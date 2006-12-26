@@ -1,0 +1,27 @@
+## Interface: 20000
+## Author: Haste
+## Notes: Unit frames
+## eMail: troeks@gmail.com
+## DefaultState: Enabled
+## OptionalDeps: Dongle
+## LoadOnDemand: 0
+## SavedVariables: oUFDB
+
+libs\Dongle.lua
+libs\DongleUtils.lua
+
+locale\enUS.lua
+
+core\ouf.lua
+core\settings.lua
+core\class\unit.lua
+core\class\frame.lua
+core\class\events.lua
+
+unit\player.lua
+unit\pet.lua
+unit\target.lua
+unit\targetstarget.lua
+unit\targetstargetstarget.lua
+unit\party.lua
+

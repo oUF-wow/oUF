@@ -1,0 +1,6 @@
+oUF.defaults = {
+	profile = {
+		pos = {
+		},
+	}
+}
