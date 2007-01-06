@@ -178,30 +178,4 @@ function oUF:handleEvent(event, unit)
 			self.unit[k][f](self.unit[k], k)
 		end
 	end
-end--[[
-function aUF:ObjectRegisterEvent(object,event,method)
-	if not self.events[event] then
-		self.events[event] = {}
-	end
-	
-	self.events[event][object] = method or event
-	
-	self[event] = function(self,unit) self:TriggerEvent(event,unit) end
-	self:RegisterEvent(event)
 end
-function aUF:TriggerEvent(event,unit)
-	if unit then
-		if (self.unitid[unit]) then
-			for object,_ in pairs(self.unitid[unit]) do
-				local method = self.events[event][object]
-				if (method) then
-					object[method](object,unit)
-				end
-			end
-		end
-	else
-		for object,method in pairs(self.events[event]) do
-			object[method](object)
-		end	
-	end
-end ]]
