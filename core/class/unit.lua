@@ -29,18 +29,25 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ---------------------------------------------------------------------------]]
 
-oUF.class.unit = CreateFrame("Button")
-
-local Metatable = {__index = oUF.class.unit}
-local P = DongleStub("DongleUtils")
 local G = getfenv(0)
+local oUF = oUF
+local class = CreateFrame("Button")
+local mt = {__index = class}
 
-local function RaidColor(c)
+local RGBPercToHex = DongleStub("DongleUtils-Beta0").RGBPercToHex
+local ColorGradient = DongleStub("DongleUtils-Beta0").ColorGradient
+
+local UnitHealth, UnitHealthMax = UnitHealth, UnitHealthMax
+local UnitIsConnected, UnitIsGhost, UnitIsDead = UnitIsConnected, UnitIsGhost, UnitIsDead
+local UnitLevel, UnitClass, UnitCanAttack, UnitIsPlusMob = UnitLevel, UnitClass, UnitCanAttack, UnitIsPlusMob
+local UnitIsPlayer, UnitCreatureFamiliy, UnitCreatureType = UnitIsPlayer, UnitCreatureFamiliy, UnitCreatureType
+local UnitBuff, UnitDebuff, GetPetHappiness, GetUnitName = UnitBuff, UnitDebuff, GetPetHappiness, GetUnitName
+local registerEvent
+local RaidColor = function(c)
 	c = RAID_CLASS_COLORS[c]
-	return (c and P.RGBPercToHex(c.r, c.g, c.b)) or "ffffff|r"
+	return (c and RGBPercToHex(c.r, c.g, c.b)) or "ffffff|r"
 end
-
-local function SetSmoothColor(bar, barbg, unit, alpha)
+local SetSmoothColor = function(bar, barbg, unit, alpha)
 	if(not type or not bar) then return end
 	local min, max = bar:GetMinMaxValues()
 	if(min == max) then return end
@@ -48,47 +55,51 @@ local function SetSmoothColor(bar, barbg, unit, alpha)
 	local perc = 1 - bar:GetValue()/(max-min)
 	local c = oUF.getHealthColor()
 --	local c = RAID_CLASS_COLORS[select(2, UnitClass(unit))]
---	local r, g, b = P.ColorGradient(perc, c.r, c.g, c.b, 1, 1, 0, 1, 0, 0)
-	local r, g, b = P.ColorGradient(perc, c.r1, c.g1, c.b1, 1, 1, 0, 1, 0, 0)
+--	local r, g, b = ColorGradient(perc, c.r, c.g, c.b, 1, 1, 0, 1, 0, 0)
+	local r, g, b = ColorGradient(perc, c.r1, c.g1, c.b1, 1, 1, 0, 1, 0, 0)
 
 	barbg:SetStatusBarColor(r, g, b, .25)
 	bar:SetStatusBarColor(r, g ,b, alpha)
 end
 
-function oUF.class.unit:new(unit)
+function class:new(unit)
 	local name = "oUF_" .. oUF.getCapitalized(unit)
 	local frame = oUF.class.frame:new(unit, name)
-	setmetatable(frame, Metatable)
+	setmetatable(frame, mt)
 	self.unit = unit
 
-	oUF:RegisterClassEvent(self.unit, "UNIT_HEALTH", "updateHealth")
+	registerEvent = function(event, handler)
+		oUF:RegisterClassEvent(unit, event, handler)
+	end
 
-	oUF:RegisterClassEvent(self.unit, "UNIT_MANA", "updatePower")
-	oUF:RegisterClassEvent(self.unit, "UNIT_RAGE", "updatePower")
-	oUF:RegisterClassEvent(self.unit, "UNIT_FOCUS", "updatePower")
-	oUF:RegisterClassEvent(self.unit, "UNIT_ENERGY", "updatePower")
-	oUF:RegisterClassEvent(self.unit, "UNIT_MAXMANA", "updatePower")
-	oUF:RegisterClassEvent(self.unit, "UNIT_MAXRAGE", "updatePower")
-	oUF:RegisterClassEvent(self.unit, "UNIT_MAXFOCUS", "updatePower")
-	oUF:RegisterClassEvent(self.unit, "UNIT_MAXENERGY", "updatePower")
-	oUF:RegisterClassEvent(self.unit, "UNIT_HAPPINESS", "updatePower")
-	oUF:RegisterClassEvent(self.unit, "UNIT_DISPLAYPOWER", "updatePower")
-	oUF:RegisterClassEvent(self.unit, "UNIT_MAXHAPPINESS", "updatePower")
+	registerEvent("UNIT_HEALTH", "updateHealth")
 
-	oUF:RegisterClassEvent(self.unit, "UNIT_LEVEL", "updateInfoLevel")
-	oUF:RegisterClassEvent(self.unit, "UNIT_NAME_UPDATE", "updateInfoName")
+	registerEvent("UNIT_MANA", "updatePower")
+	registerEvent("UNIT_RAGE", "updatePower")
+	registerEvent("UNIT_FOCUS", "updatePower")
+	registerEvent("UNIT_ENERGY", "updatePower")
+	registerEvent("UNIT_MAXMANA", "updatePower")
+	registerEvent("UNIT_MAXRAGE", "updatePower")
+	registerEvent("UNIT_MAXFOCUS", "updatePower")
+	registerEvent("UNIT_MAXENERGY", "updatePower")
+	registerEvent("UNIT_HAPPINESS", "updatePower")
+	registerEvent("UNIT_DISPLAYPOWER", "updatePower")
+	registerEvent("UNIT_MAXHAPPINESS", "updatePower")
 
-	oUF:RegisterClassEvent(self.unit, "UNIT_AURA", "updateAura")
+	registerEvent("UNIT_LEVEL", "updateInfoLevel")
+	registerEvent("UNIT_NAME_UPDATE", "updateInfoName")
 
-	oUF:RegisterClassEvent(self.unit, "PLAYER_ENTERING_WORLD", "updateAll")
+	registerEvent("UNIT_AURA", "updateAura")
+
+	registerEvent("PLAYER_ENTERING_WORLD", "updateAll")
 
 	if(oUF.getUnitType(unit) == "party") then
-		oUF:RegisterClassEvent(self.unit, "PARTY_MEMBERS_CHANGED", "updateAll")
+		registerEvent("PARTY_MEMBERS_CHANGED", "updateAll")
 	end
 	return G[name]
 end
 
-function oUF.class.unit:updateAll()
+function class:updateAll()
 	if(UnitExists(self.unit)) then
 		self:updateHealth(self.unit)
 		self:updatePower(self.unit)
@@ -98,7 +109,7 @@ function oUF.class.unit:updateAll()
 	end
 end
 
-function oUF.class.unit:updateHealth(a1)
+function class:updateHealth(a1)
 	local vc, vm, health, bg = UnitHealth(a1), UnitHealthMax(a1), self.Health, self.HealthBG
 	local unit = oUF.getUnitType(a1)
 
@@ -110,7 +121,7 @@ function oUF.class.unit:updateHealth(a1)
 	return self:updateHealthText(a1, unit, vc, vm, health)
 end
 
-function oUF.class.unit:updateHealthText(unit, db, vc, vm, health)
+function class:updateHealthText(unit, db, vc, vm, health)
 	if(unit == "target") then
 		-- MobHealth shit!
 	end
@@ -128,7 +139,7 @@ function oUF.class.unit:updateHealthText(unit, db, vc, vm, health)
 	end
 end
 
-function oUF.class.unit:updatePower(unit)
+function class:updatePower(unit)
 	local vc, vm, power, bg = UnitMana(unit), UnitManaMax(unit), self.Power, self.PowerBG
 	local c = oUF.getPowerColor(unit)
 
@@ -158,13 +169,13 @@ function oUF.class.unit:updatePower(unit)
 	end
 end
 
-function oUF.class.unit:updateInfoName(unit)
+function class:updateInfoName(unit)
 	local f = self.Health.Name
 	f:SetText(GetUnitName(unit))
 	f:SetTextColor(1, 1, 1)
 end
 
-function oUF.class.unit:updateInfoLevel(unit)
+function class:updateInfoLevel(unit)
 	local tl = UnitLevel(unit)
 
 	if(unit == "player") then
@@ -203,7 +214,7 @@ function oUF.class.unit:updateInfoLevel(unit)
 	end
 end
 
-function oUF.class.unit:updateAura(unit)
+function class:updateAura(unit)
 	local name, rank, texture, count, type, color
 	for i=1,32 do
 		name, rank, texture, count = UnitBuff(unit, i)
@@ -242,3 +253,5 @@ function oUF.class.unit:updateAura(unit)
 		end
 	end
 end
+
+oUF.class.unit = class

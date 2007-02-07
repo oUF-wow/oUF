@@ -29,6 +29,7 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ---------------------------------------------------------------------------]]
 
+local G = getfenv(0)
 local methods = {"createElements", "applyLayout", "menu", "loadPosition", "savePosition"}
 local OnAuraEnter = function()
 	if(not this:IsVisible()) then return end
@@ -93,6 +94,7 @@ function oUF.class.frame:new(unit, name, id, db)
 
 	frame:createElements()
 	frame:applyLayout()
+	frame:loadPosition()
 
 	return frame
 end
@@ -244,12 +246,13 @@ end
 function oUF.class.frame:savePosition()
 	local _, _, _, x, y = this:GetPoint()
 
-	oUF.db.profile.pos[this.unit] = math.ceil(x).."|"..math.ceil(y)
+	oUF.db.profile.pos[this.unit] = math.ceil(x).."#"..math.ceil(y)
 end
 
 function oUF.class.frame:loadPosition()
-	if(oUF.db.profile.pos[self.unit]) then
-		local x,y = strsplit("|", oUF.db.profile.pos[self.unit])
+	local pos = oUF.db.profile.pos[self.unit]
+	if(pos) then
+		local x,y = strsplit("#", pos)
 		self:SetPoint("TOPLEFT", nil, "TOPLEFT", x, y)
 	else
 		self:SetPoint("CENTER", nil, "CENTER")
@@ -260,8 +263,8 @@ function oUF.class.frame.menu()
 	local s = oUF.getUnitType(this.unit)
 	local unit = oUF.getCapitalized(this.unit)
 	if s == "party" or s == "partypet" then
-		ToggleDropDownMenu(1, nil, getglobal("PartyMemberFrame"..this:GetID().."DropDown"), "cursor", 0, 0)
+		ToggleDropDownMenu(1, nil, G["PartyMemberFrame"..this:GetID().."DropDown"], "cursor", 0, 0)
 	else
-		ToggleDropDownMenu(1, nil, getglobal(unit.."FrameDropDown"), "cursor", 0, 0)
+		ToggleDropDownMenu(1, nil, G[unit.."FrameDropDown"], "cursor", 0, 0)
 	end
 end

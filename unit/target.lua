@@ -1,23 +1,19 @@
-oUF.unit.target = oUF.class.unit:new("target")
-oUF:NewModule('oUF_Target', oUF.unit.target)
+local GetReactionColors, GetComboPoints = oUF.GetReactionColors, GetComboPoints
+local unit = "target"
 
-function oUF.unit.target:Enable()
-	self:disableBlizzard()
-	self:createCP()
-
-	self:RegisterEvent("PLAYER_COMBO_POINTS", "updateCP")
-	self:RegisterEvent("PLAYER_TARGET_CHANGED", "updateTarget")
+local registerEvent = function(event, handler)
+	oUF:RegisterClassEvent(unit, event, handler)
 end
 
-function oUF.unit.target:updateTarget()
-	if(UnitExists("target")) then
+local updateTarget = function(self)
+	if(UnitExists(unit)) then
 		self:updateAll()
 		self:updateReaction()
 		self:updateCP()
 	end
 end
 
-function oUF.unit.target:createCP()
+local createCP = function(self)
 	local c = select(2, UnitClass("player"))
 
 	if(c == "ROGUE" or c == "DRUID") then
@@ -29,21 +25,38 @@ function oUF.unit.target:createCP()
 	end
 end
 
-function oUF.unit.target:updateReaction()
-	local r, g, b = oUF:GetReactionColors("target")
+local updateReaction = function(self)
+	local r, g, b = GetReactionColors(unit)
 	self:SetBackdropBorderColor(r, g, b)
 end
 
-function oUF.unit.target:updateCP()
-	if not self.CPoints then return end
-	
-	if(GetComboPoints() > 0) then
-		self.CPoints:SetText(GetComboPoints())
+local updateCP = function(self)
+	local cpoints = self.CPoints
+
+	if(not cpoints) then
+		return
+	elseif(GetComboPoints() > 0) then
+		cpoints:SetText(GetComboPoints())
 	else
-		self.CPoints:SetText(nil)
+		cpoints:SetText(nil)
 	end
 end
 
-function oUF.unit.target:disableBlizzard()
+local disableBlizzard = function()
 	TargetFrame:UnregisterAllEvents()
 end
+
+oUF.addUnit(function(self)
+	local frame = self.class.unit:new(unit)
+	self.unit[unit] = frame
+
+	frame.updateCP = updateCP
+	frame.updateTarget = updateTarget
+	frame.updateReaction = updateReaction
+
+	disableBlizzard()
+	createCP(frame)
+
+	registerEvent("PLAYER_COMBO_POINTS", "updateCP")
+	registerEvent("PLAYER_TARGET_CHANGED", "updateTarget")
+end)

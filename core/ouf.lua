@@ -29,6 +29,7 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ---------------------------------------------------------------------------]]
 
+local G = getfenv(0)
 local unitTypeLookup = {
     party1 = "party",
     party2 = "party",
@@ -67,37 +68,42 @@ local strings = {
 	[7] = function(vCur, vMax) return string.format("%s | %s", vMax,vCur-vMax) end,
 }
 local events = {}
+local loadup = {}
 
-oUF = DongleStub('Dongle-Beta0'):New('oUF')
-oUF.class = {}
-oUF.unit = {}
+local addon = DongleStub('Dongle-Beta0'):New('oUF')
+addon.class = {}
+addon.unit = {}
 
-function oUF:Initialize()
+function addon:Initialize()
 	self.db = self:InitializeDB("oUFDB")
 	self.db:RegisterDefaults(self.defaults)
 end
 
-function oUF.getHealthColor()
+function addon:Enable()
+	for _, func in pairs(loadup) do func(self) end
+end
+
+function addon.getHealthColor()
 	return BC["H"][0]
 end
 
-function oUF.getPowerColor(unit)
+function addon.getPowerColor(unit)
 	return BC["P"][UnitPowerType(unit)]
 end
 
-function oUF.getStringFormat(type)
+function addon.getStringFormat(type)
 	return strings[type]
 end
 
-function oUF.getCapitalized(str)
+function addon.getCapitalized(str)
 	return string.upper(string.sub(str, 1, 1)) ..  string.lower(string.sub(str, 2))
 end
 
-function oUF.getUnitType(unit)
+function addon.getUnitType(unit)
 	return unitTypeLookup[unit]
 end
 
-function oUF.kRotation(val)
+function addon.kRotation(val)
 	if(val > 99999) then
 		return string.format("%.2fm", val / 1000000)
 	elseif(val > 9999) then
@@ -107,7 +113,7 @@ function oUF.kRotation(val)
 	end
 end
 
-function oUF:GetReactionColors(u)
+function addon.GetReactionColors(u)
 	local r, g, b
 	if UnitPlayerControlled(u) then
 		if ( UnitCanAttack(u, "player") ) then
@@ -158,9 +164,11 @@ function oUF:GetReactionColors(u)
 	return r,g,b
 end
 
---[[ I has a bucket
-]]
-function oUF:RegisterClassEvent(class, event, func)
+function addon.addUnit(func)
+	table.insert(loadup, func)
+end
+
+function addon:RegisterClassEvent(class, event, func)
 	self[event] = function(self, event, a1) self:handleEvent(event, a1) end
 	if(not events[event]) then events[event] = {} end
 	events[event][class] = func or event
@@ -168,15 +176,19 @@ function oUF:RegisterClassEvent(class, event, func)
 	self:RegisterEvent(event)
 end
 
-function oUF:handleEvent(event, unit)
-	if(unit and self.unit[unit]) then
+function addon:handleEvent(event, unit)
+	local class = self.unit[unit]
+	if(unit and class) then
 		local func = events[event][unit]
 		if(func) then
-			self.unit[unit][func](self.unit[unit], unit, event)
+			class[func](class, unit, event)
 		end
 	elseif(not unit) then
+		unit = self.unit
 		for k, f in pairs(events[event]) do
-			self.unit[k][f](self.unit[k], k)
+			self.unit[k][f](unit[k], k)
 		end
 	end
 end
+
+G['oUF'] = addon
