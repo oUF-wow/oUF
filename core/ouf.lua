@@ -12,9 +12,9 @@
         copyright notice, this list of conditions and the following
         disclaimer in the documentation and/or other materials provided
         with the distribution.
-      * Neither the name of Trond A Ekseth nor the names of its
-        contributors may be used to endorse or promote products derived
-        from this software without specific prior written permission.
+      * Neither the name of oUF nor the names of its contributors
+        may be used to endorse or promote products derived from this
+	software without specific prior written permission.
 
   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
   "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -68,7 +68,7 @@ local strings = {
 }
 local events = {}
 
-oUF = DongleStub('Dongle'):New('oUF')
+oUF = DongleStub('Dongle-Beta0'):New('oUF')
 oUF.class = {}
 oUF.unit = {}
 
@@ -108,6 +108,7 @@ function oUF.kRotation(val)
 end
 
 function oUF:GetReactionColors(u)
+	local r, g, b
 	if UnitPlayerControlled(u) then
 		if ( UnitCanAttack(u, "player") ) then
 			-- Hostile players are red
