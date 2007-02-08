@@ -1,17 +1,16 @@
-local oParty = oUF:NewModule("oUF_Party")
 local G = getfenv(0)
 
-function oParty:Enable()
+local unit = "party"
+local disableBlizzard = function()
 	for i=1,4 do
-		oUF.unit["party"..i] = oUF.class.unit:new("party"..i)
-		oUF.unit["party"..i]:loadPosition()
+		G["PartyMemberFrame"..i]:Hide() G["PartyMemberFrame"..i]:UnregisterAllEvents()
 	end
 end
 
-function oParty:disableBlizzard()
+oUF.addUnit(function(self)
 	for i=1,4 do
-		G["PartyFrame"..i]:UnregisterAllEvents()
-		G["PartyFrame"..i]:Hide()
+		oUF.unit[unit..i] = self.class.unit:new(unit..i)
 	end
-end
-
+	
+	disableBlizzard()
+end)

@@ -244,9 +244,9 @@ function oUF.class.frame:applyLayout()
 end
 
 function oUF.class.frame:savePosition()
-	local _, _, _, x, y = this:GetPoint()
+	local _, _, _, x, y = self:GetPoint()
 
-	oUF.db.profile.pos[this.unit] = math.ceil(x).."#"..math.ceil(y)
+	oUF.db.profile.pos[self.unit] = math.ceil(x).."#"..math.ceil(y)
 end
 
 function oUF.class.frame:loadPosition()
