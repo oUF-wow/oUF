@@ -114,11 +114,11 @@ function addon.kRotation(val)
 		return val
 	end
 
-	local int, float = math.modf(("%.2f"):format(val / si))
+	local int, float = math.modf(("%.1f"):format(val / si))
 	float = tostring(float)
 
 	if(#float > 4) then
-		float = ("%.2f"):format(float):gsub("0%.", prefix, 1)
+		float = ("%.1f"):format(float):gsub("0%.", prefix, 1)
 	elseif(#float ~= 1) then
 		float = float:gsub("0%.", prefix, 1)
 	else
