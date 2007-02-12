@@ -30,7 +30,6 @@
 ---------------------------------------------------------------------------]]
 
 local G = getfenv(0)
-local oUF = oUF
 local class = CreateFrame("Button")
 local mt = {__index = class}
 
@@ -42,6 +41,7 @@ local UnitIsConnected, UnitIsGhost, UnitIsDead = UnitIsConnected, UnitIsGhost, U
 local UnitLevel, UnitClass, UnitCanAttack, UnitIsPlusMob = UnitLevel, UnitClass, UnitCanAttack, UnitIsPlusMob
 local UnitIsPlayer, UnitCreatureFamiliy, UnitCreatureType = UnitIsPlayer, UnitCreatureFamiliy, UnitCreatureType
 local UnitBuff, UnitDebuff, GetPetHappiness, GetUnitName = UnitBuff, UnitDebuff, GetPetHappiness, GetUnitName
+local getHealthColor, getPowerColor, getCapitalized, getUnitType, getStringFormat = oUF.getHealthColor, oUF.getPowerColor, oUF.getCapitalized, oUF.getUnitType, oUF.getStringFormat
 local registerEvent
 local RaidColor = function(c)
 	c = RAID_CLASS_COLORS[c]
@@ -53,7 +53,7 @@ local SetSmoothColor = function(bar, barbg, unit, alpha)
 	if(min == max) then return end
 
 	local perc = 1 - bar:GetValue()/(max-min)
-	local c = oUF.getHealthColor()
+	local c = getHealthColor()
 --	local c = RAID_CLASS_COLORS[select(2, UnitClass(unit))]
 --	local r, g, b = ColorGradient(perc, c.r, c.g, c.b, 1, 1, 0, 1, 0, 0)
 	local r, g, b = ColorGradient(perc, c.r1, c.g1, c.b1, 1, 1, 0, 1, 0, 0)
@@ -62,10 +62,9 @@ local SetSmoothColor = function(bar, barbg, unit, alpha)
 	bar:SetStatusBarColor(r, g ,b, alpha)
 end
 
-function class:new(unit, id, onshow)
-	local name = "oUF_" .. oUF.getCapitalized(unit)
-	local db = oUF.getUnitType(unit)
-	local frame = oUF.class.frame:new(unit, name, id, db, onshow)
+function class:new(unit)
+	local name = "oUF_" .. getCapitalized(unit)
+	local frame = oUF.class.frame:new(unit, name)
 	setmetatable(frame, mt)
 	self.unit = unit
 
@@ -94,7 +93,7 @@ function class:new(unit, id, onshow)
 
 	registerEvent("PLAYER_ENTERING_WORLD", "updateAll")
 
-	if(oUF.getUnitType(unit) == "party") then
+	if(getUnitType(unit) == "party") then
 		registerEvent("PARTY_MEMBERS_CHANGED", "updateAll")
 	end
 	return G[name]
@@ -112,7 +111,7 @@ end
 
 function class:updateHealth(a1)
 	local vc, vm, health, bg = UnitHealth(a1), UnitHealthMax(a1), self.Health, self.HealthBG
-	local unit = oUF.getUnitType(a1)
+	local unit = getUnitType(a1)
 
 	health:SetMinMaxValues(0, vm)
 	health:SetValue(vc)
@@ -136,13 +135,13 @@ function class:updateHealthText(unit, db, vc, vm, health)
 	elseif(not UnitIsConnected(unit)) then
 		health.Points:SetText("Offline")
 	else
-		health.Points:SetText(oUF.getStringFormat(1)(vc, vm))
+		health.Points:SetText(getStringFormat(1)(vc, vm))
 	end
 end
 
 function class:updatePower(unit)
 	local vc, vm, power, bg = UnitMana(unit), UnitManaMax(unit), self.Power, self.PowerBG
-	local c = oUF.getPowerColor(unit)
+	local c = getPowerColor(unit)
 
 	power:SetMinMaxValues(0, vm)
 
@@ -165,7 +164,7 @@ function class:updatePower(unit)
 		if(vm == 0) then
 			power.Points:SetText(nil)
 		else
-			power.Points:SetText(oUF.getStringFormat(1)(vc, vm))
+			power.Points:SetText(getStringFormat(1)(vc, vm))
 		end
 	end
 end

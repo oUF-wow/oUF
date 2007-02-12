@@ -49,7 +49,7 @@ end
 
 oUF.class.frame = {}
 
-function oUF.class.frame:new(unit, name, id, db, onShow)
+function oUF.class.frame:new(unit, name, id, db, customOnShow)
 	local frame = CreateFrame("Button", name, nil, "SecureUnitButtonTemplate")
 
 	frame.unit = unit
@@ -65,7 +65,7 @@ function oUF.class.frame:new(unit, name, id, db, onShow)
 	frame:SetBackdropBorderColor(.3, .3, .3)
 	frame:SetBackdropColor(0, 0, 0)
 
-	frame:SetScript("OnShow", onShow or OnShow)
+	frame:SetScript("OnShow", customOnShow or OnShow)
 	frame:SetScript("OnDragStart", function()
 		if(IsAltKeyDown()) then
 			frame:StartMoving()
@@ -83,6 +83,7 @@ function oUF.class.frame:new(unit, name, id, db, onShow)
 	end)
 	frame:RegisterForClicks("LeftButtonUp", "RightButtonUp", "MiddleButtonUp", "Button4Up", "Button5Up")
 
+	frame:SetScale(.64)
 	frame:SetID(id or 0)
 
 	frame:SetAttribute("unit", unit)
