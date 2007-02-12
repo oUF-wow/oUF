@@ -104,13 +104,28 @@ function addon.getUnitType(unit)
 end
 
 function addon.kRotation(val)
-	if(val > 99999) then
-		return string.format("%.2fm", val / 1000000)
-	elseif(val > 9999) then
-		return string.format("%.1fk", val / 1000)
+	local prefix, si
+
+	if(val >= 1000000) then
+		prefix = "m" ; si = 1000000
+	elseif(val >= 1000) then
+		prefix = "k" ; si = 1000
 	else
 		return val
 	end
+
+	local int, float = math.modf(val / si)
+	float = tostring(float)
+
+	if(#float > 4) then
+		float = ("%.2f"):format(float):gsub("0%.", prefix, 1)
+	elseif(float ~= 0) then
+		float = float:gsub("0%.", prefix, 1)
+	else
+		float = prefix
+	end
+
+	return int..float
 end
 
 function addon.GetReactionColors(u)

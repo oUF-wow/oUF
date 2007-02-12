@@ -44,6 +44,7 @@ end
 
 local disableBlizzard = function()
 	TargetFrame:UnregisterAllEvents()
+	ComboFrame:UnregisterAllEvents()
 end
 
 oUF.addUnit(function(self)

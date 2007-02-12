@@ -62,9 +62,10 @@ local SetSmoothColor = function(bar, barbg, unit, alpha)
 	bar:SetStatusBarColor(r, g ,b, alpha)
 end
 
-function class:new(unit)
+function class:new(unit, id, onshow)
 	local name = "oUF_" .. oUF.getCapitalized(unit)
-	local frame = oUF.class.frame:new(unit, name)
+	local db = oUF.getUnitType(unit)
+	local frame = oUF.class.frame:new(unit, name, id, db, onshow)
 	setmetatable(frame, mt)
 	self.unit = unit
 

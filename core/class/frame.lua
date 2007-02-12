@@ -43,11 +43,14 @@ local OnAuraEnter = function()
 	end
 end
 
+local OnShow = function(self)
+	self:updateAll()
+end
 
 oUF.class.frame = {}
 
-function oUF.class.frame:new(unit, name, id, db)
-	local frame = CreateFrame("Button", name, UIParent, "SecureUnitButtonTemplate")
+function oUF.class.frame:new(unit, name, id, db, onShow)
+	local frame = CreateFrame("Button", name, nil, "SecureUnitButtonTemplate")
 
 	frame.unit = unit
 	frame:EnableMouse(true)
@@ -62,7 +65,7 @@ function oUF.class.frame:new(unit, name, id, db)
 	frame:SetBackdropBorderColor(.3, .3, .3)
 	frame:SetBackdropColor(0, 0, 0)
 
-	if(unit ~= "target") then frame:SetScript("OnShow",function() frame:updateAll() end) end
+	frame:SetScript("OnShow", onShow or OnShow)
 	frame:SetScript("OnDragStart", function()
 		if(IsAltKeyDown()) then
 			frame:StartMoving()
