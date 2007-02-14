@@ -31,7 +31,7 @@
 
 local G = getfenv(0)
 local class = CreateFrame("Button")
-local mt = {__index = class}
+local mt = {__index = class, __tostring = function(self) return self.unit end}
 
 local RGBPercToHex = DongleStub("DongleUtils-Beta0").RGBPercToHex
 local ColorGradient = DongleStub("DongleUtils-Beta0").ColorGradient
@@ -70,9 +70,8 @@ function class:new(unit, id, OnShow)
 	local name = "oUF_" .. getCapitalized(unit)
 	local frame = oUF.class.frame:new(unit, name, id, OnShow)
 	setmetatable(frame, mt)
-	frame.__tostring = function(self) return unit end
-	frame.RegisterEvent = function(self, event, handler) oUF.RegisterClassEvent(self, event, handler) end
-	self.unit = unit
+	frame.RegisterEvent = function(class, event, handler) oUF:RegisterClassEvent(class, event, handler) end
+	frame.__tostring = function() return frame.unit end
 
 	frame:RegisterEvent("UNIT_HEALTH", "updateHealth")
 

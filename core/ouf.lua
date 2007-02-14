@@ -186,22 +186,22 @@ end
 function addon:RegisterClassEvent(class, event, func)
 	self[event] = function(self, event, a1) self:handleEvent(event, a1) end
 	if(not events[event]) then events[event] = {} end
+	
 	events[event][class] = func or event
-
 	self:RegisterEvent(event)
 end
 
 function addon:handleEvent(event, unit)
 	local class = self.unit[unit]
 	if(unit and class) then
-		local func = events[event][unit]
+		local func = events[event][class]
 		if(func) then
 			class[func](class, unit, event)
 		end
 	elseif(not unit) then
 		unit = self.unit
 		for k, f in pairs(events[event]) do
-			self.unit[k][f](unit[k], k)
+			k[f](k, k)
 		end
 	end
 end
