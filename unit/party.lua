@@ -9,7 +9,7 @@ end
 
 oUF.addUnit(function(self)
 	for i=1,4 do
-		oUF.unit[unit..i] = self.class.unit:new(unit..i)
+		oUF.unit[unit..i] = self.class.unit:new(unit..i, i)
 	end
 	
 	disableBlizzard()

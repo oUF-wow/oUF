@@ -36,12 +36,16 @@ local mt = {__index = class}
 local RGBPercToHex = DongleStub("DongleUtils-Beta0").RGBPercToHex
 local ColorGradient = DongleStub("DongleUtils-Beta0").ColorGradient
 
+local RAID_CLASS_COLORS = RAID_CLASS_COLORS
+local select = select
+
 local UnitHealth, UnitHealthMax = UnitHealth, UnitHealthMax
 local UnitIsConnected, UnitIsGhost, UnitIsDead = UnitIsConnected, UnitIsGhost, UnitIsDead
 local UnitLevel, UnitClass, UnitCanAttack, UnitIsPlusMob = UnitLevel, UnitClass, UnitCanAttack, UnitIsPlusMob
 local UnitIsPlayer, UnitCreatureFamiliy, UnitCreatureType = UnitIsPlayer, UnitCreatureFamiliy, UnitCreatureType
 local UnitBuff, UnitDebuff, GetPetHappiness, GetUnitName = UnitBuff, UnitDebuff, GetPetHappiness, GetUnitName
 local getHealthColor, getPowerColor, getCapitalized, getUnitType, getStringFormat = oUF.getHealthColor, oUF.getPowerColor, oUF.getCapitalized, oUF.getUnitType, oUF.getStringFormat
+
 local registerEvent
 local RaidColor = function(c)
 	c = RAID_CLASS_COLORS[c]
@@ -53,18 +57,18 @@ local SetSmoothColor = function(bar, barbg, unit, alpha)
 	if(min == max) then return end
 
 	local perc = 1 - bar:GetValue()/(max-min)
-	local c = getHealthColor()
 --	local c = RAID_CLASS_COLORS[select(2, UnitClass(unit))]
 --	local r, g, b = ColorGradient(perc, c.r, c.g, c.b, 1, 1, 0, 1, 0, 0)
+	local c = getHealthColor()
 	local r, g, b = ColorGradient(perc, c.r1, c.g1, c.b1, 1, 1, 0, 1, 0, 0)
 
 	barbg:SetStatusBarColor(r, g, b, .25)
 	bar:SetStatusBarColor(r, g ,b, alpha)
 end
 
-function class:new(unit)
+function class:new(unit, id, OnShow)
 	local name = "oUF_" .. getCapitalized(unit)
-	local frame = oUF.class.frame:new(unit, name)
+	local frame = oUF.class.frame:new(unit, name, id, OnShow)
 	setmetatable(frame, mt)
 	self.unit = unit
 
@@ -116,7 +120,7 @@ function class:updateHealth(a1)
 	health:SetMinMaxValues(0, vm)
 	health:SetValue(vc)
 
-	SetSmoothColor(health, bg, unit, 1)
+	SetSmoothColor(health, bg, a1, 1)
 
 	return self:updateHealthText(a1, unit, vc, vm, health)
 end

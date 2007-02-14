@@ -49,7 +49,7 @@ end
 
 oUF.class.frame = {}
 
-function oUF.class.frame:new(unit, name, id, db, customOnShow)
+function oUF.class.frame:new(unit, name, id, customOnShow)
 	local frame = CreateFrame("Button", name, nil, "SecureUnitButtonTemplate")
 
 	frame.unit = unit
@@ -120,6 +120,7 @@ function oUF.class.frame:createElements()
 		self[type]:SetHeight(14*4)
 		for i=1,num do
 			self[type][i] = CreateFrame("Button", nil, self[type])
+			self[type][i]:Hide()
 			self[type][i]:SetWidth(14)
 			self[type][i]:SetHeight(14)
 			self[type][i]:SetScript("OnEnter", OnAuraEnter)
@@ -164,7 +165,7 @@ function oUF.class.frame:applyLayout()
 	self.HealthBG:SetStatusBarColor(49/255, 227/255, 37/255, .25)
 
 	self.Health.Name:SetPoint("LEFT", self.Health, "LEFT", 2, 0)
-	self.Health.Name:SetFont("Fonts\\FRIZQT__.TTF", 12)
+	self.Health.Name:SetFont(STANDARD_TEXT_FONT, 12)
 	self.Health.Name:SetHeight(14)
 	self.Health.Name:SetWidth(260-94)
 	self.Health.Name:SetTextColor(1, 1, 1)
@@ -173,7 +174,7 @@ function oUF.class.frame:applyLayout()
 	self.Health.Name:SetShadowColor(0, 0, 0, 1)
 
 	self.Health.Points:SetPoint("LEFT", self.Health, "RIGHT", 3, 0)
-	self.Health.Points:SetFont("Fonts\\FRIZQT__.TTF", 12)
+	self.Health.Points:SetFont(STANDARD_TEXT_FONT, 12)
 	self.Health.Points:SetHeight(14)
 	self.Health.Points:SetWidth(76)
 	self.Health.Points:SetTextColor(1, 1, 1)
@@ -194,7 +195,7 @@ function oUF.class.frame:applyLayout()
 	self.PowerBG:SetStatusBarColor(p.r1, p.g1, p.b1, .25)
 	
 	self.Power.Info:SetPoint("LEFT", self.Power, "LEFT", 2, 0)
-	self.Power.Info:SetFont("Fonts\\FRIZQT__.TTF", 12)
+	self.Power.Info:SetFont(STANDARD_TEXT_FONT, 12)
 	self.Power.Info:SetHeight(14)
 	self.Power.Info:SetWidth(260-94)
 	self.Power.Info:SetTextColor(1, 1, 1)
@@ -203,7 +204,7 @@ function oUF.class.frame:applyLayout()
 	self.Power.Info:SetShadowColor(0, 0, 0, 1)
 
 	self.Power.Points:SetPoint("LEFT", self.Power, "RIGHT", 3, 0)
-	self.Power.Points:SetFont("Fonts\\FRIZQT__.TTF", 12)
+	self.Power.Points:SetFont(STANDARD_TEXT_FONT, 12)
 	self.Power.Points:SetHeight(14)
 	self.Power.Points:SetWidth(76)
 	self.Power.Points:SetTextColor(1, 1, 1)
