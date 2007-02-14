@@ -3,10 +3,6 @@ local unit = "targettarget"
 local M = DongleStub("MetrognomeNano-Beta0")
 local frame
 
-local registerEvent = function(event, handler)
-	oUF:RegisterClassEvent(unit, event, handler)
-end
-
 local updateTargetTarget = function(self)
 	if(UnitExists(unit)) then
 		frame:updateHealth(unit)
@@ -35,7 +31,7 @@ oUF.addUnit(function(self)
 
 	disableBlizzard()
 	
-	registerEvent("PLAYER_TARGET_CHANGED", "updateTargetTarget")
+	frame:RegisterEvent("PLAYER_TARGET_CHANGED", "updateTargetTarget")
 
 	M:Register(self, "oUF Targets Target", updateTargetTarget, .5)
 	M:Start("oUF Targets Target")

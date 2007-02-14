@@ -1,6 +1,6 @@
 local G = getfenv(0)
-
 local unit = "party"
+
 local disableBlizzard = function()
 	for i=1,4 do
 		G["PartyMemberFrame"..i]:Hide() G["PartyMemberFrame"..i]:UnregisterAllEvents()
@@ -8,8 +8,11 @@ local disableBlizzard = function()
 end
 
 oUF.addUnit(function(self)
+	local frame
 	for i=1,4 do
-		oUF.unit[unit..i] = self.class.unit:new(unit..i, i)
+		frame = self.class.unit:new(unit..i, .i)
+		frame:RegisterEvent("PARTY_MEMBERS_CHANGED", "updateAll")
+		oUF.unit[unit..i] = frame
 	end
 	
 	disableBlizzard()

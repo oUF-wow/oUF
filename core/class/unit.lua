@@ -70,36 +70,31 @@ function class:new(unit, id, OnShow)
 	local name = "oUF_" .. getCapitalized(unit)
 	local frame = oUF.class.frame:new(unit, name, id, OnShow)
 	setmetatable(frame, mt)
+	frame.__tostring = function(self) return unit end
+	frame.RegisterEvent = function(self, event, handler) oUF.RegisterClassEvent(self, event, handler) end
 	self.unit = unit
 
-	registerEvent = function(event, handler)
-		oUF:RegisterClassEvent(unit, event, handler)
-	end
+	frame:RegisterEvent("UNIT_HEALTH", "updateHealth")
 
-	registerEvent("UNIT_HEALTH", "updateHealth")
+	frame:RegisterEvent("UNIT_MANA", "updatePower")
+	frame:RegisterEvent("UNIT_RAGE", "updatePower")
+	frame:RegisterEvent("UNIT_FOCUS", "updatePower")
+	frame:RegisterEvent("UNIT_ENERGY", "updatePower")
+	frame:RegisterEvent("UNIT_MAXMANA", "updatePower")
+	frame:RegisterEvent("UNIT_MAXRAGE", "updatePower")
+	frame:RegisterEvent("UNIT_MAXFOCUS", "updatePower")
+	frame:RegisterEvent("UNIT_MAXENERGY", "updatePower")
+	frame:RegisterEvent("UNIT_HAPPINESS", "updatePower")
+	frame:RegisterEvent("UNIT_DISPLAYPOWER", "updatePower")
+	frame:RegisterEvent("UNIT_MAXHAPPINESS", "updatePower")
 
-	registerEvent("UNIT_MANA", "updatePower")
-	registerEvent("UNIT_RAGE", "updatePower")
-	registerEvent("UNIT_FOCUS", "updatePower")
-	registerEvent("UNIT_ENERGY", "updatePower")
-	registerEvent("UNIT_MAXMANA", "updatePower")
-	registerEvent("UNIT_MAXRAGE", "updatePower")
-	registerEvent("UNIT_MAXFOCUS", "updatePower")
-	registerEvent("UNIT_MAXENERGY", "updatePower")
-	registerEvent("UNIT_HAPPINESS", "updatePower")
-	registerEvent("UNIT_DISPLAYPOWER", "updatePower")
-	registerEvent("UNIT_MAXHAPPINESS", "updatePower")
+	frame:RegisterEvent("UNIT_LEVEL", "updateInfoLevel")
+	frame:RegisterEvent("UNIT_NAME_UPDATE", "updateInfoName")
 
-	registerEvent("UNIT_LEVEL", "updateInfoLevel")
-	registerEvent("UNIT_NAME_UPDATE", "updateInfoName")
+	frame:RegisterEvent("UNIT_AURA", "updateAura")
 
-	registerEvent("UNIT_AURA", "updateAura")
+	frame:RegisterEvent("PLAYER_ENTERING_WORLD", "updateAll")
 
-	registerEvent("PLAYER_ENTERING_WORLD", "updateAll")
-
-	if(getUnitType(unit) == "party") then
-		registerEvent("PARTY_MEMBERS_CHANGED", "updateAll")
-	end
 	return G[name]
 end
 

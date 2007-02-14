@@ -1,10 +1,6 @@
 local GetReactionColors, GetComboPoints = oUF.GetReactionColors, GetComboPoints
 local unit = "target"
 
-local registerEvent = function(event, handler)
-	oUF:RegisterClassEvent(unit, event, handler)
-end
-
 local updateTarget = function(self)
 	if(UnitExists(unit)) then
 		self:updateAll()
@@ -58,6 +54,6 @@ oUF.addUnit(function(self)
 	disableBlizzard()
 	createCP(frame)
 
-	registerEvent("PLAYER_COMBO_POINTS", "updateCP")
-	registerEvent("PLAYER_TARGET_CHANGED", "updateTarget")
+	frame:RegisterEvent("PLAYER_COMBO_POINTS", "updateCP")
+	frame:RegisterEvent("PLAYER_TARGET_CHANGED", "updateTarget")
 end)
