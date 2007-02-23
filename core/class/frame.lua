@@ -52,6 +52,7 @@ oUF.class.frame = {}
 function oUF.class.frame:new(unit, name, id, customOnShow)
 	local frame = CreateFrame("Button", name, nil, "SecureUnitButtonTemplate")
 
+	frame.db = oUF:unitDB(oUF.getUnitType(unit))
 	frame.unit = unit
 	frame:EnableMouse(true)
 	frame:SetMovable(true)
@@ -148,8 +149,8 @@ end
 
 function oUF.class.frame:applyLayout()
 	local p = oUF.getPowerColor(self.unit)
-	self:SetWidth(260)
-	self:SetHeight(46)
+	self:SetWidth(self.db.width)
+	self:SetHeight(self.db.height)
 	self:SetPoint("CENTER", UIParent, "CENTER")
 
 	self.Health:SetPoint("TOPLEFT", self, "TOPLEFT", 8, -7)

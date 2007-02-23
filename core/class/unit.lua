@@ -179,7 +179,7 @@ function class:updateInfoLevel(unit)
 	if(unit == "player") then
 		self.Power.Info:SetText(string.format("L%d %s", UnitLevel(unit), UnitClass(unit)))
 	else
-		local c, class, cl
+		local class, h, c, cl = "", ""
 		if(tl > 0) then
 			if(UnitCanAttack("player", unit)) then
 				local c = GetDifficultyColor(tl)
@@ -202,13 +202,13 @@ function class:updateInfoLevel(unit)
 			class = UnitCreatureFamily(unit) or UnitCreatureType(unit)
 		end
 		if(unit == "pet") then
-			local h = GetPetHappiness()
+			h = GetPetHappiness()
 			if(h == 1) then h = ":<"
-			elseif(h == 2) then h = ":1"
+			elseif(h == 2) then h = ":|"
 			elseif(h == 3) then h = ":D" end
 		end
 		cl = RaidColor(cl)
-		self.Power.Info:SetText(string.format("L%s |cff%s%s|r", tl, cl, tostring(class)))
+		self.Power.Info:SetText(string.format("L%s |cff%s%s|r %s", tl, cl, class, h))
 	end
 end
 

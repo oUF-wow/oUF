@@ -30,7 +30,7 @@
 ---------------------------------------------------------------------------]]
 
 local G = getfenv(0)
-local unitTypeLookup = {
+local unitTypeLookup = setmetatable({
     party1 = "party",
     party2 = "party",
     party3 = "party",
@@ -39,12 +39,14 @@ local unitTypeLookup = {
     partypet2 = "partypet",
     partypet3 = "partypet",
     partypet4 = "partypet",
+}, {__index = function(t, k) return k end})
+local default = {
+	width = 260,
+	height = 46,
 }
-setmetatable(unitTypeLookup, {
-    __index = function(t, k)
-        return k
-    end
-})
+local defaults = {
+	profile = {}
+}
 
 local BC = {
 	P = {
@@ -76,7 +78,8 @@ addon.unit = {}
 
 function addon:Initialize()
 	self.db = self:InitializeDB("oUFDB")
-	self.db:RegisterDefaults(self.defaults)
+	self.profile = self.db.profile
+	self.db:RegisterDefaults(defaults)
 end
 
 function addon:Enable()
@@ -181,6 +184,11 @@ end
 
 function addon.addUnit(func)
 	table.insert(loadup, func)
+end
+
+function addon:unitDB(unit)
+	self.profile[unit] = setmetatable(self.profile[unit] or {}, {__index = default})
+	return self.profile[unit]
 end
 
 function addon:RegisterClassEvent(class, event, func)
