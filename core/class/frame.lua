@@ -42,7 +42,6 @@ local OnAuraEnter = function()
 		GameTooltip:SetUnitBuff(unit, this.id)
 	end
 end
-
 local OnShow = function(self)
 	self:updateAll()
 end
@@ -52,6 +51,7 @@ oUF.class.frame = {}
 function oUF.class.frame:new(unit, name, id, customOnShow)
 	local frame = CreateFrame("Button", name, nil, "SecureUnitButtonTemplate")
 
+	frame:Hide()
 	frame.db = oUF:unitDB(oUF.getUnitType(unit))
 	frame.unit = unit
 	frame:EnableMouse(true)

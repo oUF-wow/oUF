@@ -30,14 +30,15 @@
 ---------------------------------------------------------------------------]]
 
 local G = getfenv(0)
+local select = select
 local class = CreateFrame("Button")
 local mt = {__index = class, __tostring = function(self) return self.unit end}
+local pclass = select(2, UnitClass"player")
 
 local RGBPercToHex = DongleStub("DongleUtils-Beta0").RGBPercToHex
 local ColorGradient = DongleStub("DongleUtils-Beta0").ColorGradient
 
 local RAID_CLASS_COLORS = RAID_CLASS_COLORS
-local select = select
 
 local UnitHealth, UnitHealthMax = UnitHealth, UnitHealthMax
 local UnitIsConnected, UnitIsGhost, UnitIsDead = UnitIsConnected, UnitIsGhost, UnitIsDead
@@ -199,9 +200,9 @@ function class:updateInfoLevel(unit)
 		if(UnitIsPlayer(unit)) then
 			class, cl = UnitClass(unit)
 		else
-			class = UnitCreatureFamily(unit) or UnitCreatureType(unit)
+			class = UnitCreatureFamily(unit) or UnitCreatureType(unit) or ""
 		end
-		if(unit == "pet") then
+		if(unit == "pet" and pclass == "HUNTER") then
 			h = GetPetHappiness()
 			if(h == 1) then h = ":<"
 			elseif(h == 2) then h = ":|"
