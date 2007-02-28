@@ -180,7 +180,7 @@ function class:updateInfoLevel(unit)
 	if(unit == "player") then
 		self.Power.Info:SetText(string.format("L%d %s", UnitLevel(unit), UnitClass(unit)))
 	else
-		local class, h, c, cl = "", ""
+		local h, class, c, cl = ""
 		if(tl > 0) then
 			if(UnitCanAttack("player", unit)) then
 				local c = GetDifficultyColor(tl)
@@ -198,7 +198,7 @@ function class:updateInfoLevel(unit)
 		end
 		if(UnitIsPlusMob(unit)) then tl = tl.."+" end
 		if(UnitIsPlayer(unit)) then
-			class, cl = UnitClass(unit)
+			class, cl = UnitClass(unit) or ""
 		else
 			class = UnitCreatureFamily(unit) or UnitCreatureType(unit) or ""
 		end
