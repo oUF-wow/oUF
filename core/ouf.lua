@@ -44,9 +44,6 @@ local default = {
 	width = 260,
 	height = 46,
 }
-local defaults = {
-	profile = {}
-}
 
 local BC = {
 	P = {
@@ -79,7 +76,7 @@ addon.unit = {}
 function addon:Initialize()
 	self.db = self:InitializeDB("oUFDB")
 	self.profile = self.db.profile
-	self.db:RegisterDefaults(defaults)
+	self.db:RegisterDefaults(self.defaults)
 end
 
 function addon:Enable()

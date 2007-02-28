@@ -198,7 +198,7 @@ function class:updateInfoLevel(unit)
 		end
 		if(UnitIsPlusMob(unit)) then tl = tl.."+" end
 		if(UnitIsPlayer(unit)) then
-			class, cl = UnitClass(unit) or ""
+			class, cl = UnitClass(unit)
 		else
 			class = UnitCreatureFamily(unit) or UnitCreatureType(unit) or ""
 		end
@@ -209,7 +209,7 @@ function class:updateInfoLevel(unit)
 			elseif(h == 3) then h = ":D" end
 		end
 		cl = RaidColor(cl)
-		self.Power.Info:SetText(string.format("L%s |cff%s%s|r %s", tl, cl, class, h))
+		self.Power.Info:SetText(string.format("L%s |cff%s%s|r %s", tl, cl, tostring(class), h))
 	end
 end
 
