@@ -270,7 +270,7 @@ function oUF.class.frame.menu()
 	local unit = oUF.getCapitalized(this.unit)
 	if s == "party" or s == "partypet" then
 		ToggleDropDownMenu(1, nil, G["PartyMemberFrame"..this:GetID().."DropDown"], "cursor", 0, 0)
-	else
+	elseif(G[unit.."FrameDropDown"]) then
 		ToggleDropDownMenu(1, nil, G[unit.."FrameDropDown"], "cursor", 0, 0)
 	end
 end
