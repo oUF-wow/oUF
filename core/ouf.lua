@@ -109,7 +109,7 @@ end
 function addon.kRotation(val)
 	local prefix, si
 
-	if(val >= 1000000) then
+	if(val >= 100000) then
 		prefix = "m" ; si = 1000000
 	elseif(val >= 10000) then
 		prefix = "k" ; si = 1000
@@ -120,6 +120,7 @@ function addon.kRotation(val)
 	local int, float = math.modf(("%.1f"):format(val / si))
 	float = tostring(float)
 
+	if(int == 0) then int = "" end
 	if(#float > 4) then
 		float = ("%.1f"):format(float):gsub("0%.", prefix, 1)
 	elseif(#float ~= 1) then
