@@ -1,5 +1,5 @@
 --[[-------------------------------------------------------------------------
-  Copyright (c) 2006, Trond A Ekseth
+  Copyright (c) 2006-2007, Trond A Ekseth
   All rights reserved.
 
   Redistribution and use in source and binary forms, with or without

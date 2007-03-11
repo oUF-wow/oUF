@@ -10,6 +10,14 @@ local updateCombat = function(self)
 	end
 end
 
+local updateLoot = function(self)
+	if(GetLootMethod() == 0) then
+		self.Loot:Show()
+	else
+		self.Loot:Hide()
+	end
+end
+
 local disableBlizzard = function()
 	PlayerFrame:UnregisterAllEvents()
 	PlayerFrame:Hide()
@@ -22,7 +30,9 @@ oUF.addUnit(function(self)
 	disableBlizzard()
 
 	frame.updateCombat = updateCombat
+	frame.updateLoot = updateLoot
 
+	--frame:RegisterEvent("PARTY_LOOT_METHOD_CHANGED", "updateLoot")  
 	frame:RegisterEvent("PLAYER_REGEN_ENABLED", "updateCombat")
 	frame:RegisterEvent("PLAYER_REGEN_DISABLED", "updateCombat")
 	frame:RegisterEvent("PLAYER_UPDATE_RESTING", "updateCombat")
