@@ -93,6 +93,10 @@ function class:new(unit, id, OnShow)
 
 	frame:RegisterEvent("UNIT_AURA", "updateAura")
 
+	frame:RegisterEvent("RAID_TARGET_UPDATE", "updateRaidTarget")
+	frame:RegisterEvent("RAID_ROSTER_UPDATE", "updateRaidTarget")
+	frame:RegisterEvent("PARTY_MEMBERS_CHANGED", "updateRaidTarget")
+
 	frame:RegisterEvent("PLAYER_ENTERING_WORLD", "updateAll")
 
 	return G[name]
@@ -105,6 +109,7 @@ function class:updateAll()
 		self:updateInfoName(self.unit)
 		self:updateInfoLevel(self.unit)
 		self:updateAura(self.unit)
+		self:updateRaidTarget(self.unit)
 	end
 end
 
@@ -250,6 +255,17 @@ function class:updateAura(unit)
 		else
 			self.Debuffs[i]:Hide()
 		end
+	end
+end
+
+function class:updateRaidTarget(unit)
+	local id = GetRaidTargetIndex(unit)
+
+	if(id) then
+		SetRaidTargetIconTexture(self.Raid, id)
+		self.Raid:Show()
+	else
+		self.Raid:Hide()
 	end
 end
 

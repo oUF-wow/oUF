@@ -205,9 +205,8 @@ function addon:handleEvent(event, unit)
 			class[func](class, unit, event)
 		end
 	elseif(not unit) then
-		unit = self.unit
 		for k, f in pairs(events[event]) do
-			k[f](k, k)
+			k[f](k, tostring(k))
 		end
 	end
 end

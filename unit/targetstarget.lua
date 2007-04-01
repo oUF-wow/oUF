@@ -9,11 +9,12 @@ local updateTargetTarget = function(self)
 		frame:updatePower(unit)
 		frame:updateInfoName(unit)
 		frame:updateInfoLevel(unit)
-		frame:updateReaction()
+		frame:updateReaction(unit)
+		frame:updateRaidTarget(unit)
 	end
 end
 
-local updateReaction = function(self)
+local updateReaction = function(self, unit)
 	local r, g, b = GetReactionColors(unit)
 	self:SetBackdropBorderColor(r, g, b)
 end

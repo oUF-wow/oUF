@@ -115,6 +115,8 @@ function oUF.class.frame:createElements()
 	self.Power.Info = self.Power:CreateFontString(nil, "OVERLAY")
 	self.Power.Points = self.Power:CreateFontString(nil, "OVERLAY")
 
+	self.Raid = self:CreateTexture(nil, "ARTWORK")
+
 	for type, num in pairs({Buffs = 32, Debuffs = 40}) do
 		self[type] = CreateFrame("Frame", nil, self)
 		self[type]:SetWidth(260)
@@ -212,6 +214,11 @@ function oUF.class.frame:applyLayout()
 	self.Power.Points:SetJustifyH("CENTER")
 	self.Power.Points:SetShadowOffset(.8, -.8)
 	self.Power.Points:SetShadowColor(0, 0, 0, 1)
+
+	self.Raid:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcons")
+	self.Raid:SetHeight(18)
+	self.Raid:SetWidth(18)
+	self.Raid:SetPoint("CENTER", self, "TOPLEFT")
 
 	local rows = 3
 	for type, num in pairs({Buffs = 32, Debuffs = 40}) do
