@@ -20,10 +20,12 @@ oUF.addUnit(function(self)
 	for i=1,4 do
 		frame = self.class.unit:new(unit..i, i)
 		
-		--frame:RegisterEvent("PARTY_LOOT_METHOD_CHANGED", "updateLoot")  
+		--frame:RegisterEvent("PARTY_LOOT_METHOD_CHANGED", "updateLoot")
 		frame:RegisterEvent("PARTY_MEMBERS_CHANGED", "updateAll")
+
+		frame.updateLoot = updateLoot
 		
-		oUF.unit[unit..i] = frame
+		self.unit[unit..i] = frame
 	end
 	
 	disableBlizzard()
