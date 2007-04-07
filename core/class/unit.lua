@@ -43,14 +43,17 @@ local RAID_CLASS_COLORS = RAID_CLASS_COLORS
 local UnitHealth, UnitHealthMax = UnitHealth, UnitHealthMax
 local UnitIsConnected, UnitIsGhost, UnitIsDead = UnitIsConnected, UnitIsGhost, UnitIsDead
 local UnitLevel, UnitClass, UnitCanAttack, UnitIsPlusMob = UnitLevel, UnitClass, UnitCanAttack, UnitIsPlusMob
-local UnitIsPlayer, UnitCreatureFamiliy, UnitCreatureType = UnitIsPlayer, UnitCreatureFamiliy, UnitCreatureType
+local UnitIsPlayer, UnitCreatureFamily, UnitCreatureType = UnitIsPlayer, UnitCreatureFamily, UnitCreatureType
 local UnitBuff, UnitDebuff, GetPetHappiness, GetUnitName = UnitBuff, UnitDebuff, GetPetHappiness, GetUnitName
 local getHealthColor, getPowerColor, getCapitalized, getUnitType, getStringFormat = oUF.getHealthColor, oUF.getPowerColor, oUF.getCapitalized, oUF.getUnitType, oUF.getStringFormat
 
 local registerEvent
-local RaidColor = function(c)
+local RaidColor = function(c, text)
+	if(not text) then return end
+
 	c = RAID_CLASS_COLORS[c]
-	return (c and RGBPercToHex(c.r, c.g, c.b)) or "ffffff|r"
+	c = (c and RGBPercToHex(c.r, c.g, c.b)) or "ffffff"
+	return "|cff"..c..text.."|r"
 end
 local SetSmoothColor = function(bar, barbg, unit, alpha)
 	if(not type or not bar) then return end
@@ -95,7 +98,6 @@ function class:new(unit, id, OnShow)
 
 	frame:RegisterEvent("RAID_TARGET_UPDATE", "updateRaidTarget")
 	frame:RegisterEvent("RAID_ROSTER_UPDATE", "updateRaidTarget")
-	frame:RegisterEvent("PARTY_MEMBERS_CHANGED", "updateRaidTarget")
 
 	frame:RegisterEvent("PLAYER_ENTERING_WORLD", "updateAll")
 
@@ -180,8 +182,40 @@ function class:updateInfoName(unit)
 end
 
 function class:updateInfoLevel(unit)
-	local tl = UnitLevel(unit)
+	local unitclass = {
+		elite = "+",
+		worldboss = "b",
+		rareelite = "++",
+		normal = "",
+	}
+	local power = self.Power.Info
+	local c = GetDifficultyColor(99)
+	local level, happiness, classification = "??", ""
+	local class, eclass = UnitClass(unit)
 
+	if(UnitLevel(unit) > 0) then
+		level = UnitLevel(unit)
+
+		c = GetDifficultyColor(level)
+	end
+
+	if(not UnitIsPlayer(unit)) then
+		class = UnitCreatureFamily(unit) or UnitCreatureType(unit)
+	end
+
+	if(unit == "pet" and pclass == "HUNTER" and GetPetHappiness()) then
+		happiness = GetPetHappiness()
+		if(happiness == 1) then happiness = ":<"
+		elseif(happiness == 2) then happiness = ":|"
+		elseif(happiness == 3) then happiness = ":D" end
+	end
+
+	classification = unitclass[UnitClassification(unit)]
+
+	power:SetTextColor(c.r, c.g, c.b)
+	power:SetText(("L%s%s %s %s"):format(level, classification, RaidColor(eclass, class), happiness))
+
+--[[
 	if(unit == "player") then
 		self.Power.Info:SetText(string.format("L%d %s", UnitLevel(unit), UnitClass(unit)))
 	else
@@ -216,6 +250,7 @@ function class:updateInfoLevel(unit)
 		cl = RaidColor(cl)
 		self.Power.Info:SetText(string.format("L%s |cff%s%s|r %s", tl, cl, tostring(class), h))
 	end
+	]]
 end
 
 function class:updateAura(unit)

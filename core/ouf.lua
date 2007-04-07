@@ -69,7 +69,7 @@ local strings = {
 local events = {}
 local loadup = {}
 
-local addon = DongleStub('Dongle-Beta1'):New('oUF')
+local addon = DongleStub('Dongle-1.0-RC3'):New('oUF')
 addon.class = {}
 addon.unit = {}
 
@@ -81,6 +81,9 @@ end
 
 function addon:Enable()
 	for _, func in pairs(loadup) do func(self) end
+
+	self:RegisterEvent("PARTY_MEMBERS_CHANGED", "updateAllUnits")
+	self:RegisterEvent("UNIT_PET", "updateAllUnits")
 end
 
 function addon.getHealthColor()
@@ -187,6 +190,12 @@ end
 function addon:unitDB(unit)
 	self.profile[unit] = setmetatable(self.profile[unit] or {}, {__index = default})
 	return self.profile[unit]
+end
+
+function addon:updateAllUnits()
+	for _, unit in pairs(self.unit) do
+		unit:updateAll()
+	end
 end
 
 function addon:RegisterClassEvent(class, event, func)
