@@ -57,9 +57,7 @@ function class:new(unit)
 	bar.unit = unit
 	bar.type = "power"
 
-	bar:SetWidth(200)
 	bar:SetHeight(4)
-
 	bar:SetStatusBarTexture"Interface\\AddOns\\oUF\\textures\\glaze"
 
 	local bg = bar:CreateTexture(nil, "BORDER")

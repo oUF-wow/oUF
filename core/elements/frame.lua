@@ -45,9 +45,11 @@ function class:add(bar, unit)
 	if(not frame) then frames[unit] = self:acquire(unit) ; frame = frames[unit] end
 
 	bar:SetParent(frame)
+	bar:SetPoint("LEFT", frame)
+	bar:SetPoint("RIGHT", frame)
 
 	frame:SetHeight(bar:GetHeight() + frame:GetHeight())
-	frame:SetWidth(math.max(bar:GetWidth(), frame:GetWidth()))
+	frame:SetWidth(200)
 
 	frame[bar.type] = bar
 
@@ -73,13 +75,6 @@ function class:acquire(unit)
 	frame:SetBackdrop(backdrop)
 	frame:SetBackdropColor(0, 0, 0, .4)
 
-	frame:SetScript("OnShow", function(self)
-		for k, v in pairs(self) do
-			if(type(v) == "function" and v.update) then
-	--			v:update()
-			end
-		end
-	end)
 	frame:SetScript("OnEnter", function()
 		UnitFrame_OnEnter()
 	end)

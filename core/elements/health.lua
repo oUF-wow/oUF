@@ -64,9 +64,7 @@ function class:new(unit)
 	bar.unit = unit
 	bar.type = "health"
 
-	bar:SetWidth(200)
 	bar:SetHeight(18)
-
 	bar:SetStatusBarTexture"Interface\\AddOns\\oUF\\textures\\glaze"
 
 	local bg = bar:CreateTexture(nil, "BORDER")
@@ -84,8 +82,6 @@ function class:new(unit)
 	local font = bar:CreateFontString(nil, "OVERLAY")
 	bar.text = font
 	
---	font:SetShadowOffset(.8, -.8)
---	font:SetShadowColor(0, 0, 0, 1)
 	font:SetFont(STANDARD_TEXT_FONT, 10, "OUTLINE")
 	font:SetPoint("LEFT", bar, 1, -1)
 
