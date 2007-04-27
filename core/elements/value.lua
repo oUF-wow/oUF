@@ -29,6 +29,44 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ---------------------------------------------------------------------------]]
 
-local addon = DongleStub"Dongle-1.0":New"oUF"
+local core = oUF
+local mt = {__call = function(t, k) t:new(k) end}
 
-_G['oUF'] = addon
+local class = setmetatable({}, mt)
+
+local updateValue = function(self)
+	local _, max = self:GetMinMaxValues()
+	local value = self:GetValue()
+	local unit = self.unit
+	local type = self.type
+
+	if(UnitIsDead(unit)) then
+		self:SetValue(0)
+		if(type == "health") then self.value:SetText"Dead"
+		else self.value:SetText(nil) end
+	elseif(UnitIsGhost(unit)) then
+		self:SetValue(0)
+		if(type == "health") then self.value:SetText"Ghost"
+		else self.value:SetText(nil) end
+	elseif(not UnitIsConnected(unit)) then
+		if(type == "health") then self.value:SetText"Offline"
+		else self.value:SetText(nil) end
+	else
+		self.value:SetText(("%s / %s"):format(value, max))
+	end
+end
+
+function class:new(bar)
+	local font = bar:CreateFontString(nil, "OVERLAY")
+	bar.value = font
+
+--	font:SetShadowOffset(.8, -.8)
+--	font:SetShadowColor(0, 0, 0, 1)
+	font:SetFont(STANDARD_TEXT_FONT, 10, "OUTLINE")
+	font:SetPoint("RIGHT", bar, -1, -1)
+
+	bar:SetScript("OnValueChanged", updateValue)
+	updateValue(bar)
+end
+
+core.value = class

@@ -29,6 +29,71 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ---------------------------------------------------------------------------]]
 
-local addon = DongleStub"Dongle-1.0":New"oUF"
+local core = oUF
+local class = CreateFrame"Button"
+local mt = {__index = class}
 
-_G['oUF'] = addon
+local backdrop = {
+	bgFile = "Interface\\ChatFrame\\ChatFrameBackground", tile = true, tileSize = 16,
+	insets = {left = 2, right = -2, top = 2, bottom = -2},
+}
+local frames = {}
+local numFrames = 0
+
+function class:add(bar, unit)
+	local frame = frames[unit]
+	if(not frame) then frames[unit] = self:acquire(unit) ; frame = frames[unit] end
+
+	bar:SetParent(frame)
+
+	frame:SetHeight(bar:GetHeight() + frame:GetHeight())
+	frame:SetWidth(math.max(bar:GetWidth(), frame:GetWidth()))
+
+	frame[bar.type] = bar
+
+	if(not frame.last) then
+		frame.last = bar
+		bar:SetPoint("TOP", frame)
+	else
+		bar:SetPoint("TOP", frame.last, "BOTTOM")
+	end
+end
+
+function class:acquire(unit)
+	local frame = CreateFrame("Button", "oUF"..unit, UIParent, "SecureUnitButtonTemplate")
+	numFrames = numFrames + 1
+	--setmetatable(frame, mt)
+
+	frame.unit = unit
+	frame:EnableMouse(true)
+	frame:SetMovable(true)
+
+	frame:SetPoint("CENTER", UIParent, 0, -150+(numFrames*35))
+
+	frame:SetBackdrop(backdrop)
+	frame:SetBackdropColor(0, 0, 0, .4)
+
+	frame:SetScript("OnShow", function(self)
+		for k, v in pairs(self) do
+			if(type(v) == "function" and v.update) then
+	--			v:update()
+			end
+		end
+	end)
+	frame:SetScript("OnEnter", function()
+		UnitFrame_OnEnter()
+	end)
+	frame:SetScript("OnLeave", function()
+		UnitFrame_OnLeave()
+	end)
+	frame:RegisterForClicks("LeftButtonUp", "RightButtonUp", "MiddleButtonUp", "Button4Up", "Button5Up")
+
+	frame:SetAttribute("unit", unit)
+	frame:SetAttribute("type1", "target")
+
+	RegisterUnitWatch(frame)
+
+	return frame
+end
+
+core.frame = class

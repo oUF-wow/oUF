@@ -29,6 +29,43 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ---------------------------------------------------------------------------]]
 
-local addon = DongleStub"Dongle-1.0":New"oUF"
+local core = oUF
+local class = CreateFrame"StatusBar"
+local mt = {__index = class}
 
-_G['oUF'] = addon
+local shade = {
+	bgFile = "Interface\\ChatFrame\\ChatFrameBackground", tile = true, tileSize = 16,
+	insets = {left = 6, right = 2, top = 6, bottom = 2},
+}
+
+local onEvent = function(self, event, unit)
+	if(not self:IsShown() or not self.unit == unit) then return end
+	self:updatePower()
+end
+
+function class:new(unit)
+	local bar = core.frame:acquire"StatusBar"
+	setmetatable(bar, mt)
+
+	bar.unit = unit
+
+	bar:SetBackdrop(shade)
+	bar:SetBackdropColor(0, 0, 0, .4)
+
+	bar:SetStatusBarTexture"Interface\\AddOns\\oUF\\textures\\glaze"
+
+	bar:SetScript("OnEvent", onEvent)
+
+	bar:RegisterEvent"UNIT_MANA"
+	bar:RegisterEvent"UNIT_RAGE"
+	bar:RegisterEvent"UNIT_FOCUS"
+	bar:RegisterEvent"UNIT_ENERGY"
+	bar:RegisterEvent"UNIT_MAXMANA"
+	bar:RegisterEvent"UNIT_MAXRAGE"
+	bar:RegisterEvent"UNIT_MAXFOCUS"
+	bar:RegisterEvent"UNIT_MAXENERGY"
+	bar:RegisterEvent"UNIT_DISPLAYPOWER"
+end
+
+function class:updatePower()
+end

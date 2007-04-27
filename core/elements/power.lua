@@ -29,6 +29,71 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ---------------------------------------------------------------------------]]
 
-local addon = DongleStub"Dongle-1.0":New"oUF"
+local core = oUF
+local class = CreateFrame"StatusBar"
+local mt = {__index = class}
 
-_G['oUF'] = addon
+local color = {
+	[0] = { r = 48/255, g = 113/255, b = 191/255}, -- Mana
+	[1] = { r = 226/255, g = 45/255, b = 75/255}, -- Rage
+	[2] = { r = 255/255, g = 178/255, b = 0}, -- Focus
+	[3] = { r = 1, g = 1, b = 34/255}, -- Energy
+	[4] = { r = 0, g = 1, b = 1} -- Happiness
+}
+
+local onShow = function(self)
+	self:updatePower(self.unit)
+end
+
+local onEvent = function(self, event, unit)
+	if(not self:IsShown() or self.unit ~= unit) then return end
+	self:updatePower(unit)
+end
+
+function class:new(unit)
+	local bar = --[[core.frame:acquire"StatusBar"]] CreateFrame"StatusBar"
+	setmetatable(bar, mt)
+
+	bar.unit = unit
+	bar.type = "power"
+
+	bar:SetWidth(200)
+	bar:SetHeight(4)
+
+	bar:SetStatusBarTexture"Interface\\AddOns\\oUF\\textures\\glaze"
+
+	local bg = bar:CreateTexture(nil, "BORDER")
+	bar.bg = bg
+
+	bg:SetAllPoints(bar)
+	bg:SetTexture"Interface\\AddOns\\oUF\\textures\\glaze"
+
+	bar:SetScript("OnShow", onShow)
+	bar:SetScript("OnEvent", onEvent)
+
+	bar:RegisterEvent"UNIT_MANA"
+	bar:RegisterEvent"UNIT_RAGE"
+	bar:RegisterEvent"UNIT_FOCUS"
+	bar:RegisterEvent"UNIT_ENERGY"
+	bar:RegisterEvent"UNIT_MAXMANA"
+	bar:RegisterEvent"UNIT_MAXRAGE"
+	bar:RegisterEvent"UNIT_MAXFOCUS"
+	bar:RegisterEvent"UNIT_MAXENERGY"
+	bar:RegisterEvent"UNIT_DISPLAYPOWER"
+
+	core.frame:add(bar, unit)
+	return bar
+end
+
+function class:updatePower(unit)
+	local vc, vm = UnitMana(unit), UnitManaMax(unit)
+
+	self:SetMinMaxValues(0, vm)
+	self:SetValue(vc)
+
+	local c = color[UnitPowerType(unit)]
+	self.bg:SetVertexColor(c.r*.5, c.g*.5, c.b*.5)
+	self:SetStatusBarColor(c.r, c.g, c.b)
+end
+
+core.power = class
