@@ -35,6 +35,14 @@ local mt = {__index = class}
 
 local SetHeight = class.SetHeight
 
+-- locals are faster
+local UnitReactionColor = UnitReactionColor
+local UnitReaction = UnitReaction
+local UnitIsPlayer = UnitIsPlayer
+local UnitHealth = UnitHealth
+local UnitHealthMax = UnitHealthMax
+local UnitExists = UnitExists
+
 local ColorGradient = function(perc, ...)
 	if perc >= 1 then
 		local r, g, b = select(select('#', ...) - 2, ...)
@@ -102,7 +110,8 @@ end
 
 function class:updateColor(min, max)
 	local perc = 1 - min/max
-	local c = RAID_CLASS_COLORS[select(2, UnitClass(self.unit))]
+	local unit = self.unit
+	local c = UnitIsPlayer(unit) and RAID_CLASS_COLORS[select(2, UnitClass(self.unit))] or UnitReactionColor[UnitReaction(unit, "player")]
 	local r, g, b = ColorGradient(perc, c.r, c.g, c.b, 1, 1, 0, 1, 0, 0)
 
 	self.bg:SetVertexColor(r*.5, g*.5, b*.5)

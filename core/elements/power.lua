@@ -35,6 +35,11 @@ local mt = {__index = class}
 
 local SetHeight = class.SetHeight
 
+-- locals are faster
+local UnitMana = UnitMana
+local UnitManaMax = UnitManaMax
+local UnitPowerType = UnitPowerType
+
 local color = {
 	[0] = { r = 48/255, g = 113/255, b = 191/255}, -- Mana
 	[1] = { r = 226/255, g = 45/255, b = 75/255}, -- Rage
@@ -44,12 +49,12 @@ local color = {
 }
 
 local onShow = function(self)
-	self:updatePower(self.unit)
+	self:update(self.unit)
 end
 
 local onEvent = function(self, event, unit)
 	if(not self:IsShown() or self.unit ~= unit) then return end
-	self:updatePower(unit)
+	self:update(unit)
 end
 
 function class:new(unit)
@@ -85,7 +90,7 @@ function class:new(unit)
 	return bar
 end
 
-function class:updatePower(unit)
+function class:update(unit)
 	local vc, vm = UnitMana(unit), UnitManaMax(unit)
 
 	self:SetMinMaxValues(0, vm)

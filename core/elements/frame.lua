@@ -51,6 +51,7 @@ function class:add(bar, unit)
 	bar:SetPoint("LEFT", frame)
 	bar:SetPoint("RIGHT", frame)
 
+	bar.anchor = frame.last
 	bar.owner = frame
 
 	frame:SetHeight(bar:GetHeight() + frame:GetHeight())
