@@ -33,6 +33,8 @@ local core = oUF
 local class = CreateFrame"StatusBar"
 local mt = {__index = class}
 
+local SetHeight = class.SetHeight
+
 local color = {
 	[0] = { r = 48/255, g = 113/255, b = 191/255}, -- Mana
 	[1] = { r = 226/255, g = 45/255, b = 75/255}, -- Rage
@@ -92,6 +94,12 @@ function class:updatePower(unit)
 	local c = color[UnitPowerType(unit)]
 	self.bg:SetVertexColor(c.r*.5, c.g*.5, c.b*.5)
 	self:SetStatusBarColor(c.r, c.g, c.b)
+end
+
+function class:SetHeight(value)
+	local diff = value - self:GetHeight()
+	SetHeight(self, value)
+	if(self.owner) then self.owner:updateHeight(diff) end
 end
 
 core.power = class

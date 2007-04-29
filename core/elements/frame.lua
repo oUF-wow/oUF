@@ -40,6 +40,9 @@ local backdrop = {
 local frames = {}
 local numFrames = 0
 
+local onEnter = function() UnitFrame_OnEnter() end
+local onLeave = function() UnitFrame_OnLeave() end
+
 function class:add(bar, unit)
 	local frame = frames[unit]
 	if(not frame) then frames[unit] = self:acquire(unit) ; frame = frames[unit] end
@@ -47,6 +50,8 @@ function class:add(bar, unit)
 	bar:SetParent(frame)
 	bar:SetPoint("LEFT", frame)
 	bar:SetPoint("RIGHT", frame)
+
+	bar.owner = frame
 
 	frame:SetHeight(bar:GetHeight() + frame:GetHeight())
 	frame:SetWidth(200)
@@ -64,7 +69,7 @@ end
 function class:acquire(unit)
 	local frame = CreateFrame("Button", "oUF"..unit, UIParent, "SecureUnitButtonTemplate")
 	numFrames = numFrames + 1
-	--setmetatable(frame, mt)
+	setmetatable(frame, mt)
 
 	frame.unit = unit
 	frame:EnableMouse(true)
@@ -75,12 +80,8 @@ function class:acquire(unit)
 	frame:SetBackdrop(backdrop)
 	frame:SetBackdropColor(0, 0, 0, .4)
 
-	frame:SetScript("OnEnter", function()
-		UnitFrame_OnEnter()
-	end)
-	frame:SetScript("OnLeave", function()
-		UnitFrame_OnLeave()
-	end)
+	frame:SetScript("OnEnter", onEnter)
+	frame:SetScript("OnLeave", onLeave)
 	frame:RegisterForClicks("LeftButtonUp", "RightButtonUp", "MiddleButtonUp", "Button4Up", "Button5Up")
 
 	frame:SetAttribute("unit", unit)
@@ -89,6 +90,11 @@ function class:acquire(unit)
 	RegisterUnitWatch(frame)
 
 	return frame
+end
+
+function class:updateHeight(value)
+	local old = self:GetHeight()
+	self:SetHeight(old + value)
 end
 
 core.frame = class

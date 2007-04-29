@@ -33,6 +33,8 @@ local core = oUF
 local class = CreateFrame"StatusBar"
 local mt = {__index = class}
 
+local SetHeight = class.SetHeight
+
 local ColorGradient = function(perc, ...)
 	if perc >= 1 then
 		local r, g, b = select(select('#', ...) - 2, ...)
@@ -51,7 +53,6 @@ local ColorGradient = function(perc, ...)
 end
 
 local onShow = function(self) self:update() end
-
 local onEvent = function(self, event, unit)
 	if(not self:IsShown() or self.unit ~= unit) then return end
 	self:updateHealth(unit)
@@ -110,6 +111,12 @@ end
 
 function class:updateName(unit)
 	self.text:SetText(UnitName(unit))
+end
+
+function class:SetHeight(value)
+	local diff = value - self:GetHeight()
+	SetHeight(self, value)
+	if(self.owner) then self.owner:updateHeight(diff) end
 end
 
 function class:update()
