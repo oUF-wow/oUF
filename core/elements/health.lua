@@ -111,8 +111,14 @@ end
 function class:updateColor(min, max)
 	local perc = 1 - min/max
 	local unit = self.unit
-	local c = UnitIsPlayer(unit) and RAID_CLASS_COLORS[select(2, UnitClass(self.unit))] or UnitReactionColor[UnitReaction(unit, "player")]
-	local r, g, b = ColorGradient(perc, c.r, c.g, c.b, 1, 1, 0, 1, 0, 0)
+	local r, g, b
+
+	if(UnitIsTapped(unit) and not UnitIsTappedByPlayer(unit)) then
+		r, g, b = .6, .6, .6
+	else
+		local c = UnitIsPlayer(unit) and RAID_CLASS_COLORS[select(2, UnitClass(unit))] or UnitReactionColor[UnitReaction(unit, "player")]
+		r, g, b = ColorGradient(perc, c.r, c.g, c.b, 1, 1, 0, 1, 0, 0)
+	end
 
 	self.bg:SetVertexColor(r*.5, g*.5, b*.5)
 	self:SetStatusBarColor(r, g , b)

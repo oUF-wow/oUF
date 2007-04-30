@@ -32,7 +32,36 @@
 local core = oUF
 local mt = {__call = function(t, k) t:new(k) end}
 
+local anchors = {
+	["TOP"] = "BOTTOM#TOP#0#0",
+	["BOTTOM"] = "TOP#BOTTOM#0#0",
+
+	["LEFT"] = "LEFT#LEFT#1#-1",
+	["RIGHT"] = "RIGHT#RIGHT#-1#-1",
+
+	["LEFTE"] = "RIGHT#LEFT#0#-1",
+	["RIGHTE"] = "LEFT#RIGHT#0#-1",
+
+	["TOPRIGHT"] = "BOTTOMRIGHT#TOPRIGHT#-1#0",
+	["BOTTOMRIGHT"] = "TOPRIGHT#BOTTOMRIGHT#-1#0",
+
+	["TOPLEFT"] = "BOTTOMLEFT#TOPLEFT#1#0",
+	["BOTTOMLEFT"] = "TOPLEFT#BOTTOMRIGHT#1#0",
+
+	["CENTER"] = "CENTER#CENTER#0#-1",
+}
+
 local class = setmetatable({}, mt)
+
+local SetPoint = function(self, pos)
+	pos = pos or "RIGHT"
+
+	local text = self.value
+	local p1, p2, x, y = strsplit("#", anchors[pos])
+
+	text:ClearAllPoints()
+	text:SetPoint(p1, self, p2, x, y)
+end
 
 local updateValue = function(self)
 	local _, max = self:GetMinMaxValues()
@@ -56,17 +85,18 @@ local updateValue = function(self)
 	end
 end
 
-function class:new(bar)
+function class:new(bar, pos)
 	local font = bar:CreateFontString(nil, "OVERLAY")
+
 	bar.value = font
-
---	font:SetShadowOffset(.8, -.8)
---	font:SetShadowColor(0, 0, 0, 1)
+	bar.SetTextPosition = SetPoint
+	
 	font:SetFont(STANDARD_TEXT_FONT, 10, "OUTLINE")
-	font:SetPoint("RIGHT", bar, -1, -1)
-
 	bar:SetScript("OnValueChanged", updateValue)
+	
 	updateValue(bar)
+	bar:SetTextPosition(pos)
 end
+
 
 core.value = class
