@@ -33,6 +33,7 @@ local core = oUF
 local class = CreateFrame"StatusBar"
 local mt = {__index = class}
 
+local RegisterEvent = class.RegisterEvent
 local SetHeight = class.SetHeight
 
 -- locals are faster
@@ -61,9 +62,15 @@ local ColorGradient = function(perc, ...)
 end
 
 local onShow = function(self) self:update() end
-local onEvent = function(self, event, unit)
-	if(not self:IsShown() or self.unit ~= unit) then return end
-	self:updateHealth(unit)
+local onEvent = function(self, event, unit, ...)
+	if(self.unit ~= unit) then return end
+
+	local func = self.events[event]
+	if(func) then
+		if(type(func) == "string") then
+			self[func](self, unit, ...)
+		end
+	end
 end
 
 function class:new(unit)
@@ -72,6 +79,7 @@ function class:new(unit)
 
 	bar.unit = unit
 	bar.type = "health"
+	bar.events = {}
 
 	bar:SetHeight(18)
 	bar:SetStatusBarTexture"Interface\\AddOns\\oUF\\textures\\glaze"
@@ -85,8 +93,8 @@ function class:new(unit)
 	bar:SetScript("OnShow", onShow)
 	bar:SetScript("OnEvent", onEvent)
 
-	bar:RegisterEvent"UNIT_HEALTH"
-	bar:RegisterEvent"UNIT_MAXHEALTH"
+	bar:RegisterEvent("UNIT_HEALTH", "updateHealth")
+	bar:RegisterEvent("UNIT_MAXHEALTH", "updateHealth")
 
 	local font = bar:CreateFontString(nil, "OVERLAY")
 	bar.text = font
@@ -98,6 +106,15 @@ function class:new(unit)
 
 	core.frame:add(bar, unit)
 	return bar
+end
+
+function class:RegisterEvent(event, func)
+	func = func or event
+
+	if(not self.events[event]) then
+		self.events[event] = func
+		RegisterEvent(self, event)
+	end
 end
 
 function class:updateHealth(unit)

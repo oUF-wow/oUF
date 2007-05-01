@@ -33,12 +33,15 @@ local core = oUF
 local class = CreateFrame"StatusBar"
 local mt = {__index = class}
 
+local RegisterEvent = class.RegisterEvent
 local SetHeight = class.SetHeight
 
 -- locals are faster
 local UnitMana = UnitMana
 local UnitManaMax = UnitManaMax
 local UnitPowerType = UnitPowerType
+
+local type = type
 
 local color = {
 	[0] = { r = 48/255, g = 113/255, b = 191/255}, -- Mana
@@ -49,12 +52,18 @@ local color = {
 }
 
 local onShow = function(self)
-	self:update(self.unit)
+	self:updatePower(self.unit)
 end
 
-local onEvent = function(self, event, unit)
-	if(not self:IsShown() or self.unit ~= unit) then return end
-	self:update(unit)
+local onEvent = function(self, event, unit, ...)
+	if(self.unit ~= unit) then return end
+
+	local func = self.events[event]
+	if(func) then
+		if(type(func) == "string") then
+			self[func](self, unit, ...)
+		end
+	end
 end
 
 function class:new(unit)
@@ -63,6 +72,7 @@ function class:new(unit)
 
 	bar.unit = unit
 	bar.type = "power"
+	bar.events = {}
 
 	bar:SetHeight(4)
 	bar:SetStatusBarTexture"Interface\\AddOns\\oUF\\textures\\glaze"
@@ -76,21 +86,30 @@ function class:new(unit)
 	bar:SetScript("OnShow", onShow)
 	bar:SetScript("OnEvent", onEvent)
 
-	bar:RegisterEvent"UNIT_MANA"
-	bar:RegisterEvent"UNIT_RAGE"
-	bar:RegisterEvent"UNIT_FOCUS"
-	bar:RegisterEvent"UNIT_ENERGY"
-	bar:RegisterEvent"UNIT_MAXMANA"
-	bar:RegisterEvent"UNIT_MAXRAGE"
-	bar:RegisterEvent"UNIT_MAXFOCUS"
-	bar:RegisterEvent"UNIT_MAXENERGY"
-	bar:RegisterEvent"UNIT_DISPLAYPOWER"
+	bar:RegisterEvent("UNIT_MANA", "updatePower")
+	bar:RegisterEvent("UNIT_RAGE", "updatePower")
+	bar:RegisterEvent("UNIT_FOCUS", "updatePower")
+	bar:RegisterEvent("UNIT_ENERGY", "updatePower")
+	bar:RegisterEvent("UNIT_MAXMANA", "updatePower")
+	bar:RegisterEvent("UNIT_MAXRAGE", "updatePower")
+	bar:RegisterEvent("UNIT_MAXFOCUS", "updatePower")
+	bar:RegisterEvent("UNIT_MAXENERGY", "updatePower")
+	bar:RegisterEvent("UNIT_DISPLAYPOWER", "updatePower")
 
 	core.frame:add(bar, unit)
 	return bar
 end
 
-function class:update(unit)
+function class:RegisterEvent(event, func)
+	func = func or event
+
+	if(not self.events[event]) then
+		self.events[event] = func
+		RegisterEvent(self, event)
+	end
+end
+
+function class:updatePower(unit)
 	local vc, vm = UnitMana(unit), UnitManaMax(unit)
 
 	self:SetMinMaxValues(0, vm)

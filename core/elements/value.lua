@@ -53,14 +53,41 @@ local anchors = {
 
 local class = setmetatable({}, mt)
 
-local SetPoint = function(self, pos)
+local SetPoint = function(self, pos, element)
 	pos = pos or "RIGHT"
+	element = self.owner[element] or self
 
 	local text = self.value
 	local p1, p2, x, y = strsplit("#", anchors[pos])
 
 	text:ClearAllPoints()
-	text:SetPoint(p1, self, p2, x, y)
+	text:SetPoint(p1, element, p2, x, y)
+end
+
+local siRotation = function(val)
+	local prefix, si
+
+	if(val >= 100000) then
+		prefix = "m" ; si = 1000000
+	elseif(val >= 10000) then
+		prefix = "k" ; si = 1000
+	else
+		return val
+	end
+
+	local int, float = math.modf(("%.1f"):format(val / si))
+	float = tostring(float)
+
+	if(int == 0) then int = "" end
+	if(#float > 4) then
+		float = ("%.1f"):format(float):gsub("0%.", prefix, 1)
+	elseif(#float ~= 1) then
+		float = float:gsub("0%.", prefix, 1)
+	else
+		float = prefix
+	end
+
+	return int..float
 end
 
 local updateValue = function(self)
@@ -68,6 +95,8 @@ local updateValue = function(self)
 	local value = self:GetValue()
 	local unit = self.unit
 	local type = self.type
+
+	value, max = siRotation(value), siRotation(max)
 
 	if(UnitIsDead(unit)) then
 		self:SetValue(0)
@@ -89,13 +118,13 @@ function class:new(bar, pos)
 	local font = bar:CreateFontString(nil, "OVERLAY")
 
 	bar.value = font
-	bar.SetTextPosition = SetPoint
+	bar.SetValuePosition = SetPoint
 	
 	font:SetFont(STANDARD_TEXT_FONT, 10, "OUTLINE")
 	bar:SetScript("OnValueChanged", updateValue)
 	
 	updateValue(bar)
-	bar:SetTextPosition(pos)
+	bar:SetValuePosition(pos)
 end
 
 
