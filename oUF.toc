@@ -8,3 +8,5 @@ core\elements\frame.lua
 core\elements\health.lua
 core\elements\power.lua
 core\elements\value.lua
+core\elements\name.lua
+core\elements\info.lua

@@ -12,9 +12,9 @@
         copyright notice, this list of conditions and the following
         disclaimer in the documentation and/or other materials provided
         with the distribution.
-      * Neither the name of Trond A Ekseth nor the names of its
-        contributors may be used to endorse or promote products derived
-        from this software without specific prior written permission.
+      * Neither the name of oUF nor the names of its contributors may
+        be used to endorse or promote products derived from this
+        software without specific prior written permission.
 
   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
   "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -44,6 +44,8 @@ local UnitHealth = UnitHealth
 local UnitHealthMax = UnitHealthMax
 local UnitExists = UnitExists
 
+local type = type
+
 local ColorGradient = function(perc, ...)
 	if perc >= 1 then
 		local r, g, b = select(select('#', ...) - 2, ...)
@@ -61,7 +63,14 @@ local ColorGradient = function(perc, ...)
 	return r1 + (r2-r1)*relperc, g1 + (g2-g1)*relperc, b1 + (b2-b1)*relperc
 end
 
-local onShow = function(self) self:update() end
+local onShow = function(self)
+	local unit = self.unit
+
+	if(not UnitExists(unit)) then return end
+	for _, func in pairs(self.onShows) do
+		self[func](self, unit)
+	end
+end
 local onEvent = function(self, event, unit, ...)
 	if(self.unit ~= unit) then return end
 
@@ -80,6 +89,7 @@ function class:new(unit)
 	bar.unit = unit
 	bar.type = "health"
 	bar.events = {}
+	bar.onShows = {}
 
 	bar:SetHeight(18)
 	bar:SetStatusBarTexture"Interface\\AddOns\\oUF\\textures\\glaze"
@@ -96,13 +106,7 @@ function class:new(unit)
 	bar:RegisterEvent("UNIT_HEALTH", "updateHealth")
 	bar:RegisterEvent("UNIT_MAXHEALTH", "updateHealth")
 
-	local font = bar:CreateFontString(nil, "OVERLAY")
-	bar.text = font
-	
-	font:SetFont(STANDARD_TEXT_FONT, 10, "OUTLINE")
-	font:SetPoint("LEFT", bar, 1, -1)
-
-	font:SetText(UnitName(unit))
+	table.insert(bar.onShows, "updateHealth")
 
 	core.frame:add(bar, unit)
 	return bar
@@ -122,10 +126,10 @@ function class:updateHealth(unit)
 
 	self:SetMinMaxValues(0, max)
 	self:SetValue(min)
-	self:updateColor(min, max)
+	self:setColor(min, max)
 end
 
-function class:updateColor(min, max)
+function class:setColor(min, max)
 	local perc = 1 - min/max
 	local unit = self.unit
 	local r, g, b
@@ -141,22 +145,10 @@ function class:updateColor(min, max)
 	self:SetStatusBarColor(r, g , b)
 end
 
-function class:updateName(unit)
-	self.text:SetText(UnitName(unit))
-end
-
 function class:SetHeight(value)
 	local diff = value - self:GetHeight()
 	SetHeight(self, value)
 	if(self.owner) then self.owner:updateHeight(diff) end
-end
-
-function class:update()
-	local unit = self.unit
-	if(UnitExists(unit)) then
-		self:updateHealth(unit)
-		self:updateName(unit)
-	end
 end
 
 core.health = class

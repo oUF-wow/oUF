@@ -12,9 +12,9 @@
         copyright notice, this list of conditions and the following
         disclaimer in the documentation and/or other materials provided
         with the distribution.
-      * Neither the name of Trond A Ekseth nor the names of its
-        contributors may be used to endorse or promote products derived
-        from this software without specific prior written permission.
+      * Neither the name of oUF nor the names of its contributors may
+        be used to endorse or promote products derived from this
+        software without specific prior written permission.
 
   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
   "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -60,10 +60,11 @@ function class:add(bar, unit)
 	frame[bar.type] = bar
 
 	if(not frame.last) then
-		frame.last = bar
+		frame.last = bar.type
 		bar:SetPoint("TOP", frame)
 	else
-		bar:SetPoint("TOP", frame.last, "BOTTOM")
+		bar:SetPoint("TOP", frame[frame.last], "BOTTOM")
+		frame.last = bar.type
 	end
 end
 
@@ -91,6 +92,18 @@ function class:acquire(unit)
 	RegisterUnitWatch(frame)
 
 	return frame
+end
+
+function class:updateAll()
+	local unit = self.unit
+
+	for key, object in pairs(self) do
+		if(type(object) == "table" and object.onShows) then
+			for _, func in pairs(object.onShows) do
+				object[func](object, unit)
+			end
+		end
+	end
 end
 
 function class:updateHeight(value)

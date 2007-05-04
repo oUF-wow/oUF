@@ -29,3 +29,58 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ---------------------------------------------------------------------------]]
 
+local core = oUF
+local mt = {__call = function(self, k) self:new(k) end}
+
+local anchors = {
+	["TOP"] = "BOTTOM#TOP#0#0",
+	["BOTTOM"] = "TOP#BOTTOM#0#0",
+
+	["LEFT"] = "LEFT#LEFT#1#-1",
+	["RIGHT"] = "RIGHT#RIGHT#-1#-1",
+
+	["LEFTE"] = "RIGHT#LEFT#0#-1",
+	["RIGHTE"] = "LEFT#RIGHT#0#-1",
+
+	["TOPRIGHT"] = "BOTTOMRIGHT#TOPRIGHT#-1#0",
+	["BOTTOMRIGHT"] = "TOPRIGHT#BOTTOMRIGHT#-1#0",
+
+	["TOPLEFT"] = "BOTTOMLEFT#TOPLEFT#1#0",
+	["BOTTOMLEFT"] = "TOPLEFT#BOTTOMRIGHT#1#0",
+
+	["CENTER"] = "CENTER#CENTER#0#-1",
+}
+
+local class = setmetatable({}, mt)
+
+local SetPoint = function(self, pos, element)
+	pos = pos or "LEFT"
+	element = self.owner[element] or self
+
+	local text = self.name
+	local p1, p2, x, y = strsplit("#", anchors[pos])
+
+	text:ClearAllPoints()
+	text:SetPoint(p1, element, p2, x, y)
+end
+
+local updateName = function(self, unit)
+	self.name:SetText(UnitName(unit))
+end
+
+function class:new(bar, pos)
+	local font = bar:CreateFontString(nil, "OVERLAY")
+
+	bar.name = font
+	bar.updateName = updateName
+	bar.SetNamePosition = SetPoint
+	
+	font:SetFont(STANDARD_TEXT_FONT, 10, "OUTLINE")
+	font:SetText(UnitName(bar.unit))
+
+	table.insert(bar.onShows, "updateName")
+
+	bar:SetNamePosition(pos)
+end
+
+core.name = class

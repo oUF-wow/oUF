@@ -12,9 +12,9 @@
         copyright notice, this list of conditions and the following
         disclaimer in the documentation and/or other materials provided
         with the distribution.
-      * Neither the name of Trond A Ekseth nor the names of its
-        contributors may be used to endorse or promote products derived
-        from this software without specific prior written permission.
+      * Neither the name of oUF nor the names of its contributors may
+        be used to endorse or promote products derived from this
+        software without specific prior written permission.
 
   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
   "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -52,7 +52,12 @@ local color = {
 }
 
 local onShow = function(self)
-	self:updatePower(self.unit)
+	local unit = self.unit
+
+	if(not UnitExists(unit)) then return end
+	for _, func in pairs(self.onShows) do
+		self[func](self, unit)
+	end
 end
 
 local onEvent = function(self, event, unit, ...)
@@ -73,6 +78,7 @@ function class:new(unit)
 	bar.unit = unit
 	bar.type = "power"
 	bar.events = {}
+	bar.onShows = {}
 
 	bar:SetHeight(4)
 	bar:SetStatusBarTexture"Interface\\AddOns\\oUF\\textures\\glaze"
@@ -95,6 +101,8 @@ function class:new(unit)
 	bar:RegisterEvent("UNIT_MAXFOCUS", "updatePower")
 	bar:RegisterEvent("UNIT_MAXENERGY", "updatePower")
 	bar:RegisterEvent("UNIT_DISPLAYPOWER", "updatePower")
+
+	table.insert(bar.onShows, "updatePower")
 
 	core.frame:add(bar, unit)
 	return bar
