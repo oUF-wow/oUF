@@ -30,42 +30,27 @@
 ---------------------------------------------------------------------------]]
 
 local core = oUF
-local mt = {__call = function(self, k) self:new(k) end}
+local caps = core.caps
+local anchors = core.anchors
 
-local anchors = {
-	["TOP"] = "BOTTOM#TOP#0#0",
-	["BOTTOM"] = "TOP#BOTTOM#0#0",
+local class = {}
 
-	["LEFT"] = "LEFT#LEFT#1#-1",
-	["RIGHT"] = "RIGHT#RIGHT#-1#-1",
-
-	["LEFTE"] = "RIGHT#LEFT#0#-1",
-	["RIGHTE"] = "LEFT#RIGHT#0#-1",
-
-	["TOPRIGHT"] = "BOTTOMRIGHT#TOPRIGHT#-1#0",
-	["BOTTOMRIGHT"] = "TOPRIGHT#BOTTOMRIGHT#-1#0",
-
-	["TOPLEFT"] = "BOTTOMLEFT#TOPLEFT#1#0",
-	["BOTTOMLEFT"] = "TOPLEFT#BOTTOMRIGHT#1#0",
-
-	["CENTER"] = "CENTER#CENTER#0#-1",
-}
-
-local class = setmetatable({}, mt)
+class.name = "value"
+class.type = "font"
 
 local SetPoint = function(self, pos, element)
 	pos = pos or "RIGHT"
-	element = self.owner[element] or self
-
 	local text = self.value
 	local p1, p2, x, y = strsplit("#", anchors[pos])
 
+	element = self.owner[element] or self
+	text:SetParent(element)
 	text:ClearAllPoints()
 	text:SetPoint(p1, element, p2, x, y)
 end
 
 local siRotation = function(val)
-	local prefix, si
+	--[[local prefix, si
 
 	if(val >= 100000) then
 		prefix = "m" ; si = 1000000
@@ -87,17 +72,18 @@ local siRotation = function(val)
 		float = prefix
 	end
 
-	return int..float
+	return int..float]]
+
+	return val
 end
 
 local updateValue = function(self)
 	local _, max = self:GetMinMaxValues()
 	local value = self:GetValue()
-	local unit = self.unit
-	local type = self.type
+	local unit = self.owner.unit
+	local type = self.name
 
 	value, max = siRotation(value), siRotation(max)
-
 	if(UnitIsDead(unit)) then
 		self:SetValue(0)
 		if(type == "health") then self.value:SetText"Dead"
@@ -114,17 +100,25 @@ local updateValue = function(self)
 	end
 end
 
-function class:new(bar, pos)
-	local font = bar:CreateFontString(nil, "OVERLAY")
+-- oh shi-
+class.name = "value"
+class.type = "font"
+
+function class:new(element, bar)
+	local font = self:CreateFontString(nil, "OVERLAY")
+	local name = "Set"..caps(bar).."Position"
+
+	bar = self[bar]
+	self[name] = function(self, pos, element)
+		SetPoint(bar, pos, element)
+	end
 
 	bar.value = font
-	bar.SetValuePosition = SetPoint
-	
 	font:SetFont(STANDARD_TEXT_FONT, 10, "OUTLINE")
+	font.bar = bar
 	bar:SetScript("OnValueChanged", updateValue)
 	
 	updateValue(bar)
-	bar:SetValuePosition(pos)
 end
 
 core.value = class

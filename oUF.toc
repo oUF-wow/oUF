@@ -10,3 +10,4 @@ core\elements\power.lua
 core\elements\value.lua
 core\elements\name.lua
 core\elements\info.lua
+core\elements\aura.lua

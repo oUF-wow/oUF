@@ -41,8 +41,6 @@ local UnitMana = UnitMana
 local UnitManaMax = UnitManaMax
 local UnitPowerType = UnitPowerType
 
-local type = type
-
 local color = {
 	[0] = { r = 48/255, g = 113/255, b = 191/255}, -- Mana
 	[1] = { r = 226/255, g = 45/255, b = 75/255}, -- Rage
@@ -51,36 +49,44 @@ local color = {
 	[4] = { r = 0, g = 1, b = 1} -- Happiness
 }
 
-local onShow = function(self)
-	local unit = self.unit
-
-	if(not UnitExists(unit)) then return end
-	for _, func in pairs(self.onShows) do
-		self[func](self, unit)
-	end
-end
-
-local onEvent = function(self, event, unit, ...)
+local updatePower = function(self, unit)
 	if(self.unit ~= unit) then return end
 
-	local func = self.events[event]
-	if(func) then
-		if(type(func) == "string") then
-			self[func](self, unit, ...)
-		end
-	end
+	local vc, vm = UnitMana(unit), UnitManaMax(unit)
+	local bar = self.power
+
+	bar:SetMinMaxValues(0, vm)
+	bar:SetValue(vc)
+
+	local c = color[UnitPowerType(unit)]
+	bar.bg:SetVertexColor(c.r*.5, c.g*.5, c.b*.5)
+	bar:SetStatusBarColor(c.r, c.g, c.b)
 end
 
+-- oh shi-
+class.name = "power"
+class.type = "bar"
+
 function class:new(unit)
+	if(self.power) then return end -- should be done by addElement
 	local bar = --[[core.frame:acquire"StatusBar"]] CreateFrame"StatusBar"
 	setmetatable(bar, mt)
 
 	bar.unit = unit
-	bar.type = "power"
-	bar.events = {}
-	bar.onShows = {}
+	bar.owner = self
 
-	bar:SetHeight(4)
+	bar:SetParent(self)
+	bar:SetPoint("LEFT", self)
+	bar:SetPoint("RIGHT", self)
+
+	if(self.last) then
+		bar:SetPoint("TOP", self.last, "BOTTOM")
+	else
+		bar:SetPoint("TOP", self)
+		self.last = bar
+	end
+
+	bar:SetHeight(10)
 	bar:SetStatusBarTexture"Interface\\AddOns\\oUF\\textures\\glaze"
 
 	local bg = bar:CreateTexture(nil, "BORDER")
@@ -89,49 +95,29 @@ function class:new(unit)
 	bg:SetAllPoints(bar)
 	bg:SetTexture"Interface\\AddOns\\oUF\\textures\\glaze"
 
-	bar:SetScript("OnShow", onShow)
-	bar:SetScript("OnEvent", onEvent)
+	self:RegisterEvent("UNIT_MANA", updatePower)
+	self:RegisterEvent("UNIT_RAGE", updatePower)
+	self:RegisterEvent("UNIT_FOCUS", updatePower)
+	self:RegisterEvent("UNIT_ENERGY", updatePower)
+	self:RegisterEvent("UNIT_MAXMANA", updatePower)
+	self:RegisterEvent("UNIT_MAXRAGE", updatePower)
+	self:RegisterEvent("UNIT_MAXFOCUS", updatePower)
+	self:RegisterEvent("UNIT_MAXENERGY", updatePower)
+	self:RegisterEvent("UNIT_DISPLAYPOWER", updatePower)
 
-	bar:RegisterEvent("UNIT_MANA", "updatePower")
-	bar:RegisterEvent("UNIT_RAGE", "updatePower")
-	bar:RegisterEvent("UNIT_FOCUS", "updatePower")
-	bar:RegisterEvent("UNIT_ENERGY", "updatePower")
-	bar:RegisterEvent("UNIT_MAXMANA", "updatePower")
-	bar:RegisterEvent("UNIT_MAXRAGE", "updatePower")
-	bar:RegisterEvent("UNIT_MAXFOCUS", "updatePower")
-	bar:RegisterEvent("UNIT_MAXENERGY", "updatePower")
-	bar:RegisterEvent("UNIT_DISPLAYPOWER", "updatePower")
+	self:RegisterOnShow("updatePower", updatePower)
 
-	table.insert(bar.onShows, "updatePower")
+	self.power = bar
 
-	core.frame:add(bar, unit)
-	return bar
-end
-
-function class:RegisterEvent(event, func)
-	func = func or event
-
-	if(not self.events[event]) then
-		self.events[event] = func
-		RegisterEvent(self, event)
+	if(UnitExists(unit)) then
+		updatePower(self, self.unit)
 	end
-end
-
-function class:updatePower(unit)
-	local vc, vm = UnitMana(unit), UnitManaMax(unit)
-
-	self:SetMinMaxValues(0, vm)
-	self:SetValue(vc)
-
-	local c = color[UnitPowerType(unit)]
-	self.bg:SetVertexColor(c.r*.5, c.g*.5, c.b*.5)
-	self:SetStatusBarColor(c.r, c.g, c.b)
 end
 
 function class:SetHeight(value)
 	local diff = value - self:GetHeight()
 	SetHeight(self, value)
-	if(self.owner) then self.owner:updateHeight(diff) end
+	self.owner:updateHeight(diff)
 end
 
 core.power = class

@@ -29,6 +29,26 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ---------------------------------------------------------------------------]]
 
-local addon = DongleStub"Dongle-1.0":New"oUF"
+_G['oUF'] = {
+	anchors = {
+		["TOP"] = "BOTTOM#TOP#0#0",
+		["BOTTOM"] = "TOP#BOTTOM#0#0",
 
-_G['oUF'] = addon
+		["LEFT"] = "LEFT#LEFT#1#-1",
+		["RIGHT"] = "RIGHT#RIGHT#-1#-1",
+
+		["LEFTE"] = "RIGHT#LEFT#0#-1",
+		["RIGHTE"] = "LEFT#RIGHT#0#-1",
+
+		["TOPRIGHT"] = "BOTTOMRIGHT#TOPRIGHT#-1#0",
+		["BOTTOMRIGHT"] = "TOPRIGHT#BOTTOMRIGHT#-1#0",
+
+		["TOPLEFT"] = "BOTTOMLEFT#TOPLEFT#1#0",
+		["BOTTOMLEFT"] = "TOPLEFT#BOTTOMRIGHT#1#0",
+
+		["CENTER"] = "CENTER#CENTER#0#-1",
+	},
+	caps = function(str)
+		return str:gsub("(.)", string.upper, 1)
+	end,
+}

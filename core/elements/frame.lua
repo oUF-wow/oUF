@@ -30,9 +30,15 @@
 ---------------------------------------------------------------------------]]
 
 local core = oUF
+local caps = core.caps
+local printf = function(...) ChatFrame1:AddMessage(string.format(...)) end
+
 local class = CreateFrame"Button"
 local mt = {__index = class}
 
+local RegisterEvent = class.RegisterEvent
+
+local methods = {"RegisterOnShow", "RegisterEvent"}
 local backdrop = {
 	bgFile = "Interface\\ChatFrame\\ChatFrameBackground", tile = true, tileSize = 16,
 	insets = {left = 2, right = -2, top = 2, bottom = -2},
@@ -42,49 +48,73 @@ local numFrames = 0
 
 local onEnter = function() UnitFrame_OnEnter() end
 local onLeave = function() UnitFrame_OnLeave() end
+local onEvent = function(self, event, unit, ...)
+	local func = self.events[event]
+	if(func and type(func) == "function") then
+		func(self, unit, ...)
+	end
+end
+local onShow = function(self)
+	local unit = self.unit
 
-function class:add(bar, unit)
-	local frame = frames[unit]
-	if(not frame) then frames[unit] = self:acquire(unit) ; frame = frames[unit] end
-
-	bar:SetParent(frame)
-	bar:SetPoint("LEFT", frame)
-	bar:SetPoint("RIGHT", frame)
-
-	bar.anchor = frame.last
-	bar.owner = frame
-
-	frame:SetHeight(bar:GetHeight() + frame:GetHeight())
-	frame:SetWidth(200)
-
-	frame[bar.type] = bar
-
-	if(not frame.last) then
-		frame.last = bar.type
-		bar:SetPoint("TOP", frame)
-	else
-		bar:SetPoint("TOP", frame[frame.last], "BOTTOM")
-		frame.last = bar.type
+	if(not UnitExists(unit)) then return end
+	for _, func in pairs(self.onShow) do
+		func(self, unit)
 	end
 end
 
+class.updateAll = onShow
+
+function class:addElement(element, ...)
+	local obj = core[element]
+	if(not obj) then return printf("%s is not a valid element.", element) end
+
+	if(obj.type == "bar") then
+		obj.new(self, self.unit, ...)
+	elseif(obj.type == "font") then
+		obj.new(self, element, ...)
+	elseif(obj.type == "texture") then
+		obj.new(self, self.unit, ...)
+	end
+end
+
+function class:delElement(element)
+	-- dummy
+end
+
+function class:add(unit)
+	local frame = frames[unit]
+	if(not frame) then frames[unit] = self:acquire(unit) ; frame = frames[unit] end
+
+	frame:SetWidth(200)
+
+	return frame
+end
+
 function class:acquire(unit)
-	local frame = CreateFrame("Button", "oUF"..unit, UIParent, "SecureUnitButtonTemplate")
+	local frame = CreateFrame("Button", "oUF"..caps(unit), UIParent, "SecureUnitButtonTemplate")
 	numFrames = numFrames + 1
 	setmetatable(frame, mt)
 
+	frame.id = unit:match("^.-(%d+)") or 0
 	frame.unit = unit
+	frame.events = {}
+	frame.onShow = {}
+
 	frame:EnableMouse(true)
 	frame:SetMovable(true)
 
-	frame:SetPoint("CENTER", UIParent, 0, -150+(numFrames*35))
+	frame:SetPoint("CENTER", UIParent, 0, -350+(numFrames*70))
 
 	frame:SetBackdrop(backdrop)
 	frame:SetBackdropColor(0, 0, 0, .4)
 
 	frame:SetScript("OnEnter", onEnter)
 	frame:SetScript("OnLeave", onLeave)
-	frame:RegisterForClicks("LeftButtonUp", "RightButtonUp", "MiddleButtonUp", "Button4Up", "Button5Up")
+	frame:SetScript("OnEvent", onEvent)
+	frame:SetScript("OnShow", onShow)
+
+	frame:RegisterForClicks"anyup"
 
 	frame:SetAttribute("unit", unit)
 	frame:SetAttribute("type1", "target")
@@ -94,21 +124,22 @@ function class:acquire(unit)
 	return frame
 end
 
-function class:updateAll()
-	local unit = self.unit
-
-	for key, object in pairs(self) do
-		if(type(object) == "table" and object.onShows) then
-			for _, func in pairs(object.onShows) do
-				object[func](object, unit)
-			end
-		end
-	end
-end
-
 function class:updateHeight(value)
 	local old = self:GetHeight()
 	self:SetHeight(old + value)
+end
+
+function class:RegisterEvent(event, func)
+	if(not self.events[event]) then
+		self.events[event] = func
+		RegisterEvent(self, event)
+	end
+end
+
+function class:RegisterOnShow(key, func)
+	if(not self.onShow[key]) then
+		table.insert(self.onShow, func)
+	end
 end
 
 core.frame = class

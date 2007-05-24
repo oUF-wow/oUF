@@ -44,8 +44,6 @@ local UnitHealth = UnitHealth
 local UnitHealthMax = UnitHealthMax
 local UnitExists = UnitExists
 
-local type = type
-
 local ColorGradient = function(perc, ...)
 	if perc >= 1 then
 		local r, g, b = select(select('#', ...) - 2, ...)
@@ -63,33 +61,39 @@ local ColorGradient = function(perc, ...)
 	return r1 + (r2-r1)*relperc, g1 + (g2-g1)*relperc, b1 + (b2-b1)*relperc
 end
 
-local onShow = function(self)
-	local unit = self.unit
-
-	if(not UnitExists(unit)) then return end
-	for _, func in pairs(self.onShows) do
-		self[func](self, unit)
-	end
-end
-local onEvent = function(self, event, unit, ...)
+local updateHealth = function(self, unit)
 	if(self.unit ~= unit) then return end
 
-	local func = self.events[event]
-	if(func) then
-		if(type(func) == "string") then
-			self[func](self, unit, ...)
-		end
-	end
+	local min, max = UnitHealth(unit), UnitHealthMax(unit)
+	local bar = self.health
+
+	bar:SetMinMaxValues(0, max)
+	bar:SetValue(min)
+	bar:setColor(min, max)
 end
 
+-- oh shi-
+class.name = "health"
+class.type = "bar"
+
 function class:new(unit)
+	if(self.health) then return end -- should be done by addElement
 	local bar = --[[core.frame:acquire"StatusBar"]] CreateFrame"StatusBar"
 	setmetatable(bar, mt)
 
 	bar.unit = unit
-	bar.type = "health"
-	bar.events = {}
-	bar.onShows = {}
+	bar.owner = self
+
+	bar:SetParent(self)
+	bar:SetPoint("LEFT", self)
+	bar:SetPoint("RIGHT", self)
+
+	if(self.last) then
+		bar:SetPoint("TOP", self.last, "BOTTOM")
+	else
+		bar:SetPoint("TOP", self)
+		self.last = bar
+	end
 
 	bar:SetHeight(18)
 	bar:SetStatusBarTexture"Interface\\AddOns\\oUF\\textures\\glaze"
@@ -100,33 +104,16 @@ function class:new(unit)
 	bg:SetAllPoints(bar)
 	bg:SetTexture"Interface\\AddOns\\oUF\\textures\\glaze"
 
-	bar:SetScript("OnShow", onShow)
-	bar:SetScript("OnEvent", onEvent)
+	self:RegisterEvent("UNIT_HEALTH", updateHealth)
+	self:RegisterEvent("UNIT_MAXHEALTH", updateHealth)
 
-	bar:RegisterEvent("UNIT_HEALTH", "updateHealth")
-	bar:RegisterEvent("UNIT_MAXHEALTH", "updateHealth")
+	self:RegisterOnShow("updateHealth", updateHealth)
 
-	table.insert(bar.onShows, "updateHealth")
+	self.health = bar
 
-	core.frame:add(bar, unit)
-	return bar
-end
-
-function class:RegisterEvent(event, func)
-	func = func or event
-
-	if(not self.events[event]) then
-		self.events[event] = func
-		RegisterEvent(self, event)
+	if(UnitExists(unit)) then
+		updateHealth(self, self.unit)
 	end
-end
-
-function class:updateHealth(unit)
-	local min, max = UnitHealth(unit), UnitHealthMax(unit)
-
-	self:SetMinMaxValues(0, max)
-	self:SetValue(min)
-	self:setColor(min, max)
 end
 
 function class:setColor(min, max)
