@@ -39,8 +39,12 @@ local SetHeight = class.SetHeight
 
 -- locals are faster
 local string_format = string.format
+local math_modf = math.modf
+local select = select
 
+local RAID_CLASS_COLORS = RAID_CLASS_COLORS
 local UnitReactionColor = UnitReactionColor
+
 local UnitReaction = UnitReaction
 local UnitIsPlayer = UnitIsPlayer
 local UnitHealth = UnitHealth
@@ -50,21 +54,21 @@ local UnitIsDead = UnitIsDead
 local UnitIsGhost = UnitIsGhost
 local UnitIsConnected = UnitIsConnected
 
-local ColorGradient = function(perc, ...)
+local ColorGradient = function(perc, r1, g1, b1, r2, g2, b2, r3, g3, b3)
 	if perc >= 1 then
-		local r, g, b = select(select('#', ...) - 2, ...)
-		return r, g, b
+		return r3, g3, b3
 	elseif perc <= 0 then
-		local r, g, b = ...
-		return r, g, b
+		return r1, g1, b1
 	end
 	
-	local num = select('#', ...) / 3
+	local segment, relperc = math_modf(perc*(3-1))
+	local offset = (segment*3)+1
 
-	local segment, relperc = math.modf(perc*(num-1))
-	local r1, g1, b1, r2, g2, b2 = select((segment*3)+1, ...)
+	if(offset == 1) then
+		return r1 + (r2-r1)*relperc, g1 + (g2-g1)*relperc, b1 + (b2-b1)*relperc
+	end
 
-	return r1 + (r2-r1)*relperc, g1 + (g2-g1)*relperc, b1 + (b2-b1)*relperc
+	return r2 + (r3-r2)*relperc, g2 + (g3-g2)*relperc, b2 + (b3-b2)*relperc
 end
 
 local updateValue = function(self, unit, min, max)
