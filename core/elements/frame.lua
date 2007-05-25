@@ -29,6 +29,7 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ---------------------------------------------------------------------------]]
 
+local G = getfenv(0)
 local core = oUF
 local caps = core.caps
 
@@ -58,6 +59,16 @@ local onShow = function(self)
 	if(not UnitExists(unit)) then return end
 	for _, func in pairs(self.onShow) do
 		func(self, unit)
+	end
+end
+local menu = function(self)
+	local unit = self.unit:sub(1, -2)
+	local cunit = caps(self.unit)
+
+	if(unit == "party" or unit == "partypet") then
+		ToggleDropDownMenu(1, nil, G["PartyMemberFrame"..self.id.."DropDown"], "cursor", 0, 0)
+	elseif(G[cunit.."FrameDropDown"]) then
+		ToggleDropDownMenu(1, nil, G[cunit.."FrameDropDown"], "cursor", 0, 0)
 	end
 end
 
@@ -116,8 +127,14 @@ function class:acquire(unit)
 
 	frame:SetAttribute("unit", unit)
 	frame:SetAttribute("type1", "target")
+	frame:SetAttribute("*type2", "menu")
+
+	frame.menu = menu
 
 	RegisterUnitWatch(frame)
+
+	ClickCastFrames = ClickCastFrames or {}
+	ClickCastFrames[frame] = true
 
 	return frame
 end
