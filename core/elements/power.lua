@@ -30,6 +30,7 @@
 ---------------------------------------------------------------------------]]
 
 local core = oUF
+local anchors = core.anchors
 local class = CreateFrame"StatusBar"
 local mt = {__index = class}
 
@@ -37,9 +38,14 @@ local RegisterEvent = class.RegisterEvent
 local SetHeight = class.SetHeight
 
 -- locals are faster
+local string_format = string.format
+
 local UnitMana = UnitMana
 local UnitManaMax = UnitManaMax
 local UnitPowerType = UnitPowerType
+local UnitIsDead = UnitIsDead
+local UnitIsGhost = UnitIsGhost
+local UnitIsConnected = UnitIsConnected
 
 local color = {
 	[0] = { r = 48/255, g = 113/255, b = 191/255}, -- Mana
@@ -49,27 +55,55 @@ local color = {
 	[4] = { r = 0, g = 1, b = 1} -- Happiness
 }
 
+local updateValue = function(self, unit, min, max)
+	if(UnitIsDead(unit) or UnitIsGhost(unit) or not UnitIsConnected(unit)) then
+		self:SetValue(0)
+		self.value:SetText(nil)
+	else
+		self.value:SetText(string_format("%s / %s", min, max))
+	end
+end
+
+local min, max, bar, c
 local updatePower = function(self, unit)
 	if(self.unit ~= unit) then return end
 
-	local vc, vm = UnitMana(unit), UnitManaMax(unit)
-	local bar = self.power
+	min, max = UnitMana(unit), UnitManaMax(unit)
+	bar = self.power
 
-	bar:SetMinMaxValues(0, vm)
-	bar:SetValue(vc)
+	bar:SetMinMaxValues(0, max)
+	bar:SetValue(min)
 
-	local c = color[UnitPowerType(unit)]
+	c = color[UnitPowerType(unit)]
 	bar.bg:SetVertexColor(c.r*.5, c.g*.5, c.b*.5)
 	bar:SetStatusBarColor(c.r, c.g, c.b)
+
+	updateValue(bar, unit, min, max)
+end
+
+local SetPoint = function(self, pos, element)
+	local text = self.value
+	local p1, p2, x, y = strsplit("#", anchors[pos])
+
+	element = self.owner[element] or self
+	text:SetParent(element)
+	text:ClearAllPoints()
+	text:SetPoint(p1, element, p2, x, y)
+end
+
+local SetPowerPosition = function(self, pos, element)
+	SetPoint(self.power, pos, element)
 end
 
 -- oh shi-
 class.name = "power"
 class.type = "bar"
 
+local bg, font
 function class:new(unit)
 	if(self.power) then return end -- should be done by addElement
-	local bar = --[[core.frame:acquire"StatusBar"]] CreateFrame"StatusBar"
+	bar = --[[core.frame:acquire"StatusBar"]] CreateFrame"StatusBar"
+	font = self:CreateFontString(nil, "OVERLAY")
 	setmetatable(bar, mt)
 
 	bar.unit = unit
@@ -89,7 +123,7 @@ function class:new(unit)
 	bar:SetHeight(10)
 	bar:SetStatusBarTexture"Interface\\AddOns\\oUF\\textures\\glaze"
 
-	local bg = bar:CreateTexture(nil, "BORDER")
+	bg = bar:CreateTexture(nil, "BORDER")
 	bar.bg = bg
 
 	bg:SetAllPoints(bar)
@@ -108,6 +142,10 @@ function class:new(unit)
 	self:RegisterOnShow("updatePower", updatePower)
 
 	self.power = bar
+
+	self.SetPowerPosition = SetPowerPosition
+	bar.value = font
+	font:SetFont(STANDARD_TEXT_FONT, 10, "OUTLINE")
 
 	if(UnitExists(unit)) then
 		updatePower(self, self.unit)

@@ -43,7 +43,6 @@ local SetPoint = function(self, pos, element)
 	local p1, p2, x, y = strsplit("#", anchors[pos])
 
 	element = self[element] or text.bar
-	
 	text:SetParent(element)
 	text:ClearAllPoints()
 	text:SetPoint(p1, element, p2, x, y)

@@ -30,147 +30,187 @@
 ---------------------------------------------------------------------------]]
 
 local core = oUF
-local mt = {__call = function(self, k) self:new(k) end}
 
-local auras = {buffs = 32, debuffs = 40} -- meh..
-local OnAuraEnter = function(self)
+local buffOnEnter = function(self)
 	if(not self:IsVisible()) then return end
-	local unit = self:GetParent():GetParent().unit
+	local unit = self:GetParent().unit
 
 	GameTooltip:SetOwner(self, "ANHOR_BOTTOMRIGHT")
-	if(self.isdebuff) then
-		GameTooltip:SetUnitDebuff(unit, self.id)
-	else
-		GameTooltip:SetUnitBuff(unit, self.id)
-	end
+	GameTooltip:SetUnitBuff(unit, self:GetID())
 end
--- do this for now...
-local createAuras = function(self)
-	for type, num in pairs(auras) do
-		self[type] = CreateFrame("Frame", nil, self)
-		self[type]:SetWidth(260)
-		self[type]:SetHeight(14*4)
-		for i=1,num do
-			self[type][i] = CreateFrame("Button", nil, self[type])
-			self[type][i]:Hide()
-			self[type][i]:SetWidth(14)
-			self[type][i]:SetHeight(14)
-			self[type][i]:SetScript("OnEnter", OnAuraEnter)
-			self[type][i]:SetScript("OnLeave", function() GameTooltip:Hide() end)
-			self[type][i].id = i
-			self[type][i].isdebuff = (type == "debuffs" and 1 or nil)
+local debuffOnEnter = function(self)
+	if(not self:IsVisible()) then return end
+	local unit = self:GetParent().unit
 
-			self[type][i].Icon = self[type][i]:CreateTexture(nil, "BACKGROUND")
-			self[type][i].Icon:SetAllPoints(self[type][i])
-			self[type][i].Icon:SetAlpha(.6)
+	GameTooltip:SetOwner(self, "ANHOR_BOTTOMRIGHT")
 
-			if(type == "debuffs") then
-				self[type][i].Overlay = self[type][i]:CreateTexture(nil, "OVERLAY")
-				self[type][i].Overlay:SetTexture"Interface\\Buttons\\UI-Debuff-Overlays"
-				self[type][i].Overlay:SetAllPoints(self[type][i])
-				self[type][i].Overlay:SetTexCoord(.296875, .5703125, 0, .515625)
-			end
-
-			self[type][i].Count = self[type][i]:CreateFontString(nil, "OVERLAY")
-			self[type][i].Count:SetFontObject(NumberFontNormal)
-			self[type][i].Count:SetPoint("BOTTOMRIGHT", self[type][i])
-		end
-	end
+	GameTooltip:SetUnitDebuff(unit, self:GetID())
 end
--- and this for now...
-local setPosition = function(self)
-	for type, num in pairs(auras) do
-		local limit = 16
-		local row = 1
+local onLeave = function() GameTooltip:Hide() end
 
-		self[type]:ClearAllPoints()
-		if(type == "buffs") then
-			self[type]:SetPoint("BOTTOMLEFT", self, "TOPLEFT", 0, 0)
+local createBuff = function(self, index)
+	local buff = CreateFrame("Frame", nil, self)
+	buff:EnableMouse(true)
+	buff:SetID(index)
+
+	buff:SetWidth(14)
+	buff:SetHeight(14)
+
+	local icon = buff:CreateTexture(nil, "BACKGROUND")
+	icon:SetAllPoints(buff)
+
+	local count = buff:CreateFontString(nil, "OVERLAY")
+	count:SetFontObject(NumberFontNormal)
+	count:SetPoint("BOTTOMRIGHT", debuff, "BOTTOMRIGHT", -1, 0)
+
+	buff:SetScript("OnEnter", buffOnEnter)
+	buff:SetScript("OnLeave", onLeave)
+
+	table.insert(self.buffs, buff)
+
+	buff.icon = icon
+	buff.count = count
+
+	return buff
+end
+
+local createDebuff = function(self, index)
+	local debuff = CreateFrame("Frame", nil, self)
+	debuff:EnableMouse(true)
+	debuff:SetID(index)
+
+	debuff:SetWidth(14)
+	debuff:SetHeight(14)
+
+	local icon = debuff:CreateTexture(nil, "BACKGROUND")
+	icon:SetAllPoints(debuff)
+
+	local count = debuff:CreateFontString(nil, "OVERLAY")
+	count:SetFontObject(NumberFontNormal)
+	count:SetPoint("BOTTOMRIGHT", debuff, "BOTTOMRIGHT", -1, 0)
+
+	local overlay = debuff:CreateTexture(nil, "OVERLAY")
+	overlay:SetTexture"Interface\\Buttons\\UI-Debuff-Overlays"
+	overlay:SetAllPoints(debuff)
+	overlay:SetTexCoord(.296875, .5703125, 0, .515625)
+
+	debuff:SetScript("OnEnter", debuffOnEnter)
+	debuff:SetScript("OnLeave", onLeave)
+
+	table.insert(self.debuffs, debuff)
+
+	debuff.icon = icon
+	debuff.count = count
+	debuff.overlay = overlay
+
+	return debuff
+end
+
+-- /wrists
+local limit, row, button, r, icons = 16
+local setPosition = function(self, nb, nd)
+	row = 1
+	icons = self.buffs
+
+	for i=1, nb do
+		button = icons[i]
+		if(i == 1) then
+			button:ClearAllPoints()
+			button:SetPoint("BOTTOMLEFT", self, "TOPLEFT")
 		else
-			self[type]:SetPoint("TOPLEFT", self, "BOTTOMLEFT", 0, -2)
-		end
-		self[type][1]:ClearAllPoints()
-		if(type == "buffs") then
-			self[type][1]:SetPoint("BOTTOMLEFT", self[type], "BOTTOMLEFT")
-		else
-			self[type][1]:SetPoint("TOPLEFT", self[type], "TOPLEFT")
-		end
+			button:ClearAllPoints()
+			button:SetPoint("LEFT", icons[i-1], "RIGHT", 0, 0)
 
-		for i=2, num do
-			self[type][i]:ClearAllPoints()
-			self[type][i]:SetPoint("LEFT", self[type][i-1], "RIGHT", 0, 0)
-		end
-
-		for i=2, num do
-			local r = math.fmod(i -1, limit)
+			r = math.fmod(i - 1, limit)
 			if(r == 0) then
-				self[type][num]:ClearAllPoints()
-				if(type == "buffs") then
-					self[type][num]:SetPoint("BOTTOMLEFT", self[type][row], "TOPLEFT", 0, 2)
-				else
-					self[type][num]:SetPoint("TOPLEFT", self[type][row], "BOTTOMLEFT", 0, -2)
-				end
+				button:ClearAllPoints()
+				button:SetPoint("BOTTOMLEFT", icons[row], "TOPLEFT", 0, 2)
+				row = i
+			end
+		end
+	end
+
+	icons = self.debuffs
+
+	for i=1, nd do
+		button = icons[i]
+		if(i == 1) then
+			button:ClearAllPoints()
+			button:SetPoint("TOPLEFT", self, "BOTTOMLEFT", 2, -2)
+		else
+			button:ClearAllPoints()
+			button:SetPoint("LEFT", icons[i-1], "RIGHT", 0, 0)
+
+			r = math.fmod(i - 1, limit)
+			if(r == 0) then
+				button:ClearAllPoints()
+				button:SetPoint("TOPLEFT", icons[row], "BOTTOMLEFT", 0, -2)
 				row = i
 			end
 		end
 	end
 end
-
+local nb, nd, name, texture, count, type, color, buffs, debuffs
 local updateAura = function(self, unit)
 	if(self.unit ~= unit) then return end
 
-	local name, rank, texture, count, type, color
+	nb, nd = 0, 0
+	buffs = self.buffs
+	
 	for i=1,32 do
+		buff = buffs[i]
 		name, rank, texture, count = UnitBuff(unit, i)
 
-		if(name) then
-			self.buffs[i]:Show()
-			self.buffs[i].Icon:SetTexture(texture)
-			self.buffs[i].Count:SetText((count > 1 and count) or nil)
-			self.buffs[i].index = i
-		else
-			self.buffs[i]:Hide()
+		if(not buff and not name) then
+			break
+		elseif(name) then
+			if(not buff) then buff = createBuff(self, i) end
+			buff:Show()
+			buff.icon:SetTexture(texture)
+			buff.count:SetText((count > 1 and count) or nil)
+
+			nb = nb + 1
+		elseif(buff) then
+			buff:Hide()
 		end
 	end
 
+	debuffs = self.debuffs
 	for i=1,40 do
+		debuff = debuffs[i]
 		name, rank, texture, count, type, color = UnitDebuff(unit, i)
 
-		if(name) then
-			self.debuffs[i]:Show()
-			self.debuffs[i].Icon:SetTexture(texture)
-			if(type) then
-				color = DebuffTypeColor[type]
-			else
-				color = DebuffTypeColor["none"]
-			end
-			self.debuffs[i].Overlay:SetVertexColor(color.r, color.g, color.b)
+		if(not debuff and not name) then
+			break;
+		elseif(name) then
+			if(not debuff) then debuff = createDebuff(self, i) end
+			debuff:Show()
+			debuff.icon:SetTexture(texture)
 
-			if(count > 1) then
-				self.debuffs[i].Count:SetText(count)
-				self.debuffs[i].index = i
-			else
-				self.debuffs[i].Count:SetText(nil)
-			end
-		else
-			self.debuffs[i]:Hide()
+			color = DebuffTypeColor[type or "none"]
+			debuff.overlay:SetVertexColor(color.r, color.g, color.b)
+			debuff.count:SetText((count > 1 and count) or nil)
+
+			nd = nd + 1
+		elseif(debuff) then
+			debuff:Hide()
 		end
 	end
+
+	setPosition(self, nb, nd)
 end
 
-local class = setmetatable({}, mt)
+local class = {}
 
 class.name = "aura"
 class.type = "texture"
 
 function class:new(unit)
-	self:RegisterEvent("UNIT_AURA", updateAura)
-
-	createAuras(self)
-	setPosition(self)
+	self.buffs = {}
+	self.debuffs = {}
 
 	self:RegisterOnShow("updateAura", updateAura)
-
+	self:RegisterEvent("UNIT_AURA", updateAura)
 	if(UnitExists(unit)) then updateAura(self, unit) end
 end
 

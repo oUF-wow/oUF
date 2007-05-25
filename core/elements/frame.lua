@@ -31,14 +31,11 @@
 
 local core = oUF
 local caps = core.caps
-local printf = function(...) ChatFrame1:AddMessage(string.format(...)) end
 
 local class = CreateFrame"Button"
 local mt = {__index = class}
-
 local RegisterEvent = class.RegisterEvent
 
-local methods = {"RegisterOnShow", "RegisterEvent"}
 local backdrop = {
 	bgFile = "Interface\\ChatFrame\\ChatFrameBackground", tile = true, tileSize = 16,
 	insets = {left = 2, right = -2, top = 2, bottom = -2},
@@ -46,16 +43,17 @@ local backdrop = {
 local frames = {}
 local numFrames = 0
 
+local func, unit
 local onEnter = function() UnitFrame_OnEnter() end
 local onLeave = function() UnitFrame_OnLeave() end
 local onEvent = function(self, event, unit, ...)
-	local func = self.events[event]
+	func = self.events[event]
 	if(func and type(func) == "function") then
 		func(self, unit, ...)
 	end
 end
 local onShow = function(self)
-	local unit = self.unit
+	unit = self.unit
 
 	if(not UnitExists(unit)) then return end
 	for _, func in pairs(self.onShow) do

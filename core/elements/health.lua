@@ -30,6 +30,7 @@
 ---------------------------------------------------------------------------]]
 
 local core = oUF
+local anchors = core.anchors
 local class = CreateFrame"StatusBar"
 local mt = {__index = class}
 
@@ -37,12 +38,17 @@ local RegisterEvent = class.RegisterEvent
 local SetHeight = class.SetHeight
 
 -- locals are faster
+local string_format = string.format
+
 local UnitReactionColor = UnitReactionColor
 local UnitReaction = UnitReaction
 local UnitIsPlayer = UnitIsPlayer
 local UnitHealth = UnitHealth
 local UnitHealthMax = UnitHealthMax
 local UnitExists = UnitExists
+local UnitIsDead = UnitIsDead
+local UnitIsGhost = UnitIsGhost
+local UnitIsConnected = UnitIsConnected
 
 local ColorGradient = function(perc, ...)
 	if perc >= 1 then
@@ -61,24 +67,64 @@ local ColorGradient = function(perc, ...)
 	return r1 + (r2-r1)*relperc, g1 + (g2-g1)*relperc, b1 + (b2-b1)*relperc
 end
 
+local updateValue = function(self, unit, min, max)
+	if(not self:IsVisible()) then return end
+
+	if(UnitIsDead(unit)) then
+		self:SetValue(0)
+		self.value:SetText"Dead"
+	elseif(UnitIsGhost(unit)) then
+		self:SetValue(0)
+		self.value:SetText"Ghost"
+	elseif(not UnitIsConnected(unit)) then
+		self.value:SetText"Offline"
+	else
+		self.value:SetText(string_format("%s / %s", min, max))
+	end
+end
+
+local min, max, bar
 local updateHealth = function(self, unit)
 	if(self.unit ~= unit) then return end
 
-	local min, max = UnitHealth(unit), UnitHealthMax(unit)
-	local bar = self.health
+	min, max = UnitHealth(unit), UnitHealthMax(unit)
+	bar = self.health
 
 	bar:SetMinMaxValues(0, max)
 	bar:SetValue(min)
 	bar:setColor(min, max)
+
+	updateValue(bar, unit, min, max)
 end
+
+local SetPoint = function(self, pos, element)
+	local text = self.value
+	local p1, p2, x, y = strsplit("#", anchors[pos])
+
+	element = self.owner[element] or self
+	text:SetParent(element)
+	text:ClearAllPoints()
+	text:SetPoint(p1, element, p2, x, y)
+end
+
+local SetHealthPosition = function(self, pos, element)
+	SetPoint(self.health, pos, element)
+end
+
+local siRotation = function(val)
+	return val
+end
+
 
 -- oh shi-
 class.name = "health"
 class.type = "bar"
 
+local bg, font
 function class:new(unit)
 	if(self.health) then return end -- should be done by addElement
-	local bar = --[[core.frame:acquire"StatusBar"]] CreateFrame"StatusBar"
+	bar = --[[core.frame:acquire"StatusBar"]] CreateFrame"StatusBar"
+	font = self:CreateFontString(nil, "OVERLAY")
 	setmetatable(bar, mt)
 
 	bar.unit = unit
@@ -98,7 +144,7 @@ function class:new(unit)
 	bar:SetHeight(18)
 	bar:SetStatusBarTexture"Interface\\AddOns\\oUF\\textures\\glaze"
 
-	local bg = bar:CreateTexture(nil, "BORDER")
+	bg = bar:CreateTexture(nil, "BORDER")
 	bar.bg = bg
 
 	bg:SetAllPoints(bar)
@@ -111,20 +157,24 @@ function class:new(unit)
 
 	self.health = bar
 
+	self.SetHealthPosition = SetHealthPosition
+	bar.value = font
+	font:SetFont(STANDARD_TEXT_FONT, 10, "OUTLINE")
+
 	if(UnitExists(unit)) then
 		updateHealth(self, self.unit)
 	end
 end
 
+local perc, unit, r, g, b, c
 function class:setColor(min, max)
-	local perc = 1 - min/max
-	local unit = self.unit
-	local r, g, b
+	perc = 1 - min/max
+	unit = self.unit
 
 	if(UnitIsTapped(unit) and not UnitIsTappedByPlayer(unit)) then
 		r, g, b = .6, .6, .6
 	else
-		local c = UnitIsPlayer(unit) and RAID_CLASS_COLORS[select(2, UnitClass(unit))] or UnitReactionColor[UnitReaction(unit, "player")]
+		c = UnitIsPlayer(unit) and RAID_CLASS_COLORS[select(2, UnitClass(unit))] or UnitReactionColor[UnitReaction(unit, "player")]
 		r, g, b = ColorGradient(perc, c.r, c.g, c.b, 1, 1, 0, 1, 0, 0)
 	end
 

@@ -1,13 +1,10 @@
-## Interface: 20003
-
-Dongle.lua
+## Interface: 20100
 
 core\ouf.lua
 
 core\elements\frame.lua
 core\elements\health.lua
 core\elements\power.lua
-core\elements\value.lua
 core\elements\name.lua
 core\elements\info.lua
 core\elements\aura.lua
