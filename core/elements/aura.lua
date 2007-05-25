@@ -61,7 +61,7 @@ local createBuff = function(self, index)
 
 	local count = buff:CreateFontString(nil, "OVERLAY")
 	count:SetFontObject(NumberFontNormal)
-	count:SetPoint("BOTTOMRIGHT", debuff, "BOTTOMRIGHT", -1, 0)
+	count:SetPoint("BOTTOMRIGHT", buff, "BOTTOMRIGHT", -1, 0)
 
 	buff:SetScript("OnEnter", buffOnEnter)
 	buff:SetScript("OnLeave", onLeave)
