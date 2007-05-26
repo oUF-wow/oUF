@@ -175,7 +175,7 @@ function class:setColor(min, max)
 	perc = 1 - min/max
 	unit = self.unit
 
-	if(UnitIsTapped(unit) and not UnitIsTappedByPlayer(unit)) then
+	if(UnitIsTapped(unit) and not UnitIsTappedByPlayer(unit) or not UnitIsConnected(unit)) then
 		r, g, b = .6, .6, .6
 	else
 		c = UnitIsPlayer(unit) and RAID_CLASS_COLORS[select(2, UnitClass(unit))] or UnitReactionColor[UnitReaction(unit, "player")]
