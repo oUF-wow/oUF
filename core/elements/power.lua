@@ -81,9 +81,12 @@ local updatePower = function(self, unit)
 	updateValue(bar, unit, min, max)
 end
 
-local SetPoint = function(self, pos, element)
+local SetPoint = function(self, pos, element, x2, y2)
 	local text = self.value
 	local p1, p2, x, y = strsplit("#", anchors[pos])
+
+	if(x2 and type(x2) == "number") then x = x + x2 end
+	if(y2 and type(y2) == "number") then y = y + y2 end
 
 	element = self.owner[element] or self
 	text:SetParent(element)
@@ -91,8 +94,8 @@ local SetPoint = function(self, pos, element)
 	text:SetPoint(p1, element, p2, x, y)
 end
 
-local SetPowerPosition = function(self, pos, element)
-	SetPoint(self.power, pos, element)
+local SetPowerPosition = function(self, pos, element, x2, y2)
+	SetPoint(self.power, pos, element, x2, y2)
 end
 
 -- oh shi-

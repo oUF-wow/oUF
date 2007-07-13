@@ -101,9 +101,12 @@ local updateHealth = function(self, unit)
 	updateValue(bar, unit, min, max)
 end
 
-local SetPoint = function(self, pos, element)
+local SetPoint = function(self, pos, element, x2, y2)
 	local text = self.value
 	local p1, p2, x, y = strsplit("#", anchors[pos])
+
+	if(x2 and type(x2) == "number") then x = x + x2 end
+	if(y2 and type(y2) == "number") then y = y + y2 end
 
 	element = self.owner[element] or self
 	text:SetParent(element)
@@ -111,14 +114,13 @@ local SetPoint = function(self, pos, element)
 	text:SetPoint(p1, element, p2, x, y)
 end
 
-local SetHealthPosition = function(self, pos, element)
-	SetPoint(self.health, pos, element)
+local SetHealthPosition = function(self, pos, element, x2, y2)
+	SetPoint(self.health, pos, element, x2, y2)
 end
 
 local siRotation = function(val)
 	return val
 end
-
 
 -- oh shi-
 class.name = "health"
