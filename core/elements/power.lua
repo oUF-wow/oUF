@@ -112,6 +112,10 @@ function class:new(unit)
 	bar.unit = unit
 	bar.owner = self
 
+	bar:SetHeight(10)
+	bar:SetStatusBarTexture"Interface\\AddOns\\oUF\\textures\\glaze"
+
+
 	bar:SetParent(self)
 	bar:SetPoint("LEFT", self)
 	bar:SetPoint("RIGHT", self)
@@ -122,9 +126,6 @@ function class:new(unit)
 		bar:SetPoint("TOP", self)
 		self.last = bar
 	end
-
-	bar:SetHeight(10)
-	bar:SetStatusBarTexture"Interface\\AddOns\\oUF\\textures\\glaze"
 
 	bg = bar:CreateTexture(nil, "BORDER")
 	bar.bg = bg
