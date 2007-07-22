@@ -45,8 +45,6 @@ local frames = {}
 local numFrames = 0
 
 local func, unit
-local onEnter = function() UnitFrame_OnEnter() end
-local onLeave = function() UnitFrame_OnLeave() end
 local onEvent = function(self, event, unit, ...)
 	func = self.events[event]
 	if(func and type(func) == "function") then
@@ -118,8 +116,8 @@ function class:acquire(unit)
 	frame:SetBackdrop(backdrop)
 	frame:SetBackdropColor(0, 0, 0, .4)
 
-	frame:SetScript("OnEnter", onEnter)
-	frame:SetScript("OnLeave", onLeave)
+	frame:SetScript("OnEnter", UnitFrame_OnEnter)
+	frame:SetScript("OnLeave", UnitFrame_OnLeave)
 	frame:SetScript("OnEvent", onEvent)
 	frame:SetScript("OnShow", onShow)
 

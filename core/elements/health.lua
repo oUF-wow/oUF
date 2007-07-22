@@ -37,6 +37,12 @@ local mt = {__index = class}
 local RegisterEvent = class.RegisterEvent
 local SetHeight = class.SetHeight
 
+local phColor = {
+	[1] = {r = 1, g = 0, b = 0},
+	[2] = {r = 1 ,g = 1, b = 0},
+	[3] = {r = 0, g = 1, b = 0},
+}
+
 -- locals are faster
 local string_format = string.format
 local math_modf = math.modf
@@ -53,6 +59,7 @@ local UnitExists = UnitExists
 local UnitIsDead = UnitIsDead
 local UnitIsGhost = UnitIsGhost
 local UnitIsConnected = UnitIsConnected
+local GetPetHappiness = GetPetHappiness
 
 local ColorGradient = function(perc, r1, g1, b1, r2, g2, b2, r3, g3, b3)
 	if perc >= 1 then
@@ -172,13 +179,16 @@ function class:new(unit)
 	end
 end
 
-local perc, unit, r, g, b, c
+local perc, unit, r, g, b, c, h
 function class:setColor(min, max)
 	perc = 1 - min/max
 	unit = self.unit
+	h = GetPetHappiness()
 
 	if(UnitIsTapped(unit) and not UnitIsTappedByPlayer(unit) or not UnitIsConnected(unit)) then
 		r, g, b = .6, .6, .6
+	elseif(h and self.unit == "pet") then
+		r, g, b = phColor[h].r, phColor[h].g, phColor[h].b
 	else
 		c = UnitIsPlayer(unit) and RAID_CLASS_COLORS[select(2, UnitClass(unit))] or UnitReactionColor[UnitReaction(unit, "player")]
 		r, g, b = ColorGradient(perc, c.r, c.g, c.b, 1, 1, 0, 1, 0, 0)
