@@ -93,7 +93,7 @@ local metatable = {__index = oUF}
 --[[
 --:RegisterEvent(event, func)
 --	Notes:
---		- Internal function, but externaly avaible as someone might want to call it.
+--		- Internal function, but externally avaible as someone might want to call it.
 --]]
 function oUF:RegisterEvent(event, func)
 	if(not events[event]) then
@@ -139,7 +139,7 @@ end
 --[[
 --:RegisterObject(object, subType)
 --	Notes:
---		- Internal function, but externaly avaible as someone might want to call it.
+--		- Internal function, but externally avaible as someone might want to call it.
 --]]
 function oUF:RegisterObject(object, subType)
 	local unit = object.unit
@@ -192,7 +192,7 @@ local min, max, bar, func
 --[[
 --:UpdateHealth(event, unit)
 --	Notes:
---		- Internal function, but externaly avaible as someone might want to call it.
+--		- Internal function, but externally avaible as someone might want to call it.
 --		- It will call .func if it's defined.
 --]]
 function oUF:UpdateHealth(event, unit)
