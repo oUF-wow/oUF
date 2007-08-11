@@ -188,6 +188,7 @@ function oUF:RegisterFrameObject(object)
 	local unit = object.unit
 
 	object = setmetatable(object, metatable)
+
 	object.events = {}
 	object:SetScript("OnEvent", OnEvent)
 	object:SetScript("OnShow", self.UpdateAll)
@@ -210,6 +211,7 @@ function oUF:RegisterFrameObject(object)
 	ClickCastFrames = ClickCastFrames or {}
 	ClickCastFrames[object] = true
 
+	object:UpdateAll()
 	objects[unit] = object
 
 	return object
