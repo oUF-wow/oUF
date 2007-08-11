@@ -28,3 +28,59 @@
   (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ---------------------------------------------------------------------------]]
+
+-- locals
+local _G = getfenv(0)
+local select = select
+local type = type
+local tostring = tostring
+
+local argstostring = function(v, ...) if select('#', ...) == 0 then return v end return v..tostring(...) end
+local print = function(...) ChatFrame1:AddMessage("|cff33ff99oUF:|r "..argstostring(...)) end
+local error = function(...) print("|cffff0000Error:|r ", string.format(...)) end
+
+local objects = {}
+local subTypes = {
+	["Health"] = true,
+	["Power"] = true,
+	["Name"] = true,
+	["CPoints"] = true,
+}
+
+-- For debugging
+local log = {}
+
+-- add-on object
+local oUF = CreateFrame"Frame"
+
+--[[
+--:RegisterFrameObject(object, unit)
+--	Arguments:
+--		- object: WoW frame table
+--		- unit: Valid WoW unit
+--	Returns:
+--		- oUF frame object
+--]]
+function oUF:RegisterFrameObject(object, unit)
+	if(type(object) ~= "table") then return end
+	if(type(unit) ~= "string") then return end
+	if(objects[unit]) then return error("Unit '%s' is already registered.", unit) end
+
+	table.insert(log, string.format("[%s]: Parsing frame table.", unit))
+
+	-- We might want to go deeper then the first level of the table, but there is honestly
+	-- nothing preventing us from just placing all the interesting vars at the first level
+	-- of it.
+	for subType, subObject in pairs(object) do
+		if(subTypes[subType]) then
+			table.insert(log, string.format("[%s] Valid key '%s' found.", unit, key))
+
+			self:RegisterObject(object, subType, subObject)
+		end
+	end
+
+	objects[unit] = object
+end
+
+oUF.log = log
+_G.oUF = oUF
