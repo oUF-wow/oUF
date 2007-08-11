@@ -46,11 +46,42 @@ local subTypes = {
 	["CPoints"] = true,
 }
 
+local events = {}
+local OnEvent = function(self, event, ...)
+	local regs = events[event]
+
+	if(regs) then
+		for obj, func in pairs(regs) do
+			if(type(func) == "string") then
+				if(obj[func]) == "function") then
+					obj[func](obj, event, ...)
+				end
+			else
+				func(obj, event, ...)
+			end
+		end
+	end
+end
+
 -- For debugging
 local log = {}
 
 -- add-on object
 local oUF = CreateFrame"Frame"
+
+--[[
+--:RegisterEvent(event, func)
+--	Notes:
+--		- Internal function, but externaly avaible as someone might want to call it.
+--]]
+function oUF:RegisterEvent(event, func)
+	if(not events[event]) then
+		events[event] = {}
+		self:RegisterEvent(event)
+	end
+
+	events[event][self] = func or event
+end
 
 --[[
 --:RegisterFrameObject(object, unit)
@@ -84,7 +115,7 @@ function oUF:RegisterFrameObject(objectunit)
 end
 
 --[[
--- :RegisterObject(object, subType)
+--:RegisterObject(object, subType)
 --	Notes:
 --		- Internal function, but externaly avaible as someone might want to call it.
 --]]
