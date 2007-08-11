@@ -105,14 +105,13 @@ function oUF:RegisterEvent(event, func)
 end
 
 --[[
---:RegisterFrameObject(object, unit)
+--:RegisterFrameObject(object)
 --	Arguments:
 --		- object: WoW frame table
---		- unit: Valid WoW unit
 --	Returns:
 --		- oUF frame object
 --]]
-function oUF:RegisterFrameObject(objectunit)
+function oUF:RegisterFrameObject(object)
 	if(type(object) ~= "table") then return end
 	if(type(object.unit) ~= "string") then return end
 	if(objects[unit]) then return error("Unit '%s' is already registered.", unit) end
