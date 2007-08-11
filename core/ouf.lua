@@ -77,9 +77,9 @@ local colors = {
 		[0] = {49/255, g1 = 207/255, b1 = 37/255}, -- Health
 	},
 	happiness = {
-		[1] = {r = 1, g = 0, b = 0}, -- need
-		[2] = {r = 1 ,g = 1, b = 0}, -- new
-		[3] = {r = 0, g = 1, b = 0}, -- colors
+		[1] = {r = 1, g = 0, b = 0}, -- need | unhappy
+		[2] = {r = 1 ,g = 1, b = 0}, -- new | content
+		[3] = {r = 0, g = 1, b = 0}, -- colors | happy
 	},
 }
 
@@ -170,6 +170,9 @@ end
 
 --[[ Health - Updating ]]
 
+local UnitHealth = UnitHealth
+local UnitHealthMax = UnitHealthMa
+
 -- My 8-ball tells me we'll need this one later on.
 local ColorGradient = function(perc, r1, g1, b1, r2, g2, b2, r3, g3, b3)
 	if perc >= 1 then
@@ -204,6 +207,39 @@ function oUF:UpdateHealth(event, unit)
 	bar:SetMinMaxValues(0, max)
 	bar:SetValue(min)
 	bar:setColor(min, max)
+
+	func = bar.func
+	if(type(func) == "function") then func(bar, unit, min, max) end
+end
+
+--[[ Power - Updating ]]
+
+local UnitMana = UnitMana
+local UnitManaMax = UnitManaMax
+local UnitPowerType = UnitPowerType
+
+local min, max, bar, color, func
+--[[
+--:UpdatePower(event, unit)
+--	Notes:
+--		- Internal function, but externally avaible as someone might want to call it.
+--		- It will call .func if it's defined.
+--]]
+function oUF:UpdatePower(event, unit)
+	if(self.unit ~= unit) then return end
+
+	min, max = UnitMana(unit), UnitManaMax(unit)
+	bar = self.Power
+
+	bar:SetMinMaxValues(0, max)
+	bar:SetValue(min)
+
+	color = colors.power[UnitPowerType(unit)]
+	bar:SetStatusBarColor(c.r, c.g, c.b)
+	
+	if(bar.bg) then
+		bar.bg:SetVertexColor(c.r*.5, c.g*.5, c.b*.5)
+	end
 
 	func = bar.func
 	if(type(func) == "function") then func(bar, unit, min, max) end
