@@ -98,6 +98,18 @@ local RegisterUnitEvents = function(object)
 
 		TargetofTargetHealthBar:UnregisterAllEvents()
 		TargetofTargetManaBar:UnregisterAllEvents()
+	elseif(unit:sub(1, -2) == "party") then
+		-- Hide the blizzard stuff
+		for i=1, 4 do
+			local name = "PartyMemberFrame"..i
+			local frame = _G[name]
+			frame:UnregisterAllEvents()
+			frame.Show = dummy
+			frame:Hide()
+			
+			_G[name..'HealthBar']:UnregisterAllEvents()
+			_G[name..'ManaBar']:UnregisterAllEvents()
+		end
 	end
 
 	object:RegisterEvent("PLAYER_ENTERING_WORLD", "UpdateAll")
