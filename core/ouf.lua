@@ -56,9 +56,9 @@ local OnEvent = function(self, event, ...)
 	local func = self.events[event]
 
 	if(type(func) == "string") then
-		self[func](self, event, ...)
+		self[func](self, ...)
 	elseif(type(func) == "function") then
-		func(self, event, unit, ...)
+		func(self, ...)
 	end
 end
 
@@ -89,6 +89,8 @@ local RegisterUnitEvents = function(object)
 		TargetofTargetHealthBar:UnregisterAllEvents()
 		TargetofTargetManaBar:UnregisterAllEvents()
 	end
+
+	object:RegisterEvent("PLAYER_ENTERING_WORLD", "UpdateAll")
 end
 
 -- Colors
@@ -205,6 +207,23 @@ function oUF:RegisterObject(object, subType)
 	end
 end
 
+--[[
+--:UpdateAll()
+--	Notes:
+--		- Does a full update of all elements on the object.
+--]]
+function oUF:UpdateAll()
+	local unit = self.unit
+	self:UpdateHealth(unit)
+	self:UpdatePower(unit)
+	self:UpdateName(unit)
+	self:UpdateRaidIcon(unit)
+
+	if(unit == "target") then
+		self:UpdateCPoints()
+	end
+end
+
 --[[ Health - Updating ]]
 
 local UnitHealth = UnitHealth
@@ -235,7 +254,7 @@ local min, max, bar, func, color
 --		- Internal function, but externally avaible as someone might want to call it.
 --		- It will call .func if it's defined.
 --]]
-function oUF:UpdateHealth(event, unit)
+function oUF:UpdateHealth(unit)
 	if(self.unit ~= unit) then return end
 
 	min, max = UnitHealth(unit), UnitHealthMax(unit)
@@ -268,7 +287,7 @@ local min, max, bar, color, func
 --		- Internal function, but externally avaible as someone might want to call it.
 --		- It will call .func if it's defined.
 --]]
-function oUF:UpdatePower(event, unit)
+function oUF:UpdatePower(unit)
 	if(self.unit ~= unit) then return end
 
 	min, max = UnitMana(unit), UnitManaMax(unit)
@@ -292,7 +311,7 @@ end
 
 local UnitName = UnitName
 
-function oUF:UpdateName(event, unit)
+function oUF:UpdateName(unit)
 	local name = UnitName(unit)
 
 	-- This is really really temporary, at least until someone writes a tag
