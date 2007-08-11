@@ -203,6 +203,13 @@ function oUF:UpdateHealth(event, unit)
 	bar:SetMinMaxValues(0, max)
 	bar:SetValue(min)
 
+	color = colors.health[0]
+	bar:SetStatusBarColor(color.r, color.g, color.b)
+
+	if(bar.bg) then
+		bar.bg:SetVertexColor(color.r*.5, color.g*.5, color.b*.5)
+	end
+
 	func = bar.func
 	if(type(func) == "function") then func(bar, unit, min, max) end
 end
@@ -230,10 +237,10 @@ function oUF:UpdatePower(event, unit)
 	bar:SetValue(min)
 
 	color = colors.power[UnitPowerType(unit)]
-	bar:SetStatusBarColor(c.r, c.g, c.b)
+	bar:SetStatusBarColor(color.r, color.g, color.b)
 	
 	if(bar.bg) then
-		bar.bg:SetVertexColor(c.r*.5, c.g*.5, c.b*.5)
+		bar.bg:SetVertexColor(color.r*.5, color.g*.5, color.b*.5)
 	end
 
 	func = bar.func
