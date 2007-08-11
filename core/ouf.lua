@@ -47,6 +47,9 @@ local subTypes = {
 	["RaidIcon"] = true,
 }
 
+-- Aho!
+local dummy = function() end
+
 -- Events
 local events = {}
 local OnEvent = function(self, event, ...)
@@ -56,6 +59,35 @@ local OnEvent = function(self, event, ...)
 		self[func](self, event, ...)
 	elseif(type(func) == "function") then
 		func(self, event, unit, ...)
+	end
+end
+
+-- Gigantic function of doom
+local RegisterUnitEvents = function(object)
+	local unit = object.unit
+
+	if(unit == "player") then
+		PlayerFrame:UnregisterAllEvents()
+		PlayerFrame.Show = dummy
+		PlayerFrame:Hide()
+
+		PlayerFrameHealthBar:UnregisterAllEvents()
+		PlayerFrameManaBar:UnregisterAllEvents()
+	elseif(unit == "target") then
+		TargetFrame:UnregisterAllEvents()
+		TargetFrame.Show = dummy
+		TargetFrame:Hide()
+
+		TargetFrameHealthBar:UnregisterAllEvents()
+		TargetFrameManaBar:UnregisterAllEvents()
+		TargetFrameSpellBar:UnregisterAllEvents()
+	elseif(unit == "targettarget") then
+		TargetofTargetFrame:UnregisterAllEvents()
+		TargetofTargetFrame.Show = dummy
+		TargetofTargetFrame:Hide()
+
+		TargetofTargetHealthBar:UnregisterAllEvents()
+		TargetofTargetManaBar:UnregisterAllEvents()
 	end
 end
 
@@ -127,6 +159,12 @@ function oUF:RegisterFrameObject(object)
 			self:RegisterObject(object, subType)
 		end
 	end
+
+	RegisterUnitEvents(object)
+	RegisterUnitWatch(object)
+
+	ClickCastFrames = ClickCastFrames or {}
+	ClickCastFrames[object] = true
 
 	objects[unit] = object
 
