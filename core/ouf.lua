@@ -12,9 +12,9 @@
         copyright notice, this list of conditions and the following
         disclaimer in the documentation and/or other materials provided
         with the distribution.
-      * Neither the name of Trond A Ekseth nor the names of its
-        contributors may be used to endorse or promote products derived
-        from this software without specific prior written permission.
+      * Neither the name of oUF nor the names of its contributors may
+        be used to endorse or promote products derived from this
+        software without specific prior written permission.
 
   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
   "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -28,27 +28,3 @@
   (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ---------------------------------------------------------------------------]]
-
-_G['oUF'] = {
-	anchors = {
-		["top"] = "BOTTOM#TOP#0#0",
-		["bottom"] = "TOP#BOTTOM#0#0",
-
-		["left"] = "LEFT#LEFT#1#-1",
-		["right"] = "RIGHT#RIGHT#-1#-1",
-
-		["lefte"] = "RIGHT#LEFT#0#-1",
-		["righte"] = "LEFT#RIGHT#0#-1",
-
-		["topright"] = "BOTTOMRIGHT#TOPRIGHT#-1#0",
-		["bottomright"] = "TOPRIGHT#BOTTOMRIGHT#-1#0",
-
-		["topleft"] = "BOTTOMLEFT#TOPLEFT#1#0",
-		["bottomleft"] = "TOPLEFT#BOTTOMRIGHT#1#0",
-
-		["center"] = "CENTER#CENTER#0#-1",
-	},
-	caps = function(str)
-		return str:gsub("(.)", string.upper, 1)
-	end,
-}

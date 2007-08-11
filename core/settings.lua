@@ -1,6 +1,0 @@
-oUF.defaults = {
-	profile = {
-		pos = {
-		},
-	}
-}
