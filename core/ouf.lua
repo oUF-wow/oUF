@@ -44,6 +44,7 @@ local subTypes = {
 	["Power"] = true,
 	["Name"] = true,
 	["CPoints"] = true,
+	["RaidIcon"] = true,
 }
 
 -- Events
@@ -159,6 +160,8 @@ function oUF:RegisterObject(object, subType)
 		object:RegisterEvent("UNIT_NAME_UPDATE", "UpdateName")
 	elseif(subType == "CPoints" and unit == "target") then
 		object:RegisterEvent("PLAYER_COMBO_POINTS", "UpdateCPoints")
+	elseif(subType == "RaidIcon") then
+		object:RegisterEvent("RAID_TARGET_UPDATE", "UpdateRaidIcon")
 	else
 		error("Typo? - '%s' is not a valid subType.", subType)
 	end
@@ -279,6 +282,22 @@ function oUF:UpdateCPoints()
 				cpoints[i]:Hide()
 			end
 		end
+	end
+end
+
+--[[ RaidIcon ]]
+
+local GetRaidTargetIndex = GetRaidTargetIndex
+
+function oUF:UpdateRaidIcon()
+	local index = GetRaidTargetIndex(self.unit)
+	local icon = self.RaidIcon
+
+	if(index) then
+		SetRaidTargetIconTexture(icon, index)
+		self.RaidIcon:Show()
+	else
+		self.RaidIcon:Hide()
 	end
 end
 
