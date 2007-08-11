@@ -40,11 +40,11 @@ local error = function(...) print("|cffff0000Error:|r ", string.format(...)) end
 
 local objects = {}
 local subTypes = {
-	["Health"] = true,
-	["Power"] = true,
-	["Name"] = true,
-	["CPoints"] = true,
-	["RaidIcon"] = true,
+	["Health"] = "UpdateHealth",
+	["Power"] = "UpdatePower",
+	["Name"] = "UpdateName",
+	["CPoints"] = "UpdateCPoints",
+	["RaidIcon"] = "UpdateRaidIcon",
 }
 
 -- Aho!
@@ -67,6 +67,7 @@ local RegisterUnitEvents = function(object)
 	local unit = object.unit
 
 	if(unit == "player") then
+		-- Hide the blizzard stuff
 		PlayerFrame:UnregisterAllEvents()
 		PlayerFrame.Show = dummy
 		PlayerFrame:Hide()
@@ -74,6 +75,7 @@ local RegisterUnitEvents = function(object)
 		PlayerFrameHealthBar:UnregisterAllEvents()
 		PlayerFrameManaBar:UnregisterAllEvents()
 	elseif(unit == "target") then
+		-- Hide the blizzard stuff
 		TargetFrame:UnregisterAllEvents()
 		TargetFrame.Show = dummy
 		TargetFrame:Hide()
@@ -81,7 +83,15 @@ local RegisterUnitEvents = function(object)
 		TargetFrameHealthBar:UnregisterAllEvents()
 		TargetFrameManaBar:UnregisterAllEvents()
 		TargetFrameSpellBar:UnregisterAllEvents()
+
+		ComboFrame:UnregisterAllEvents()
+		ComboFrame.Show = dummy
+		ComboFrame:Hide()
+
+		-- Enable our shit
+		object:RegisterEvent("PLAYER_TARGET_CHANGED", "UpdateAll")
 	elseif(unit == "targettarget") then
+		-- Hide the blizzard stuff
 		TargetofTargetFrame:UnregisterAllEvents()
 		TargetofTargetFrame.Show = dummy
 		TargetofTargetFrame:Hide()
@@ -149,6 +159,7 @@ function oUF:RegisterFrameObject(object)
 	object = setmetatable(object, metatable)
 	object.events = {}
 	object:SetScript("OnEvent", OnEvent)
+	object:SetScript("OnShow", self.UpdateAll)
 	table.insert(log, string.format("[%s]: Parsing frame table.", unit))
 
 	-- We might want to go deeper then the first level of the table, but there is honestly
@@ -207,6 +218,9 @@ function oUF:RegisterObject(object, subType)
 	end
 end
 
+
+local UnitExists = UnitExists
+
 --[[
 --:UpdateAll()
 --	Notes:
@@ -214,13 +228,12 @@ end
 --]]
 function oUF:UpdateAll()
 	local unit = self.unit
-	self:UpdateHealth(unit)
-	self:UpdatePower(unit)
-	self:UpdateName(unit)
-	self:UpdateRaidIcon(unit)
+	if(not UnitExists(unit)) then return end
 
-	if(unit == "target") then
-		self:UpdateCPoints()
+	for key, func in pairs(subTypes) do
+		if(self[key]) then
+			self[func](self, unit)
+		end
 	end
 end
 
