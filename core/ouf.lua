@@ -53,7 +53,7 @@ local OnEvent = function(self, event, ...)
 	if(regs) then
 		for obj, func in pairs(regs) do
 			if(type(func) == "string") then
-				if(obj[func]) == "function") then
+				if(type(obj[func]) == "function") then
 					obj[func](obj, event, ...)
 				end
 			else
@@ -67,7 +67,8 @@ end
 local log = {}
 
 -- add-on object
-local oUF = CreateFrame"Frame"
+local oUF = CreateFrame"Button"
+local metatable = {__index = oUF}
 
 --[[
 --:RegisterEvent(event, func)
@@ -111,7 +112,8 @@ function oUF:RegisterFrameObject(objectunit)
 		end
 	end
 
-	objects[unit] = object
+	objects[unit] = setmetatable(object, metatable)
+	return objects[unit]
 end
 
 --[[
@@ -141,6 +143,8 @@ function oUF:RegisterObject(object, subType)
 		object:RegisterEvent("UNIT_NAME_UPDATE", "UpdateName")
 	elseif(subType == "CPoints" and unit == "target") then
 		object:RegisterEvent("PLAYER_COMBO_POINTS", "UpdateCPoints")
+	else
+		error("Typo? - '%s' is not a valid subType", subType)
 	end
 end
 
