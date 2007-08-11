@@ -248,6 +248,9 @@ function oUF:UpdatePower(event, unit)
 end
 
 --[[ Name ]]
+
+local UnitName = UnitName
+
 function oUF:UpdateName(event, unit)
 	local name = UnitName(unit)
 
@@ -255,6 +258,28 @@ function oUF:UpdateName(event, unit)
 	-- library that doesn't eat babies and spew poison (or any other common
 	-- solution to this problem).
 	self.Name:SetText(name)
+end
+
+--[[ CPoints ]]
+
+local MAX_COMBO_POINTS
+local GetComboPoints = GetComboPoints
+
+function oUF:UpdateCPoints()
+	local cp = GetComboPoints()
+	local cpoints = self.CPoints
+
+	if(#cpoints == 0) then
+		cpoints:SetText(cp)
+	else
+		for i=1, MAX_COMBO_POINTS do
+			if(i <= cp) then
+				cpoints[i]:Show()
+			else
+				cpoints[i]:Hide()
+			end
+		end
+	end
 end
 
 oUF.log = log
