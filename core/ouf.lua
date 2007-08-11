@@ -125,7 +125,7 @@ function oUF:RegisterFrameObject(object)
 	-- of it.
 	for subType, subObject in pairs(object) do
 		if(subTypes[subType]) then
-			table.insert(log, string.format("[%s] Valid key '%s' found.", unit, key))
+			table.insert(log, string.format("[%s] Valid key '%s' found.", unit, subType))
 
 			self:RegisterObject(object, subType)
 		end
