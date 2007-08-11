@@ -46,6 +46,7 @@ local subTypes = {
 	["CPoints"] = true,
 }
 
+-- Events
 local events = {}
 local OnEvent = function(self, event, ...)
 	local regs = events[event]
@@ -62,6 +63,25 @@ local OnEvent = function(self, event, ...)
 		end
 	end
 end
+
+-- Colors
+local colors = {
+	power = {
+		[0] = { r = 48/255, g = 113/255, b = 191/255}, -- Mana
+		[1] = { r = 226/255, g = 45/255, b = 75/255}, -- Rage
+		[2] = { r = 255/255, g = 178/255, b = 0}, -- Focus
+		[3] = { r = 1, g = 1, b = 34/255}, -- Energy
+		[4] = { r = 0, g = 1, b = 1} -- Happiness
+	},
+	health = {
+		[0] = {49/255, g1 = 207/255, b1 = 37/255}, -- Health
+	},
+	happiness = {
+		[1] = {r = 1, g = 0, b = 0}, -- need
+		[2] = {r = 1 ,g = 1, b = 0}, -- new
+		[3] = {r = 0, g = 1, b = 0}, -- colors
+	},
+}
 
 -- For debugging
 local log = {}
@@ -144,8 +164,49 @@ function oUF:RegisterObject(object, subType)
 	elseif(subType == "CPoints" and unit == "target") then
 		object:RegisterEvent("PLAYER_COMBO_POINTS", "UpdateCPoints")
 	else
-		error("Typo? - '%s' is not a valid subType", subType)
+		error("Typo? - '%s' is not a valid subType.", subType)
 	end
+end
+
+--[[ Health - Updating ]]
+
+-- My 8-ball tells me we'll need this one later on.
+local ColorGradient = function(perc, r1, g1, b1, r2, g2, b2, r3, g3, b3)
+	if perc >= 1 then
+		return r3, g3, b3
+	elseif perc <= 0 then
+		return r1, g1, b1
+	end
+	
+	local segment, relperc = math_modf(perc*(3-1))
+	local offset = (segment*3)+1
+
+	if(offset == 1) then
+		return r1 + (r2-r1)*relperc, g1 + (g2-g1)*relperc, b1 + (b2-b1)*relperc
+	end
+
+	return r2 + (r3-r2)*relperc, g2 + (g3-g2)*relperc, b2 + (b3-b2)*relperc
+end
+
+local min, max, bar, func
+--[[
+--:UpdateHealth(event, unit)
+--	Notes:
+--		- Internal function, but externaly avaible as someone might want to call it.
+--		- It will call .func if it's defined.
+--]]
+function oUF:UpdateHealth(event, unit)
+	if(self.unit ~= unit) then return end
+
+	min, max = UnitHealth(unit), UnitHealthMax(unit)
+	bar = self.Health
+
+	bar:SetMinMaxValues(0, max)
+	bar:SetValue(min)
+	bar:setColor(min, max)
+
+	func = bar.func
+	if(type(func) == "function") then func(bar, unit, min, max) end
 end
 
 oUF.log = log
