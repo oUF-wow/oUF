@@ -49,18 +49,12 @@ local subTypes = {
 -- Events
 local events = {}
 local OnEvent = function(self, event, ...)
-	local regs = events[event]
+	local func = self.events[event]
 
-	if(regs) then
-		for obj, func in pairs(regs) do
-			if(type(func) == "string") then
-				if(type(obj[func]) == "function") then
-					obj[func](obj, event, ...)
-				end
-			else
-				func(obj, event, ...)
-			end
-		end
+	if(type(func) == "string") then
+		self[func](self, event, ...)
+	elseif(type(func) == "function") then
+		func(self, event, unit, ...)
 	end
 end
 
@@ -88,6 +82,7 @@ local log = {}
 
 -- add-on object
 local oUF = CreateFrame"Button"
+local RegisterEvent = oUF.RegisterEvent
 local metatable = {__index = oUF}
 
 --[[
@@ -96,12 +91,10 @@ local metatable = {__index = oUF}
 --		- Internal function, but externally avaible as someone might want to call it.
 --]]
 function oUF:RegisterEvent(event, func)
-	if(not events[event]) then
-		events[event] = {}
-		self:RegisterEvent(event)
+	if(not self.events[event]) then
+		self.events[event] = func or event
+		RegisterEvent(self, event)
 	end
-
-	events[event][self] = func or event
 end
 
 --[[
@@ -118,6 +111,9 @@ function oUF:RegisterFrameObject(object)
 
 	local unit = object.unit
 
+	object = setmetatable(object, metatable)
+	object.events = {}
+	object:SetScript("OnEvent", OnEvent)
 	table.insert(log, string.format("[%s]: Parsing frame table.", unit))
 
 	-- We might want to go deeper then the first level of the table, but there is honestly
@@ -131,8 +127,9 @@ function oUF:RegisterFrameObject(object)
 		end
 	end
 
-	objects[unit] = setmetatable(object, metatable)
-	return objects[unit]
+	objects[unit] = object
+
+	return object
 end
 
 --[[
@@ -170,7 +167,7 @@ end
 --[[ Health - Updating ]]
 
 local UnitHealth = UnitHealth
-local UnitHealthMax = UnitHealthMa
+local UnitHealthMax = UnitHealthMax
 
 -- My 8-ball tells me we'll need this one later on.
 local ColorGradient = function(perc, r1, g1, b1, r2, g2, b2, r3, g3, b3)
@@ -205,7 +202,6 @@ function oUF:UpdateHealth(event, unit)
 
 	bar:SetMinMaxValues(0, max)
 	bar:SetValue(min)
-	bar:setColor(min, max)
 
 	func = bar.func
 	if(type(func) == "function") then func(bar, unit, min, max) end
