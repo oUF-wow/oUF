@@ -49,6 +49,7 @@ local subTypes = {
 
 -- Aho!
 local dummy = function() end
+local leeroyparty
 
 -- Events
 local events = {}
@@ -74,6 +75,14 @@ local RegisterUnitEvents = function(object)
 
 		PlayerFrameHealthBar:UnregisterAllEvents()
 		PlayerFrameManaBar:UnregisterAllEvents()
+	elseif(unit == "pet")then
+		-- Hide the blizzard stuff
+		PetFrame:UnregisterAllEvents()
+		PetFrame.Show = dummy
+		PetFrame:Hide()
+
+		PetFrameHealthBar:UnregisterAllEvents()
+		PetFrameManaBar:UnregisterAllEvents()
 	elseif(unit == "target") then
 		-- Hide the blizzard stuff
 		TargetFrame:UnregisterAllEvents()
@@ -98,7 +107,7 @@ local RegisterUnitEvents = function(object)
 
 		TargetofTargetHealthBar:UnregisterAllEvents()
 		TargetofTargetManaBar:UnregisterAllEvents()
-	elseif(unit:sub(1, -2) == "party") then
+	elseif(unit:sub(1, -2) == "party" and not leeroyparty) then
 		-- Hide the blizzard stuff
 		for i=1, 4 do
 			local party = "PartyMemberFrame"..i
@@ -119,6 +128,8 @@ local RegisterUnitEvents = function(object)
 			_G[pet..'HealthBar']:UnregisterAllEvents()
 			_G[pet..'ManaBar']:UnregisterAllEvents()
 		end
+
+		leeroyparty = true
 	end
 
 	object:RegisterEvent("PLAYER_ENTERING_WORLD", "UpdateAll")
