@@ -101,14 +101,23 @@ local RegisterUnitEvents = function(object)
 	elseif(unit:sub(1, -2) == "party") then
 		-- Hide the blizzard stuff
 		for i=1, 4 do
-			local name = "PartyMemberFrame"..i
-			local frame = _G[name]
+			local party = "PartyMemberFrame"..i
+			local pet = party.."PetFrame"
+			local frame = _G[party]
+			local peframe = _G[pet]
 			frame:UnregisterAllEvents()
 			frame.Show = dummy
 			frame:Hide()
 			
-			_G[name..'HealthBar']:UnregisterAllEvents()
-			_G[name..'ManaBar']:UnregisterAllEvents()
+			_G[party..'HealthBar']:UnregisterAllEvents()
+			_G[party..'ManaBar']:UnregisterAllEvents()
+
+			petframe:UnregisterAllEvents()
+			petframe.Show = dummy
+			petframe:Hide()
+
+			_G[pet..'HealthBar']:UnregisterAllEvents()
+			_G[pet..'ManaBar']:UnregisterAllEvents()
 		end
 	end
 
