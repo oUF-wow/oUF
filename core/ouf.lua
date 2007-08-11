@@ -29,7 +29,6 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ---------------------------------------------------------------------------]]
 
--- locals
 local _G = getfenv(0)
 local select = select
 local type = type
@@ -61,10 +60,12 @@ local oUF = CreateFrame"Frame"
 --	Returns:
 --		- oUF frame object
 --]]
-function oUF:RegisterFrameObject(object, unit)
+function oUF:RegisterFrameObject(objectunit)
 	if(type(object) ~= "table") then return end
-	if(type(unit) ~= "string") then return end
+	if(type(object.unit) ~= "string") then return end
 	if(objects[unit]) then return error("Unit '%s' is already registered.", unit) end
+
+	local unit = object.unit
 
 	table.insert(log, string.format("[%s]: Parsing frame table.", unit))
 
@@ -75,11 +76,41 @@ function oUF:RegisterFrameObject(object, unit)
 		if(subTypes[subType]) then
 			table.insert(log, string.format("[%s] Valid key '%s' found.", unit, key))
 
-			self:RegisterObject(object, subType, subObject)
+			self:RegisterObject(object, subType)
 		end
 	end
 
 	objects[unit] = object
+end
+
+--[[
+-- :RegisterObject(object, subType)
+--	Notes:
+--		- Internal function, but externaly avaible as someone might want to call it.
+--]]
+function oUF:RegisterObject(object, subType)
+	local unit = object.unit
+
+	-- We could use a table containing this info, but it's just as easy to do it
+	-- manually.
+	if(subType == "Health") then
+		object:RegisterEvent("UNIT_HEALTH", "UpdateHealth")
+		object:RegisterEvent("UNIT_MAXHEALTH", "UpdateHealth")
+	elseif(subType == "Power") then
+		object:RegisterEvent("UNIT_MANA", "UpdatePower")
+		object:RegisterEvent("UNIT_RAGE", "UpdatePower")
+		object:RegisterEvent("UNIT_FOCUS", "UpdatePower")
+		object:RegisterEvent("UNIT_ENERGY", "UpdatePower")
+		object:RegisterEvent("UNIT_MAXMANA", "UpdatePower")
+		object:RegisterEvent("UNIT_MAXRAGE", "UpdatePower")
+		object:RegisterEvent("UNIT_MAXFOCUS", "UpdatePower")
+		object:RegisterEvent("UNIT_MAXENERGY", "UpdatePower")
+		object:RegisterEvent("UNIT_DISPLAYPOWER", "UpdatePower")
+	elseif(subType == "Name") then
+		object:RegisterEvent("UNIT_NAME_UPDATE", "UpdateName")
+	elseif(subType == "CPoints" and unit == "target") then
+		object:RegisterEvent("PLAYER_COMBO_POINTS", "UpdateCPoints")
+	end
 end
 
 oUF.log = log
