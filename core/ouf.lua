@@ -69,7 +69,7 @@ local colors = {
 		[4] = { r = 0, g = 1, b = 1} -- Happiness
 	},
 	health = {
-		[0] = {r = 49/255, g1 = 207/255, b1 = 37/255}, -- Health
+		[0] = {r = 49/255, g = 207/255, b = 37/255}, -- Health
 	},
 	happiness = {
 		[1] = {r = 1, g = 0, b = 0}, -- need | unhappy
