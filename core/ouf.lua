@@ -113,7 +113,7 @@ local RegisterUnitEvents = function(object)
 			local party = "PartyMemberFrame"..i
 			local pet = party.."PetFrame"
 			local frame = _G[party]
-			local peframe = _G[pet]
+			local petframe = _G[pet]
 			frame:UnregisterAllEvents()
 			frame.Show = dummy
 			frame:Hide()
@@ -126,7 +126,6 @@ local RegisterUnitEvents = function(object)
 			petframe:Hide()
 
 			_G[pet..'HealthBar']:UnregisterAllEvents()
-			_G[pet..'ManaBar']:UnregisterAllEvents()
 		end
 
 		leeroyparty = true
@@ -357,6 +356,7 @@ end
 local UnitName = UnitName
 
 function oUF:UpdateName(unit)
+	if(self.unit ~= unit) then return end
 	local name = UnitName(unit)
 
 	-- This is really really temporary, at least until someone writes a tag
