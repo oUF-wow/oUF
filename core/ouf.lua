@@ -68,7 +68,7 @@ local colors = {
 		[4] = { r = 0, g = 1, b = 1} -- Happiness
 	},
 	health = {
-		[0] = {49/255, g1 = 207/255, b1 = 37/255}, -- Health
+		[0] = {r = 49/255, g1 = 207/255, b1 = 37/255}, -- Health
 	},
 	happiness = {
 		[1] = {r = 1, g = 0, b = 0}, -- need | unhappy
@@ -187,7 +187,7 @@ local ColorGradient = function(perc, r1, g1, b1, r2, g2, b2, r3, g3, b3)
 	return r2 + (r3-r2)*relperc, g2 + (g3-g2)*relperc, b2 + (b3-b2)*relperc
 end
 
-local min, max, bar, func
+local min, max, bar, func, color
 --[[
 --:UpdateHealth(event, unit)
 --	Notes:
@@ -245,6 +245,16 @@ function oUF:UpdatePower(event, unit)
 
 	func = bar.func
 	if(type(func) == "function") then func(bar, unit, min, max) end
+end
+
+--[[ Name ]]
+function oUF:UpdateName(event, unit)
+	local name = UnitName(unit)
+
+	-- This is really really temporary, at least until someone writes a tag
+	-- library that doesn't eat babies and spew poison (or any other common
+	-- solution to this problem).
+	self.Name:SetText(name)
 end
 
 oUF.log = log
