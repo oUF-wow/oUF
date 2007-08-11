@@ -1,0 +1,5 @@
+## Interface: 20100
+## Title: oUF
+## Author: Haste
+
+core\ouf.lua
