@@ -34,7 +34,7 @@ local select = select
 local type = type
 local tostring = tostring
 
-local argstostring = function(v, ...) if select('#', ...) == 0 then return v end return v..tostring(...) end
+local argstostring = function(v, ...) if select('#', ...) == 0 then return v end return v..", "..tostring(...) end
 local print = function(...) ChatFrame1:AddMessage("|cff33ff99oUF:|r "..argstostring(...)) end
 local error = function(...) print("|cffff0000Error:|r ", string.format(...)) end
 
@@ -60,6 +60,17 @@ local OnEvent = function(self, event, ...)
 		self[func](self, ...)
 	elseif(type(func) == "function") then
 		func(self, ...)
+	end
+end
+
+-- Updates
+local time = 0
+local OnUpdate = function(self, a1)
+	time = time + a1
+	
+	if(time > .5) then
+		self:UpdateAll()
+		time = 0
 	end
 end
 
@@ -107,6 +118,8 @@ local RegisterUnitEvents = function(object)
 
 		TargetofTargetHealthBar:UnregisterAllEvents()
 		TargetofTargetManaBar:UnregisterAllEvents()
+
+		object:SetScript("OnUpdate", OnUpdate)
 	elseif(unit:sub(1, -2) == "party" and not leeroyparty) then
 		-- Hide the blizzard stuff
 		for i=1, 4 do
@@ -145,6 +158,7 @@ local colors = {
 	},
 	health = {
 		[0] = {r = 49/255, g = 207/255, b = 37/255}, -- Health
+		[1] = {r = .6, g = .6, b = .6} -- Tapped targets
 	},
 	happiness = {
 		[1] = {r = 1, g = 0, b = 0}, -- need | unhappy
@@ -294,6 +308,7 @@ local ColorGradient = function(perc, r1, g1, b1, r2, g2, b2, r3, g3, b3)
 end
 
 local min, max, bar, func, color
+local r, g, b
 --[[
 --:UpdateHealth(event, unit)
 --	Notes:
@@ -309,7 +324,17 @@ function oUF:UpdateHealth(unit)
 	bar:SetMinMaxValues(0, max)
 	bar:SetValue(min)
 
-	color = colors.health[0]
+	-- Discuss...
+	if(UnitIsTapped(unit) and not UnitIsTappedByPlayer(unit) or not UnitIsConnected(unit)) then
+		color = colors.health[1]
+	elseif(unit == "pet" and GetPetHappiness()) then
+		color = colors.happiness[GetPetHappiness()]
+	else
+		color = UnitIsPlayer(unit) and RAID_CLASS_COLORS[select(2, UnitClass(unit))] or UnitReactionColor[UnitReaction(unit, "player")]
+	end
+
+	if(not color) then print(UnitIsPlayer(unit), UnitClass(unit), select(2, UnitClass(unit)), UnitReaction(unit)) end
+
 	bar:SetStatusBarColor(color.r, color.g, color.b)
 
 	if(bar.bg) then
