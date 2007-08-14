@@ -34,8 +34,8 @@ local select = select
 local type = type
 local tostring = tostring
 
-local argstostring = function(v, ...) if select('#', ...) == 0 then return v end return v..", "..tostring(...) end
-local print = function(...) ChatFrame1:AddMessage("|cff33ff99oUF:|r "..argstostring(...)) end
+local function _tostring(v, ...) if select('#', ...) == 0 then return tostring(v) end return tostring(v)..", ".._tostring(...) end
+local print = function(...) ChatFrame1:AddMessage("|cff33ff99oUF:|r ".._tostring(...)) end
 local error = function(...) print("|cffff0000Error:|r ", string.format(...)) end
 
 local objects = {}
@@ -45,6 +45,7 @@ local subTypes = {
 	["Name"] = "UpdateName",
 	["CPoints"] = "UpdateCPoints",
 	["RaidIcon"] = "UpdateRaidIcon",
+	["Aura"] = "UpdateAura",
 }
 
 -- Aho!
@@ -333,12 +334,12 @@ function oUF:UpdateHealth(unit)
 		color = UnitIsPlayer(unit) and RAID_CLASS_COLORS[select(2, UnitClass(unit))] or UnitReactionColor[UnitReaction(unit, "player")]
 	end
 
-	if(not color) then print(UnitIsPlayer(unit), UnitClass(unit), select(2, UnitClass(unit)), UnitReaction(unit)) end
+	if(color) then
+		bar:SetStatusBarColor(color.r, color.g, color.b)
 
-	bar:SetStatusBarColor(color.r, color.g, color.b)
-
-	if(bar.bg) then
-		bar.bg:SetVertexColor(color.r*.5, color.g*.5, color.b*.5)
+		if(bar.bg) then
+			bar.bg:SetVertexColor(color.r*.5, color.g*.5, color.b*.5)
+		end
 	end
 
 	func = bar.func
@@ -429,6 +430,8 @@ function oUF:UpdateRaidIcon()
 		self.RaidIcon:Hide()
 	end
 end
+
+--[[ Aura ]]
 
 oUF.log = log
 _G.oUF = oUF
