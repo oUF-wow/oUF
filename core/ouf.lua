@@ -95,6 +95,10 @@ local RegisterUnitEvents = function(object)
 
 		PetFrameHealthBar:UnregisterAllEvents()
 		PetFrameManaBar:UnregisterAllEvents()
+
+		-- Enable our shit
+		-- Temp solution :----D
+		object:RegisterEvent("UNIT_HAPPINESS", "UpdateHealth")
 	elseif(unit == "target") then
 		-- Hide the blizzard stuff
 		TargetFrame:UnregisterAllEvents()
