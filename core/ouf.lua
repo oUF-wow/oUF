@@ -38,6 +38,53 @@ local function _tostring(v, ...) if select('#', ...) == 0 then return tostring(v
 local print = function(...) ChatFrame1:AddMessage("|cff33ff99oUF:|r ".._tostring(...)) end
 local error = function(...) print("|cffff0000Error:|r ", string.format(...)) end
 
+-- Colors
+local colors = {
+	power = {
+		[0] = { r = 48/255, g = 113/255, b = 191/255}, -- Mana
+		[1] = { r = 226/255, g = 45/255, b = 75/255}, -- Rage
+		[2] = { r = 255/255, g = 178/255, b = 0}, -- Focus
+		[3] = { r = 1, g = 1, b = 34/255}, -- Energy
+		[4] = { r = 0, g = 1, b = 1} -- Happiness
+	},
+	health = {
+		[0] = {r = 49/255, g = 207/255, b = 37/255}, -- Health
+		[1] = {r = .6, g = .6, b = .6} -- Tapped targets
+	},
+	happiness = {
+		[1] = {r = 1, g = 0, b = 0}, -- need | unhappy
+		[2] = {r = 1 ,g = 1, b = 0}, -- new | content
+		[3] = {r = 0, g = 1, b = 0}, -- colors | happy
+	},
+}
+
+-- For debugging
+local log = {}
+
+-- add-on object
+local oUF = CreateFrame"Button"
+local RegisterEvent = oUF.RegisterEvent
+local metatable = {__index = oUF}
+
+local UnitExists = UnitExists
+local UnitHealth = UnitHealth
+local UnitHealthMax = UnitHealthMax
+local UnitMana = UnitMana
+local UnitManaMax = UnitManaMax
+local UnitPowerType = UnitPowerType
+local UnitName = UnitName
+local GetComboPoints = GetComboPoints
+local GetRaidTargetIndex = GetRaidTargetIndex
+local UnitBuff = UnitBuff
+local UnitDebuff = UnitDebuff
+
+local min, max, bar, color, func
+local r, g, b
+local MAX_COMBO_POINTS
+local blimit, dlimit, row, button, r, icons
+local nb, nd, buff, debuff
+local name, rank, texture, count, color, type
+
 local objects = {}
 local subTypes = {
 	["Health"] = "UpdateHealth",
@@ -161,34 +208,6 @@ local RegisterUnitEvents = function(object)
 	object:RegisterEvent("PLAYER_ENTERING_WORLD", "UpdateAll")
 end
 
--- Colors
-local colors = {
-	power = {
-		[0] = { r = 48/255, g = 113/255, b = 191/255}, -- Mana
-		[1] = { r = 226/255, g = 45/255, b = 75/255}, -- Rage
-		[2] = { r = 255/255, g = 178/255, b = 0}, -- Focus
-		[3] = { r = 1, g = 1, b = 34/255}, -- Energy
-		[4] = { r = 0, g = 1, b = 1} -- Happiness
-	},
-	health = {
-		[0] = {r = 49/255, g = 207/255, b = 37/255}, -- Health
-		[1] = {r = .6, g = .6, b = .6} -- Tapped targets
-	},
-	happiness = {
-		[1] = {r = 1, g = 0, b = 0}, -- need | unhappy
-		[2] = {r = 1 ,g = 1, b = 0}, -- new | content
-		[3] = {r = 0, g = 1, b = 0}, -- colors | happy
-	},
-}
-
--- For debugging
-local log = {}
-
--- add-on object
-local oUF = CreateFrame"Button"
-local RegisterEvent = oUF.RegisterEvent
-local metatable = {__index = oUF}
-
 --[[
 --:RegisterEvent(event, func)
 --	Notes:
@@ -282,7 +301,6 @@ function oUF:RegisterObject(object, subType)
 end
 
 
-local UnitExists = UnitExists
 
 --[[
 --:UpdateAll()
@@ -302,9 +320,6 @@ end
 
 --[[ Health - Updating ]]
 
-local UnitHealth = UnitHealth
-local UnitHealthMax = UnitHealthMax
-
 -- My 8-ball tells me we'll need this one later on.
 local ColorGradient = function(perc, r1, g1, b1, r2, g2, b2, r3, g3, b3)
 	if perc >= 1 then
@@ -323,8 +338,6 @@ local ColorGradient = function(perc, r1, g1, b1, r2, g2, b2, r3, g3, b3)
 	return r2 + (r3-r2)*relperc, g2 + (g3-g2)*relperc, b2 + (b3-b2)*relperc
 end
 
-local min, max, bar, func, color
-local r, g, b
 --[[
 --:UpdateHealth(event, unit)
 --	Notes:
@@ -363,11 +376,6 @@ end
 
 --[[ Power - Updating ]]
 
-local UnitMana = UnitMana
-local UnitManaMax = UnitManaMax
-local UnitPowerType = UnitPowerType
-
-local min, max, bar, color, func
 --[[
 --:UpdatePower(event, unit)
 --	Notes:
@@ -396,7 +404,6 @@ end
 
 --[[ Name ]]
 
-local UnitName = UnitName
 
 function oUF:UpdateName(unit)
 	if(self.unit ~= unit) then return end
@@ -409,9 +416,6 @@ function oUF:UpdateName(unit)
 end
 
 --[[ CPoints ]]
-
-local MAX_COMBO_POINTS
-local GetComboPoints = GetComboPoints
 
 function oUF:UpdateCPoints()
 	local cp = GetComboPoints()
@@ -432,7 +436,6 @@ end
 
 --[[ RaidIcon ]]
 
-local GetRaidTargetIndex = GetRaidTargetIndex
 
 function oUF:UpdateRaidIcon()
 	local index = GetRaidTargetIndex(self.unit)
@@ -447,9 +450,6 @@ function oUF:UpdateRaidIcon()
 end
 
 --[[ Aura ]]
-
-local UnitBuff = UnitBuff
-local UnitDebuff = UnitDebuff
 
 local buffOnEnter = function(self)
 	if(not self:IsVisible()) then return end
@@ -526,7 +526,6 @@ local createDebuff = function(self, index)
 	return debuff
 end
 
-local blimit, dlimit, row, button, r, icons
 function oUF:SetPosition(unit, nb, nd)
 	blimit = settings.buffLimit
 	dlimit = settings.debuffLimit
@@ -571,15 +570,13 @@ function oUF:SetPosition(unit, nb, nd)
 	end
 end
 
-local nb, nd, buff, debuff
-local name, rank, texture, count, color, type
 function oUF:UpdateAura(unit)
 	if(self.unit ~= unit) then return end
-	if(not self.Buffs) then self.Buffs = {} end
-	if(not self.Debuffs) then self.Debuffs = {} end
 
 	nb = 0
 	if(settings.showBuffs) then
+		if(not self.Buffs) then self.Buffs = {} end
+
 		icons = self.Buffs
 		for i=1,settings.numBuffs do
 			buff = icons[i]
@@ -602,6 +599,8 @@ function oUF:UpdateAura(unit)
 
 	nd = 0
 	if(settings.showDebuffs) then
+		if(not self.Debuffs) then self.Debuffs = {} end
+
 		icons = self.Debuffs
 		for i=1,settings.numDebuffs do
 			debuff = icons[i]
