@@ -83,7 +83,7 @@ local r, g, b
 local MAX_COMBO_POINTS
 local blimit, dlimit, row, button, r, icons
 local nb, nd, buff, debuff
-local name, rank, texture, count, color, type
+local name, rank, texture, count, color, dtype
 
 local objects = {}
 local subTypes = {
@@ -526,7 +526,7 @@ local createDebuff = function(self, index)
 	return debuff
 end
 
-function oUF:SetPosition(unit, nb, nd)
+function oUF:SetAuraPosition(unit, nb, nd)
 	blimit = settings.buffLimit
 	dlimit = settings.debuffLimit
 	row = 1
@@ -604,7 +604,7 @@ function oUF:UpdateAura(unit)
 		icons = self.Debuffs
 		for i=1,settings.numDebuffs do
 			debuff = icons[i]
-			name, rank, texture, count, type, color = UnitDebuff(unit, i)
+			name, rank, texture, count, dtype, color = UnitDebuff(unit, i)
 
 			if(not debuff and not name) then
 				break
@@ -613,7 +613,7 @@ function oUF:UpdateAura(unit)
 				debuff:Show()
 				debuff.icon:SetTexture(texture)
 
-				color = DebuffTypeColor[type or "none"]
+				color = DebuffTypeColor[dtype or "none"]
 				debuff.overlay:SetVertexColor(color.r, color.g, color.b)
 				debuff.count:SetText((count > 1 and count) or nil)
 
@@ -624,7 +624,7 @@ function oUF:UpdateAura(unit)
 		end
 	end
 
-	self:SetPosition(unit, nb, nd)
+	self:SetAuraPosition(unit, nb, nd)
 end
 
 oUF.settings = settings
