@@ -34,7 +34,7 @@ local select = select
 local type = type
 local tostring = tostring
 
-local function _tostring(v, ...) if select('#', ...) == 0 then return tostring(v) end return tostring(v)..", ".._tostring(...) end
+local function _tostring(v, ...) if select('#', ...) == 0 then return tostring(v) end return tostring(v).." ".._tostring(...) end
 local print = function(...) ChatFrame1:AddMessage("|cff33ff99oUF:|r ".._tostring(...)) end
 local error = function(...) print("|cffff0000Error:|r ", string.format(...)) end
 
@@ -52,9 +52,9 @@ local colors = {
 		[1] = {r = .6, g = .6, b = .6} -- Tapped targets
 	},
 	happiness = {
-		[1] = {r = 1, g = 0, b = 0}, -- need | unhappy
-		[2] = {r = 1 ,g = 1, b = 0}, -- new | content
-		[3] = {r = 0, g = 1, b = 0}, -- colors | happy
+		[1] = {r = 1, g = 0, b = 0}, -- need.... | unhappy
+		[2] = {r = 1 ,g = 1, b = 0}, -- new..... | content
+		[3] = {r = 0, g = 1, b = 0}, -- colors.. | happy
 	},
 }
 
@@ -228,9 +228,8 @@ end
 --		- oUF frame object
 --]]
 function oUF:RegisterFrameObject(object)
-	if(type(object) ~= "table") then return end
-	if(type(object.unit) ~= "string") then return end
-	if(objects[unit]) then return error("Unit '%s' is already registered.", unit) end
+	if(type(object) ~= "table") then return error("Bad argument #1 to 'RegisterFrameObject' (table expected, got %s)", type(object)) end
+	if(type(object.unit) ~= "string") then return error("No unit set.") end -- ...
 
 	local unit = object.unit
 
@@ -259,7 +258,6 @@ function oUF:RegisterFrameObject(object)
 	ClickCastFrames[object] = true
 
 	object:UpdateAll()
-	objects[unit] = object
 
 	return object
 end
@@ -295,11 +293,8 @@ function oUF:RegisterObject(object, subType)
 		object:RegisterEvent("RAID_TARGET_UPDATE", "UpdateRaidIcon")
 	elseif(subType == "Aura") then
 		object:RegisterEvent("UNIT_AURA", "UpdateAura")
-	else
-		error("Typo? - '%s' is not a valid subType.", subType)
 	end
 end
-
 
 
 --[[
@@ -404,7 +399,6 @@ end
 
 --[[ Name ]]
 
-
 function oUF:UpdateName(unit)
 	if(self.unit ~= unit) then return end
 	local name = UnitName(unit)
@@ -435,7 +429,6 @@ function oUF:UpdateCPoints()
 end
 
 --[[ RaidIcon ]]
-
 
 function oUF:UpdateRaidIcon()
 	local index = GetRaidTargetIndex(self.unit)
@@ -526,6 +519,7 @@ local createDebuff = function(self, index)
 	return debuff
 end
 
+-- TODO: Rewrite to use the width of the parent.
 function oUF:SetAuraPosition(unit, nb, nd)
 	blimit = settings.buffLimit
 	dlimit = settings.debuffLimit
