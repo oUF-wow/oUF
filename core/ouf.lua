@@ -436,9 +436,9 @@ function oUF:UpdateRaidIcon()
 
 	if(index) then
 		SetRaidTargetIconTexture(icon, index)
-		self.RaidIcon:Show()
+		icon:Show()
 	else
-		self.RaidIcon:Hide()
+		icon:Hide()
 	end
 end
 
