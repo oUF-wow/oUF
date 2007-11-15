@@ -1,5 +1,7 @@
 ## Interface: 20300
 ## Title: oUF
 ## Author: Haste
+## X-eMail: troeks@gmail.com
+## Notes: Unit frame framework for the people. Does nothing by itself. 
 
 core\ouf.lua
