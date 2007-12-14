@@ -66,6 +66,10 @@ local oUF = CreateFrame"Button"
 local RegisterEvent = oUF.RegisterEvent
 local metatable = {__index = oUF}
 
+local style, cache
+local styles = {}
+local furui = {}
+
 local UnitExists = UnitExists
 local UnitHealth = UnitHealth
 local UnitHealthMax = UnitHealthMax
@@ -104,9 +108,7 @@ local settings = {
 	["numDebuffs"] = 40,
 }
 
--- Aho!
 local dummy = function() end
-local leeroyparty
 
 -- Events
 local events = {}
@@ -181,28 +183,6 @@ local RegisterUnitEvents = function(object)
 		TargetofTargetManaBar:UnregisterAllEvents()
 
 		object:SetScript("OnUpdate", OnUpdate)
-	elseif(unit:sub(1, -2) == "party" and not leeroyparty) then
-		-- Hide the blizzard stuff
-		for i=1, 4 do
-			local party = "PartyMemberFrame"..i
-			local pet = party.."PetFrame"
-			local frame = _G[party]
-			local petframe = _G[pet]
-			frame:UnregisterAllEvents()
-			frame.Show = dummy
-			frame:Hide()
-			
-			_G[party..'HealthBar']:UnregisterAllEvents()
-			_G[party..'ManaBar']:UnregisterAllEvents()
-
-			petframe:UnregisterAllEvents()
-			petframe.Show = dummy
-			petframe:Hide()
-
-			_G[pet..'HealthBar']:UnregisterAllEvents()
-		end
-
-		leeroyparty = true
 	end
 
 	object:RegisterEvent("PLAYER_ENTERING_WORLD", "UpdateAll")
@@ -220,21 +200,40 @@ function oUF:RegisterEvent(event, func)
 	end
 end
 
---[[
---:RegisterFrameObject(object)
---	Arguments:
---		- object: WoW frame table
---	Returns:
---		- oUF frame object
---]]
-function oUF:RegisterFrameObject(object)
-	if(type(object) ~= "table") then return error("Bad argument #1 to 'RegisterFrameObject' (table expected, got %s)", type(object)) end
-	if(type(object.unit) ~= "string") then return error("No unit set.") end -- ...
+function oUF:RegisterStyle(name, func)
+	if(type(name) ~= "string") then return error("Bad argument #1 to 'RegisterStyle' (string expected, got %s)", type(name)) end
+	if(type(func) ~= "function") then return error("Bad argument #2 to 'RegisterStyle' (function expected, got %s)", type(func)) end
+	if(styles[name]) then return error("Style [%s] already registered.", name) end
+	if(not style) then style = name end
 
-	local unit = object.unit
+	styles[name] = style
+end
 
-	object = setmetatable(object, metatable)
+function oUF:SetActiveStyle(name)
+	if(type(name) ~= "string") then return error("Bad argument #1 to 'SetActiveStyle' (string expected, got %s)", type(name)) end
+	if(not styles[name]) then return error("Style [%s] does not exist.", name) end
 
+	furui[style] = cache
+	cache = furui[name] or {}
+
+	style = name
+end
+
+function oUF:Spawn(name, unit, template)
+	if(not unit) then return error("Bad argument #2 to 'Spawn' (string expected, got %s)", type(unit)) end
+	if(not style) then return error("Unable to create frame. No styles have been registered.") end
+
+	if(unit:sub(1,8) == "partypet") then
+		template = "SecurePartyPetHeaderTemplate, "..template
+	elseif(unit:sub(1,5) == "party") then
+		template = "SecurePartyHeaderTemplate, "..template
+	elseif(unit:sub(1,4) == "raid") then
+		template = "SecureRaidGroupHeaderTemplate, "..template
+	else
+		template = "SecureUnitButtonTemplate, "..template
+	end
+
+	local object = setmetatable(styles[style](CreateFrame("Button", name, UIParent, template)), metatable)
 	object.events = {}
 	object:SetScript("OnEvent", OnEvent)
 	object:SetScript("OnShow", self.UpdateAll)
@@ -257,9 +256,15 @@ function oUF:RegisterFrameObject(object)
 	ClickCastFrames = ClickCastFrames or {}
 	ClickCastFrames[object] = true
 
-	object:UpdateAll()
+	if(UnitExists(unit)) then
+		object:UpdateAll()
+	end
 
 	return object
+end
+
+function oUF:RegisterFrameObject()
+	error":RegisterFrameObject is deprecated"
 end
 
 --[[
