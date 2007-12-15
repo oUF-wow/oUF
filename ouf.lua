@@ -122,6 +122,19 @@ local OnEvent = function(self, event, ...)
 	end
 end
 
+local OnAttributeChanged = function(self, name, value)
+
+	if(name == "unit") then
+		if(self.unit and self.unit == value) then
+			return
+		else
+			self.unit = value
+			self.id = value:match"^.-(%d+)"
+			self:UpdateAll()
+		end
+	end
+end
+
 -- Updates
 local time = 0
 local OnUpdate = function(self, a1)
@@ -183,9 +196,48 @@ local RegisterUnitEvents = function(object)
 		TargetofTargetManaBar:UnregisterAllEvents()
 
 		object:SetScript("OnUpdate", OnUpdate)
+	elseif(unit:sub(1, -2) == "party") then
+		local i = unit:match"%d"
+		local party = "PartyMemberFrame"..i
+		local frame = _G[party]
+
+		frame:UnregisterAllEvents()
+		frame.Show = dummy
+		frame:Hide()
+
+		_G[party..'HealthBar']:UnregisterAllEvents()
+		_G[party..'ManaBar']:UnregisterAllEvents()
 	end
 
 	object:RegisterEvent("PLAYER_ENTERING_WORLD", "UpdateAll")
+end
+
+local initObject = function(object)
+	object:SetAttribute("initial-width", 200)
+	object:SetAttribute("initial-height", 28)
+	object:SetAttribute("*type1", "target")
+
+	object.events = {}
+	object:SetScript("OnEvent", OnEvent)
+	object:SetScript("OnAttributeChanged", OnAttributeChanged)
+	object:SetScript("OnShow", self.UpdateAll)
+	table.insert(log, string.format("[%s]: Parsing frame table.", unit))
+
+	-- We might want to go deeper then the first level of the table, but there is honestly
+	-- nothing preventing us from just placing all the interesting vars at the first level
+	-- of it.
+	for subType, subObject in pairs(object) do
+		if(subTypes[subType]) then
+			table.insert(log, string.format("[%s] Valid key '%s' found.", unit, subType))
+
+			self:RegisterObject(object, subType)
+		end
+	end
+
+	ClickCastFrames = ClickCastFrames or {}
+	ClickCastFrames[object] = true
+
+	styles[style](setmetatable(object, metatable))
 end
 
 --[[
@@ -206,7 +258,7 @@ function oUF:RegisterStyle(name, func)
 	if(styles[name]) then return error("Style [%s] already registered.", name) end
 	if(not style) then style = name end
 
-	styles[name] = style
+	styles[name] = func
 end
 
 function oUF:SetActiveStyle(name)
@@ -219,47 +271,35 @@ function oUF:SetActiveStyle(name)
 	style = name
 end
 
-function oUF:Spawn(name, unit, template)
-	if(not unit) then return error("Bad argument #2 to 'Spawn' (string expected, got %s)", type(unit)) end
+function oUF:Spawn(unit, name)
+	if(not unit) then return error("Bad argument #1 to 'Spawn' (string expected, got %s)", type(unit)) end
 	if(not style) then return error("Unable to create frame. No styles have been registered.") end
 
-	if(unit:sub(1,8) == "partypet") then
-		template = "SecurePartyPetHeaderTemplate, "..template
-	elseif(unit:sub(1,5) == "party") then
-		template = "SecurePartyHeaderTemplate, "..template
-	elseif(unit:sub(1,4) == "raid") then
-		template = "SecureRaidGroupHeaderTemplate, "..template
+	if(unit == "party") then
+		local header = CreateFrame("Frame", "oUF_Party", UIParent, "SecurePartyHeaderTemplate")
+		header:SetAttribute("template","SecureUnitButtonTemplate")
+		header:SetPoint"CENTER"
+		header:SetMovable(true)
+		header:EnableMouse(true)
+		header:SetAttribute("point", "BOTTOM")
+		header:SetAttribute("sortDir", "DESC")
+		header:SetAttribute("yOffset", 30)
+		header.initialConfigFunction = initObject
+		header:Show()
+
+		return
 	else
-		template = "SecureUnitButtonTemplate, "..template
-	end
+		local object = setmetatable(CreateFrame("Button", name, UIParent, "SecureUnitButtonTemplate"), metatable)
+		object:SetAttribute("unit", unit)
+		object.unit = unit
+		object.id = value:match"^.-(%d+)"
 
-	local object = setmetatable(styles[style](CreateFrame("Button", name, UIParent, template)), metatable)
-	object.events = {}
-	object:SetScript("OnEvent", OnEvent)
-	object:SetScript("OnShow", self.UpdateAll)
-	table.insert(log, string.format("[%s]: Parsing frame table.", unit))
+		initObject(object)
 
-	-- We might want to go deeper then the first level of the table, but there is honestly
-	-- nothing preventing us from just placing all the interesting vars at the first level
-	-- of it.
-	for subType, subObject in pairs(object) do
-		if(subTypes[subType]) then
-			table.insert(log, string.format("[%s] Valid key '%s' found.", unit, subType))
-
-			self:RegisterObject(object, subType)
+		if(UnitExists(unit)) then
+			object:UpdateAll()
 		end
 	end
-
-	RegisterUnitEvents(object)
-	RegisterUnitWatch(object)
-
-	ClickCastFrames = ClickCastFrames or {}
-	ClickCastFrames[object] = true
-
-	if(UnitExists(unit)) then
-		object:UpdateAll()
-	end
-
 	return object
 end
 
@@ -300,7 +340,6 @@ function oUF:RegisterObject(object, subType)
 		object:RegisterEvent("UNIT_AURA", "UpdateAura")
 	end
 end
-
 
 --[[
 --:UpdateAll()
