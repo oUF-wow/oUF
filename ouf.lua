@@ -97,7 +97,8 @@ local subTypes = {
 	["Name"] = "UpdateName",
 	["CPoints"] = "UpdateCPoints",
 	["RaidIcon"] = "UpdateRaidIcon",
-	["Aura"] = "UpdateAura",
+	["Buffs"] = "UpdateAura",
+	["Debuffs"] = "UpdateAura",
 }
 
 local settings = {
