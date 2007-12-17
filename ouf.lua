@@ -87,7 +87,8 @@ local r, g, b
 local MAX_COMBO_POINTS
 local blimit, dlimit, row, button, r, icons
 local nb, nd, buff, debuff
-local name, rank, texture, count, color, dtype
+local name, rank, texture, count, color, duration, timeLeft, dtype
+local iwidth, fwidth
 
 local objects = {}
 local subTypes = {
@@ -102,8 +103,6 @@ local subTypes = {
 local settings = {
 	["showBuffs"] = true,
 	["showDebuffs"] = true,
-	["buffLimit"] = 16,
-	["debuffLimit"] = 18,
 	["numBuffs"] = 32,
 	["numDebuffs"] = 40,
 }
@@ -213,31 +212,31 @@ local RegisterUnitEvents = function(object)
 end
 
 local initObject = function(object)
-	object:SetAttribute("initial-width", 200)
-	object:SetAttribute("initial-height", 28)
+	local style = styles[style]
+
+	object = setmetatable(object, metatable)
+	object:SetAttribute("initial-width", style["initial-width"])
+	object:SetAttribute("initial-height", style["initial-height"])
 	object:SetAttribute("*type1", "target")
 
 	object.events = {}
 	object:SetScript("OnEvent", OnEvent)
 	object:SetScript("OnAttributeChanged", OnAttributeChanged)
-	object:SetScript("OnShow", self.UpdateAll)
-	table.insert(log, string.format("[%s]: Parsing frame table.", unit))
+	object:SetScript("OnShow", object.UpdateAll)
 
+	style(object)
 	-- We might want to go deeper then the first level of the table, but there is honestly
 	-- nothing preventing us from just placing all the interesting vars at the first level
 	-- of it.
 	for subType, subObject in pairs(object) do
 		if(subTypes[subType]) then
-			table.insert(log, string.format("[%s] Valid key '%s' found.", unit, subType))
-
-			self:RegisterObject(object, subType)
+			object:RegisterObject(object, subType)
 		end
 	end
 
+	RegisterUnitEvents(object)
 	ClickCastFrames = ClickCastFrames or {}
 	ClickCastFrames[object] = true
-
-	styles[style](setmetatable(object, metatable))
 end
 
 --[[
@@ -254,7 +253,7 @@ end
 
 function oUF:RegisterStyle(name, func)
 	if(type(name) ~= "string") then return error("Bad argument #1 to 'RegisterStyle' (string expected, got %s)", type(name)) end
-	if(type(func) ~= "function") then return error("Bad argument #2 to 'RegisterStyle' (function expected, got %s)", type(func)) end
+	if(type(func) ~= "table" and type(getmetatable(func).__call) ~= "function") then return error("Bad argument #2 to 'RegisterStyle' (table expected, got %s)", type(func)) end
 	if(styles[name]) then return error("Style [%s] already registered.", name) end
 	if(not style) then style = name end
 
@@ -275,31 +274,35 @@ function oUF:Spawn(unit, name)
 	if(not unit) then return error("Bad argument #1 to 'Spawn' (string expected, got %s)", type(unit)) end
 	if(not style) then return error("Unable to create frame. No styles have been registered.") end
 
+	local style = styles[style]
+	local object
 	if(unit == "party") then
 		local header = CreateFrame("Frame", "oUF_Party", UIParent, "SecurePartyHeaderTemplate")
 		header:SetAttribute("template","SecureUnitButtonTemplate")
 		header:SetPoint"CENTER"
 		header:SetMovable(true)
 		header:EnableMouse(true)
-		header:SetAttribute("point", "BOTTOM")
-		header:SetAttribute("sortDir", "DESC")
-		header:SetAttribute("yOffset", 30)
+		header:SetAttribute("point", style.point)
+		header:SetAttribute("sortDir", style.sortDir)
+		header:SetAttribute("yOffset", style.yOffset)
 		header.initialConfigFunction = initObject
 		header:Show()
 
-		return
+		return header
 	else
-		local object = setmetatable(CreateFrame("Button", name, UIParent, "SecureUnitButtonTemplate"), metatable)
+		object = CreateFrame("Button", name, UIParent, "SecureUnitButtonTemplate")
 		object:SetAttribute("unit", unit)
 		object.unit = unit
-		object.id = value:match"^.-(%d+)"
+		object.id = unit:match"^.-(%d+)"
 
+		RegisterUnitWatch(object)
 		initObject(object)
 
 		if(UnitExists(unit)) then
 			object:UpdateAll()
 		end
 	end
+
 	return object
 end
 
@@ -336,7 +339,7 @@ function oUF:RegisterObject(object, subType)
 		object:RegisterEvent("PLAYER_COMBO_POINTS", "UpdateCPoints")
 	elseif(subType == "RaidIcon") then
 		object:RegisterEvent("RAID_TARGET_UPDATE", "UpdateRaidIcon")
-	elseif(subType == "Aura") then
+	elseif(subType == "Buffs" or subType == "Debuffs") then
 		object:RegisterEvent("UNIT_AURA", "UpdateAura")
 	end
 end
@@ -513,6 +516,10 @@ local createBuff = function(self, index)
 	buff:SetWidth(14)
 	buff:SetHeight(14)
 
+	local cd = CreateFrame("Cooldown", nil, buff)
+	cd:SetAllPoints(buff)
+	buff.cd = cd
+
 	local icon = buff:CreateTexture(nil, "BACKGROUND")
 	icon:SetAllPoints(buff)
 
@@ -539,6 +546,10 @@ local createDebuff = function(self, index)
 	debuff:SetWidth(14)
 	debuff:SetHeight(14)
 
+	local cd = CreateFrame("Cooldown", nil, debuff)
+	cd:SetAllPoints(debuff)
+	debuff.cd = cd
+
 	local icon = debuff:CreateTexture(nil, "BACKGROUND")
 	icon:SetAllPoints(debuff)
 
@@ -563,46 +574,51 @@ local createDebuff = function(self, index)
 	return debuff
 end
 
--- TODO: Rewrite to use the width of the parent.
 function oUF:SetAuraPosition(unit, nb, nd)
-	blimit = settings.buffLimit
-	dlimit = settings.debuffLimit
 	row = 1
-
 	icons = self.Buffs
-	for i=1, nb do
-		button = icons[i]
-		if(i == 1) then
-			button:ClearAllPoints()
-			button:SetPoint("BOTTOMLEFT", self, "TOPLEFT")
-		else
-			button:ClearAllPoints()
-			button:SetPoint("LEFT", icons[i-1], "RIGHT", 0, 0)
-
-			r = math.fmod(i - 1, blimit)
-			if(r == 0) then
+	if(icons and nb > 0) then
+		local iwidth, fwidth = self:GetWidth(), 0
+		for i=1, nb do
+			button = icons[i]
+			if(i == 1) then
+				fwidth = fwidth + button:GetWidth()
 				button:ClearAllPoints()
-				button:SetPoint("BOTTOMLEFT", icons[row], "TOPLEFT", 0, 2)
-				row = i
+				button:SetPoint("BOTTOMLEFT", icons)
+			else
+				fwidth = fwidth + button:GetWidth()
+				button:ClearAllPoints()
+				
+				if(fwidth <= iwidth) then
+					button:SetPoint("LEFT", icons[i-1], "RIGHT")
+				else
+					button:SetPoint("BOTTOMLEFT", icons[row], "TOPLEFT", 0, 2)
+					row = i
+				end
 			end
 		end
 	end
 
+	row = 1
 	icons = self.Debuffs
-	for i=1, nd do
-		button = icons[i]
-		if(i == 1) then
-			button:ClearAllPoints()
-			button:SetPoint("TOPLEFT", self, "BOTTOMLEFT", 2, -2)
-		else
-			button:ClearAllPoints()
-			button:SetPoint("LEFT", icons[i-1], "RIGHT", 0, 0)
-
-			r = math.fmod(i - 1, dlimit)
-			if(r == 0) then
+	if(icons and nd > 0) then
+		local iwidth, fwidth = self:GetWidth(), 0
+		for i=1, nb do
+			button = icons[i]
+			if(i == 1) then
+				fwidth = fwidth + button:GetWidth()
 				button:ClearAllPoints()
-				button:SetPoint("TOPLEFT", icons[row], "BOTTOMLEFT", 0, -2)
-				row = i
+				button:SetPoint("TOPLEFT", icons)
+			else
+				fwidth = fwidth + button:GetWidth()
+				button:ClearAllPoints()
+				
+				if(fwidth <= iwidth) then
+					button:SetPoint("LEFT", icons[i-1], "RIGHT")
+				else
+					button:SetPoint("TOPLEFT", icons[row], "BOTTOMLEFT", 0, 2)
+					row = i
+				end
 			end
 		end
 	end
@@ -612,18 +628,24 @@ function oUF:UpdateAura(unit)
 	if(self.unit ~= unit) then return end
 
 	nb = 0
-	if(settings.showBuffs) then
-		if(not self.Buffs) then self.Buffs = {} end
-
-		icons = self.Buffs
+	icons = self.Buffs
+	if(icons) then
 		for i=1,settings.numBuffs do
 			buff = icons[i]
-			name, rank, texture, count = UnitBuff(unit, i)
+			name, rank, texture, count, duration, timeLeft = UnitBuff(unit, i)
 
 			if(not buff and not name) then
 				break
 			elseif(name) then
 				if(not buff) then buff = createBuff(self, i) end
+
+				if(duration and duration > 0) then
+					buff.cd:SetCooldown(GetTime()-(duration-timeLeft), duration)
+					buff.cd:Show()
+				else
+					buff.cd:Hide()
+				end
+
 				buff:Show()
 				buff.icon:SetTexture(texture)
 				buff.count:SetText((count > 1 and count) or nil)
@@ -636,18 +658,24 @@ function oUF:UpdateAura(unit)
 	end
 
 	nd = 0
-	if(settings.showDebuffs) then
-		if(not self.Debuffs) then self.Debuffs = {} end
-
-		icons = self.Debuffs
+	icons = self.Debuffs
+	if(icons) then
 		for i=1,settings.numDebuffs do
 			debuff = icons[i]
-			name, rank, texture, count, dtype, color = UnitDebuff(unit, i)
+			name, rank, texture, count, dtype, duration, timeLeft = UnitDebuff(unit, i)
 
 			if(not debuff and not name) then
 				break
 			elseif(name) then
 				if(not debuff) then debuff = createDebuff(self, i) end
+
+				if(duration and duration > 0) then
+					debuff.cd:SetCooldown(GetTime()-(duration-timeLeft), duration)
+					debuff.cd:Show()
+				else
+					debuff.cd:Hide()
+				end
+
 				debuff:Show()
 				debuff.icon:SetTexture(texture)
 
@@ -666,5 +694,4 @@ function oUF:UpdateAura(unit)
 end
 
 oUF.settings = settings
-oUF.log = log
 _G.oUF = oUF
