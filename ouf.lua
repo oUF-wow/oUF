@@ -123,8 +123,7 @@ local OnEvent = function(self, event, ...)
 end
 
 local OnAttributeChanged = function(self, name, value)
-
-	if(name == "unit") then
+	if(name == "unit" and value) then
 		if(self.unit and self.unit == value) then
 			return
 		else
@@ -147,9 +146,7 @@ local OnUpdate = function(self, a1)
 end
 
 -- Gigantic function of doom
-local RegisterUnitEvents = function(object)
-	local unit = object.unit
-
+local HandleUnit = function(unit, object)
 	if(unit == "player") then
 		-- Hide the blizzard stuff
 		PlayerFrame:UnregisterAllEvents()
@@ -196,20 +193,19 @@ local RegisterUnitEvents = function(object)
 		TargetofTargetManaBar:UnregisterAllEvents()
 
 		object:SetScript("OnUpdate", OnUpdate)
-	elseif(unit:sub(1, -2) == "party") then
-		local i = unit:match"%d"
-		local party = "PartyMemberFrame"..i
-		local frame = _G[party]
+	elseif(unit == "party") then
+		for i=1,4 do
+			local party = "PartyMemberFrame"..i
+			local frame = _G[party]
 
-		frame:UnregisterAllEvents()
-		frame.Show = dummy
-		frame:Hide()
+			frame:UnregisterAllEvents()
+			frame.Show = dummy
+			frame:Hide()
 
-		_G[party..'HealthBar']:UnregisterAllEvents()
-		_G[party..'ManaBar']:UnregisterAllEvents()
+			_G[party..'HealthBar']:UnregisterAllEvents()
+			_G[party..'ManaBar']:UnregisterAllEvents()
+		end
 	end
-
-	object:RegisterEvent("PLAYER_ENTERING_WORLD", "UpdateAll")
 end
 
 local initObject = function(object)
@@ -225,6 +221,8 @@ local initObject = function(object)
 	object:SetScript("OnAttributeChanged", OnAttributeChanged)
 	object:SetScript("OnShow", object.UpdateAll)
 
+	object:RegisterEvent("PLAYER_ENTERING_WORLD", "UpdateAll")
+
 	style(object)
 	-- We might want to go deeper then the first level of the table, but there is honestly
 	-- nothing preventing us from just placing all the interesting vars at the first level
@@ -235,7 +233,6 @@ local initObject = function(object)
 		end
 	end
 
-	RegisterUnitEvents(object)
 	ClickCastFrames = ClickCastFrames or {}
 	ClickCastFrames[object] = true
 end
@@ -289,6 +286,8 @@ function oUF:Spawn(unit, name)
 		header.initialConfigFunction = initObject
 		header:Show()
 
+		HandleUnit"party"
+
 		return header
 	else
 		object = CreateFrame("Button", name, UIParent, "SecureUnitButtonTemplate")
@@ -296,8 +295,9 @@ function oUF:Spawn(unit, name)
 		object.unit = unit
 		object.id = unit:match"^.-(%d+)"
 
-		RegisterUnitWatch(object)
 		initObject(object)
+		HandleUnit(unit, object)
+		RegisterUnitWatch(object)
 
 		if(UnitExists(unit)) then
 			object:UpdateAll()
