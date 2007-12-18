@@ -509,70 +509,44 @@ local debuffOnEnter = function(self)
 end
 local onLeave = function() GameTooltip:Hide() end
 
-local createBuff = function(self, index)
-	local buff = CreateFrame("Frame", nil, self)
-	buff:EnableMouse(true)
-	buff:SetID(index)
+local createButton = function(self, index, debuff)
+	local button = CreateFrame("Frame", nil, self)
+	button:EnableMouse(true)
+	button:SetID(index)
 
-	buff:SetWidth(14)
-	buff:SetHeight(14)
+	button:SetWidth(14)
+	button:SetHeight(14)
 
 	local cd = CreateFrame("Cooldown", nil, buff)
-	cd:SetAllPoints(buff)
-	buff.cd = cd
+	cd:SetAllPoints(button)
 
-	local icon = buff:CreateTexture(nil, "BACKGROUND")
-	icon:SetAllPoints(buff)
+	local icon = button:CreateTexture(nil, "BACKGROUND")
+	icon:SetAllPoints(button)
 
-	local count = buff:CreateFontString(nil, "OVERLAY")
+	local count = button:CreateFontString(nil, "OVERLAY")
 	count:SetFontObject(NumberFontNormal)
-	count:SetPoint("BOTTOMRIGHT", buff, "BOTTOMRIGHT", -1, 0)
+	count:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -1, 0)
 
-	buff:SetScript("OnEnter", buffOnEnter)
-	buff:SetScript("OnLeave", onLeave)
+	if(debuff) then
+		local overlay = button:CreateTexture(nil, "OVERLAY")
+		overlay:SetTexture"Interface\\Buttons\\UI-Debuff-Overlays"
+		overlay:SetAllPoints(button)
+		overlay:SetTexCoord(.296875, .5703125, 0, .515625)
+		button.overlay = overlay
+	
+		button:SetScript("OnEnter", debuffOnEnter)
+	else
+		button:SetScript("OnEnter", buffOnEnter)
+	end
+	button:SetScript("OnLeave", onLeave)
 
-	table.insert(self.Buffs, buff)
+	table.insert((debuff and self.Debufs) or self.Buffs, button)
 
-	buff.icon = icon
-	buff.count = count
+	button.icon = icon
+	buutton.count = count
+	button.cd = cd
 
-	return buff
-end
-
-local createDebuff = function(self, index)
-	local debuff = CreateFrame("Frame", nil, self)
-	debuff:EnableMouse(true)
-	debuff:SetID(index)
-
-	debuff:SetWidth(14)
-	debuff:SetHeight(14)
-
-	local cd = CreateFrame("Cooldown", nil, debuff)
-	cd:SetAllPoints(debuff)
-	debuff.cd = cd
-
-	local icon = debuff:CreateTexture(nil, "BACKGROUND")
-	icon:SetAllPoints(debuff)
-
-	local count = debuff:CreateFontString(nil, "OVERLAY")
-	count:SetFontObject(NumberFontNormal)
-	count:SetPoint("BOTTOMRIGHT", debuff, "BOTTOMRIGHT", -1, 0)
-
-	local overlay = debuff:CreateTexture(nil, "OVERLAY")
-	overlay:SetTexture"Interface\\Buttons\\UI-Debuff-Overlays"
-	overlay:SetAllPoints(debuff)
-	overlay:SetTexCoord(.296875, .5703125, 0, .515625)
-
-	debuff:SetScript("OnEnter", debuffOnEnter)
-	debuff:SetScript("OnLeave", onLeave)
-
-	table.insert(self.Debuffs, debuff)
-
-	debuff.icon = icon
-	debuff.count = count
-	debuff.overlay = overlay
-
-	return debuff
+	return button
 end
 
 function oUF:SetAuraPosition(unit, nb, nd)
@@ -582,14 +556,12 @@ function oUF:SetAuraPosition(unit, nb, nd)
 		local iwidth, fwidth = self:GetWidth(), 0
 		for i=1, nb do
 			button = icons[i]
+			fwidth = fwidth + button:GetWidth()
+			button:ClearAllPoints()
+
 			if(i == 1) then
-				fwidth = fwidth + button:GetWidth()
-				button:ClearAllPoints()
 				button:SetPoint("BOTTOMLEFT", icons)
 			else
-				fwidth = fwidth + button:GetWidth()
-				button:ClearAllPoints()
-				
 				if(fwidth <= iwidth) then
 					button:SetPoint("LEFT", icons[i-1], "RIGHT")
 				else
@@ -606,14 +578,12 @@ function oUF:SetAuraPosition(unit, nb, nd)
 		local iwidth, fwidth = self:GetWidth(), 0
 		for i=1, nb do
 			button = icons[i]
+			fwidth = fwidth + button:GetWidth()
+			button:ClearAllPoints()
+
 			if(i == 1) then
-				fwidth = fwidth + button:GetWidth()
-				button:ClearAllPoints()
 				button:SetPoint("TOPLEFT", icons)
 			else
-				fwidth = fwidth + button:GetWidth()
-				button:ClearAllPoints()
-				
 				if(fwidth <= iwidth) then
 					button:SetPoint("LEFT", icons[i-1], "RIGHT")
 				else
@@ -638,7 +608,7 @@ function oUF:UpdateAura(unit)
 			if(not buff and not name) then
 				break
 			elseif(name) then
-				if(not buff) then buff = createBuff(self, i) end
+				if(not buff) then buff = createButton(self, i) end
 
 				if(duration and duration > 0) then
 					buff.cd:SetCooldown(GetTime()-(duration-timeLeft), duration)
@@ -668,7 +638,7 @@ function oUF:UpdateAura(unit)
 			if(not debuff and not name) then
 				break
 			elseif(name) then
-				if(not debuff) then debuff = createDebuff(self, i) end
+				if(not debuff) then debuff = createButton(self, i, true) end
 
 				if(duration and duration > 0) then
 					debuff.cd:SetCooldown(GetTime()-(duration-timeLeft), duration)
