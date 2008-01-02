@@ -54,6 +54,6 @@ function oUF:UpdatePower(unit)
 			bar.bg:SetVertexColor(color.r*.5, color.g*.5, color.b*.5)
 		end
 	else
-		bar:func(unit, min, max)
+		bar:func(self, unit, min, max)
 	end
 end

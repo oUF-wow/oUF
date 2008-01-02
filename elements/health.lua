@@ -72,6 +72,6 @@ function oUF:UpdateHealth(unit)
 			end
 		end
 	else
-		bar:func(unit, min, max)
+		bar:func(self, unit, min, max)
 	end
 end

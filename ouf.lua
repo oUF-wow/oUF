@@ -187,7 +187,7 @@ local HandleUnit = function(unit, object)
 	end
 end
 
-local initObject = function(object)
+local initObject = function(object, unit)
 	local style = styles[style]
 
 	object = setmetatable(object, metatable)
@@ -202,7 +202,7 @@ local initObject = function(object)
 
 	object:RegisterEvent("PLAYER_ENTERING_WORLD", "UpdateAll")
 
-	style(object)
+	style(object, unit)
 	-- We might want to go deeper then the first level of the table, but there is honestly
 	-- nothing preventing us from just placing all the interesting vars at the first level
 	-- of it.
@@ -274,7 +274,7 @@ function oUF:Spawn(unit, name)
 		object.unit = unit
 		object.id = unit:match"^.-(%d+)"
 
-		initObject(object)
+		initObject(object, unit)
 		HandleUnit(unit, object)
 		RegisterUnitWatch(object)
 
