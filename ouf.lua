@@ -1,5 +1,5 @@
 --[[-------------------------------------------------------------------------
-  Copyright (c) 2006-2007, Trond A Ekseth
+  Copyright (c) 2006-2008, Trond A Ekseth
   All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
@@ -34,8 +34,7 @@ local select = select
 local type = type
 local tostring = tostring
 
-local function _tostring(v, ...) if select('#', ...) == 0 then return tostring(v) end return tostring(v).." ".._tostring(...) end
-local print = function(...) ChatFrame1:AddMessage("|cff33ff99oUF:|r ".._tostring(...)) end
+local print = function(a) ChatFrame1:AddMessage("|cff33ff99oUF:|r "..tostring(a)) end
 local error = function(...) print("|cffff0000Error:|r ", string.format(...)) end
 
 -- Colors
@@ -70,25 +69,12 @@ local style, cache
 local styles = {}
 local furui = {}
 
+local select = select
+local type = type
+local pairs = pairs
+local math_modf = math.modf
 local UnitExists = UnitExists
-local UnitHealth = UnitHealth
-local UnitHealthMax = UnitHealthMax
-local UnitMana = UnitMana
-local UnitManaMax = UnitManaMax
-local UnitPowerType = UnitPowerType
 local UnitName = UnitName
-local GetComboPoints = GetComboPoints
-local GetRaidTargetIndex = GetRaidTargetIndex
-local UnitBuff = UnitBuff
-local UnitDebuff = UnitDebuff
-
-local min, max, bar, color, func
-local r, g, b
-local MAX_COMBO_POINTS
-local blimit, dlimit, row, button, r, icons
-local nb, nd, buff, debuff
-local name, rank, texture, count, color, duration, timeLeft, dtype
-local iwidth, fwidth
 
 local objects = {}
 local subTypes = {
@@ -99,13 +85,6 @@ local subTypes = {
 	["RaidIcon"] = "UpdateRaidIcon",
 	["Buffs"] = "UpdateAura",
 	["Debuffs"] = "UpdateAura",
-}
-
-local settings = {
-	["showBuffs"] = true,
-	["showDebuffs"] = true,
-	["numBuffs"] = 32,
-	["numDebuffs"] = 40,
 }
 
 local dummy = function() end
@@ -361,9 +340,7 @@ function oUF:UpdateAll()
 	end
 end
 
---[[ Health - Updating ]]
-
--- My 8-ball tells me we'll need this one later on.
+--[[ My 8-ball tells me we'll need this one later on.
 local ColorGradient = function(perc, r1, g1, b1, r2, g2, b2, r3, g3, b3)
 	if perc >= 1 then
 		return r3, g3, b3
@@ -379,71 +356,7 @@ local ColorGradient = function(perc, r1, g1, b1, r2, g2, b2, r3, g3, b3)
 	end
 
 	return r2 + (r3-r2)*relperc, g2 + (g3-g2)*relperc, b2 + (b3-b2)*relperc
-end
-
---[[
---:UpdateHealth(event, unit)
---	Notes:
---		- Internal function, but externally avaible as someone might want to call it.
---		- It will call .func if it's defined.
---]]
-function oUF:UpdateHealth(unit)
-	if(self.unit ~= unit) then return end
-
-	min, max = UnitHealth(unit), UnitHealthMax(unit)
-	bar = self.Health
-
-	bar:SetMinMaxValues(0, max)
-	bar:SetValue(min)
-
-	-- Discuss...
-	if(UnitIsTapped(unit) and not UnitIsTappedByPlayer(unit) or not UnitIsConnected(unit)) then
-		color = colors.health[1]
-	elseif(unit == "pet" and GetPetHappiness()) then
-		color = colors.happiness[GetPetHappiness()]
-	else
-		color = UnitIsPlayer(unit) and RAID_CLASS_COLORS[select(2, UnitClass(unit))] or UnitReactionColor[UnitReaction(unit, "player")]
-	end
-
-	if(color) then
-		bar:SetStatusBarColor(color.r, color.g, color.b)
-
-		if(bar.bg) then
-			bar.bg:SetVertexColor(color.r*.5, color.g*.5, color.b*.5)
-		end
-	end
-
-	func = bar.func
-	if(type(func) == "function") then func(bar, unit, min, max) end
-end
-
---[[ Power - Updating ]]
-
---[[
---:UpdatePower(event, unit)
---	Notes:
---		- Internal function, but externally avaible as someone might want to call it.
---		- It will call .func if it's defined.
---]]
-function oUF:UpdatePower(unit)
-	if(self.unit ~= unit) then return end
-
-	min, max = UnitMana(unit), UnitManaMax(unit)
-	bar = self.Power
-
-	bar:SetMinMaxValues(0, max)
-	bar:SetValue(min)
-
-	color = colors.power[UnitPowerType(unit)]
-	bar:SetStatusBarColor(color.r, color.g, color.b)
-	
-	if(bar.bg) then
-		bar.bg:SetVertexColor(color.r*.5, color.g*.5, color.b*.5)
-	end
-
-	func = bar.func
-	if(type(func) == "function") then func(bar, unit, min, max) end
-end
+end]]
 
 --[[ Name ]]
 
@@ -457,212 +370,5 @@ function oUF:UpdateName(unit)
 	self.Name:SetText(name)
 end
 
---[[ CPoints ]]
-
-function oUF:UpdateCPoints()
-	local cp = GetComboPoints()
-	local cpoints = self.CPoints
-
-	if(#cpoints == 0) then
-		cpoints:SetText(cp)
-	else
-		for i=1, MAX_COMBO_POINTS do
-			if(i <= cp) then
-				cpoints[i]:Show()
-			else
-				cpoints[i]:Hide()
-			end
-		end
-	end
-end
-
---[[ RaidIcon ]]
-
-function oUF:UpdateRaidIcon()
-	local index = GetRaidTargetIndex(self.unit)
-	local icon = self.RaidIcon
-
-	if(index) then
-		SetRaidTargetIconTexture(icon, index)
-		icon:Show()
-	else
-		icon:Hide()
-	end
-end
-
---[[ Aura ]]
-
-local buffOnEnter = function(self)
-	if(not self:IsVisible()) then return end
-	local unit = self:GetParent().unit
-
-	GameTooltip:SetOwner(self, "ANHOR_BOTTOMRIGHT")
-	GameTooltip:SetUnitBuff(unit, self:GetID())
-end
-local debuffOnEnter = function(self)
-	if(not self:IsVisible()) then return end
-	local unit = self:GetParent().unit
-
-	GameTooltip:SetOwner(self, "ANHOR_BOTTOMRIGHT")
-
-	GameTooltip:SetUnitDebuff(unit, self:GetID())
-end
-local onLeave = function() GameTooltip:Hide() end
-
-local createButton = function(self, index, debuff)
-	local button = CreateFrame("Frame", nil, self)
-	button:EnableMouse(true)
-	button:SetID(index)
-
-	button:SetWidth(14)
-	button:SetHeight(14)
-
-	local cd = CreateFrame("Cooldown", nil, buff)
-	cd:SetAllPoints(button)
-
-	local icon = button:CreateTexture(nil, "BACKGROUND")
-	icon:SetAllPoints(button)
-
-	local count = button:CreateFontString(nil, "OVERLAY")
-	count:SetFontObject(NumberFontNormal)
-	count:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -1, 0)
-
-	if(debuff) then
-		local overlay = button:CreateTexture(nil, "OVERLAY")
-		overlay:SetTexture"Interface\\Buttons\\UI-Debuff-Overlays"
-		overlay:SetAllPoints(button)
-		overlay:SetTexCoord(.296875, .5703125, 0, .515625)
-		button.overlay = overlay
-	
-		button:SetScript("OnEnter", debuffOnEnter)
-	else
-		button:SetScript("OnEnter", buffOnEnter)
-	end
-	button:SetScript("OnLeave", onLeave)
-
-	table.insert((debuff and self.Debufs) or self.Buffs, button)
-
-	button.icon = icon
-	buutton.count = count
-	button.cd = cd
-
-	return button
-end
-
-function oUF:SetAuraPosition(unit, nb, nd)
-	row = 1
-	icons = self.Buffs
-	if(icons and nb > 0) then
-		local iwidth, fwidth = self:GetWidth(), 0
-		for i=1, nb do
-			button = icons[i]
-			fwidth = fwidth + button:GetWidth()
-			button:ClearAllPoints()
-
-			if(i == 1) then
-				button:SetPoint("BOTTOMLEFT", icons)
-			else
-				if(fwidth <= iwidth) then
-					button:SetPoint("LEFT", icons[i-1], "RIGHT")
-				else
-					button:SetPoint("BOTTOMLEFT", icons[row], "TOPLEFT", 0, 2)
-					row = i
-				end
-			end
-		end
-	end
-
-	row = 1
-	icons = self.Debuffs
-	if(icons and nd > 0) then
-		local iwidth, fwidth = self:GetWidth(), 0
-		for i=1, nb do
-			button = icons[i]
-			fwidth = fwidth + button:GetWidth()
-			button:ClearAllPoints()
-
-			if(i == 1) then
-				button:SetPoint("TOPLEFT", icons)
-			else
-				if(fwidth <= iwidth) then
-					button:SetPoint("LEFT", icons[i-1], "RIGHT")
-				else
-					button:SetPoint("TOPLEFT", icons[row], "BOTTOMLEFT", 0, 2)
-					row = i
-				end
-			end
-		end
-	end
-end
-
-function oUF:UpdateAura(unit)
-	if(self.unit ~= unit) then return end
-
-	nb = 0
-	icons = self.Buffs
-	if(icons) then
-		for i=1,settings.numBuffs do
-			buff = icons[i]
-			name, rank, texture, count, duration, timeLeft = UnitBuff(unit, i)
-
-			if(not buff and not name) then
-				break
-			elseif(name) then
-				if(not buff) then buff = createButton(self, i) end
-
-				if(duration and duration > 0) then
-					buff.cd:SetCooldown(GetTime()-(duration-timeLeft), duration)
-					buff.cd:Show()
-				else
-					buff.cd:Hide()
-				end
-
-				buff:Show()
-				buff.icon:SetTexture(texture)
-				buff.count:SetText((count > 1 and count) or nil)
-
-				nb = nb + 1
-			elseif(buff) then
-				buff:Hide()
-			end
-		end
-	end
-
-	nd = 0
-	icons = self.Debuffs
-	if(icons) then
-		for i=1,settings.numDebuffs do
-			debuff = icons[i]
-			name, rank, texture, count, dtype, duration, timeLeft = UnitDebuff(unit, i)
-
-			if(not debuff and not name) then
-				break
-			elseif(name) then
-				if(not debuff) then debuff = createButton(self, i, true) end
-
-				if(duration and duration > 0) then
-					debuff.cd:SetCooldown(GetTime()-(duration-timeLeft), duration)
-					debuff.cd:Show()
-				else
-					debuff.cd:Hide()
-				end
-
-				debuff:Show()
-				debuff.icon:SetTexture(texture)
-
-				color = DebuffTypeColor[dtype or "none"]
-				debuff.overlay:SetVertexColor(color.r, color.g, color.b)
-				debuff.count:SetText((count > 1 and count) or nil)
-
-				nd = nd + 1
-			elseif(debuff) then
-				debuff:Hide()
-			end
-		end
-	end
-
-	self:SetAuraPosition(unit, nb, nd)
-end
-
-oUF.settings = settings
+oUF.colors = colors
 _G.oUF = oUF

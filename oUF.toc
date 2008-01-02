@@ -2,6 +2,12 @@
 ## Title: oUF
 ## Author: Haste
 ## X-eMail: troeks@gmail.com
-## Notes: Unit frame framework for the people. Does nothing by itself. 
+## Notes: Unit frame framework for the people. Does nothing by itself.
 
 ouf.lua
+
+elements/power.lua
+elements/aura.lua
+elements/health.lua
+elements/cpoints.lua
+elements/ricons.lua
