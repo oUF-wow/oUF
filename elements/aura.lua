@@ -150,7 +150,7 @@ function oUF:UpdateAura(unit)
 			if(not buff and not name) then
 				break
 			elseif(name) then
-				if(not buff) then buff = createButton(self, i) end
+				if(not buff) then buff = createButton(icons, i) end
 
 				if(duration and duration > 0) then
 					buff.cd:SetCooldown(GetTime()-(duration-timeLeft), duration)
