@@ -95,6 +95,7 @@ local events = {
 	PLAYER_TARGET_CHANGED = "UpdateAll",
 	PLAYER_FOCUS_CHANGED = "UpdateAll",
 	PLAYER_ENTERING_WORLD = "UpdateAll",
+	UPDATE_MOUSEOVER_UNIT = "UpdateAll",
 	UNIT_AURA = "UpdateAura",
 	UNIT_HEALTH = "UpdateHealth",
 	UNIT_MAXHEALTH = "UpdateHealth",
@@ -181,6 +182,8 @@ local HandleUnit = function(unit, object)
 		object:RegisterEvent"PLAYER_TARGET_CHANGED"
 	elseif(unit == "focus") then
 		object:RegisterEvent"PLAYER_FOCUS_CHANGED"
+	elseif(unit == "mouseover") then
+		object:RegisterEvent"UPDATE_MOUSEOVER_UNIT"
 	elseif(unit:match"target") then
 		-- Hide the blizzard stuff
 		if(unit == "targettarget") then
