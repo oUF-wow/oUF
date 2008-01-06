@@ -85,16 +85,17 @@ local subTypes = {
 	["RaidIcon"] = "UpdateRaidIcon",
 	["Buffs"] = "UpdateAura",
 	["Debuffs"] = "UpdateAura",
+	["Leader"] = "UpdateLeader",
 }
 
 local dummy = function() end
 
 -- Events
 local events = {
-	UNIT_HAPPINESS = "UpdateHealth",
 	PLAYER_TARGET_CHANGED = "UpdateAll",
 	PLAYER_FOCUS_CHANGED = "UpdateAll",
 	PLAYER_ENTERING_WORLD = "UpdateAll",
+	UNIT_AURA = "UpdateAura",
 	UNIT_HEALTH = "UpdateHealth",
 	UNIT_MAXHEALTH = "UpdateHealth",
 	UNIT_MANA = "UpdatePower",
@@ -106,10 +107,12 @@ local events = {
 	UNIT_MAXFOCUS = "UpdatePower",
 	UNIT_MAXENERGY = "UpdatePower",
 	UNIT_DISPLAYPOWER = "UpdatePower",
+	UNIT_HAPPINESS = "UpdateHealth",
 	UNIT_NAME_UPDATE = "UpdateName",
 	PLAYER_COMBO_POINTS = "UpdateCPoints",
 	RAID_TARGET_UPDATE = "UpdateRaidIcon",
-	UNIT_AURA = "UpdateAura",
+	PARTY_LEADER_CHANGED = "UpdateLeader",
+	PARTY_MEMBERS_CHANGED = "UpdateLeader",
 }
 local OnEvent = function(self, event, ...)
 	self[events[event]](self, ...)
@@ -326,6 +329,9 @@ function oUF:RegisterObject(object, subType)
 		object:RegisterEvent"PLAYER_COMBO_POINTS"
 	elseif(subType == "RaidIcon") then
 		object:RegisterEvent"RAID_TARGET_UPDATE"
+	elseif(subType == "Leader") then
+		object:RegisterEvent"PARTY_LEADER_CHANGED"
+		object:RegisterEvent"PARTY_MEMBERS_CHANGED"
 	elseif(subType == "Buffs" or subType == "Debuffs") then
 		object:RegisterEvent"UNIT_AURA"
 	end

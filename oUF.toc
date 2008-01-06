@@ -11,3 +11,4 @@ elements\aura.lua
 elements\health.lua
 elements\cpoints.lua
 elements\ricons.lua
+elements\leader.lua
