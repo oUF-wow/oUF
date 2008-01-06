@@ -193,6 +193,7 @@ local initObject = function(object, unit)
 	object = setmetatable(object, metatable)
 	object:SetAttribute("initial-width", style["initial-width"])
 	object:SetAttribute("initial-height", style["initial-height"])
+	object:SetAttribute("initial-scale", style["initial-scale"])
 	object:SetAttribute("*type1", "target")
 
 	object.events = {}
@@ -261,6 +262,7 @@ function oUF:Spawn(unit, name)
 		header:EnableMouse(true)
 		header:SetAttribute("point", style.point)
 		header:SetAttribute("sortDir", style.sortDir)
+		header:SetAttribute("xOffset", style.xOffset)
 		header:SetAttribute("yOffset", style.yOffset)
 		header.initialConfigFunction = initObject
 		header:Show()
