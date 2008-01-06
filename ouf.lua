@@ -90,15 +90,29 @@ local subTypes = {
 local dummy = function() end
 
 -- Events
-local events = {}
+local events = {
+	UNIT_HAPPINESS = "UpdateHealth",
+	PLAYER_TARGET_CHANGED = "UpdateAll",
+	PLAYER_FOCUS_CHANGED = "UpdateAll",
+	PLAYER_ENTERING_WORLD = "UpdateAll",
+	UNIT_HEALTH = "UpdateHealth",
+	UNIT_MAXHEALTH = "UpdateHealth",
+	UNIT_MANA = "UpdatePower",
+	UNIT_RAGE = "UpdatePower",
+	UNIT_FOCUS = "UpdatePower",
+	UNIT_ENERGY = "UpdatePower",
+	UNIT_MAXMANA = "UpdatePower",
+	UNIT_MAXRAGE = "UpdatePower",
+	UNIT_MAXFOCUS = "UpdatePower",
+	UNIT_MAXENERGY = "UpdatePower",
+	UNIT_DISPLAYPOWER = "UpdatePower",
+	UNIT_NAME_UPDATE = "UpdateName",
+	PLAYER_COMBO_POINTS = "UpdateCPoints",
+	RAID_TARGET_UPDATE = "UpdateRaidIcon",
+	UNIT_AURA = "UpdateAura",
+}
 local OnEvent = function(self, event, ...)
-	local func = self.events[event]
-
-	if(type(func) == "string") then
-		self[func](self, ...)
-	elseif(type(func) == "function") then
-		func(self, ...)
-	end
+	self[events[event]](self, ...)
 end
 
 local OnAttributeChanged = function(self, name, value)
@@ -145,7 +159,7 @@ local HandleUnit = function(unit, object)
 
 		-- Enable our shit
 		-- Temp solution :----D
-		object:RegisterEvent("UNIT_HAPPINESS", "UpdateHealth")
+		object:RegisterEvent"UNIT_HAPPINESS"
 	elseif(unit == "target") then
 		-- Hide the blizzard stuff
 		TargetFrame:UnregisterAllEvents()
@@ -161,15 +175,19 @@ local HandleUnit = function(unit, object)
 		ComboFrame:Hide()
 
 		-- Enable our shit
-		object:RegisterEvent("PLAYER_TARGET_CHANGED", "UpdateAll")
-	elseif(unit == "targettarget") then
+		object:RegisterEvent"PLAYER_TARGET_CHANGED"
+	elseif(unit == "focus") then
+		object:RegisterEvent"PLAYER_FOCUS_CHANGED"
+	elseif(unit:match"target") then
 		-- Hide the blizzard stuff
-		TargetofTargetFrame:UnregisterAllEvents()
-		TargetofTargetFrame.Show = dummy
-		TargetofTargetFrame:Hide()
+		if(unit == "targettarget") then
+			TargetofTargetFrame:UnregisterAllEvents()
+			TargetofTargetFrame.Show = dummy
+			TargetofTargetFrame:Hide()
 
-		TargetofTargetHealthBar:UnregisterAllEvents()
-		TargetofTargetManaBar:UnregisterAllEvents()
+			TargetofTargetHealthBar:UnregisterAllEvents()
+			TargetofTargetManaBar:UnregisterAllEvents()
+		end
 
 		object:SetScript("OnUpdate", OnUpdate)
 	elseif(unit == "party") then
@@ -196,12 +214,11 @@ local initObject = function(object, unit)
 	object:SetAttribute("initial-scale", style["initial-scale"])
 	object:SetAttribute("*type1", "target")
 
-	object.events = {}
 	object:SetScript("OnEvent", OnEvent)
 	object:SetScript("OnAttributeChanged", OnAttributeChanged)
 	object:SetScript("OnShow", object.UpdateAll)
 
-	object:RegisterEvent("PLAYER_ENTERING_WORLD", "UpdateAll")
+	object:RegisterEvent"PLAYER_ENTERING_WORLD"
 
 	style(object, unit)
 	-- We might want to go deeper then the first level of the table, but there is honestly
@@ -215,18 +232,6 @@ local initObject = function(object, unit)
 
 	ClickCastFrames = ClickCastFrames or {}
 	ClickCastFrames[object] = true
-end
-
---[[
---:RegisterEvent(event, func)
---	Notes:
---		- Internal function, but externally avaible as someone might want to call it.
---]]
-function oUF:RegisterEvent(event, func)
-	if(not self.events[event]) then
-		self.events[event] = func or event
-		RegisterEvent(self, event)
-	end
 end
 
 function oUF:RegisterStyle(name, func)
@@ -303,26 +308,26 @@ function oUF:RegisterObject(object, subType)
 	-- We could use a table containing this info, but it's just as easy to do it
 	-- manually.
 	if(subType == "Health") then
-		object:RegisterEvent("UNIT_HEALTH", "UpdateHealth")
-		object:RegisterEvent("UNIT_MAXHEALTH", "UpdateHealth")
+		object:RegisterEvent"UNIT_HEALTH"
+		object:RegisterEvent"UNIT_MAXHEALTH"
 	elseif(subType == "Power") then
-		object:RegisterEvent("UNIT_MANA", "UpdatePower")
-		object:RegisterEvent("UNIT_RAGE", "UpdatePower")
-		object:RegisterEvent("UNIT_FOCUS", "UpdatePower")
-		object:RegisterEvent("UNIT_ENERGY", "UpdatePower")
-		object:RegisterEvent("UNIT_MAXMANA", "UpdatePower")
-		object:RegisterEvent("UNIT_MAXRAGE", "UpdatePower")
-		object:RegisterEvent("UNIT_MAXFOCUS", "UpdatePower")
-		object:RegisterEvent("UNIT_MAXENERGY", "UpdatePower")
-		object:RegisterEvent("UNIT_DISPLAYPOWER", "UpdatePower")
+		object:RegisterEvent"UNIT_MANA"
+		object:RegisterEvent"UNIT_RAGE"
+		object:RegisterEvent"UNIT_FOCUS"
+		object:RegisterEvent"UNIT_ENERGY"
+		object:RegisterEvent"UNIT_MAXMANA"
+		object:RegisterEvent"UNIT_MAXRAGE"
+		object:RegisterEvent"UNIT_MAXFOCUS"
+		object:RegisterEvent"UNIT_MAXENERGY"
+		object:RegisterEvent"UNIT_DISPLAYPOWER"
 	elseif(subType == "Name") then
-		object:RegisterEvent("UNIT_NAME_UPDATE", "UpdateName")
+		object:RegisterEvent"UNIT_NAME_UPDATE"
 	elseif(subType == "CPoints" and unit == "target") then
-		object:RegisterEvent("PLAYER_COMBO_POINTS", "UpdateCPoints")
+		object:RegisterEvent"PLAYER_COMBO_POINTS"
 	elseif(subType == "RaidIcon") then
-		object:RegisterEvent("RAID_TARGET_UPDATE", "UpdateRaidIcon")
+		object:RegisterEvent"RAID_TARGET_UPDATE"
 	elseif(subType == "Buffs" or subType == "Debuffs") then
-		object:RegisterEvent("UNIT_AURA", "UpdateAura")
+		object:RegisterEvent"UNIT_AURA"
 	end
 end
 
