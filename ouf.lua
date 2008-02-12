@@ -271,10 +271,10 @@ function oUF:Spawn(unit, name)
 		header:SetPoint"CENTER"
 		header:SetMovable(true)
 		header:EnableMouse(true)
-		header:SetAttribute("point", style.point)
-		header:SetAttribute("sortDir", style.sortDir)
-		header:SetAttribute("xOffset", style.xOffset)
-		header:SetAttribute("yOffset", style.yOffset)
+		header:SetAttribute("point", style["party-point"])
+		header:SetAttribute("sortDir", style["party-sortDir"])
+		header:SetAttribute("xOffset", style["party-xOffset"])
+		header:SetAttribute("yOffset", style["party-yOffset"])
 		header.initialConfigFunction = initObject
 		header:Show()
 
