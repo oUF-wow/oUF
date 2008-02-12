@@ -38,16 +38,16 @@ local DebuffTypeColor = DebuffTypeColor
 local row, icons, button, nb, buff, timeLeft, count, texture
 local dtype, debuff, rank, name, nd, color, nd, duration
 
-local debuffOnEnter = function(self)
+local OnEnter = function(self)
 	if(not self:IsVisible()) then return end
-	local unit = self:GetParent():GetParent().unit
-
-	GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
-
-	GameTooltip:SetUnitDebuff(unit, self:GetID())
+	if(self.overlay) then
+		GameTooltip:SetUnitDebuff(self.unit, self:GetID())
+	else
+		GameTooltip:SetUnitBuff(self.unit, self:GetID())
+	end
 end
 
-local onLeave = function()
+local OnLeave = function()
 	GameTooltip:Hide()
 end
 
@@ -75,18 +75,17 @@ local createButton = function(self, index, debuff)
 		overlay:SetAllPoints(button)
 		overlay:SetTexCoord(.296875, .5703125, 0, .515625)
 		button.overlay = overlay
-
-		button:SetScript("OnEnter", debuffOnEnter)
-	else
-		button:SetScript("OnEnter", buffOnEnter)
 	end
-	button:SetScript("OnLeave", onLeave)
+
+	button:SetScript("OnEnter", OnEnter)
+	button:SetScript("OnLeave", OnLeave)
 
 	table_insert(self, button)
 
 	button.icon = icon
 	button.count = count
 	button.cd = cd
+	button.unit = self.unit
 
 	return button
 end
