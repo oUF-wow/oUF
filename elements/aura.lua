@@ -42,7 +42,7 @@ local debuffOnEnter = function(self)
 	if(not self:IsVisible()) then return end
 	local unit = self:GetParent():GetParent().unit
 
-	GameTooltip:SetOwner(self, "ANHOR_BOTTOMRIGHT")
+	GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
 
 	GameTooltip:SetUnitDebuff(unit, self:GetID())
 end
@@ -75,7 +75,7 @@ local createButton = function(self, index, debuff)
 		overlay:SetAllPoints(button)
 		overlay:SetTexCoord(.296875, .5703125, 0, .515625)
 		button.overlay = overlay
-	
+
 		button:SetScript("OnEnter", debuffOnEnter)
 	else
 		button:SetScript("OnEnter", buffOnEnter)
