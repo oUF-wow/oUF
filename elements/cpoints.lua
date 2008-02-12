@@ -37,7 +37,7 @@ function oUF:UpdateCPoints()
 	local cpoints = self.CPoints
 
 	if(#cpoints == 0) then
-		cpoints:SetText((cp > 0))
+		cpoints:SetText((cp > 0) and cp)
 	else
 		for i=1, MAX_COMBO_POINTS do
 			if(i <= cp) then
