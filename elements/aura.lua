@@ -40,6 +40,8 @@ local dtype, debuff, rank, name, nd, color, nd, duration
 
 local OnEnter = function(self)
 	if(not self:IsVisible()) then return end
+
+	GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
 	if(self.overlay) then
 		GameTooltip:SetUnitDebuff(self.unit, self:GetID())
 	else
@@ -51,13 +53,13 @@ local OnLeave = function()
 	GameTooltip:Hide()
 end
 
-local createButton = function(self, index, debuff)
+local createButton = function(self, icons, index, debuff)
 	local button = CreateFrame("Frame", nil, self)
 	button:EnableMouse(true)
 	button:SetID(index)
 
-	button:SetWidth(self.size or 16)
-	button:SetHeight(self.size or 16)
+	button:SetWidth(icons.size or 16)
+	button:SetHeight(icons.size or 16)
 
 	local cd = CreateFrame("Cooldown", nil, button)
 	cd:SetAllPoints(button)
@@ -80,7 +82,7 @@ local createButton = function(self, index, debuff)
 	button:SetScript("OnEnter", OnEnter)
 	button:SetScript("OnLeave", OnLeave)
 
-	table_insert(self, button)
+	table_insert(icons, button)
 
 	button.icon = icon
 	button.count = count
@@ -150,7 +152,7 @@ function oUF:UNIT_AURA(event, unit)
 			if(not buff and not name) then
 				break
 			elseif(name) then
-				if(not buff) then buff = createButton(icons, i) end
+				if(not buff) then buff = createButton(self, icons, i) end
 
 				if(duration and duration > 0) then
 					buff.cd:SetCooldown(GetTime()-(duration-timeLeft), duration)
@@ -180,7 +182,7 @@ function oUF:UNIT_AURA(event, unit)
 			if(not debuff and not name) then
 				break
 			elseif(name) then
-				if(not debuff) then debuff = createButton(icons, i, true) end
+				if(not debuff) then debuff = createButton(self, icons, i, true) end
 
 				if(duration and duration > 0) then
 					debuff.cd:SetCooldown(GetTime()-(duration-timeLeft), duration)
