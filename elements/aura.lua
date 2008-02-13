@@ -136,8 +136,9 @@ function oUF:SetAuraPosition(unit, nb, nd)
 	end
 end
 
-function oUF:UpdateAura(unit)
+function oUF:UNIT_AURA(event, unit)
 	if(self.unit ~= unit) then return end
+	if(self.PreUpdateAura) then self:PreUpdateAura(event, unit) end
 
 	nb = 0
 	icons = self.Buffs
@@ -203,4 +204,5 @@ function oUF:UpdateAura(unit)
 	end
 
 	self:SetAuraPosition(unit, nb, nd)
+	if(self.PostUpdateAura) then self:PostUpdateAura(event, unit) end
 end

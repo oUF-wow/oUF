@@ -30,7 +30,6 @@
 ---------------------------------------------------------------------------]]
 
 local select = select
-local type = type
 local UnitHealth = UnitHealth
 local UnitHealthMax = UnitHealthMax
 local UnitIsTapped = UnitIsTapped
@@ -47,16 +46,17 @@ local health = oUF.colors.health
 local happiness = oUF.colors.happiness
 local min, max, bar, color
 
-function oUF:UpdateHealth(unit)
+function oUF:UNIT_HEALTH(event, unit)
 	if(self.unit ~= unit) then return end
+	if(self.PreUpdateHealth) then self:PreUpdateHealth(event, unit) end
 
 	min, max = UnitHealth(unit), UnitHealthMax(unit)
 	bar = self.Health
-
 	bar:SetMinMaxValues(0, max)
 	bar:SetValue(min)
 
-	if(not type(bar.func) == "function") then
+	if(not self.OverrideUpdateHealth) then
+		-- TODO: Rewrite this block.
 		if(UnitIsTapped(unit) and not UnitIsTappedByPlayer(unit) or not UnitIsConnected(unit)) then
 			color = health[1]
 		elseif(unit == "pet" and GetPetHappiness()) then
@@ -72,6 +72,10 @@ function oUF:UpdateHealth(unit)
 			end
 		end
 	else
-		bar:func(self, unit, min, max)
+		self:OverrideUpdateHealth(event, bar, unit, min, max)
 	end
+
+	if(self.PostUpdateHealth) then self:PostUpdateHealth(event, bar, unit, min, max) end
 end
+oUF.UNIT_MAXHEALTH = oUF.UNIT_HEALTH
+oUF.UNIT_HAPPINESS = oUF.UNIT_HEALTH

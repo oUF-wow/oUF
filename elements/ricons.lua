@@ -32,7 +32,8 @@
 local GetRaidTargetIndex = GetRaidTargetIndex
 local SetRaidTargetIconTexture = SetRaidTargetIconTexture
 
-function oUF:UpdateRaidIcon()
+function oUF:RAID_TARGET_UPDATE(event)
+	if(not self:IsShown()) then return end
 	local index = GetRaidTargetIndex(self.unit)
 	local icon = self.RaidIcon
 

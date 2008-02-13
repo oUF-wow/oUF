@@ -78,45 +78,21 @@ local UnitName = UnitName
 
 local objects = {}
 local subTypes = {
-	["Health"] = "UpdateHealth",
-	["Power"] = "UpdatePower",
-	["Name"] = "UpdateName",
-	["CPoints"] = "UpdateCPoints",
-	["RaidIcon"] = "UpdateRaidIcon",
-	["Buffs"] = "UpdateAura",
-	["Debuffs"] = "UpdateAura",
-	["Leader"] = "UpdateLeader",
+	["Health"] = "UNIT_HEALTH",
+	["Power"] = "UNIT_MANA",
+	["Name"] = "UNIT_NAME_UPDATE",
+	["CPoints"] = "PLAYER_COMBO_POINTS",
+	["RaidIcon"] = "RAID_TARGET_UPDATE",
+	["Buffs"] = "UNIT_AURA",
+	["Debuffs"] = "UNIT_AURA",
+	["Leader"] = "PARTY_LEADER_CHANGED",
 }
 
 local dummy = function() end
 
 -- Events
-local events = {
-	PLAYER_TARGET_CHANGED = "UpdateAll",
-	PLAYER_FOCUS_CHANGED = "UpdateAll",
-	PLAYER_ENTERING_WORLD = "UpdateAll",
-	UPDATE_MOUSEOVER_UNIT = "UpdateAll",
-	UNIT_AURA = "UpdateAura",
-	UNIT_HEALTH = "UpdateHealth",
-	UNIT_MAXHEALTH = "UpdateHealth",
-	UNIT_MANA = "UpdatePower",
-	UNIT_RAGE = "UpdatePower",
-	UNIT_FOCUS = "UpdatePower",
-	UNIT_ENERGY = "UpdatePower",
-	UNIT_MAXMANA = "UpdatePower",
-	UNIT_MAXRAGE = "UpdatePower",
-	UNIT_MAXFOCUS = "UpdatePower",
-	UNIT_MAXENERGY = "UpdatePower",
-	UNIT_DISPLAYPOWER = "UpdatePower",
-	UNIT_HAPPINESS = "UpdateHealth",
-	UNIT_NAME_UPDATE = "UpdateName",
-	PLAYER_COMBO_POINTS = "UpdateCPoints",
-	RAID_TARGET_UPDATE = "UpdateRaidIcon",
-	PARTY_LEADER_CHANGED = "UpdateLeader",
-	PARTY_MEMBERS_CHANGED = "UpdateLeader",
-}
 local OnEvent = function(self, event, ...)
-	self[events[event]](self, ...)
+	self[event](self, event, ...)
 end
 
 local OnAttributeChanged = function(self, name, value)
@@ -126,7 +102,7 @@ local OnAttributeChanged = function(self, name, value)
 		else
 			self.unit = value
 			self.id = value:match"^.-(%d+)"
-			self:UpdateAll()
+			self:PLAYER_ENTERING_WORLD()
 		end
 	end
 end
@@ -135,9 +111,9 @@ end
 local time = 0
 local OnUpdate = function(self, a1)
 	time = time + a1
-	
+
 	if(time > .5) then
-		self:UpdateAll()
+		self:PLAYER_ENTERING_WORLD()
 		time = 0
 	end
 end
@@ -222,7 +198,7 @@ local initObject = function(object, unit)
 
 	object:SetScript("OnEvent", OnEvent)
 	object:SetScript("OnAttributeChanged", OnAttributeChanged)
-	object:SetScript("OnShow", object.UpdateAll)
+	object:SetScript("OnShow", object.PLAYER_ENTERING_WORLD)
 
 	object:RegisterEvent"PLAYER_ENTERING_WORLD"
 
@@ -292,7 +268,7 @@ function oUF:Spawn(unit, name)
 		RegisterUnitWatch(object)
 
 		if(UnitExists(unit)) then
-			object:UpdateAll()
+			object:PLAYER_ENTERING_WORLD()
 		end
 	end
 
@@ -341,20 +317,24 @@ function oUF:RegisterObject(object, subType)
 end
 
 --[[
---:UpdateAll()
+--:PLAYER_ENTERING_WORLD()
 --	Notes:
 --		- Does a full update of all elements on the object.
 --]]
-function oUF:UpdateAll()
+function oUF:PLAYER_ENTERING_WORLD(event)
 	local unit = self.unit
 	if(not UnitExists(unit)) then return end
 
 	for key, func in pairs(subTypes) do
 		if(self[key]) then
-			self[func](self, unit)
+			self[func](self, event, unit)
 		end
 	end
 end
+
+oUF.PLAYER_TARGET_CHANGED = oUF.PLAYER_ENTERING_WORLD
+oUF.PLAYER_FOCUS_CHANGED = oUF.PLAYER_ENTERING_WORLD
+oUF.UPDATE_MOUSEOVER_UNIT = oUF.PLAYER_ENTERING_WORLD
 
 --[[ My 8-ball tells me we'll need this one later on.
 local ColorGradient = function(perc, r1, g1, b1, r2, g2, b2, r3, g3, b3)
@@ -374,9 +354,11 @@ local ColorGradient = function(perc, r1, g1, b1, r2, g2, b2, r3, g3, b3)
 	return r2 + (r3-r2)*relperc, g2 + (g3-g2)*relperc, b2 + (b3-b2)*relperc
 end]]
 
---[[ Name ]]
+function oUF:PARTY_MEMBERS_CHANGED(event)
+	self:PARTY_LEADER_CHANGED()
+end
 
-function oUF:UpdateName(unit)
+function oUF:UNIT_NAME_UPDATE(event, unit)
 	if(self.unit ~= unit) then return end
 	local name = UnitName(unit)
 

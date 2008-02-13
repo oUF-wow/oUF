@@ -32,7 +32,7 @@
 local GetComboPoints = GetComboPoints
 local MAX_COMBO_POINTS = MAX_COMBO_POINTS
 
-function oUF:UpdateCPoints()
+function oUF:PLAYER_COMBO_POINTS(event)
 	local cp = GetComboPoints()
 	local cpoints = self.CPoints
 
