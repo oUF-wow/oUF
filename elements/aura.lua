@@ -35,11 +35,13 @@ local UnitDebuff = UnitDebuff
 local GetTime = GetTime
 local DebuffTypeColor = DebuffTypeColor
 
-local row, icons, button, nb, buff, timeLeft, count, texture
-local dtype, debuff, rank, name, nd, color, nd, duration
+local col, row, cols, rows, icons, button, nb, buff, timeLeft, count, texture
+local dtype, debuff, rank, name, nd, color, duration, size, anchor, growth
 
 local OnEnter = function(self)
 	if(not self:IsVisible()) then return end
+
+	GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
 	if(self.overlay) then
 		GameTooltip:SetUnitDebuff(self.unit, self:GetID())
 	else
@@ -51,13 +53,13 @@ local OnLeave = function()
 	GameTooltip:Hide()
 end
 
-local createButton = function(self, index, debuff)
+local createButton = function(self, icons, index, debuff)
 	local button = CreateFrame("Frame", nil, self)
 	button:EnableMouse(true)
 	button:SetID(index)
 
-	button:SetWidth(self.size or 16)
-	button:SetHeight(self.size or 16)
+	button:SetWidth(icons.size or 16)
+	button:SetHeight(icons.size or 16)
 
 	local cd = CreateFrame("Cooldown", nil, button)
 	cd:SetAllPoints(button)
@@ -80,7 +82,7 @@ local createButton = function(self, index, debuff)
 	button:SetScript("OnEnter", OnEnter)
 	button:SetScript("OnLeave", OnLeave)
 
-	table_insert(self, button)
+	table_insert(icons, button)
 
 	button.icon = icon
 	button.count = count
@@ -91,46 +93,66 @@ local createButton = function(self, index, debuff)
 end
 
 function oUF:SetAuraPosition(unit, nb, nd)
-	row = 1
-	icons = self.Buffs
-	if(icons and nb > 0) then
-		local iwidth, fwidth = self:GetWidth(), 0
-		for i=1, nb do
-			button = icons[i]
-			fwidth = fwidth + button:GetWidth()
-			button:ClearAllPoints()
+	if(self.Auras) then
+		icons = self.Auras
+	elseif(self.Buffs) then
+		icons = self.Buffs
+	end
 
-			if(i == 1) then
-				button:SetPoint("BOTTOMLEFT", icons)
+	col = 0
+	row = 0
+	size = icons.size or 16
+	anchor = icons.initialAnchor or "BOTTOMLEFT"
+	growth = (icons.growth or "RIGHT") == "RIGHT" and 1 or -1
+	cols = math.floor(icons:GetWidth() / size)
+	rows = math.floor(icons:GetHeight() / size)
+
+	if(icons and nb > 0) then
+		for i = 1, nb do
+			button = icons[i]
+			button:ClearAllPoints()
+			button:SetPoint(anchor, icons, anchor, col * (size * growth), row * size)
+			
+			if col >= cols then
+				col = 0
+				row = row + 1
 			else
-				if(fwidth <= iwidth) then
-					button:SetPoint("LEFT", icons[i-1], "RIGHT")
-				else
-					button:SetPoint("BOTTOMLEFT", icons[row], "TOPLEFT", 0, 2)
-					row = i
-				end
+				col = col + 1
 			end
 		end
 	end
-
-	row = 1
-	icons = self.Debuffs
+	
+	if(self.Auras and col > 0) then
+		-- Create a space between buffs and debuffs
+		col = col + 1
+		
+		if col >= cols then
+			col = 0
+			row = row + 1
+		end
+	elseif(self.Debuffs) then
+		icons = self.Debuffs
+		
+		col = 0
+		row = 0
+		size = icons.size or 16
+		anchor = icons.initialAnchor or "BOTTOMLEFT"
+		growth = (icons.growth or "RIGHT") == "RIGHT" and 1 or -1
+		cols = math.floor(icons:GetWidth() / size)
+		rows = math.floor(icons:GetHeight() / size)
+	end
+	
 	if(icons and nd > 0) then
-		local iwidth, fwidth = self:GetWidth(), 0
-		for i=1, nd do
+		for i = 1, nd do
 			button = icons[i]
-			fwidth = fwidth + button:GetWidth()
 			button:ClearAllPoints()
+			button:SetPoint(anchor, icons, anchor, col * (size * growth), row * size)
 
-			if(i == 1) then
-				button:SetPoint("TOPLEFT", icons)
+			if col >= cols then
+				col = 0
+				row = row + 1
 			else
-				if(fwidth <= iwidth) then
-					button:SetPoint("LEFT", icons[i-1], "RIGHT")
-				else
-					button:SetPoint("TOPLEFT", icons[row], "BOTTOMLEFT", 0, 2)
-					row = i
-				end
+				col = col + 1
 			end
 		end
 	end
@@ -141,8 +163,15 @@ function oUF:UNIT_AURA(event, unit)
 	if(self.PreUpdateAura) then self:PreUpdateAura(event, unit) end
 
 	nb = 0
-	icons = self.Buffs
-	if(icons) then
+	nd = 0
+
+	if self.Auras then
+		icons = self.Auras
+	else
+		icons = self.Buffs
+	end
+
+	if icons then
 		for i=1, self.numBuffs do
 			buff = icons[i]
 			name, rank, texture, count, duration, timeLeft = UnitBuff(unit, i)
@@ -150,7 +179,7 @@ function oUF:UNIT_AURA(event, unit)
 			if(not buff and not name) then
 				break
 			elseif(name) then
-				if(not buff) then buff = createButton(icons, i) end
+				if(not buff) then buff = createButton(self, icons, i) end
 
 				if(duration and duration > 0) then
 					buff.cd:SetCooldown(GetTime()-(duration-timeLeft), duration)
@@ -170,9 +199,13 @@ function oUF:UNIT_AURA(event, unit)
 		end
 	end
 
-	nd = 0
-	icons = self.Debuffs
-	if(icons) then
+	if self.Auras then
+		icons = self.Auras
+	else
+		icons = self.Debuffs
+	end
+	
+	if icons then
 		for i=1, self.numDebuffs do
 			debuff = icons[i]
 			name, rank, texture, count, dtype, duration, timeLeft = UnitDebuff(unit, i)
@@ -180,7 +213,7 @@ function oUF:UNIT_AURA(event, unit)
 			if(not debuff and not name) then
 				break
 			elseif(name) then
-				if(not debuff) then debuff = createButton(icons, i, true) end
+				if(not debuff) then debuff = createButton(self, icons, i, true) end
 
 				if(duration and duration > 0) then
 					debuff.cd:SetCooldown(GetTime()-(duration-timeLeft), duration)

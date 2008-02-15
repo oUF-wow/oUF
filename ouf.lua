@@ -83,9 +83,12 @@ local subTypes = {
 	["Name"] = "UNIT_NAME_UPDATE",
 	["CPoints"] = "PLAYER_COMBO_POINTS",
 	["RaidIcon"] = "RAID_TARGET_UPDATE",
+	["Auras"] = "UNIT_AURA",
 	["Buffs"] = "UNIT_AURA",
 	["Debuffs"] = "UNIT_AURA",
 	["Leader"] = "PARTY_LEADER_CHANGED",
+	["Combat"] = "PLAYER_REGEN_DISABLED",
+	["Resting"] = "PLAYER_UPDATE_RESTING",
 }
 
 local dummy = function() end
@@ -311,7 +314,12 @@ function oUF:RegisterObject(object, subType)
 	elseif(subType == "Leader") then
 		object:RegisterEvent"PARTY_LEADER_CHANGED"
 		object:RegisterEvent"PARTY_MEMBERS_CHANGED"
-	elseif(subType == "Buffs" or subType == "Debuffs") then
+	elseif(subType == "Combat") then
+		object:RegisterEvent"PLAYER_REGEN_DISABLED"
+		object:RegisterEvent"PLAYER_REGEN_ENABLED"
+	elseif(subType == "Resting" and unit == "player") then
+		object:RegisterEvent"PLAYER_UPDATE_RESTING"
+	elseif(subType == "Buffs" or subType == "Debuffs" or subType == "Auras") then
 		object:RegisterEvent"UNIT_AURA"
 	end
 end
