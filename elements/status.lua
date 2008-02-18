@@ -30,14 +30,10 @@
 ---------------------------------------------------------------------------]]
 
 function oUF:PLAYER_UPDATE_RESTING(event)
-	if(self.Resting) then
+	if(IsResting()) then
+		self.Resting:Show()
+	else
 		self.Resting:Hide()
-		
-		if(IsResting()) then
-			self.Resting:Show()
-		else
-			self.Resting:Hide()
-		end
 	end
 end
 
@@ -51,4 +47,4 @@ function oUF:PLAYER_REGEN_DISABLED(event)
 	end
 end
 
-oUF.PLAYER_REGEN_DISABLED = oUF.PLAYER_REGEN_ENABLED
+oUF.PLAYER_REGEN_ENABLED = oUF.PLAYER_REGEN_DISABLED
