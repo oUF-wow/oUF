@@ -247,7 +247,6 @@ function oUF:Spawn(unit, name)
 	if(unit == "party") then
 		local header = CreateFrame("Frame", "oUF_Party", UIParent, "SecurePartyHeaderTemplate")
 		header:SetAttribute("template","SecureUnitButtonTemplate")
-		header:SetPoint"CENTER"
 		header:SetMovable(true)
 		header:EnableMouse(true)
 		header:SetAttribute("point", style["party-point"])
