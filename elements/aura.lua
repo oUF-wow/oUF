@@ -36,7 +36,7 @@ local GetTime = GetTime
 local DebuffTypeColor = DebuffTypeColor
 
 local icon, timeLeft, duration, dtype, count, texture, rank, name, color
-local total, col, row, size, anchor, button, growth, cols, rows
+local total, col, row, size, anchor, button, growthx, growthy, cols, rows
 
 local OnEnter = function(self)
 	if(not self:IsVisible()) then return end
@@ -53,7 +53,7 @@ local OnLeave = function()
 	GameTooltip:Hide()
 end
 
-local createAuraButton = function(self, icons, index, debuff)
+local createAuraIcon = function(self, icons, index, debuff)
 	local button = CreateFrame("Frame", nil, self)
 	button:EnableMouse(true)
 	button:SetID(index)
@@ -88,6 +88,8 @@ local createAuraButton = function(self, icons, index, debuff)
 	button.count = count
 	button.cd = cd
 
+	if(self.PostCreateAuraIcon) then self:PostCreateAuraIcon(button) end
+
 	return button
 end
 
@@ -105,7 +107,7 @@ local updateIcons = function(self, unit, icons, isDebuff)
 			break
 		elseif(name) then
 			-- Clearly easy to read:
-			if(not icon) then icon = (self.createAuraButton and self:createAuraButton(self, icons, i, isDebuff)) or createAuraButton(self, icons, i, isDebuff) end
+			if(not icon) then icon = (self.CreateAuraIcon and self:CreateAuraIcon(self, icons, i, isDebuff)) or createAuraIcon(self, icons, i, isDebuff) end
 
 			if(duration and duration > 0) then
 				icon.cd:SetCooldown(GetTime()-(duration-timeLeft), duration)
@@ -139,14 +141,15 @@ function oUF:SetAuraPosition(icons, x)
 		row = 0
 		size = icons.size or 16
 		anchor = icons.initialAnchor or "BOTTOMLEFT"
-		growth = (icons.growth == "LEFT" and -1) or 1
+		growthx = (icons["growth-x"] == "LEFT" and -1) or 1
+		growthy = (icons["growth-y"] == "DOWN" and -1) or 1
 		cols = math.floor(icons:GetWidth() / size)
 		rows = math.floor(icons:GetHeight() / size)
 
 		for i = 1, x do
 			button = icons[i]
 			button:ClearAllPoints()
-			button:SetPoint(anchor, icons, anchor, col * (size * growth), row * size)
+			button:SetPoint(anchor, icons, anchor, col * size * growthx, row * size * growthy)
 
 			if(col >= cols) then
 				col = 0
