@@ -378,5 +378,6 @@ function oUF:UNIT_NAME_UPDATE(event, unit)
 	self.Name:SetText(name)
 end
 
+oUF.subTypes = subTypes
 oUF.colors = colors
 _G.oUF = oUF
