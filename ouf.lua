@@ -76,7 +76,6 @@ local math_modf = math.modf
 local UnitExists = UnitExists
 local UnitName = UnitName
 
-local objects = {}
 local subTypes = {
 	["Health"] = "UNIT_HEALTH",
 	["Power"] = "UNIT_MANA",
