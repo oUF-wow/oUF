@@ -98,9 +98,9 @@ local updateIcons = function(self, unit, icons, isDebuff)
 	for i=1, icons.num do
 		icon = icons[i]
 		if(isDebuff) then
-			name, rank, texture, count, dtype, duration, timeLeft = UnitDebuff(unit, i, self.filter)
+			name, rank, texture, count, dtype, duration, timeLeft = UnitDebuff(unit, i, icons.filter)
 		else
-			name, rank, texture, count, duration, timeLeft = UnitBuff(unit, i, self.filter)
+			name, rank, texture, count, duration, timeLeft = UnitBuff(unit, i, icons.filter)
 		end
 
 		if(not icon and not name) then
