@@ -13,3 +13,4 @@ elements\cpoints.lua
 elements\ricons.lua
 elements\leader.lua
 elements\status.lua
+elements\pvp.lua
