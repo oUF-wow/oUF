@@ -29,6 +29,7 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ---------------------------------------------------------------------------]]
 
+local ver = "$Id$"
 local _G = getfenv(0)
 local select = select
 local type = type
@@ -377,6 +378,7 @@ function oUF:UNIT_NAME_UPDATE(event, unit)
 	self.Name:SetText(name)
 end
 
+oUF.version = ver
 oUF.subTypes = subTypes
 oUF.colors = colors
 _G.oUF = oUF
