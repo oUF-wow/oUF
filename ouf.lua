@@ -254,6 +254,7 @@ function oUF:Spawn(unit, name)
 		header:SetAttribute("sortDir", style["party-sortDir"])
 		header:SetAttribute("xOffset", style["party-xOffset"])
 		header:SetAttribute("yOffset", style["party-yOffset"])
+		header:SetAttribute("showRaid", style["party-showRaid"])
 		header.initialConfigFunction = initObject
 		header:Show()
 
