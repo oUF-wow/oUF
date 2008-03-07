@@ -66,7 +66,7 @@ local oUF = CreateFrame"Button"
 local RegisterEvent = oUF.RegisterEvent
 local metatable = {__index = oUF}
 
-local style, cache
+local style, raid, party, cache
 local styles = {}
 local furui = {}
 
@@ -77,6 +77,7 @@ local math_modf = math.modf
 local UnitExists = UnitExists
 local UnitName = UnitName
 
+local objects = {}
 local subTypes = {
 	["Health"] = "UNIT_HEALTH",
 	["Power"] = "UNIT_MANA",
@@ -195,9 +196,20 @@ local initObject = function(object, unit)
 	local style = styles[style]
 
 	object = setmetatable(object, metatable)
-	object:SetAttribute("initial-width", style["initial-width"])
-	object:SetAttribute("initial-height", style["initial-height"])
-	object:SetAttribute("initial-scale", style["initial-scale"])
+
+	if(object:GetParent() == oUF_Party) then
+		object:SetAttribute("initial-width", party["initial-width"])
+		object:SetAttribute("initial-height", party["initial-height"])
+		object:SetAttribute("initial-scale", party["initial-scale"])
+	elseif(object:GetParent():GetName():sub(1, 8) == "oUF_Raid") then
+		object:SetAttribute("initial-width", raid["initial-width"])
+		object:SetAttribute("initial-height", raid["initial-height"])
+		object:SetAttribute("initial-scale", raid["initial-scale"])
+	else
+		object:SetAttribute("initial-width", style["initial-width"])
+		object:SetAttribute("initial-height", style["initial-height"])
+		object:SetAttribute("initial-scale", style["initial-scale"])
+	end
 	object:SetAttribute("*type1", "target")
 
 	object:SetScript("OnEvent", OnEvent)
@@ -216,6 +228,9 @@ local initObject = function(object, unit)
 		end
 	end
 
+	-- We could use ClickCastFrames only, but it will probably contain frames that
+	-- we don't care about.
+	objects[object] = true
 	ClickCastFrames = ClickCastFrames or {}
 	ClickCastFrames[object] = true
 end
@@ -239,19 +254,24 @@ function oUF:SetActiveStyle(name)
 	style = name
 end
 
-function oUF:Spawn(unit, name)
+function oUF:Spawn(unit, name, group)
 	if(not unit) then return error("Bad argument #1 to 'Spawn' (string expected, got %s)", type(unit)) end
 	if(not style) then return error("Unable to create frame. No styles have been registered.") end
 
 	local style = styles[style]
 	local object
 	if(unit == "party") then
+		if(not party) then party = style end
+
 		local header = CreateFrame("Frame", "oUF_Party", UIParent, "SecurePartyHeaderTemplate")
-		header:SetAttribute("template","SecureUnitButtonTemplate")
+		header:SetAttribute("template", "SecureUnitButtonTemplate")
+		header:SetAttribute("templateType", style["party-templateType"])
 		header:SetMovable(true)
 		header:EnableMouse(true)
+
 		header:SetAttribute("point", style["party-point"])
 		header:SetAttribute("sortDir", style["party-sortDir"])
+		header:SetAttribute("sortMethod", style["party-sortMethod"])
 		header:SetAttribute("xOffset", style["party-xOffset"])
 		header:SetAttribute("yOffset", style["party-yOffset"])
 		header:SetAttribute("showRaid", style["party-showRaid"])
@@ -259,6 +279,34 @@ function oUF:Spawn(unit, name)
 		header:Show()
 
 		HandleUnit"party"
+
+		return header
+	elseif(unit == "raid") then
+		if(not raid) then raid = style end
+
+		local header = CreateFrame("Frame", "oUF_Raid"..(group or 1), UIParent, "SecureRaidGroupHeaderTemplate")
+		header:SetAttribute("template", "SecureUnitButtonTemplate")
+		header:SetAttribute("templateType", style["raid-templateType"])
+		header:SetMovable(true)
+		header:EnableMouse(true)
+
+		header:SetAttribute("point", style["raid-point"])
+		header:SetAttribute("sortDir", style["raid-sortDir"])
+		header:SetAttribute("xOffset", style["raid-xOffset"])
+		header:SetAttribute("yOffset", style["raid-yOffset"])
+		header:SetAttribute("sortMethod", style["raid-sortMethod"])
+		header:SetAttribute("startingIndex ", style["raid-startingIndex "])
+		header:SetAttribute("nameList", style["raid-nameList"])
+		header:SetAttribute("strictFiltering", style["raid-strictFiltering"])
+		header:SetAttribute("groupBy", style["raid-groupBy"])
+		header:SetAttribute("groupFilter", style["raid-groupFilter"])
+		header:SetAttribute("groupingOrder", style["raid-groupingOrder"])
+		header:SetAttribute("maxColumns", style["raid-maxColumns"])
+		header:SetAttribute("unitsPerColumn", style["raid-unitsPerColumn"])
+		header:SetAttribute("columnSpacing", style["raid-columnSpacing"])
+		header:SetAttribute("columnAnchorPoint", style["raid-columnAnchorPoint"])
+		header.initialConfigFunction = initObject
+		header:Show()
 
 		return header
 	else
@@ -380,6 +428,7 @@ function oUF:UNIT_NAME_UPDATE(event, unit)
 end
 
 oUF.version = ver
+oUF.objects = objects
 oUF.subTypes = subTypes
 oUF.colors = colors
 _G.oUF = oUF
