@@ -76,6 +76,7 @@ local pairs = pairs
 local math_modf = math.modf
 local UnitExists = UnitExists
 local UnitName = UnitName
+local UnitInRange = UnitInRange or CheckInteractDistance
 
 local objects = {}
 local subTypes = {
@@ -91,6 +92,7 @@ local subTypes = {
 	["Combat"] = "PLAYER_REGEN_DISABLED",
 	["Resting"] = "PLAYER_UPDATE_RESTING",
 	["PvP"] = "UNIT_FACTION",
+	["Range"] = true,
 }
 
 local dummy = function() end
@@ -113,13 +115,49 @@ local OnAttributeChanged = function(self, name, value)
 end
 
 -- Updates
-local time = 0
-local OnUpdate = function(self, a1)
-	time = time + a1
+-- updating of range.
+local OnRangeUpdate = function(self, elapsed)
+	if(not self.unit) then
+		return
+	elseif(not self.timer) then
+		self.timer = .25
+	elseif(self.timer <= .25) then
+		if(UnitIsConnected(self.unit) and not UnitInRange(self.unit, 1)) then
+			if(self:GetAlpha() == self.inRangeAlpha) then
+				self:SetAlpha(self.outsideRangeAlpha)
+			end
+		elseif(self:GetAlpha() ~= self.inRangeAlpha) then
+			self:SetAlpha(self.inRangeAlpha)
+		end
 
-	if(time > .5) then
+		self.timer = .25
+	else
+		self.timer = self.timer - elapsed
+	end
+end
+
+-- updating of "invalid" units.
+local OnTargetUpdate = function(self, elapsed)
+	if(not self.unit) then
+		return
+	elseif(not self.timer) then
+		self.timer = .5
+	elseif(self.timer <= .5) then
 		self:PLAYER_ENTERING_WORLD()
-		time = 0
+
+		if(self.Range) then
+			if(UnitIsConnected(self.unit) and not UnitInRange(self.unit, 1)) then
+				if(self:GetAlpha() == self.inRangeAlpha) then
+					self:SetAlpha(self.outsideRangeAlpha)
+				end
+			elseif(self:GetAlpha() ~= self.inRangeAlpha) then
+				self:SetAlpha(self.inRangeAlpha)
+			end
+		end
+
+		self.timer = .5
+	else
+		self.timer = self.timer - elapsed
 	end
 end
 
@@ -176,7 +214,7 @@ local HandleUnit = function(unit, object)
 			TargetofTargetManaBar:UnregisterAllEvents()
 		end
 
-		object:SetScript("OnUpdate", OnUpdate)
+		object:SetScript("OnUpdate", OnTargetUpdate)
 	elseif(unit == "party") then
 		for i=1,4 do
 			local party = "PartyMemberFrame"..i
@@ -368,6 +406,10 @@ function oUF:RegisterObject(object, subType)
 		object:RegisterEvent"PLAYER_REGEN_ENABLED"
 	elseif(subType == "PvP") then
 		object:RegisterEvent"UNIT_FACTION"
+	elseif(subType == "Range") then
+		if(object:GetScript("OnUpdate") ~= OnTargetUpdate) then
+			object:SetScript("OnUpdate", OnRangeUpdate)
+		end
 	elseif(subType == "Resting" and unit == "player") then
 		object:RegisterEvent"PLAYER_UPDATE_RESTING"
 	elseif(subType == "Buffs" or subType == "Debuffs" or subType == "Auras") then
@@ -385,7 +427,7 @@ function oUF:PLAYER_ENTERING_WORLD(event)
 	if(not UnitExists(unit)) then return end
 
 	for key, func in pairs(subTypes) do
-		if(self[key]) then
+		if(self[key] and type(func) == "string") then
 			self[func](self, event, unit)
 		end
 	end
