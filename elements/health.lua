@@ -78,4 +78,3 @@ function oUF:UNIT_HEALTH(event, unit)
 	if(self.PostUpdateHealth) then self:PostUpdateHealth(event, bar, unit, min, max) end
 end
 oUF.UNIT_MAXHEALTH = oUF.UNIT_HEALTH
-oUF.UNIT_HAPPINESS = oUF.UNIT_HEALTH

@@ -461,6 +461,13 @@ function oUF:UNIT_NAME_UPDATE(event, unit)
 	self.Name:SetText(name)
 end
 
+function oUF:UNIT_HAPPINESS(event, unit)
+	if(not self.unit ~= unit) then return end
+
+	self:UNIT_HEALTH(event, unit)
+	self:UNIT_MANA(event, unit)
+end
+
 oUF.version = ver
 oUF.objects = objects
 oUF.subTypes = subTypes
