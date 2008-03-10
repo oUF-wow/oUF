@@ -116,23 +116,25 @@ end
 
 -- Updates
 -- updating of range.
+local timer = 0
+local OnRangeFrame
 local OnRangeUpdate = function(self, elapsed)
-	if(not self.unit) then
-		return
-	elseif(not self.timer) then
-		self.timer = .25
-	elseif(self.timer <= .25) then
-		if(UnitIsConnected(self.unit) and not UnitInRange(self.unit, 1)) then
-			if(self:GetAlpha() == self.inRangeAlpha) then
-				self:SetAlpha(self.outsideRangeAlpha)
+	timer = timer + elapsed
+
+	if(timer >= .25) then
+		for object, v in pairs(objects) do
+			if(object:IsShown() and object.Range) then
+				if(UnitIsConnected(object.unit) and not UnitInRange(object.unit, 1)) then
+					if(object:GetAlpha() == object.inRangeAlpha) then
+						object:SetAlpha(object.outsideRangeAlpha)
+					end
+				elseif(object:GetAlpha() ~= object.inRangeAlpha) then
+					object:SetAlpha(object.inRangeAlpha)
+				end
 			end
-		elseif(self:GetAlpha() ~= self.inRangeAlpha) then
-			self:SetAlpha(self.inRangeAlpha)
 		end
 
-		self.timer = .25
-	else
-		self.timer = self.timer - elapsed
+		timer = 0
 	end
 end
 
@@ -144,17 +146,6 @@ local OnTargetUpdate = function(self, elapsed)
 		self.timer = .5
 	elseif(self.timer <= .5) then
 		self:PLAYER_ENTERING_WORLD()
-
-		if(self.Range) then
-			if(UnitIsConnected(self.unit) and not UnitInRange(self.unit, 1)) then
-				if(self:GetAlpha() == self.inRangeAlpha) then
-					self:SetAlpha(self.outsideRangeAlpha)
-				end
-			elseif(self:GetAlpha() ~= self.inRangeAlpha) then
-				self:SetAlpha(self.inRangeAlpha)
-			end
-		end
-
 		self.timer = .5
 	else
 		self.timer = self.timer - elapsed
@@ -407,8 +398,9 @@ function oUF:RegisterObject(object, subType)
 	elseif(subType == "PvP") then
 		object:RegisterEvent"UNIT_FACTION"
 	elseif(subType == "Range") then
-		if(object:GetScript("OnUpdate") ~= OnTargetUpdate) then
-			object:SetScript("OnUpdate", OnRangeUpdate)
+		if(not OnRangeFrame) then
+			OnRangeFrame = CreateFrame"Frame"
+			OnRangeFrame:SetScript("OnUpdate", OnRangeUpdate)
 		end
 	elseif(subType == "Resting" and unit == "player") then
 		object:RegisterEvent"PLAYER_UPDATE_RESTING"
@@ -444,7 +436,7 @@ local ColorGradient = function(perc, r1, g1, b1, r2, g2, b2, r3, g3, b3)
 	elseif perc <= 0 then
 		return r1, g1, b1
 	end
-	
+
 	local segment, relperc = math_modf(perc*(3-1))
 	local offset = (segment*3)+1
 
@@ -468,6 +460,9 @@ function oUF:UNIT_NAME_UPDATE(event, unit)
 	-- solution to this problem).
 	self.Name:SetText(name)
 end
+
+oUF.OnTargetUpdate = OnTargetUpdate
+oUF.OnRangeUpdate = OnRangeUpdate
 
 oUF.version = ver
 oUF.objects = objects
