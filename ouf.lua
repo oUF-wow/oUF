@@ -461,9 +461,6 @@ function oUF:UNIT_NAME_UPDATE(event, unit)
 	self.Name:SetText(name)
 end
 
-oUF.OnTargetUpdate = OnTargetUpdate
-oUF.OnRangeUpdate = OnRangeUpdate
-
 oUF.version = ver
 oUF.objects = objects
 oUF.subTypes = subTypes
