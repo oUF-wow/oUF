@@ -78,6 +78,7 @@ local UnitExists = UnitExists
 local UnitName = UnitName
 local UnitInRange = UnitInRange or CheckInteractDistance
 
+local units = {}
 local objects = {}
 local subTypes = {
 	["Health"] = "UNIT_HEALTH",
@@ -104,6 +105,8 @@ end
 
 local OnAttributeChanged = function(self, name, value)
 	if(name == "unit" and value) then
+		units[value] = self
+
 		if(self.unit and self.unit == value) then
 			return
 		else
@@ -344,6 +347,7 @@ function oUF:Spawn(unit, name, group)
 		object.unit = unit
 		object.id = unit:match"^.-(%d+)"
 
+		units[unit] = object
 		initObject(object, unit)
 		HandleUnit(unit, object)
 		RegisterUnitWatch(object)
@@ -469,6 +473,7 @@ function oUF:UNIT_HAPPINESS(event, unit)
 end
 
 oUF.version = ver
+oUF.units = units
 oUF.objects = objects
 oUF.subTypes = subTypes
 oUF.colors = colors
