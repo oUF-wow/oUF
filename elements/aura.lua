@@ -36,7 +36,7 @@ local GetTime = GetTime
 local DebuffTypeColor = DebuffTypeColor
 
 local icon, timeLeft, duration, dtype, count, texture, rank, name, color
-local total, col, row, size, anchor, button, growthx, growthy, cols, rows
+local total, col, row, size, anchor, button, growthx, growthy, cols, rows, spacing
 
 local OnEnter = function(self)
 	if(not self:IsVisible()) then return end
@@ -139,7 +139,8 @@ function oUF:SetAuraPosition(icons, x)
 	if(icons and x > 0) then
 		col = 0
 		row = 0
-		size = icons.size or 16
+		spacing = icons.spacing or 0
+		size = (icons.size or 16) + spacing
 		anchor = icons.initialAnchor or "BOTTOMLEFT"
 		growthx = (icons["growth-x"] == "LEFT" and -1) or 1
 		growthy = (icons["growth-y"] == "DOWN" and -1) or 1
