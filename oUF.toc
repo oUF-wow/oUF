@@ -1,4 +1,4 @@
-## Interface: 20300
+## Interface: 20400
 ## Title: oUF
 ## Author: Haste
 ## X-eMail: troeks@gmail.com
@@ -14,3 +14,4 @@ elements\ricons.lua
 elements\leader.lua
 elements\status.lua
 elements\pvp.lua
+elements\portraits.lua
