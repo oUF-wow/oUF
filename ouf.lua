@@ -94,6 +94,7 @@ local subTypes = {
 	["Resting"] = "PLAYER_UPDATE_RESTING",
 	["PvP"] = "UNIT_FACTION",
 	["Range"] = true,
+	["Portrait"] = "UNIT_PORTRAIT_UPDATE",
 }
 
 local dummy = function() end
@@ -406,6 +407,8 @@ function oUF:RegisterObject(object, subType)
 			OnRangeFrame = CreateFrame"Frame"
 			OnRangeFrame:SetScript("OnUpdate", OnRangeUpdate)
 		end
+	elseif(subType == "Portrait") then
+		object:RegisterEvent"UNIT_PORTRAIT_UPDATE"
 	elseif(subType == "Resting" and unit == "player") then
 		object:RegisterEvent"PLAYER_UPDATE_RESTING"
 	elseif(subType == "Buffs" or subType == "Debuffs" or subType == "Auras") then
