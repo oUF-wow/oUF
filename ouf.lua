@@ -33,6 +33,13 @@ local ver = "$Id$"
 local print = function(a) ChatFrame1:AddMessage("|cff33ff99oUF:|r "..tostring(a)) end
 local error = function(...) print("|cffff0000Error:|r ", string.format(...)) end
 local dummy = function() end
+local function SetManyAttributes(self, ...)
+	for i=1,select("#", ...),2 do
+		local att,val = select(i, ...)
+		if not att then return end
+		self:SetAttribute(att,val)
+	end
+end
 
 -- Colors
 local colors = {
@@ -299,6 +306,7 @@ function oUF:Spawn(unit, name, group)
 
 		local header = CreateFrame("Frame", "oUF_Party", UIParent, "SecurePartyHeaderTemplate")
 		header.initialConfigFunction = initObject
+		header.SetManyAttributes = SetManyAttributes
 		header:Show()
 
 		HandleUnit"party"
@@ -309,6 +317,7 @@ function oUF:Spawn(unit, name, group)
 
 		local header = CreateFrame("Frame","oUF_PartyPet", UIParent, "SecurePartyPetHeaderTemplate")
 		header.initialConfigFunction = initObject
+		header.SetManyAttributes = SetManyAttributes
 		header:Show()
 
 		return header
@@ -317,6 +326,7 @@ function oUF:Spawn(unit, name, group)
 
 		local header = CreateFrame("Frame", "oUF_Raid"..(group or 1), UIParent, "SecureRaidGroupHeaderTemplate")
 		header.initialConfigFunction = initObject
+		header.SetManyAttributes = SetManyAttributes
 		header:Show()
 
 		return header
@@ -325,6 +335,7 @@ function oUF:Spawn(unit, name, group)
 
 		local header = CreateFrame("Frame", "oUF_RaidPet"..(group or 1), UIParent, "SecureRaidPetHeaderTemplate")
 		header.initialConfigFunction = initObject
+		header.SetManyAttributes = SetManyAttributes
 		header:Show()
 
 		return header
