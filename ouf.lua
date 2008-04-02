@@ -30,13 +30,9 @@
 ---------------------------------------------------------------------------]]
 
 local ver = "$Id$"
-local _G = getfenv(0)
-local select = select
-local type = type
-local tostring = tostring
-
 local print = function(a) ChatFrame1:AddMessage("|cff33ff99oUF:|r "..tostring(a)) end
 local error = function(...) print("|cffff0000Error:|r ", string.format(...)) end
+local dummy = function() end
 
 -- Colors
 local colors = {
@@ -58,28 +54,20 @@ local colors = {
 	},
 }
 
--- For debugging
-local log = {}
-
 -- add-on object
 local oUF = CreateFrame"Button"
 local RegisterEvent = oUF.RegisterEvent
 local metatable = {__index = oUF}
 
-local style, raid, party, cache
-local styles = {}
-local furui = {}
+local style, raid, raidpet, party, partypet, cache
+local styles, furui = {}, {}
+local units, objects = {}, {}
 
-local select = select
-local type = type
-local pairs = pairs
-local math_modf = math.modf
-local UnitExists = UnitExists
-local UnitName = UnitName
-local UnitInRange = UnitInRange or CheckInteractDistance
+local	_G, select, type, pairs, tostring, math_modf =
+		_G, select, type, pairs, tostring, math.modf
+local	UnitExists, UnitName, UnitInRange =
+		UnitExists, UnitName, UnitInRange
 
-local units = {}
-local objects = {}
 local subTypes = {
 	["Health"] = "UNIT_HEALTH",
 	["Power"] = "UNIT_MANA",
@@ -96,8 +84,6 @@ local subTypes = {
 	["Range"] = true,
 	["Portrait"] = "UNIT_PORTRAIT_UPDATE",
 }
-
-local dummy = function() end
 
 -- Events
 local OnEvent = function(self, event, ...)
@@ -128,7 +114,7 @@ local OnRangeUpdate = function(self, elapsed)
 	if(timer >= .25) then
 		for object, v in pairs(objects) do
 			if(object:IsShown() and object.Range) then
-				if(UnitIsConnected(object.unit) and not UnitInRange(object.unit, 1)) then
+				if(UnitIsConnected(object.unit) and not UnitInRange(object.unit)) then
 					if(object:GetAlpha() == object.inRangeAlpha) then
 						object:SetAlpha(object.outsideRangeAlpha)
 					end
@@ -234,17 +220,32 @@ local initObject = function(object, unit)
 		object:SetAttribute("initial-width", party["initial-width"])
 		object:SetAttribute("initial-height", party["initial-height"])
 		object:SetAttribute("initial-scale", party["initial-scale"])
+	elseif(object:GetParent() == oUF_PartyPet) then
+		object:SetAttribute("initial-width", partypet["initial-width"])
+		object:SetAttribute("initial-height", partypet["initial-height"])
+		object:SetAttribute("initial-scale", partypet["initial-scale"])
 	elseif(object:GetParent():GetName():sub(1, 8) == "oUF_Raid") then
 		object:SetAttribute("initial-width", raid["initial-width"])
 		object:SetAttribute("initial-height", raid["initial-height"])
 		object:SetAttribute("initial-scale", raid["initial-scale"])
+	elseif(object:GetParent():GetName():sub(1, 11) == "oUF_RaidPet") then
+		object:SetAttribute("initial-width", raidpet["initial-width"])
+		object:SetAttribute("initial-height", raidpet["initial-height"])
+		object:SetAttribute("initial-scale", raidpet["initial-scale"])
 	else
 		object:SetAttribute("initial-width", style["initial-width"])
 		object:SetAttribute("initial-height", style["initial-height"])
 		object:SetAttribute("initial-scale", style["initial-scale"])
 	end
-	object:SetAttribute("*type1", "target")
 
+	if(not InCombatLockdown()) then
+		local width, height, scale = style["initial-width"], style["initial-height"], style["initial-scale"]
+		if(width) then object:SetWidth(width) end
+		if(height) then object:SetHeight(height) end
+		if(scale) then object:SetScale(scale) end
+	end
+
+	object:SetAttribute("*type1", "target")
 	object:SetScript("OnEvent", OnEvent)
 	object:SetScript("OnAttributeChanged", OnAttributeChanged)
 	object:SetScript("OnShow", object.PLAYER_ENTERING_WORLD)
@@ -297,47 +298,32 @@ function oUF:Spawn(unit, name, group)
 		if(not party) then party = style end
 
 		local header = CreateFrame("Frame", "oUF_Party", UIParent, "SecurePartyHeaderTemplate")
-		header:SetAttribute("template", "SecureUnitButtonTemplate")
-		header:SetAttribute("templateType", style["party-templateType"])
-		header:SetMovable(true)
-		header:EnableMouse(true)
-
-		header:SetAttribute("point", style["party-point"])
-		header:SetAttribute("sortDir", style["party-sortDir"])
-		header:SetAttribute("sortMethod", style["party-sortMethod"])
-		header:SetAttribute("xOffset", style["party-xOffset"])
-		header:SetAttribute("yOffset", style["party-yOffset"])
-		header:SetAttribute("showRaid", style["party-showRaid"])
 		header.initialConfigFunction = initObject
 		header:Show()
 
 		HandleUnit"party"
 
 		return header
+	elseif(unit == "partypet") then
+		if(not partypet) then partypet = style end
+
+		local header = CreateFrame("Frame","oUF_PartyPet", UIParent, "SecurePartyPetHeaderTemplate")
+		header.initialConfigFunction = initObject
+		header:Show()
+
+		return header
 	elseif(unit == "raid") then
 		if(not raid) then raid = style end
 
 		local header = CreateFrame("Frame", "oUF_Raid"..(group or 1), UIParent, "SecureRaidGroupHeaderTemplate")
-		header:SetAttribute("template", "SecureUnitButtonTemplate")
-		header:SetAttribute("templateType", style["raid-templateType"])
-		header:SetMovable(true)
-		header:EnableMouse(true)
+		header.initialConfigFunction = initObject
+		header:Show()
 
-		header:SetAttribute("point", style["raid-point"])
-		header:SetAttribute("sortDir", style["raid-sortDir"])
-		header:SetAttribute("xOffset", style["raid-xOffset"])
-		header:SetAttribute("yOffset", style["raid-yOffset"])
-		header:SetAttribute("sortMethod", style["raid-sortMethod"])
-		header:SetAttribute("startingIndex ", style["raid-startingIndex "])
-		header:SetAttribute("nameList", style["raid-nameList"])
-		header:SetAttribute("strictFiltering", style["raid-strictFiltering"])
-		header:SetAttribute("groupBy", style["raid-groupBy"])
-		header:SetAttribute("groupFilter", style["raid-groupFilter"])
-		header:SetAttribute("groupingOrder", style["raid-groupingOrder"])
-		header:SetAttribute("maxColumns", style["raid-maxColumns"])
-		header:SetAttribute("unitsPerColumn", style["raid-unitsPerColumn"])
-		header:SetAttribute("columnSpacing", style["raid-columnSpacing"])
-		header:SetAttribute("columnAnchorPoint", style["raid-columnAnchorPoint"])
+		return header
+	elseif(unit == "raidpet") then
+		if(not raidpet) then raidpet = style end
+
+		local header = CreateFrame("Frame", "oUF_RaidPet"..(group or 1), UIParent, "SecureRaidPetHeaderTemplate")
 		header.initialConfigFunction = initObject
 		header:Show()
 

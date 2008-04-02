@@ -29,7 +29,7 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ---------------------------------------------------------------------------]]
 
-local UnitExists, UnitIsConnected, UnitIsVisible =
+local	UnitExists, UnitIsConnected, UnitIsVisible =
 		UnitExists, UnitIsConnected, UnitIsVisible
 
 function oUF:UNIT_PORTRAIT_UPDATE(event, unit)
