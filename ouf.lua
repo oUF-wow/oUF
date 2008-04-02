@@ -305,6 +305,7 @@ function oUF:Spawn(unit, name, group)
 		if(not party) then party = style end
 
 		local header = CreateFrame("Frame", "oUF_Party", UIParent, "SecurePartyHeaderTemplate")
+		header:SetAttribute("template", "SecureUnitButtonTemplate")
 		header.initialConfigFunction = initObject
 		header.SetManyAttributes = SetManyAttributes
 		header:Show()
@@ -316,6 +317,7 @@ function oUF:Spawn(unit, name, group)
 		if(not partypet) then partypet = style end
 
 		local header = CreateFrame("Frame","oUF_PartyPet", UIParent, "SecurePartyPetHeaderTemplate")
+		header:SetAttribute("template", "SecureUnitButtonTemplate")
 		header.initialConfigFunction = initObject
 		header.SetManyAttributes = SetManyAttributes
 		header:Show()
@@ -325,6 +327,7 @@ function oUF:Spawn(unit, name, group)
 		if(not raid) then raid = style end
 
 		local header = CreateFrame("Frame", "oUF_Raid"..(group or 1), UIParent, "SecureRaidGroupHeaderTemplate")
+		header:SetAttribute("template", "SecureUnitButtonTemplate")
 		header.initialConfigFunction = initObject
 		header.SetManyAttributes = SetManyAttributes
 		header:Show()
@@ -334,6 +337,7 @@ function oUF:Spawn(unit, name, group)
 		if(not raidpet) then raidpet = style end
 
 		local header = CreateFrame("Frame", "oUF_RaidPet"..(group or 1), UIParent, "SecureRaidPetHeaderTemplate")
+		header:SetAttribute("template", "SecureUnitButtonTemplate")
 		header.initialConfigFunction = initObject
 		header.SetManyAttributes = SetManyAttributes
 		header:Show()
