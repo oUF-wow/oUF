@@ -227,22 +227,27 @@ local initObject = function(object, unit)
 		object:SetAttribute("initial-width", party["initial-width"])
 		object:SetAttribute("initial-height", party["initial-height"])
 		object:SetAttribute("initial-scale", party["initial-scale"])
+		party(object, unit)
 	elseif(object:GetParent() == oUF_PartyPet) then
 		object:SetAttribute("initial-width", partypet["initial-width"])
 		object:SetAttribute("initial-height", partypet["initial-height"])
 		object:SetAttribute("initial-scale", partypet["initial-scale"])
+		partypet(object, unit)
 	elseif(object:GetParent():GetName():sub(1, 8) == "oUF_Raid") then
 		object:SetAttribute("initial-width", raid["initial-width"])
 		object:SetAttribute("initial-height", raid["initial-height"])
 		object:SetAttribute("initial-scale", raid["initial-scale"])
+		raid(object, unit)
 	elseif(object:GetParent():GetName():sub(1, 11) == "oUF_RaidPet") then
 		object:SetAttribute("initial-width", raidpet["initial-width"])
 		object:SetAttribute("initial-height", raidpet["initial-height"])
 		object:SetAttribute("initial-scale", raidpet["initial-scale"])
+		raidpet(object, unit)
 	else
 		object:SetAttribute("initial-width", style["initial-width"])
 		object:SetAttribute("initial-height", style["initial-height"])
 		object:SetAttribute("initial-scale", style["initial-scale"])
+		style(object, unit)
 	end
 
 	if(not InCombatLockdown()) then
@@ -259,7 +264,6 @@ local initObject = function(object, unit)
 
 	object:RegisterEvent"PLAYER_ENTERING_WORLD"
 
-	style(object, unit)
 	-- We might want to go deeper then the first level of the table, but there is honestly
 	-- nothing preventing us from just placing all the interesting vars at the first level
 	-- of it.
