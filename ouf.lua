@@ -223,32 +223,17 @@ local initObject = function(object, unit)
 
 	object = setmetatable(object, metatable)
 
-	if(object:GetParent() == oUF_Party) then
-		object:SetAttribute("initial-width", party["initial-width"])
-		object:SetAttribute("initial-height", party["initial-height"])
-		object:SetAttribute("initial-scale", party["initial-scale"])
-		party(object, unit)
-	elseif(object:GetParent() == oUF_PartyPet) then
-		object:SetAttribute("initial-width", partypet["initial-width"])
-		object:SetAttribute("initial-height", partypet["initial-height"])
-		object:SetAttribute("initial-scale", partypet["initial-scale"])
-		partypet(object, unit)
-	elseif(object:GetParent():GetName():sub(1, 8) == "oUF_Raid") then
-		object:SetAttribute("initial-width", raid["initial-width"])
-		object:SetAttribute("initial-height", raid["initial-height"])
-		object:SetAttribute("initial-scale", raid["initial-scale"])
-		raid(object, unit)
-	elseif(object:GetParent():GetName():sub(1, 11) == "oUF_RaidPet") then
-		object:SetAttribute("initial-width", raidpet["initial-width"])
-		object:SetAttribute("initial-height", raidpet["initial-height"])
-		object:SetAttribute("initial-scale", raidpet["initial-scale"])
-		raidpet(object, unit)
-	else
-		object:SetAttribute("initial-width", style["initial-width"])
-		object:SetAttribute("initial-height", style["initial-height"])
-		object:SetAttribute("initial-scale", style["initial-scale"])
-		style(object, unit)
-	end
+	local style =
+		(object:GetParent() == oUF_Party and party) or
+		(object:GetParent() == oUF_PartyPet and partypet) or
+		(object:GetParent():GetName():sub(1, 8) == "oUF_Raid" and raid) or
+		(object:GetParent():GetName():sub(1, 11) == "oUF_RaidPet" and raidpet) or
+		style
+
+	object:SetAttribute("initial-width", style["initial-width"])
+	object:SetAttribute("initial-height", style["initial-height"])
+	object:SetAttribute("initial-scale", style["initial-scale"])
+	style(object, unit)
 
 	if(not InCombatLockdown()) then
 		local width, height, scale = style["initial-width"], style["initial-height"], style["initial-scale"]
