@@ -38,12 +38,10 @@ function oUF:PLAYER_UPDATE_RESTING(event)
 end
 
 function oUF:PLAYER_REGEN_DISABLED(event)
-	if(self.Combat) then
-		if(UnitAffectingCombat(self.unit)) then
-			self.Combat:Show()
-		else
-			self.Combat:Hide()
-		end
+	if(UnitAffectingCombat"player") then
+		self.Combat:Show()
+	else
+		self.Combat:Hide()
 	end
 end
 
