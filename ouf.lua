@@ -459,7 +459,7 @@ function oUF:UNIT_NAME_UPDATE(event, unit)
 end
 
 function oUF:UNIT_HAPPINESS(event, unit)
-	if(not self.unit ~= unit) then return end
+	if(self.unit ~= unit) then return end
 
 	self:UNIT_HEALTH(event, unit)
 	self:UNIT_MANA(event, unit)
