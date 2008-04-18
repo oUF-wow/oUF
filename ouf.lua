@@ -68,7 +68,7 @@ local metatable = {__index = oUF}
 
 local style, raid, raidpet, party, partypet, cache
 local styles, furui = {}, {}
-local units, objects = {}, {}
+local callback, units, objects = {}, {}, {}
 
 local	_G, select, type, pairs, tostring, math_modf =
 		_G, select, type, pairs, tostring, math.modf
@@ -258,11 +258,19 @@ local initObject = function(object, unit)
 		end
 	end
 
+	for _, func in ipairs(callback) do
+		func(object)
+	end
+
 	-- We could use ClickCastFrames only, but it will probably contain frames that
 	-- we don't care about.
 	objects[object] = true
 	ClickCastFrames = ClickCastFrames or {}
 	ClickCastFrames[object] = true
+end
+
+function oUF:RegisterInitCallback(func)
+	table.insert(callback, func)
 end
 
 function oUF:RegisterStyle(name, func)
