@@ -94,6 +94,7 @@ local subTypes = {
 
 -- Events
 local OnEvent = function(self, event, ...)
+	if(not self:IsShown()) then return end
 	self[event](self, event, ...)
 end
 
