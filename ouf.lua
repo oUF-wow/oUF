@@ -66,7 +66,7 @@ local oUF = CreateFrame"Button"
 local RegisterEvent = oUF.RegisterEvent
 local metatable = {__index = oUF}
 
-local style, raid, raidpet, party, partypet, cache
+local style, cache
 local styles, furui = {}, {}
 local callback, units, objects = {}, {}, {}
 
@@ -224,12 +224,7 @@ local initObject = function(object, unit)
 
 	object = setmetatable(object, metatable)
 
-	local style =
-		(object:GetParent() == oUF_Party and party) or
-		(object:GetParent() == oUF_PartyPet and partypet) or
-		(object:GetParent():GetName():sub(1, 8) == "oUF_Raid" and raid) or
-		(object:GetParent():GetName():sub(1, 11) == "oUF_RaidPet" and raidpet) or
-		style
+	local style = object:GetParent().style or style
 
 	object:SetAttribute("initial-width", style["initial-width"])
 	object:SetAttribute("initial-height", style["initial-height"])
@@ -266,7 +261,7 @@ local initObject = function(object, unit)
 	-- We could use ClickCastFrames only, but it will probably contain frames that
 	-- we don't care about.
 	objects[object] = true
-	ClickCastFrames = ClickCastFrames or {}
+	_G.ClickCastFrames = ClickCastFrames or {}
 	ClickCastFrames[object] = true
 end
 
@@ -293,52 +288,27 @@ function oUF:SetActiveStyle(name)
 	style = name
 end
 
-function oUF:Spawn(unit, name, group)
+function oUF:Spawn(unit, name, isPet)
 	if(not unit) then return error("Bad argument #1 to 'Spawn' (string expected, got %s)", type(unit)) end
 	if(not style) then return error("Unable to create frame. No styles have been registered.") end
 
 	local style = styles[style]
 	local object
-	if(unit == "party") then
-		if(not party) then party = style end
+	if(unit == "header") then
+		local template
+		if(isPet) then
+			template = "SecureGroupPetHeaderTemplate"
+		else
+			-- Yes, I know.
+			HandleUnit"party"
+			template = "SecureGroupHeaderTemplate"
+		end
 
-		local header = CreateFrame("Frame", "oUF_Party", UIParent, "SecurePartyHeaderTemplate")
+		local header = CreateFrame("Frame", name, UIParent, template)
 		header:SetAttribute("template", "SecureUnitButtonTemplate")
 		header.initialConfigFunction = initObject
+		header.style = style
 		header.SetManyAttributes = SetManyAttributes
-		header:Show()
-
-		HandleUnit"party"
-
-		return header
-	elseif(unit == "partypet") then
-		if(not partypet) then partypet = style end
-
-		local header = CreateFrame("Frame","oUF_PartyPet", UIParent, "SecurePartyPetHeaderTemplate")
-		header:SetAttribute("template", "SecureUnitButtonTemplate")
-		header.initialConfigFunction = initObject
-		header.SetManyAttributes = SetManyAttributes
-		header:Show()
-
-		return header
-	elseif(unit == "raid") then
-		if(not raid) then raid = style end
-
-		local header = CreateFrame("Frame", "oUF_Raid"..(group or 1), UIParent, "SecureRaidGroupHeaderTemplate")
-		header:SetAttribute("template", "SecureUnitButtonTemplate")
-		header.initialConfigFunction = initObject
-		header.SetManyAttributes = SetManyAttributes
-		header:Show()
-
-		return header
-	elseif(unit == "raidpet") then
-		if(not raidpet) then raidpet = style end
-
-		local header = CreateFrame("Frame", "oUF_RaidPet"..(group or 1), UIParent, "SecureRaidPetHeaderTemplate")
-		header:SetAttribute("template", "SecureUnitButtonTemplate")
-		header.initialConfigFunction = initObject
-		header.SetManyAttributes = SetManyAttributes
-		header:Show()
 
 		return header
 	else
