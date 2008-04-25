@@ -440,8 +440,8 @@ end
 function oUF:UNIT_HAPPINESS(event, unit)
 	if(self.unit ~= unit) then return end
 
-	self:UNIT_HEALTH(event, unit)
-	self:UNIT_MANA(event, unit)
+	if(self:IsEventRegistered"UNIT_HEALTH") then self:UNIT_HEALTH(event, unit) end
+	if(self:IsEventRegistered"UNIT_MANA") then self:UNIT_MANA(event, unit) end
 end
 
 oUF.version = ver
