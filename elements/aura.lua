@@ -43,9 +43,9 @@ local OnEnter = function(self)
 
 	GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
 	if(self.overlay) then
-		GameTooltip:SetUnitDebuff(self:GetParent().unit, self:GetID())
+		GameTooltip:SetUnitDebuff(self.frame.unit, self:GetID(), self.parent.filter)
 	else
-		GameTooltip:SetUnitBuff(self:GetParent().unit, self:GetID())
+		GameTooltip:SetUnitBuff(self.frame.unit, self:GetID(), self.parent.filter)
 	end
 end
 
@@ -54,7 +54,7 @@ local OnLeave = function()
 end
 
 local createAuraIcon = function(self, icons, index, debuff)
-	local button = CreateFrame("Frame", nil, self)
+	local button = CreateFrame("Frame", nil, icons)
 	button:EnableMouse(true)
 	button:SetID(index)
 
@@ -84,6 +84,8 @@ local createAuraIcon = function(self, icons, index, debuff)
 
 	table_insert(icons, button)
 
+	button.parent = icons
+	button.frame = self
 	button.icon = icon
 	button.count = count
 	button.cd = cd
@@ -107,7 +109,7 @@ local updateIcons = function(self, unit, icons, isDebuff)
 			break
 		elseif(name) then
 			-- Clearly easy to read:
-			if(not icon) then icon = (self.CreateAuraIcon and self:CreateAuraIcon(self, icons, i, isDebuff)) or createAuraIcon(self, icons, i, isDebuff) end
+			if(not icon) then icon = (self.CreateAuraIcon and self:CreateAuraIcon(icons, i, isDebuff)) or createAuraIcon(self, icons, i, isDebuff) end
 
 			if(duration and duration > 0) then
 				icon.cd:SetCooldown(GetTime()-(duration-timeLeft), duration)
