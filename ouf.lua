@@ -395,7 +395,7 @@ function oUF:PLAYER_ENTERING_WORLD(event)
 	if(not UnitExists(unit)) then return end
 
 	for key, func in pairs(subTypes) do
-		if(self[key] and type(func) == "string") then
+		if(self:IsEventRegistered(event) and self[key] and type(func) == "string") then
 			self[func](self, event, unit)
 		end
 	end
