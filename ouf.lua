@@ -198,7 +198,6 @@ local initObject = function(object, unit)
 	object:SetAttribute("initial-width", style["initial-width"])
 	object:SetAttribute("initial-height", style["initial-height"])
 	object:SetAttribute("initial-scale", style["initial-scale"])
-	object.style = style
 	style(object, unit)
 
 	if(not InCombatLockdown()) then
