@@ -114,7 +114,7 @@ function oUF:SetAuraPosition(icons, x)
 		size = (icons.size or 16) + spacing
 		anchor = icons.initialAnchor or "BOTTOMLEFT"
 		growthx = (icons["growth-x"] == "LEFT" and -1) or 1
-		growthy = (icons["growth-y"] == "DOWN" and -1) or 1
+		growthy = (icons["growth-y"] == "UP" and -1) or 1
 		cols = math.floor(icons:GetWidth() / size)
 		rows = math.floor(icons:GetHeight() / size)
 
