@@ -59,7 +59,7 @@ local createAuraIcon = function(self, icons, index, debuff)
 	button.count = count
 	button.cd = cd
 
-	if(self.PostCreateAuraIcon) then self:PostCreateAuraIcon(button) end
+	if(self.PostCreateAuraIcon) then self:PostCreateAuraIcon(button, icons, index, debuff) end
 
 	return button
 end
