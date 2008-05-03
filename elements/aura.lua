@@ -156,6 +156,11 @@ function oUF:UNIT_AURA(event, unit)
 			for index = 1, max do
 				if(not updateIcon(self, unit, buffs, index, max, filter)) then
 					max = index - 1
+
+					while(buffs[index]) do
+						buffs[index]:Hide()
+						index = index + 1
+					end
 					break
 				end
 			end
@@ -167,6 +172,11 @@ function oUF:UNIT_AURA(event, unit)
 			for index = 1, max do
 				if(not updateIcon(self, unit, debuffs, index, max, filter, true)) then
 					max = index - 1
+
+					while(debuffs[index]) do
+						debuffs[index]:Hide()
+						index = index + 1
+					end
 					break
 				end
 			end
