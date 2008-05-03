@@ -107,28 +107,16 @@ local updateIcons = function(self, unit, icons, isDebuff)
 end
 
 function oUF:SetAuraPosition(icons, x)
-	if(icons.merge and col > 0) then
-		col = col + 1
-
-		if(col >= cols) then
-			col = 0
-			row = row + 1
-		end
-	else
+	if(icons and x > 0) then
 		col = 0
 		row = 0
-	end
-
-	if(x > 0) then
-		if(not icons.merge) then
-			spacing = icons.spacing or 0
-			size = (icons.size or 16) + spacing
-			anchor = icons.initialAnchor or "BOTTOMLEFT"
-			growthx = (icons["growth-x"] == "LEFT" and -1) or 1
-			growthy = (icons["growth-y"] == "UP" and -1) or 1
-			cols = math.floor(icons:GetWidth() / size)
-			rows = math.floor(icons:GetHeight() / size)
-		end
+		spacing = icons.spacing or 0
+		size = (icons.size or 16) + spacing
+		anchor = icons.initialAnchor or "BOTTOMLEFT"
+		growthx = (icons["growth-x"] == "LEFT" and -1) or 1
+		growthy = (icons["growth-y"] == "UP" and -1) or 1
+		cols = math.floor(icons:GetWidth() / size)
+		rows = math.floor(icons:GetHeight() / size)
 
 		for i = 1, x do
 			button = icons[i]
@@ -147,9 +135,18 @@ end
 
 function oUF:UNIT_AURA(event, unit)
 	if(self.unit ~= unit) then return end
-
 	if(self.PreUpdateAura) then self:PreUpdateAura(event, unit) end
-	if(self.Buffs) then self:SetAuraPosition(updateIcons(self, unit, self.Buffs)) end
-	if(self.Debuffs) then self:SetAuraPosition(updateIcons(self, unit, self.Debuffs, true)) end
+
+	if(self.Aura) then
+	else
+		if(self.Buffs) then
+			self:SetAuraPosition(updateIcons(self, unit, self.Buffs))
+		end
+
+		if(self.Debuffs) then
+			self:SetAuraPosition(updateIcons(self, unit, self.Debuffs, true))
+		end
+	end
+
 	if(self.PostUpdateAura) then self:PostUpdateAura(event, unit) end
 end
