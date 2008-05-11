@@ -141,8 +141,8 @@ function oUF:UNIT_AURA(event, unit)
 	auras, buffs, debuffs = self.Auras, self.Buffs, self.Debuffs
 
 	if(auras) then
-		mod = auras.numBuffs
-		max = auras.numDebuffs + mod
+		mod = auras.numBuffs or 32
+		max = (auras.numDebuffs or 40) + mod
 		for index = 1, max do
 			updateIcon(self, unit, auras, index, mod, false, (index > mod))
 		end
@@ -151,7 +151,7 @@ function oUF:UNIT_AURA(event, unit)
 	else
 		if(buffs) then
 			filter = buffs.filter
-			max = buffs.num
+			max = buffs.num or 32
 			for index = 1, max do
 				if(not updateIcon(self, unit, buffs, index, max, filter)) then
 					max = index - 1
@@ -167,7 +167,7 @@ function oUF:UNIT_AURA(event, unit)
 		end
 		if(debuffs) then
 			filter = debuffs.filter
-			max = debuffs.num
+			max = debuffs.num or 40
 			for index = 1, max do
 				if(not updateIcon(self, unit, debuffs, index, max, filter, true)) then
 					max = index - 1
