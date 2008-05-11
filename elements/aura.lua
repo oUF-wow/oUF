@@ -115,21 +115,20 @@ function oUF:SetAuraPosition(icons, x)
 		anchor = icons.initialAnchor or "BOTTOMLEFT"
 		growthx = (icons["growth-x"] == "LEFT" and -1) or 1
 		growthy = (icons["growth-y"] == "DOWN" and -1) or 1
-		cols = math_floor(icons:GetWidth() / size)
-		rows = math_floor(icons:GetHeight() / size)
+		cols = math_floor(icons:GetWidth() / size + .5)
+		rows = math_floor(icons:GetHeight() / size + .5)
 
 		for i = 1, x do
 			button = icons[i]
 			if(button and button:IsShown()) then
+				if(col == cols) then
+					col = 0
+					row = row + 1
+				end
 				button:ClearAllPoints()
 				button:SetPoint(anchor, icons, anchor, col * size * growthx, row * size * growthy)
 
-				if(col >= cols) then
-					col = 0
-					row = row + 1
-				else
-					col = col + 1
-				end
+				col = col + 1
 			end
 		end
 	end
