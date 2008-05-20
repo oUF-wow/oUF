@@ -2,7 +2,7 @@ local	select, table_insert, math_floor, UnitDebuff, UnitBuff, GetTime, DebuffTyp
 		select, table.insert, math.floor, UnitDebuff, UnitBuff, GetTime, DebuffTypeColor
 
 local timeLeft, duration, dtype, count, texture, rank, name, color
-local total, col, row, size, anchor, button, growthx, growthy, cols, rows, spacing
+local total, col, row, size, anchor, button, growthx, growthy, cols, rows, spacing, gap
 local auras, buffs, debuffs, mod, max, filter, index, icon
 
 local OnEnter = function(self)
@@ -105,6 +105,7 @@ function oUF:SetAuraPosition(icons, x)
 		col = 0
 		row = 0
 		spacing = icons.spacing or 0
+		gap = icons.gap
 		size = (icons.size or 16) + spacing
 		anchor = icons.initialAnchor or "BOTTOMLEFT"
 		growthx = (icons["growth-x"] == "LEFT" and -1) or 1
@@ -115,6 +116,14 @@ function oUF:SetAuraPosition(icons, x)
 		for i = 1, x do
 			button = icons[i]
 			if(button and button:IsShown()) then
+				if(gap and button.debuff) then
+					if(col > 0) then
+						col = col + 1
+					end
+
+					gap = false
+				end
+
 				if(col == cols) then
 					col = 0
 					row = row + 1
