@@ -3,7 +3,7 @@ local	select, table_insert, math_floor, UnitDebuff, UnitBuff, GetTime, DebuffTyp
 
 local timeLeft, duration, dtype, count, texture, rank, name, color
 local total, col, row, size, anchor, button, growthx, growthy, cols, rows, spacing
-local auras, buffs, debuffs, mod, max, filter, index
+local auras, buffs, debuffs, mod, max, filter, index, icon
 
 local OnEnter = function(self)
 	if(not self:IsVisible()) then return end
@@ -62,20 +62,14 @@ local createAuraIcon = function(self, icons, index, debuff)
 	return button
 end
 
-local updateIcon = function(self, unit, icons, icon, mod, filter, isDebuff)
-	if(icon <= mod) then
-		index = icon
-	else
-		index = icon % mod
-	end
-
+local updateIcon = function(self, unit, icons, index, offset, filter, isDebuff)
 	if(isDebuff) then
 		name, rank, texture, count, dtype, duration, timeLeft = UnitDebuff(unit, index, filter)
 	else
 		name, rank, texture, count, duration, timeLeft = UnitBuff(unit, index, filter)
 	end
 
-	icon = icons[icon]
+	icon = icons[index + offset]
 	if(name) then
 		if(not icon) then icon = (self.CreateAuraIcon and self:CreateAuraIcon(icons, index, isDebuff)) or createAuraIcon(self, icons, index, isDebuff) end
 
@@ -141,10 +135,16 @@ function oUF:UNIT_AURA(event, unit)
 	auras, buffs, debuffs = self.Auras, self.Buffs, self.Debuffs
 
 	if(auras) then
-		mod = auras.numBuffs or 32
-		max = (auras.numDebuffs or 40) + mod
+		buffs = auras.numBuffs or 32
+		debuffs = auras.numDebuffs or 40
+		max = debuffs + buffs
+
 		for index = 1, max do
-			updateIcon(self, unit, auras, index, mod, false, (index > mod))
+			if(index > buffs) then
+				updateIcon(self, unit, auras, index % debuffs, buffs, false, true)
+			else
+				updateIcon(self, unit, auras, index, 0)
+			end
 		end
 
 		self:SetAuraPosition(auras, max)
@@ -153,7 +153,7 @@ function oUF:UNIT_AURA(event, unit)
 			filter = buffs.filter
 			max = buffs.num or 32
 			for index = 1, max do
-				if(not updateIcon(self, unit, buffs, index, max, filter)) then
+				if(not updateIcon(self, unit, buffs, index, 0, filter)) then
 					max = index - 1
 
 					while(buffs[index]) do
@@ -169,7 +169,7 @@ function oUF:UNIT_AURA(event, unit)
 			filter = debuffs.filter
 			max = debuffs.num or 40
 			for index = 1, max do
-				if(not updateIcon(self, unit, debuffs, index, max, filter, true)) then
+				if(not updateIcon(self, unit, debuffs, index, 0, filter, true)) then
 					max = index - 1
 
 					while(debuffs[index]) do
