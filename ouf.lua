@@ -1,6 +1,6 @@
 local ver = "$Id$"
 local print = function(a) ChatFrame1:AddMessage("|cff33ff99oUF:|r "..tostring(a)) end
-local error = function(...) print("|cffff0000Error:|r ", string.format(...)) end
+local error = function(...) print("|cffff0000Error:|r "..string.format(...)) end
 local dummy = function() end
 local function SetManyAttributes(self, ...)
 	for i=1,select("#", ...),2 do
