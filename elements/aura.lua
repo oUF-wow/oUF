@@ -94,6 +94,7 @@ local updateIcon = function(self, unit, icons, index, offset, filter, isDebuff)
 		icon.icon:SetTexture(texture)
 		icon.count:SetText((count > 1 and count))
 
+		if(self.PostUpdateAuraIcon) then self:PostUpdateAuraIcon(icons, unit, icon, index, offset, filter, isDebuff) end
 		return true
 	elseif(icon) then
 		icon:Hide()
