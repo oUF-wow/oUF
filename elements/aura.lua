@@ -23,7 +23,6 @@ end
 local createAuraIcon = function(self, icons, index, debuff)
 	local button = CreateFrame("Frame", nil, icons)
 	button:EnableMouse(true)
-	button:SetID(index)
 
 	button:SetWidth(icons.size or 16)
 	button:SetHeight(icons.size or 16)
@@ -90,6 +89,8 @@ local updateIcon = function(self, unit, icons, index, offset, filter, isDebuff)
 		end
 
 		icon:Show()
+		icon:SetID(index)
+
 		icon.debuff = isDebuff
 		icon.icon:SetTexture(texture)
 		icon.count:SetText((count > 1 and count))
