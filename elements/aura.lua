@@ -69,7 +69,7 @@ local updateIcon = function(self, unit, icons, index, offset, filter, isDebuff)
 	end
 
 	icon = icons[index + offset]
-	if(name) then
+	if((icons.onlyShowDuration and duration) or (not icons.onlyShowDuration and name)) then
 		if(not icon) then icon = (self.CreateAuraIcon and self:CreateAuraIcon(icons, index, isDebuff)) or createAuraIcon(self, icons, index, isDebuff) end
 
 		if(duration and duration > 0) then
