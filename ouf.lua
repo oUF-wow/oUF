@@ -308,7 +308,7 @@ local ColorGradient = function(perc, r1, g1, b1, r2, g2, b2, r3, g3, b3)
 end]]
 
 function oUF:PARTY_MEMBERS_CHANGED(event)
-	self:PARTY_LEADER_CHANGED()
+	if(self:IsEventRegistered"PARTY_LEADER_CHANGED") then self:PARTY_LEADER_CHANGED() end
 end
 
 function oUF:UNIT_NAME_UPDATE(event, unit)
