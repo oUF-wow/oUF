@@ -33,4 +33,3 @@ table.insert(oUF.subTypes, function(self)
 		OnRangeFrame:SetScript("OnUpdate", OnRangeUpdate)
 	end
 end)
-oUF.subTypesMapping.Range = true
