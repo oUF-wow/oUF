@@ -47,7 +47,7 @@ local	UnitExists, UnitName =
 
 local subTypes = {}
 local subTypesMapping = {
-	["Name"] = "UNIT_NAME_UPDATE",
+	"UNIT_NAME_UPDATE",
 }
 
 -- Events
@@ -259,6 +259,16 @@ function oUF:Spawn(unit, name, isPet)
 	return object
 end
 
+function oUF:RegisterSubTypeMapping(event)
+	for _, map in ipairs(subTypesMapping) do
+		if(map == event) then
+			return
+		end
+	end
+
+	table.insert(subTypesMapping, event)
+end
+
 --[[
 --:PLAYER_ENTERING_WORLD()
 --	Notes:
@@ -268,8 +278,8 @@ function oUF:PLAYER_ENTERING_WORLD(event)
 	local unit = self.unit
 	if(not UnitExists(unit)) then return end
 
-	for key, func in pairs(subTypesMapping) do
-		if(self[key] and self:IsEventRegistered(func)) then
+	for _, func in ipairs(subTypesMapping) do
+		if(self:IsEventRegistered(func)) then
 			self[func](self, event, unit)
 		end
 	end

@@ -12,4 +12,4 @@ table.insert(oUF.subTypes, function(self)
 		self:RegisterEvent"PARTY_MEMBERS_CHANGED"
 	end
 end)
-oUF.subTypesMapping.Leader = "PARTY_LEADER_CHANGED"
+oUF:RegisterSubTypeMapping"PARTY_LEADER_CHANGED"

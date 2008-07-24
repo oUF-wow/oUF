@@ -18,4 +18,4 @@ table.insert(oUF.subTypes, function(self)
 		self:RegisterEvent"RAID_TARGET_UPDATE"
 	end
 end)
-oUF.subTypesMapping.RaidIcon = "RAID_TARGET_UPDATE"
+oUF:RegisterSubTypeMapping"RAID_TARGET_UPDATE"

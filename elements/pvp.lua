@@ -18,4 +18,4 @@ table.insert(oUF.subTypes, function(self)
 		self:RegisterEvent"UNIT_FACTION"
 	end
 end)
-oUF.subTypesMapping.PvP = "UNIT_FACTION"
+oUF:RegisterSubTypeMapping"UNIT_FACTION"

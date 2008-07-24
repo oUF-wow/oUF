@@ -53,4 +53,4 @@ table.insert(oUF.subTypes, function(self)
 		self:RegisterEvent"UNIT_DISPLAYPOWER"
 	end
 end)
-oUF.subTypesMapping.Power = "UNIT_MANA"
+oUF:RegisterSubTypeMapping"UNIT_MANA"

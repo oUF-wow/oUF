@@ -25,4 +25,4 @@ table.insert(oUF.subTypes, function(self)
 		self:RegisterEvent"UNIT_PORTRAIT_UPDATE"
 	end
 end)
-oUF.subTypesMapping.Portrait = "UNIT_PORTRAIT_UPDATE"
+oUF:RegisterSubTypeMapping"UNIT_PORTRAIT_UPDATE"

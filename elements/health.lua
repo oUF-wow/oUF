@@ -54,4 +54,4 @@ table.insert(oUF.subTypes, function(self, unit)
 		self:RegisterEvent"UNIT_MAXHEALTH"
 	end
 end)
-oUF.subTypesMapping.Health = "UNIT_HEALTH"
+oUF:RegisterSubTypeMapping"UNIT_HEALTH"

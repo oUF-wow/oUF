@@ -23,4 +23,4 @@ table.insert(oUF.subTypes, function(self, unit)
 		self:RegisterEvent"PLAYER_COMBO_POINTS"
 	end
 end)
-oUF.subTypesMapping.CPoints = "PLAYER_COMBO_POINTS"
+oUF:RegisterSubTypeMapping"PLAYER_COMBO_POINTS"
