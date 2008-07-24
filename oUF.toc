@@ -15,3 +15,4 @@ elements\leader.lua
 elements\status.lua
 elements\pvp.lua
 elements\portraits.lua
+elements\range.lua
