@@ -12,3 +12,10 @@ function oUF:UNIT_FACTION(event, unit)
 		self.PvP:Hide()
 	end
 end
+
+table.insert(oUF.subTypes, function(self)
+	if(self.PvP) then
+		self:RegisterEvent"UNIT_FACTION"
+	end
+end)
+oUF.subTypesMapping.PvP = "UNIT_FACTION"

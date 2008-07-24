@@ -38,3 +38,19 @@ oUF.UNIT_MAXRAGE = oUF.UNIT_MANA
 oUF.UNIT_MAXFOCUS = oUF.UNIT_MANA
 oUF.UNIT_MAXENERGY = oUF.UNIT_MANA
 oUF.UNIT_DISPLAYPOWER = oUF.UNIT_MANA
+
+
+table.insert(oUF.subTypes, function(self)
+	if(self.Power) then
+		self:RegisterEvent"UNIT_MANA"
+		self:RegisterEvent"UNIT_RAGE"
+		self:RegisterEvent"UNIT_FOCUS"
+		self:RegisterEvent"UNIT_ENERGY"
+		self:RegisterEvent"UNIT_MAXMANA"
+		self:RegisterEvent"UNIT_MAXRAGE"
+		self:RegisterEvent"UNIT_MAXFOCUS"
+		self:RegisterEvent"UNIT_MAXENERGY"
+		self:RegisterEvent"UNIT_DISPLAYPOWER"
+	end
+end)
+oUF.subTypesMapping.Power = "UNIT_MANA"

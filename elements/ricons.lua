@@ -12,3 +12,10 @@ function oUF:RAID_TARGET_UPDATE(event)
 		icon:Hide()
 	end
 end
+
+table.insert(oUF.subTypes, function(self)
+	if(self.RaidIcon) then
+		self:RegisterEvent"RAID_TARGET_UPDATE"
+	end
+end)
+oUF.subTypesMapping.RaidIcon = "RAID_TARGET_UPDATE"

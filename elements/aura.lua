@@ -196,3 +196,13 @@ function oUF:UNIT_AURA(event, unit)
 
 	if(self.PostUpdateAura) then self:PostUpdateAura(event, unit) end
 end
+
+table.insert(oUF.subTypes, function(self)
+	if(self.Buffs or self.Debuffs or self.Auras) then
+		self:RegisterEvent"UNIT_AURA"
+	end
+end)
+
+oUF.subTypesMapping.Auras = "UNIT_AURA"
+oUF.subTypesMapping.Buffs = "UNIT_AURA"
+oUF.subTypesMapping.Debuffs = "UNIT_AURA"

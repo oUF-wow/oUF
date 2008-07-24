@@ -41,24 +41,13 @@ local callback, units, objects = {}, {}, {}
 
 local	_G, select, type, pairs, tostring, math_modf =
 		_G, select, type, pairs, tostring, math.modf
-local	UnitExists, UnitName, UnitInRange =
-		UnitExists, UnitName, UnitInRange
+local	UnitExists, UnitName =
+		UnitExists, UnitName
 
-local subTypes = {
-	["Health"] = "UNIT_HEALTH",
-	["Power"] = "UNIT_MANA",
+
+local subTypes = {}
+local subTypesMapping = {
 	["Name"] = "UNIT_NAME_UPDATE",
-	["CPoints"] = "PLAYER_COMBO_POINTS",
-	["RaidIcon"] = "RAID_TARGET_UPDATE",
-	["Auras"] = "UNIT_AURA",
-	["Buffs"] = "UNIT_AURA",
-	["Debuffs"] = "UNIT_AURA",
-	["Leader"] = "PARTY_LEADER_CHANGED",
-	["Combat"] = "PLAYER_REGEN_DISABLED",
-	["Resting"] = "PLAYER_UPDATE_RESTING",
-	["PvP"] = "UNIT_FACTION",
-	["Range"] = true,
-	["Portrait"] = "UNIT_PORTRAIT_UPDATE",
 }
 
 -- Events
@@ -78,30 +67,6 @@ local OnAttributeChanged = function(self, name, value)
 			self.id = value:match"^.-(%d+)"
 			self:PLAYER_ENTERING_WORLD()
 		end
-	end
-end
-
--- Updates
--- updating of range.
-local timer = 0
-local OnRangeFrame
-local OnRangeUpdate = function(self, elapsed)
-	timer = timer + elapsed
-
-	if(timer >= .25) then
-		for object, v in pairs(objects) do
-			if(object:IsShown() and object.Range) then
-				if(UnitIsConnected(object.unit) and not UnitInRange(object.unit)) then
-					if(object:GetAlpha() == object.inRangeAlpha) then
-						object:SetAlpha(object.outsideRangeAlpha)
-					end
-				elseif(object:GetAlpha() ~= object.inRangeAlpha) then
-					object:SetAlpha(object.inRangeAlpha)
-				end
-			end
-		end
-
-		timer = 0
 	end
 end
 
@@ -214,13 +179,8 @@ local initObject = function(object, unit)
 
 	object:RegisterEvent"PLAYER_ENTERING_WORLD"
 
-	-- We might want to go deeper then the first level of the table, but there is honestly
-	-- nothing preventing us from just placing all the interesting vars at the first level
-	-- of it.
-	for subType, subObject in pairs(object) do
-		if(subTypes[subType]) then
-			object:RegisterObject(object, subType)
-		end
+	for _, func in ipairs(subTypes) do
+		func(object, unit)
 	end
 
 	for _, func in ipairs(callback) do
@@ -299,61 +259,6 @@ function oUF:Spawn(unit, name, isPet)
 	return object
 end
 
-function oUF:RegisterFrameObject()
-	error":RegisterFrameObject is deprecated"
-end
-
---[[
---:RegisterObject(object, subType)
---	Notes:
---		- Internal function, but externally avaible as someone might want to call it.
---]]
-function oUF:RegisterObject(object, subType)
-	local unit = object.unit
-
-	-- We could use a table containing this info, but it's just as easy to do it
-	-- manually.
-	if(subType == "Health") then
-		object:RegisterEvent"UNIT_HEALTH"
-		object:RegisterEvent"UNIT_MAXHEALTH"
-	elseif(subType == "Power") then
-		object:RegisterEvent"UNIT_MANA"
-		object:RegisterEvent"UNIT_RAGE"
-		object:RegisterEvent"UNIT_FOCUS"
-		object:RegisterEvent"UNIT_ENERGY"
-		object:RegisterEvent"UNIT_MAXMANA"
-		object:RegisterEvent"UNIT_MAXRAGE"
-		object:RegisterEvent"UNIT_MAXFOCUS"
-		object:RegisterEvent"UNIT_MAXENERGY"
-		object:RegisterEvent"UNIT_DISPLAYPOWER"
-	elseif(subType == "Name") then
-		object:RegisterEvent"UNIT_NAME_UPDATE"
-	elseif(subType == "CPoints" and unit == "target") then
-		object:RegisterEvent"PLAYER_COMBO_POINTS"
-	elseif(subType == "RaidIcon") then
-		object:RegisterEvent"RAID_TARGET_UPDATE"
-	elseif(subType == "Leader") then
-		object:RegisterEvent"PARTY_LEADER_CHANGED"
-		object:RegisterEvent"PARTY_MEMBERS_CHANGED"
-	elseif(subType == "Combat") then
-		object:RegisterEvent"PLAYER_REGEN_DISABLED"
-		object:RegisterEvent"PLAYER_REGEN_ENABLED"
-	elseif(subType == "PvP") then
-		object:RegisterEvent"UNIT_FACTION"
-	elseif(subType == "Range") then
-		if(not OnRangeFrame) then
-			OnRangeFrame = CreateFrame"Frame"
-			OnRangeFrame:SetScript("OnUpdate", OnRangeUpdate)
-		end
-	elseif(subType == "Portrait") then
-		object:RegisterEvent"UNIT_PORTRAIT_UPDATE"
-	elseif(subType == "Resting" and unit == "player") then
-		object:RegisterEvent"PLAYER_UPDATE_RESTING"
-	elseif(subType == "Buffs" or subType == "Debuffs" or subType == "Auras") then
-		object:RegisterEvent"UNIT_AURA"
-	end
-end
-
 --[[
 --:PLAYER_ENTERING_WORLD()
 --	Notes:
@@ -363,7 +268,7 @@ function oUF:PLAYER_ENTERING_WORLD(event)
 	local unit = self.unit
 	if(not UnitExists(unit)) then return end
 
-	for key, func in pairs(subTypes) do
+	for key, func in pairs(subTypesMapping) do
 		if(self[key] and type(func) == "string" and self:IsEventRegistered(func)) then
 			self[func](self, event, unit)
 		end
@@ -405,6 +310,11 @@ function oUF:UNIT_NAME_UPDATE(event, unit)
 	-- solution to this problem).
 	self.Name:SetText(name)
 end
+table.insert(subTypes, function(self)
+	if(self.Name) then
+		self:RegisterEvent"UNIT_NAME_UPDATE"
+	end
+end)
 
 function oUF:UNIT_HAPPINESS(event, unit)
 	if(self.unit ~= unit) then return end
@@ -417,5 +327,6 @@ oUF.version = ver
 oUF.units = units
 oUF.objects = objects
 oUF.subTypes = subTypes
+oUF.subTypesMapping = subTypesMapping
 oUF.colors = colors
 _G.oUF = oUF

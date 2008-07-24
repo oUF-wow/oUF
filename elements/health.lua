@@ -47,3 +47,11 @@ function oUF:UNIT_HEALTH(event, unit)
 	if(self.PostUpdateHealth) then self:PostUpdateHealth(event, bar, unit, min, max) end
 end
 oUF.UNIT_MAXHEALTH = oUF.UNIT_HEALTH
+
+table.insert(oUF.subTypes, function(self, unit)
+	if(self.Health) then
+		self:RegisterEvent"UNIT_HEALTH"
+		self:RegisterEvent"UNIT_MAXHEALTH"
+	end
+end)
+oUF.subTypesMapping.Health = "UNIT_HEALTH"

@@ -19,3 +19,10 @@ function oUF:UNIT_PORTRAIT_UPDATE(event, unit)
 		SetPortraitTexture(portrait, unit)
 	end
 end
+
+table.insert(oUF.subTypes, function(self)
+	if(self.Portrait) then
+		self:RegisterEvent"UNIT_PORTRAIT_UPDATE"
+	end
+end)
+oUF.subTypesMapping.Portrait = "UNIT_PORTRAIT_UPDATE"

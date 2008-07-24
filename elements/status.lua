@@ -15,3 +15,19 @@ function oUF:PLAYER_REGEN_DISABLED(event)
 end
 
 oUF.PLAYER_REGEN_ENABLED = oUF.PLAYER_REGEN_DISABLED
+
+table.insert(oUF.subTypes, function(self, unit)
+	if(self.Resting and unit == 'player') then
+		self:RegisterEvent"PLAYER_UPDATE_RESTING"
+	end
+end)
+
+table.insert(oUF.subTypes, function(self)
+	if(self.Combat) then
+		self:RegisterEvent"PLAYER_REGEN_DISABLED"
+		self:RegisterEvent"PLAYER_REGEN_ENABLED"
+	end
+end)
+
+oUF.subTypesMapping. = "PLAYER_UPDATE_RESTING"
+oUF.subTypesMapping. = "PLAYER_REGEN_DISABLED"

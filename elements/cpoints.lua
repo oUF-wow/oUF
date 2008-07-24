@@ -17,3 +17,10 @@ function oUF:PLAYER_COMBO_POINTS(event)
 		end
 	end
 end
+
+table.insert(oUF.subTypes, function(self, unit)
+	if(self.CPoints and unit == "target") then
+		self:RegisterEvent"PLAYER_COMBO_POINTS"
+	end
+end)
+oUF.subTypesMapping.CPoints = "PLAYER_COMBO_POINTS"
