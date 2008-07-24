@@ -76,7 +76,7 @@ local OnTargetUpdate = function(self, elapsed)
 		return
 	elseif(not self.timer) then
 		self.timer = .5
-	elseif(self.timer <= .5) then
+	elseif(self.timer < 0) then
 		self:PLAYER_ENTERING_WORLD()
 		self.timer = .5
 	else
