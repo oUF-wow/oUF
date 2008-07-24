@@ -29,5 +29,5 @@ table.insert(oUF.subTypes, function(self)
 	end
 end)
 
-oUF.subTypesMapping. = "PLAYER_UPDATE_RESTING"
-oUF.subTypesMapping. = "PLAYER_REGEN_DISABLED"
+oUF.subTypesMapping.Resting = "PLAYER_UPDATE_RESTING"
+oUF.subTypesMapping.Combat = "PLAYER_REGEN_DISABLED"
