@@ -70,20 +70,6 @@ local OnAttributeChanged = function(self, name, value)
 	end
 end
 
--- updating of "invalid" units.
-local OnTargetUpdate = function(self, elapsed)
-	if(not self.unit) then
-		return
-	elseif(not self.timer) then
-		self.timer = .5
-	elseif(self.timer < 0) then
-		self:PLAYER_ENTERING_WORLD()
-		self.timer = .5
-	else
-		self.timer = self.timer - elapsed
-	end
-end
-
 -- Gigantic function of doom
 local HandleUnit = function(unit, object)
 	if(unit == "player") then
@@ -135,6 +121,22 @@ local HandleUnit = function(unit, object)
 
 			TargetofTargetHealthBar:UnregisterAllEvents()
 			TargetofTargetManaBar:UnregisterAllEvents()
+		end
+
+		-- updating of "invalid" units.
+		local OnTargetUpdate
+		do
+			local timer = 0
+			OnTargetUpdate = function(self, elapsed)
+				if(not self.unit) then
+					return
+				elseif(timer >= .5) then
+					self:PLAYER_ENTERING_WORLD()
+					timer = 0
+				end
+
+				timer = timer + elapsed
+			end
 		end
 
 		object:SetScript("OnUpdate", OnTargetUpdate)
