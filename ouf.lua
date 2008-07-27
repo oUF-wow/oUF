@@ -328,13 +328,6 @@ table.insert(subTypes, function(self)
 	end
 end)
 
-function oUF:UNIT_HAPPINESS(event, unit)
-	if(self.unit ~= unit) then return end
-
-	if(self:IsEventRegistered"UNIT_HEALTH") then self:UNIT_HEALTH(event, unit) end
-	if(self:IsEventRegistered"UNIT_MANA") then self:UNIT_MANA(event, unit) end
-end
-
 oUF.version = ver
 oUF.units = units
 oUF.objects = objects
