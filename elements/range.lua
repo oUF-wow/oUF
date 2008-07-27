@@ -11,7 +11,7 @@ local OnRangeUpdate = function(self, elapsed)
 	timer = timer + elapsed
 
 	if(timer >= .25) then
-		for object, v in pairs(objects) do
+		for _, object in ipairs(objects) do
 			if(object:IsShown() and object.Range) then
 				if(UnitIsConnected(object.unit) and not UnitInRange(object.unit)) then
 					if(object:GetAlpha() == object.inRangeAlpha) then

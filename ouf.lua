@@ -88,10 +88,6 @@ local HandleUnit = function(unit, object)
 
 		PetFrameHealthBar:UnregisterAllEvents()
 		PetFrameManaBar:UnregisterAllEvents()
-
-		-- Enable our shit
-		-- Temp solution :----D
-		object:RegisterEvent"UNIT_HAPPINESS"
 	elseif(unit == "target") then
 		-- Hide the blizzard stuff
 		TargetFrame:UnregisterAllEvents()
@@ -191,7 +187,7 @@ local initObject = function(object, unit)
 
 	-- We could use ClickCastFrames only, but it will probably contain frames that
 	-- we don't care about.
-	objects[object] = true
+	table.insert(objects, object)
 	_G.ClickCastFrames = ClickCastFrames or {}
 	ClickCastFrames[object] = true
 end
