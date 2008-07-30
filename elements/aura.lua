@@ -126,7 +126,7 @@ function oUF:SetAuraPosition(icons, x)
 					gap = false
 				end
 
-				if(col == cols) then
+				if(col >= cols) then
 					col = 0
 					row = row + 1
 				end
