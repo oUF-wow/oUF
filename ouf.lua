@@ -1,4 +1,3 @@
-local ver = "$Id$"
 local print = function(a) ChatFrame1:AddMessage("|cff33ff99oUF:|r "..tostring(a)) end
 local error = function(...) print("|cffff0000Error:|r "..string.format(...)) end
 local dummy = function() end
@@ -324,7 +323,7 @@ table.insert(subTypes, function(self)
 	end
 end)
 
-oUF.version = ver
+oUF.version = GetAddOnMetadata('oUF', 'version')
 oUF.units = units
 oUF.objects = objects
 oUF.subTypes = subTypes
