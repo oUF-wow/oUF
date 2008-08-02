@@ -2,7 +2,7 @@
 ## Title: oUF
 ## Author: Haste
 ## X-eMail: troeks@gmail.com
-## Notes: Unit frame framework for the people. Does nothing by itself.
+## Notes: Unit frame framework. Does nothing by itself.
 
 ouf.lua
 
