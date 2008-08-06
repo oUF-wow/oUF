@@ -3,7 +3,7 @@ local UnitMana = UnitMana
 local UnitManaMax = UnitManaMax
 local UnitPowerType = UnitPowerType
 
-local power = oUF.colors.power
+local power = PowerBarColor
 local min, max, bar, color
 
 function oUF:UNIT_MANA(event, unit)
@@ -38,7 +38,7 @@ oUF.UNIT_MAXRAGE = oUF.UNIT_MANA
 oUF.UNIT_MAXFOCUS = oUF.UNIT_MANA
 oUF.UNIT_MAXENERGY = oUF.UNIT_MANA
 oUF.UNIT_DISPLAYPOWER = oUF.UNIT_MANA
-
+oUF.UNIT_RUNIC_POWER = oUF.UNIT_MANA
 
 table.insert(oUF.subTypes, function(self)
 	if(self.Power) then
@@ -51,6 +51,7 @@ table.insert(oUF.subTypes, function(self)
 		self:RegisterEvent"UNIT_MAXFOCUS"
 		self:RegisterEvent"UNIT_MAXENERGY"
 		self:RegisterEvent"UNIT_DISPLAYPOWER"
+		self:RegisterEvent"UNIT_RUNIC_POWER"
 	end
 end)
 oUF:RegisterSubTypeMapping"UNIT_MANA"
