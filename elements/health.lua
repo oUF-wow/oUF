@@ -1,16 +1,3 @@
-local select = select
-local UnitHealth = UnitHealth
-local UnitHealthMax = UnitHealthMax
-local UnitIsTapped = UnitIsTapped
-local UnitIsTappedByPlayer = UnitIsTappedByPlayer
-local UnitIsPlayer = UnitIsPlayer
-local UnitIsConnected = UnitIsConnected
-local GetPetHappiness = GetPetHappiness
-local UnitClass = UnitClass
-local UnitReactionColor = UnitReactionColor
-local UnitReaction = UnitReaction
-local RAID_CLASS_COLORS = RAID_CLASS_COLORS
-
 local health = oUF.colors.health
 local happiness = oUF.colors.happiness
 local min, max, bar, color
