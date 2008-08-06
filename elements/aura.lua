@@ -65,7 +65,7 @@ local updateIcon = function(self, unit, icons, index, offset, filter, isDebuff)
 	if(isDebuff) then
 		name, rank, texture, count, dtype, duration, timeLeft = UnitDebuff(unit, index, filter)
 	else
-		name, rank, texture, count, duration, timeLeft = UnitBuff(unit, index, filter)
+		name, rank, texture, count, dtype, duration, timeLeft = UnitBuff(unit, index, filter)
 	end
 
 	icon = icons[index + offset]
