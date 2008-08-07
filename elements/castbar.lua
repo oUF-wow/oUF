@@ -195,7 +195,7 @@ table.insert(oUF.subTypes, function(object, unit)
 	--~   object.timeSinceLastUpdate = 0
 
 	object.Castbar.parent = object
-	object.Castbar:SetScript("OnUpdate", object.OnCastBarUpdate or onUpdate)
+	object.Castbar:SetScript("OnUpdate", object.OnCastbarUpdate or onUpdate)
 
 	if object.unit == "player" then
 		CastingBarFrame:UnregisterAllEvents()
