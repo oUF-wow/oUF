@@ -203,9 +203,6 @@ table.insert(oUF.subTypes, function(object, unit)
 		CastingBarFrame:Hide()
 	end
 
-	object.Castbar:SetStatusBarColor(.8, .8, 0)
-	if object.Castbar.bg then object.Castbar.bg:SetVertexColor(.4, .4, 0) end
-
 	object.Castbar:Hide()
 end)
 
