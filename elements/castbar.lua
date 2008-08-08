@@ -76,6 +76,7 @@ end
 
 function oUF:UNIT_SPELLCAST_STOP(event, unit, spellname, spellrank)
 	if self.unit ~= unit then return end
+	if not self.Castbar.casting then return end
 	if not self.SpellcastStop then
 		local castbar = self.Castbar
 		castbar.Castbar:SetValue(0)
@@ -191,7 +192,7 @@ table.insert(oUF.subTypes, function(object, unit)
 
 	object:RegisterEvent"UNIT_SPELLCAST_START"
 	object:RegisterEvent"UNIT_SPELLCAST_FAILED"
-	--object:RegisterEvent"UNIT_SPELLCAST_STOP"
+	object:RegisterEvent"UNIT_SPELLCAST_STOP"
 	object:RegisterEvent"UNIT_SPELLCAST_INTERRUPTED"
 	object:RegisterEvent"UNIT_SPELLCAST_DELAYED"
 	object:RegisterEvent"UNIT_SPELLCAST_CHANNEL_START"
