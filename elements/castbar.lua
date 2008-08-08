@@ -1,3 +1,9 @@
+--[[
+	Original codebase:
+		oUF_Castbar by starlon.
+		http://svn.wowace.com/wowace/trunk/oUF_Castbar/
+--]]
+
 local UnitName = UnitName
 local GetTime = GetTime
 local UnitCastingInfo = UnitCastingInfo
