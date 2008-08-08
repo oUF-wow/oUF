@@ -79,8 +79,8 @@ function oUF:UNIT_SPELLCAST_STOP(event, unit, spellname, spellrank)
 	if not self.Castbar.casting then return end
 	if not self.SpellcastStop then
 		local castbar = self.Castbar
-		castbar.Castbar:SetValue(0)
-		castbar.Castbar:Hide()
+		castbar:SetValue(0)
+		castbar:Hide()
 		castbar.casting = nil
 	else
 		self:SpellcastStop(event, unit, spellname, spellrank)
