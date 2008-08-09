@@ -37,8 +37,7 @@ local oUF = CreateFrame"Button"
 local RegisterEvent = oUF.RegisterEvent
 local metatable = {__index = oUF}
 
-local style, cache
-local styles, furui = {}, {}
+local styles, style = {}
 local callback, units, objects = {}, {}, {}
 
 local	_G, select, type, pairs, tostring, math_modf =
@@ -210,9 +209,6 @@ end
 function oUF:SetActiveStyle(name)
 	if(type(name) ~= "string") then return error("Bad argument #1 to 'SetActiveStyle' (string expected, got %s)", type(name)) end
 	if(not styles[name]) then return error("Style [%s] does not exist.", name) end
-
-	furui[style] = cache
-	cache = furui[name] or {}
 
 	style = name
 end
