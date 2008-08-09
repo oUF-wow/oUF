@@ -1,3 +1,5 @@
+local wotlk = select(4, GetBuildInfo()) >= 3e4
+
 local	select, table_insert, math_floor, UnitDebuff, UnitBuff, GetTime, DebuffTypeColor =
 		select, table.insert, math.floor, UnitDebuff, UnitBuff, GetTime, DebuffTypeColor
 
@@ -64,6 +66,8 @@ end
 local updateIcon = function(self, unit, icons, index, offset, filter, isDebuff)
 	if(isDebuff) then
 		name, rank, texture, count, dtype, duration, timeLeft = UnitDebuff(unit, index, filter)
+	elseif(wotlk) then
+		name, rank, texture, count, dtype, duration, timeLeft = UnitBuff(unit, index, filter)
 	else
 		name, rank, texture, count, duration, timeLeft = UnitBuff(unit, index, filter)
 	end
