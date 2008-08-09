@@ -11,13 +11,6 @@ end
 
 -- Colors
 local colors = {
-	power = {
-		[0] = { r = 48/255, g = 113/255, b = 191/255}, -- Mana
-		[1] = { r = 226/255, g = 45/255, b = 75/255}, -- Rage
-		[2] = { r = 255/255, g = 178/255, b = 0}, -- Focus
-		[3] = { r = 1, g = 1, b = 34/255}, -- Energy
-		[4] = { r = 0, g = 1, b = 1} -- Happiness
-	},
 	health = {
 		[0] = {r = 49/255, g = 207/255, b = 37/255}, -- Health
 		[1] = {r = .6, g = .6, b = .6} -- Tapped targets
@@ -28,6 +21,16 @@ local colors = {
 		[3] = {r = 0, g = 1, b = 0}, -- colors.. | happy
 	},
 }
+
+if(select(4, GetBuildInfo()) < 3e4) then
+	colors.power = {
+		[0] = { r = 48/255, g = 113/255, b = 191/255}, -- Mana
+		[1] = { r = 226/255, g = 45/255, b = 75/255}, -- Rage
+		[2] = { r = 255/255, g = 178/255, b = 0}, -- Focus
+		[3] = { r = 1, g = 1, b = 34/255}, -- Energy
+		[4] = { r = 0, g = 1, b = 1} -- Happiness
+	}
+end
 
 -- add-on object
 local oUF = CreateFrame"Button"

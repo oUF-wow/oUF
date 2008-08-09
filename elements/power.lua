@@ -2,9 +2,14 @@ local type = type
 local UnitMana = UnitMana
 local UnitManaMax = UnitManaMax
 local UnitPowerType = UnitPowerType
-
-local power = PowerBarColor
+local power
 local min, max, bar, color
+
+if(select(4, GetBuildInfo()) >= 3e4) then
+	power = PowerBarColor
+else
+	power = oUF.colors.power
+end
 
 function oUF:UNIT_MANA(event, unit)
 	if(self.unit ~= unit) then return end
