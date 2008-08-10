@@ -208,5 +208,3 @@ table.insert(oUF.subTypes, function(self)
 end)
 
 oUF:RegisterSubTypeMapping"UNIT_AURA"
-oUF:RegisterSubTypeMapping"UNIT_AURA"
-oUF:RegisterSubTypeMapping"UNIT_AURA"
