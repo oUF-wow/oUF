@@ -94,7 +94,7 @@ local updateIcon = function(self, unit, icons, index, offset, filter, isDebuff, 
 			icon.cd:Hide()
 		end
 
-		if(isDebuff and icons.showType) then
+		if((isDebuff and icons.showDebuffType) or (not isDebuff and icons.showBuffType) or icons.showType) then
 			color = DebuffTypeColor[dtype or "none"]
 			icon.overlay:SetVertexColor(color.r, color.g, color.b)
 			icon.overlay:Show()
