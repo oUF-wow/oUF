@@ -11,10 +11,14 @@ local OnEnter = function(self)
 	if(not self:IsVisible()) then return end
 
 	GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
-	if(self.debuff) then
-		GameTooltip:SetUnitDebuff(self.frame.unit, self:GetID(), self.parent.filter)
+	if(wotlk) then
+		GameTooltip:SetUnitAura(self.frame.unit, self:GetID(), self.filter)
 	else
-		GameTooltip:SetUnitBuff(self.frame.unit, self:GetID(), self.parent.filter)
+		if(self.debuff) then
+			GameTooltip:SetUnitDebuff(self.frame.unit, self:GetID(), self.parent.filter)
+		else
+			GameTooltip:SetUnitBuff(self.frame.unit, self:GetID(), self.parent.filter)
+		end
 	end
 end
 
@@ -63,13 +67,15 @@ local createAuraIcon = function(self, icons, index, debuff)
 	return button
 end
 
-local updateIcon = function(self, unit, icons, index, offset, filter, isDebuff)
-	if(isDebuff) then
-		name, rank, texture, count, dtype, duration, timeLeft = UnitDebuff(unit, index, filter)
-	elseif(wotlk) then
-		name, rank, texture, count, dtype, duration, timeLeft = UnitBuff(unit, index, filter)
+local updateIcon = function(self, unit, icons, index, offset, filter, isDebuff, max)
+	if(wotlk) then
+		name, rank, texture, count, dtype, duration, timeLeft = UnitAura(unit, index, filter)
 	else
-		name, rank, texture, count, duration, timeLeft = UnitBuff(unit, index, filter)
+		if(isDebuff) then
+			name, rank, texture, count, dtype, duration, timeLeft = UnitDebuff(unit, index, filter)
+		else
+			name, rank, texture, count, duration, timeLeft = UnitBuff(unit, index, filter)
+		end
 	end
 
 	icon = icons[index + offset]
@@ -99,6 +105,7 @@ local updateIcon = function(self, unit, icons, index, offset, filter, isDebuff)
 		icon:Show()
 		icon:SetID(index)
 
+		icon.filter = filter
 		icon.debuff = isDebuff
 		icon.icon:SetTexture(texture)
 		icon.count:SetText((count > 1 and count))
@@ -160,16 +167,20 @@ function oUF:UNIT_AURA(event, unit)
 
 		for index = 1, max do
 			if(index > buffs) then
-				updateIcon(self, unit, auras, index % debuffs, buffs, false, true)
+				updateIcon(self, unit, auras, index % debuffs, buffs, auras.debuffFilter or 'HARMFUL', true, debuffs)
 			else
-				updateIcon(self, unit, auras, index, 0)
+				updateIcon(self, unit, auras, index, 0, auras.buffFilter or 'HELPFUL')
 			end
 		end
 
 		self:SetAuraPosition(auras, max)
 	else
 		if(buffs) then
-			filter = buffs.filter
+			if(wotlk) then
+				filter = buffs.filter or 'HELPFUL'
+			else
+				filter = buffs.filter
+			end
 			max = buffs.num or 32
 			for index = 1, max do
 				if(not updateIcon(self, unit, buffs, index, 0, filter)) then
@@ -185,7 +196,11 @@ function oUF:UNIT_AURA(event, unit)
 			self:SetAuraPosition(buffs, max)
 		end
 		if(debuffs) then
-			filter = debuffs.filter
+			if(wotlk) then
+				filter = debuffs.filter or 'HARMFUL'
+			else
+				filter = debuffs.filter
+			end
 			max = debuffs.num or 40
 			for index = 1, max do
 				if(not updateIcon(self, unit, debuffs, index, 0, filter, true)) then
