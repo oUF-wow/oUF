@@ -29,10 +29,10 @@ function oUF:UNIT_MANA(event, unit)
 			bar.bg:SetVertexColor(color.r*.5, color.g*.5, color.b*.5)
 		end
 	else
-		self:OverrideUpdatePower(event, bar, unit, min, max)
+		self:OverrideUpdatePower(event, unit, bar, min, max)
 	end
 
-	if(self.PostUpdatePower) then self:PostUpdatePower(event, bar, unit, min, max) end
+	if(self.PostUpdatePower) then self:PostUpdatePower(event, unit, bar, min, max) end
 end
 
 oUF.UNIT_RAGE = oUF.UNIT_MANA
