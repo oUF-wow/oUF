@@ -68,6 +68,7 @@ local createAuraIcon = function(self, icons, index, debuff)
 end
 
 local updateIcon = function(self, unit, icons, index, offset, filter, isDebuff, max)
+	if(index == 0) then index = max end
 	if(wotlk) then
 		name, rank, texture, count, dtype, duration, timeLeft = UnitAura(unit, index, filter)
 	else
