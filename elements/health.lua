@@ -28,10 +28,10 @@ function oUF:UNIT_HEALTH(event, unit)
 			end
 		end
 	else
-		self:OverrideUpdateHealth(event, bar, unit, min, max)
+		self:OverrideUpdateHealth(event, unit, bar, min, max)
 	end
 
-	if(self.PostUpdateHealth) then self:PostUpdateHealth(event, bar, unit, min, max) end
+	if(self.PostUpdateHealth) then self:PostUpdateHealth(event, unit, bar, min, max) end
 end
 oUF.UNIT_MAXHEALTH = oUF.UNIT_HEALTH
 
