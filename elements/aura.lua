@@ -77,7 +77,11 @@ local updateIcon = function(self, unit, icons, index, offset, filter, isDebuff)
 		if(not icon) then icon = (self.CreateAuraIcon and self:CreateAuraIcon(icons, index, isDebuff)) or createAuraIcon(self, icons, index, isDebuff) end
 
 		if(duration and duration > 0) then
-			icon.cd:SetCooldown(GetTime()-(duration-timeLeft), duration)
+			if(wotlk) then
+				icon.cd:SetCooldown(timeLeft - duration, duration)
+			else
+				icon.cd:SetCooldown(GetTime()-(duration-timeLeft), duration)
+			end
 			icon.cd:Show()
 		else
 			icon.cd:Hide()
