@@ -116,7 +116,7 @@ function oUF:UNIT_SPELLCAST_CHANNEL_UPDATE(event, unit, spellname, spellrank)
 	if not self.SpellcastChannelUpdate then
 		local spell, _, _, _, startTime, endTime, oldStart = UnitChannelInfo(unit);
 		local castbar = self.Castbar
-		local oldStart = self.startTime
+		local oldStart = castbar.startTime
 		castbar.startTime = startTime / 1000
 		castbar.endTime = endTime / 1000
 		castbar.maxValue = castbar.startTime
