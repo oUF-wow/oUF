@@ -1,8 +1,26 @@
+local ColorGradient = oUF.ColorGradient
+
 local health = oUF.colors.health
 local happiness = oUF.colors.happiness
-local min, max, bar, color
+local min, max, bar
 
-function oUF:UNIT_HEALTH(event, unit)
+local OnHealthUpdate
+do
+	local UnitHealth = UnitHealth
+	OnHealthUpdate = function(self)
+		if(self.disconnected) then return end
+		local health = UnitHealth(self.unit)
+
+		if(health ~= self.min) then
+			self:SetValue(health)
+			self.min = health
+
+			self:GetParent():UNIT_MAXHEALTH("OnHealthUpdate", self.unit)
+		end
+	end
+end
+
+function oUF:UNIT_MAXHEALTH(event, unit)
 	if(self.unit ~= unit) then return end
 	if(self.PreUpdateHealth) then self:PreUpdateHealth(event, unit) end
 
@@ -10,21 +28,32 @@ function oUF:UNIT_HEALTH(event, unit)
 	bar = self.Health
 	bar:SetMinMaxValues(0, max)
 	bar:SetValue(min)
+	bar.disconnected = not UnitIsConnected(unit)
 
 	if(not self.OverrideUpdateHealth) then
-		-- TODO: Rewrite this block.
-		if(UnitIsTapped(unit) and not UnitIsTappedByPlayer(unit) or not UnitIsConnected(unit)) then
-			color = health[1]
-		elseif(unit == "pet" and GetPetHappiness()) then
-			color = happiness[GetPetHappiness()]
-		else
-			color = UnitIsPlayer(unit) and RAID_CLASS_COLORS[select(2, UnitClass(unit))] or UnitReactionColor[UnitReaction(unit, "player")]
+		local r, g, b, t
+		if(bar.colorTapping and UnitIsTapped(unit) and not UnitIsTappedByPlayer(unit) or not UnitIsConnected(unit)) then
+			t = health[1]
+		elseif(bar.colorHappiness and unit == "pet" and GetPetHappiness()) then
+			t = happiness[GetPetHappiness()]
+		elseif(bar.colorClass and UnitIsPlayer(unit)) then
+			local _, class = UnitClass(unit)
+			t = self.colors.class[class]
+		elseif(bar.colorReaction) then
+			t = self.colors.reaction[UnitReaction(unit, "player")]
+		elseif(bar.colorSmooth) then
+			r, g, b = self.ColorGradient(min / max, unpack(bar.colors or self.colors.smooth))
 		end
-		if(color) then
-			bar:SetStatusBarColor(color.r, color.g, color.b)
+
+		if(t) then
+			r, g, b = t[1], t[2], t[3]
+		end
+
+		if(r and g and b) then
+			bar:SetStatusBarColor(r, g, b)
 
 			if(bar.bg) then
-				bar.bg:SetVertexColor(color.r*.5, color.g*.5, color.b*.5)
+				bar.bg:SetVertexColor(r*.5, g*.5, b*.5)
 			end
 		end
 	else
@@ -33,12 +62,17 @@ function oUF:UNIT_HEALTH(event, unit)
 
 	if(self.PostUpdateHealth) then self:PostUpdateHealth(event, unit, bar, min, max) end
 end
-oUF.UNIT_MAXHEALTH = oUF.UNIT_HEALTH
+oUF.UNIT_HEALTH = oUF.UNIT_MAXHEALTH
 
-table.insert(oUF.subTypes, function(self, unit)
+table.insert(oUF.subTypes, function(self)
 	if(self.Health) then
-		self:RegisterEvent"UNIT_HEALTH"
+		if(self.Health.frequentUpdates) then
+			self.Health.unit = self.unit
+			self.Health:SetScript('OnUpdate', OnHealthUpdate)
+		else
+			self:RegisterEvent"UNIT_HEALTH"
+		end
 		self:RegisterEvent"UNIT_MAXHEALTH"
 	end
 end)
-oUF:RegisterSubTypeMapping"UNIT_HEALTH"
+oUF:RegisterSubTypeMapping"UNIT_MAXHEALTH"

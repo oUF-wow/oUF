@@ -12,24 +12,49 @@ end
 -- Colors
 local colors = {
 	health = {
-		[0] = {r = 49/255, g = 207/255, b = 37/255}, -- Health
-		[1] = {r = .6, g = .6, b = .6} -- Tapped targets
+		[0] = {49/255, 207/255, 37/255}, -- Health
+		[1] = {.6,.6,.6} -- Tapped targets
 	},
 	happiness = {
-		[1] = {r = 1, g = 0, b = 0}, -- need.... | unhappy
-		[2] = {r = 1 ,g = 1, b = 0}, -- new..... | content
-		[3] = {r = 0, g = 1, b = 0}, -- colors.. | happy
+		[1] = {1, 0, 0}, -- need.... | unhappy
+		[2] = {1, 1, 0}, -- new..... | content
+		[3] = {0, 1, 0}, -- colors.. | happy
 	},
+	smooth = {
+		1, 0, 0,
+		1, 1, 0,
+		0, 1, 0
+	},
+	class = {},
+	reaction = {},
+	power = {},
 }
+
+-- We do this because people edit the vars directly, and changing the default
+-- globals makes SPICE FLOW!
+for eclass, color in pairs(RAID_CLASS_COLORS) do
+	colors.class[eclass] = {color.r, color.g, color.b}
+end
+
+for eclass, color in ipairs(UnitReactionColor) do
+	colors.reaction[eclass] = {color.r, color.g, color.b}
+end
+
 
 if(select(4, GetBuildInfo()) < 3e4) then
 	colors.power = {
-		[0] = { r = 48/255, g = 113/255, b = 191/255}, -- Mana
-		[1] = { r = 226/255, g = 45/255, b = 75/255}, -- Rage
-		[2] = { r = 255/255, g = 178/255, b = 0}, -- Focus
-		[3] = { r = 1, g = 1, b = 34/255}, -- Energy
-		[4] = { r = 0, g = 1, b = 1} -- Happiness
+		[0] = { 48/255, 113/255, 191/255}, -- Mana
+		[1] = { 226/255, 45/255, 75/255}, -- Rage
+		[2] = { 255/255, 178/255, 0}, -- Focus
+		[3] = { 1, 1, 34/255}, -- Energy
+		[4] = { 0, 1, 1} -- Happiness
 	}
+else
+	for power, color in pairs(PowerBarColor) do
+		if(type(power) == 'string') then
+			colors.power[power] = {color.r, color.g, color.b}
+		end
+	end
 end
 
 -- add-on object
@@ -40,8 +65,8 @@ local metatable = {__index = oUF}
 local styles, style = {}
 local callback, units, objects = {}, {}, {}
 
-local	_G, select, type, pairs, tostring, math_modf =
-		_G, select, type, pairs, tostring, math.modf
+local	_G, select, type, tostring, math_modf =
+		_G, select, type, tostring, math.modf
 local	UnitExists, UnitName =
 		UnitExists, UnitName
 
@@ -285,23 +310,23 @@ oUF.PLAYER_TARGET_CHANGED = oUF.PLAYER_ENTERING_WORLD
 oUF.PLAYER_FOCUS_CHANGED = oUF.PLAYER_ENTERING_WORLD
 oUF.UPDATE_MOUSEOVER_UNIT = oUF.PLAYER_ENTERING_WORLD
 
---[[ My 8-ball tells me we'll need this one later on.
-local ColorGradient = function(perc, r1, g1, b1, r2, g2, b2, r3, g3, b3)
+-- http://www.wowwiki.com/ColorGradient
+function oUF.ColorGradient(perc, ...)
 	if perc >= 1 then
-		return r3, g3, b3
+		local r, g, b = select(select('#', ...) - 2, ...)
+		return r, g, b
 	elseif perc <= 0 then
-		return r1, g1, b1
+		local r, g, b = ...
+		return r, g, b
 	end
 
-	local segment, relperc = math_modf(perc*(3-1))
-	local offset = (segment*3)+1
+	local num = select('#', ...) / 3
 
-	if(offset == 1) then
-		return r1 + (r2-r1)*relperc, g1 + (g2-g1)*relperc, b1 + (b2-b1)*relperc
-	end
+	local segment, relperc = math.modf(perc*(num-1))
+	local r1, g1, b1, r2, g2, b2 = select((segment*3)+1, ...)
 
-	return r2 + (r3-r2)*relperc, g2 + (g3-g2)*relperc, b2 + (b3-b2)*relperc
-end]]
+	return r1 + (r2-r1)*relperc, g1 + (g2-g1)*relperc, b1 + (b2-b1)*relperc
+end
 
 function oUF:PARTY_MEMBERS_CHANGED(event)
 	if(self:IsEventRegistered"PARTY_LEADER_CHANGED") then self:PARTY_LEADER_CHANGED() end
