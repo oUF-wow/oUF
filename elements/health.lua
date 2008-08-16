@@ -28,7 +28,9 @@ function oUF:UNIT_MAXHEALTH(event, unit)
 	bar = self.Health
 	bar:SetMinMaxValues(0, max)
 	bar:SetValue(min)
+
 	bar.disconnected = not UnitIsConnected(unit)
+	bar.unit = unit
 
 	if(not self.OverrideUpdateHealth) then
 		local r, g, b, t
@@ -67,7 +69,6 @@ oUF.UNIT_HEALTH = oUF.UNIT_MAXHEALTH
 table.insert(oUF.subTypes, function(self)
 	if(self.Health) then
 		if(self.Health.frequentUpdates) then
-			self.Health.unit = self.unit
 			self.Health:SetScript('OnUpdate', OnHealthUpdate)
 		else
 			self:RegisterEvent"UNIT_HEALTH"
