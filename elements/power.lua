@@ -30,7 +30,7 @@ function oUF:UNIT_MAXMANA(event, unit)
 	bar:SetValue(min)
 	bar.disconnected = not UnitIsConnected(unit)
 
-	if(not self.OverrideUpdateHealth) then
+	if(not self.OverrideUpdatePower) then
 		local r, g, b, t
 		if(bar.colorTapping and UnitIsTapped(unit) and not UnitIsTappedByPlayer(unit) or not UnitIsConnected(unit)) then
 			t = health[1]
