@@ -33,9 +33,9 @@ function oUF:UNIT_MAXMANA(event, unit)
 	if(not self.OverrideUpdatePower) then
 		local r, g, b, t
 		if(bar.colorTapping and UnitIsTapped(unit) and not UnitIsTappedByPlayer(unit) or not UnitIsConnected(unit)) then
-			t = health[1]
+			t = self.colors.tapped
 		elseif(bar.colorHappiness and unit == "pet" and GetPetHappiness()) then
-			t = happiness[GetPetHappiness()]
+			t = self.colors.happiness[GetPetHappiness()]
 		elseif(bar.colorPower) then
 			local _, ptype
 			if(wotlk) then
