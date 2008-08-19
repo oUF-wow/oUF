@@ -166,13 +166,22 @@ function oUF:UNIT_AURA(event, unit)
 		debuffs = auras.numDebuffs or 40
 		max = debuffs + buffs
 
+		local visibleBuffs, visibleDebuffs = 0, 0
 		for index = 1, max do
 			if(index > buffs) then
-				updateIcon(self, unit, auras, index % debuffs, buffs, auras.debuffFilter or 'HARMFUL', true, debuffs)
+				if(updateIcon(self, unit, auras, index % debuffs, buffs, auras.debuffFilter or 'HARMFUL', true, debuffs)) then
+					visibleBuffs = visibleBuffs + 1
+				end
 			else
-				updateIcon(self, unit, auras, index, 0, auras.buffFilter or 'HELPFUL')
+				if(updateIcon(self, unit, auras, index, 0, auras.buffFilter or 'HELPFUL')) then
+					visibleDebuffs = visibleDebuffs + 1
+				end
 			end
 		end
+
+		auras.visibleBuffs = visibleBuffs
+		auras.visibleDebuffs = visibleDebuffs
+		auras.visibleAuras = visibleBuffs + visibleDebuffs
 
 		self:SetAuraPosition(auras, max)
 	else
@@ -183,6 +192,7 @@ function oUF:UNIT_AURA(event, unit)
 				filter = buffs.filter
 			end
 			max = buffs.num or 32
+			local visibleBuffs = 0
 			for index = 1, max do
 				if(not updateIcon(self, unit, buffs, index, 0, filter)) then
 					max = index - 1
@@ -193,7 +203,11 @@ function oUF:UNIT_AURA(event, unit)
 					end
 					break
 				end
+
+				visibleBuffs = visibleBuffs + 1
 			end
+
+			buffs.visibleBuffs = visibleBuffs
 			self:SetAuraPosition(buffs, max)
 		end
 		if(debuffs) then
@@ -203,6 +217,7 @@ function oUF:UNIT_AURA(event, unit)
 				filter = debuffs.filter
 			end
 			max = debuffs.num or 40
+			local visibleDebuffs = 0
 			for index = 1, max do
 				if(not updateIcon(self, unit, debuffs, index, 0, filter, true)) then
 					max = index - 1
@@ -213,7 +228,10 @@ function oUF:UNIT_AURA(event, unit)
 					end
 					break
 				end
+
+				visibleDebuffs = visibleDebuffs + 1
 			end
+			debuffs.visibleDebuffs = visibleDebuffs
 			self:SetAuraPosition(debuffs, max)
 		end
 	end
