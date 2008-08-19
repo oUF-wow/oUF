@@ -40,7 +40,6 @@ for eclass, color in ipairs(UnitReactionColor) do
 	colors.reaction[eclass] = {color.r, color.g, color.b}
 end
 
-
 if(select(4, GetBuildInfo()) < 3e4) then
 	colors.power = {
 		[0] = { 48/255, 113/255, 191/255}, -- Mana
@@ -178,22 +177,29 @@ local HandleUnit = function(unit, object)
 end
 
 local initObject = function(object, unit)
-	local style = styles[style]
+	local style = object:GetParent().style or styles[style]
 
 	object = setmetatable(object, metatable)
-
-	local style = object:GetParent().style or style
-
-	object:SetAttribute("initial-width", style["initial-width"])
-	object:SetAttribute("initial-height", style["initial-height"])
-	object:SetAttribute("initial-scale", style["initial-scale"])
 	style(object, unit)
 
-	if(not InCombatLockdown()) then
-		local width, height, scale = style["initial-width"], style["initial-height"], style["initial-scale"]
-		if(width) then object:SetWidth(width) end
-		if(height) then object:SetHeight(height) end
-		if(scale) then object:SetScale(scale) end
+	local mt = type(style) == 'table'
+	local height = object:GetAttribute'initial-height' or (mt and style['initial-height'])
+	local width = object:GetAttribute'initial-width' or (mt and style['initial-width'])
+	local scale = object:GetAttribute'initial-scale' or (mt and style['initial-scale'])
+
+	if(height) then
+		object:SetAttribute('initial-height', height)
+		if(unit) then object:SetHeight(height) end
+	end
+
+	if(width) then
+		object:SetAttribute("initial-width", width)
+		if(unit) then object:SetWidth(width) end
+	end
+
+	if(scale) then
+		object:SetAttribute("initial-scale", scale)
+		if(unit) then object:SetScale(scale) end
 	end
 
 	object:SetAttribute("*type1", "target")
@@ -224,11 +230,14 @@ end
 
 function oUF:RegisterStyle(name, func)
 	if(type(name) ~= "string") then return error("Bad argument #1 to 'RegisterStyle' (string expected, got %s)", type(name)) end
-	if(type(func) ~= "table" and type(getmetatable(func).__call) ~= "function") then return error("Bad argument #2 to 'RegisterStyle' (table expected, got %s)", type(func)) end
-	if(styles[name]) then return error("Style [%s] already registered.", name) end
-	if(not style) then style = name end
+	if(type(func) == 'function' or (type(func) == 'table' and type(getmetatable(func).__call))) then
+		if(styles[name]) then return error("Style [%s] already registered.", name) end
+		if(not style) then style = name end
 
-	styles[name] = func
+		styles[name] = func
+	else
+		error("Bad argument #2 to 'RegisterStyle' (table/function expected, got %s)", type(func))
+	end
 end
 
 function oUF:SetActiveStyle(name)
