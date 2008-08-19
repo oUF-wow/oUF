@@ -15,7 +15,7 @@ do
 			self:SetValue(power)
 			self.min = power
 
-			self:GetParent():UNIT_MANA("OnHealthUpdate", 'player')
+			self:GetParent():UNIT_MANA("OnPowerUpdate", 'player')
 		end
 	end
 end
