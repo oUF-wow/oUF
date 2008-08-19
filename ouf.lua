@@ -184,11 +184,17 @@ local initObject = function(object, unit)
 
 	local style = object:GetParent().style or style
 
-	local width, height, scale = style["initial-width"], style["initial-height"], style["initial-scale"]
-	if(width) then object:SetAttribute("initial-width", width) end
-	if(height) then object:SetAttribute("initial-height", height) end
-	if(scale) then object:SetAttribute("initial-scale", scale) end
+	object:SetAttribute("initial-width", style["initial-width"])
+	object:SetAttribute("initial-height", style["initial-height"])
+	object:SetAttribute("initial-scale", style["initial-scale"])
 	style(object, unit)
+
+	if(not InCombatLockdown()) then
+		local width, height, scale = style["initial-width"], style["initial-height"], style["initial-scale"]
+		if(width) then object:SetWidth(width) end
+		if(height) then object:SetHeight(height) end
+		if(scale) then object:SetScale(scale) end
+	end
 
 	object:SetAttribute("*type1", "target")
 	object:SetScript("OnEvent", OnEvent)
