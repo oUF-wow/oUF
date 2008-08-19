@@ -30,8 +30,13 @@ function oUF:UNIT_MAXMANA(event, unit)
 	bar:SetValue(min)
 	bar.disconnected = not UnitIsConnected(unit)
 
-	if(not self.OverrideUpdatePower) then
-		if(bar.colorType) then
+	if(not self.OverrideUpdateHealth) then
+		local r, g, b, t
+		if(bar.colorTapping and UnitIsTapped(unit) and not UnitIsTappedByPlayer(unit) or not UnitIsConnected(unit)) then
+			t = health[1]
+		elseif(bar.colorHappiness and unit == "pet" and GetPetHappiness()) then
+			t = happiness[GetPetHappiness()]
+		elseif(bar.colorPower) then
 			local _, ptype
 			if(wotlk) then
 				_, ptype = UnitPowerType(unit)
@@ -39,8 +44,21 @@ function oUF:UNIT_MAXMANA(event, unit)
 				ptype = UnitPowerType(unit)
 			end
 
-			local t = self.colors.power[ptype]
-			local r, g, b = t[1], t[2], t[3]
+			t = self.colors.power[ptype]
+		elseif(bar.colorClass and UnitIsPlayer(unit)) then
+			local _, class = UnitClass(unit)
+			t = self.colors.class[class]
+		elseif(bar.colorReaction) then
+			t = self.colors.reaction[UnitReaction(unit, "player")]
+		elseif(bar.colorSmooth) then
+			r, g, b = self.ColorGradient(min / max, unpack(bar.colors or self.colors.smooth))
+		end
+
+		if(t) then
+			r, g, b = t[1], t[2], t[3]
+		end
+
+		if(r and g and b) then
 			bar:SetStatusBarColor(r, g, b)
 
 			if(bar.bg) then
