@@ -1,7 +1,5 @@
 local ColorGradient = oUF.ColorGradient
 
-local health = oUF.colors.health
-local happiness = oUF.colors.happiness
 local min, max, bar
 
 local OnHealthUpdate
@@ -35,9 +33,9 @@ function oUF:UNIT_MAXHEALTH(event, unit)
 	if(not self.OverrideUpdateHealth) then
 		local r, g, b, t
 		if(bar.colorTapping and UnitIsTapped(unit) and not UnitIsTappedByPlayer(unit) or not UnitIsConnected(unit)) then
-			t = health[1]
+			t = self.colors.tapped
 		elseif(bar.colorHappiness and unit == "pet" and GetPetHappiness()) then
-			t = happiness[GetPetHappiness()]
+			t = self.colors.happiness[GetPetHappiness()]
 		elseif(bar.colorClass and UnitIsPlayer(unit)) then
 			local _, class = UnitClass(unit)
 			t = self.colors.class[class]
