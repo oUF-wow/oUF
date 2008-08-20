@@ -32,8 +32,10 @@ function oUF:UNIT_MAXHEALTH(event, unit)
 
 	if(not self.OverrideUpdateHealth) then
 		local r, g, b, t
-		if(bar.colorTapping and UnitIsTapped(unit) and not UnitIsTappedByPlayer(unit) or not UnitIsConnected(unit)) then
+		if(bar.colorTapping and UnitIsTapped(unit) and not UnitIsTappedByPlayer(unit)) then
 			t = self.colors.tapped
+		elseif(bar.colorDisconnected and not UnitIsConnected(unit)) then
+			t = self.colors.disconnected
 		elseif(bar.colorHappiness and unit == "pet" and GetPetHappiness()) then
 			t = self.colors.happiness[GetPetHappiness()]
 		elseif(bar.colorClass and UnitIsPlayer(unit)) then
