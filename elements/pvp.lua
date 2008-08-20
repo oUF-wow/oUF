@@ -5,15 +5,17 @@ function oUF:UNIT_FACTION(event, unit)
 	if(self:IsEventRegistered'UNIT_MAXHEALTH') then self:UNIT_MAXHEALTH(event, unit) end
 	if(self:IsEventRegistered'UNIT_MAXMANA') then self:UNIT_MAXMANA(event, unit) end
 
-	local factionGroup = UnitFactionGroup(unit)
-	if(UnitIsPVPFreeForAll(unit)) then
-		self.PvP:SetTexture[[Interface\TargetingFrame\UI-PVP-FFA]]
-		self.PvP:Show()
-	elseif(factionGroup and UnitIsPVP(unit)) then
-		self.PvP:SetTexture([[Interface\TargetingFrame\UI-PVP-]]..factionGroup)
-		self.PvP:Show()
-	else
-		self.PvP:Hide()
+	if(self.PvP) then
+		local factionGroup = UnitFactionGroup(unit)
+		if(UnitIsPVPFreeForAll(unit)) then
+			self.PvP:SetTexture[[Interface\TargetingFrame\UI-PVP-FFA]]
+			self.PvP:Show()
+		elseif(factionGroup and UnitIsPVP(unit)) then
+			self.PvP:SetTexture([[Interface\TargetingFrame\UI-PVP-]]..factionGroup)
+			self.PvP:Show()
+		else
+			self.PvP:Hide()
+		end
 	end
 end
 
