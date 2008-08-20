@@ -2,8 +2,10 @@ function oUF:UNIT_FACTION(event, unit)
 	if(unit ~= self.unit) then return end
 
 	-- For tapping
-	if(self:IsEventRegistered'UNIT_MAXHEALTH') then self:UNIT_MAXHEALTH(event, unit) end
-	if(self:IsEventRegistered'UNIT_MAXMANA') then self:UNIT_MAXMANA(event, unit) end
+	if(event == 'UNIT_FACTION') then
+		if(self:IsEventRegistered'UNIT_MAXHEALTH') then self:UNIT_MAXHEALTH(event, unit) end
+		if(self:IsEventRegistered'UNIT_MAXMANA') then self:UNIT_MAXMANA(event, unit) end
+	end
 
 	if(self.PvP) then
 		local factionGroup = UnitFactionGroup(unit)

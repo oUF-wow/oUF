@@ -1,8 +1,10 @@
 function oUF:UNIT_HAPPINESS(event, unit)
 	if(self.unit ~= unit) then return end
 
-	if(self:IsEventRegistered'UNIT_MAXHEALTH') then self:UNIT_MAXHEALTH(event, unit) end
-	if(self:IsEventRegistered'UNIT_MAXMANA') then self:UNIT_MAXMANA(event, unit) end
+	if(event == 'UNIT_HAPPINESS') then
+		if(self:IsEventRegistered'UNIT_MAXHEALTH') then self:UNIT_MAXHEALTH(event, unit) end
+		if(self:IsEventRegistered'UNIT_MAXMANA') then self:UNIT_MAXMANA(event, unit) end
+	end
 
 	if(self.Happiness) then
 		local happiness = GetPetHappiness()
