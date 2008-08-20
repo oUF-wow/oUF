@@ -151,7 +151,7 @@ local HandleUnit = function(unit, object)
 				if(not self.unit) then
 					return
 				elseif(timer >= .5) then
-					self:PLAYER_ENTERING_WORLD()
+					self:PLAYER_ENTERING_WORLD'OnTargetUpdate'
 					timer = 0
 				end
 
@@ -279,10 +279,6 @@ function oUF:Spawn(unit, name, isPet)
 		initObject(object, unit)
 		HandleUnit(unit, object)
 		RegisterUnitWatch(object)
-
-		if(UnitExists(unit)) then
-			object:PLAYER_ENTERING_WORLD()
-		end
 	end
 
 	return object
