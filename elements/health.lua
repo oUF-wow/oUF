@@ -73,6 +73,8 @@ table.insert(oUF.subTypes, function(self)
 		end
 		self:RegisterEvent"UNIT_MAXHEALTH"
 		self:RegisterEvent'UNIT_HAPPINESS'
+		-- For tapping.
+		self:RegisterEvent'UNIT_FACTION'
 	end
 end)
 oUF:RegisterSubTypeMapping"UNIT_MAXHEALTH"

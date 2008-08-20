@@ -1,6 +1,10 @@
 function oUF:UNIT_FACTION(event, unit)
 	if(unit ~= self.unit) then return end
 
+	-- For tapping
+	if(self:IsEventRegistered'UNIT_MAXHEALTH') then self:UNIT_MAXHEALTH(event, unit) end
+	if(self:IsEventRegistered'UNIT_MAXMANA') then self:UNIT_MAXMANA(event, unit) end
+
 	local factionGroup = UnitFactionGroup(unit)
 	if(UnitIsPVPFreeForAll(unit)) then
 		self.PvP:SetTexture[[Interface\TargetingFrame\UI-PVP-FFA]]
