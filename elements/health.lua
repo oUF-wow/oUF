@@ -53,7 +53,7 @@ function oUF:UNIT_MAXHEALTH(event, unit)
 			bar:SetStatusBarColor(r, g, b)
 
 			if(bar.bg) then
-				bar.bg:SetVertexColor(r*.5, g*.5, b*.5)
+				bar.bg:SetVertexColor(r, g, b)
 			end
 		end
 	else
