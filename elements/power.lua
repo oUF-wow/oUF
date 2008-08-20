@@ -99,6 +99,7 @@ table.insert(oUF.subTypes, function(self, unit)
 		self:RegisterEvent"UNIT_MAXENERGY"
 		self:RegisterEvent"UNIT_DISPLAYPOWER"
 		self:RegisterEvent"UNIT_MAXRUNIC_POWER"
+		self:RegisterEvent'UNIT_HAPPINESS'
 	end
 end)
 oUF:RegisterSubTypeMapping"UNIT_MANA"
