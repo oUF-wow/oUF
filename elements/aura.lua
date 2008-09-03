@@ -1,3 +1,42 @@
+--[[
+	Elements handled: .Auras, .Buffs, .Debuffs
+	Notes: .Auras override .Buffs and .Debuffs if they exist on the same frame.
+
+	Shared:
+	 - spacing: Padding between aura icons. (Default: 0)
+	 - size: Size of the aura icons. (Default: 16)
+	 - initialAnchor: Initial anchor in the aura frame. (Default: "BOTTEMLEFT")
+	 - growth-x: Growth direction, affected by initialAnchor. (Default: "UP")
+	 - growth-y: Growth direction, affected by initialAnchor. (Default: "RIGHT")
+	 - filter
+		- 2.x: Expects a boolean. (Default: nil)
+		- 3.x: Expects a string with filter. See the UnitAura[1] documentation for
+		more information.
+
+	.Auras only:
+	 - gap: Adds a empty icon to separate buffs and debuffs. (Default: nil)
+	 - numBuffs: The maximum number of buffs that should be shown. (Default: 32)
+	 - numDebuffs: The maximum number of debuffs that should be shown. (Default: 40)
+	 - buffFilter: See filter on Shared. (Default: "HELPFUL")
+	 - debuffFilter: See filter on Shared. (Default: "HARMFUL")
+
+	.Buffs only:
+	 - num: The maximum number of buffs that should be shown. (Default: 32)
+
+	.Debuffs only:
+	 - num: The maximum number of debuffs that should be shown. (Default: 40)
+
+	Functions that can be overridden from within a layout:
+	 - :PostCreateAuraIcon(icon, icons, index, isDebuff)
+	 - :CreateAuraIcon(icons, index, isDebuff)
+	 - :PostUpdateAuraIcon(icons, unit, icon, index, offset, filter, isDebuff)
+	 - :PreUpdateAura(event, unit)
+	 - :SetAuraPosition(auras, max)
+	 - :PostUpdateAura(event, unit)
+
+	[1] http://www.wowwiki.com/API_UnitAura
+--]]
+
 local wotlk = select(4, GetBuildInfo()) >= 3e4
 
 local	select, table_insert, math_floor, UnitDebuff, UnitBuff, GetTime, DebuffTypeColor =
