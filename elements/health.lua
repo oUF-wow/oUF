@@ -43,7 +43,7 @@ function oUF:UNIT_MAXHEALTH(event, unit)
 			t = self.colors.class[class]
 		elseif(bar.colorReaction) then
 			t = self.colors.reaction[UnitReaction(unit, "player")]
-		elseif(bar.colorSmooth) then
+		elseif(bar.colorSmooth and max ~= 0) then
 			r, g, b = self.ColorGradient(min / max, unpack(bar.smoothGradient or self.colors.smooth))
 		end
 
