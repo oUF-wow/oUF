@@ -1,3 +1,25 @@
+--[[
+	Elements handled: .Health
+
+	Shared:
+	 The following settings are listed by priority:
+	 - colorTapping
+	 - colorDisconnected
+	 - colorHappiness
+	 - colorClass
+	 - colorReaction
+	 - colorSmooth - will use smoothGradient instead of the internal gradient if set.
+
+	WotLK only:
+	 - frequentUpdates - do OnUpdate polling of health data.
+
+	Functions that can be overridden from within a layout:
+	 - :PreUpdateHealth(event, unit)
+	 - :OverrideUpdateHealth(event, unit, bar, min, max) - Setting this function
+	 will disable the above color settings.
+	 - :PostUpdateHealth(event, unit, bar, min, max)
+--]]
+
 local OnHealthUpdate
 do
 	local UnitHealth = UnitHealth
