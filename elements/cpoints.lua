@@ -1,8 +1,18 @@
+local wotlk = select(4, GetBuildInfo()) >= 3e4
 local GetComboPoints = GetComboPoints
 local MAX_COMBO_POINTS = MAX_COMBO_POINTS
 
-function oUF:PLAYER_COMBO_POINTS(event)
-	local cp = GetComboPoints()
+local ename
+if(wotlk) then
+	ename = 'UNIT_COMBO_POINTS'
+else
+	ename = 'PLAYER_COMBO_POINTS'
+end
+
+-- TODO: This shouldn't be hardcoded in wotlk.
+oUF[ename] = function(self, event, unit)
+	if(wotlk and unit ~= 'player') then return end
+	local cp = GetComboPoints('player', 'target')
 	local cpoints = self.CPoints
 
 	if(#cpoints == 0) then
@@ -20,7 +30,7 @@ end
 
 table.insert(oUF.subTypes, function(self, unit)
 	if(self.CPoints and unit == "target") then
-		self:RegisterEvent"PLAYER_COMBO_POINTS"
+		self:RegisterEvent(ename)
 	end
 end)
-oUF:RegisterSubTypeMapping"PLAYER_COMBO_POINTS"
+oUF:RegisterSubTypeMapping(ename)
