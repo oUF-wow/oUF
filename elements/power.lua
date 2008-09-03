@@ -8,6 +8,7 @@
 	 - colorHappiness
 	 - colorPower
 	 - colorClass
+	 - colorReaction
 	 - colorSmooth - will use smoothGradient instead of the internal gradient if set.
 
 	WotLK only:
