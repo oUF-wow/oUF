@@ -1,10 +1,19 @@
+--[[
+	Elements handled: .Range
+
+	Settings:
+	 - inRangeAlpha - A number for frame alpha when unit is within player range.
+	 Required.
+	 - outsideRangeAlpha - A numbef for frame alpha when unit is outside player
+	 range. Required.
+--]]
+
 local objects = oUF.objects
 local OnRangeFrame
 
 local	UnitInRange, UnitIsConnected =
 		UnitInRange, UnitIsConnected
 
--- Updates
 -- updating of range.
 local timer = 0
 local OnRangeUpdate = function(self, elapsed)
