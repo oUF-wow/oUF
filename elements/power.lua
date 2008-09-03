@@ -87,7 +87,7 @@ oUF.UNIT_MAXRUNIC_POWER = oUF.UNIT_MAXMANA
 
 table.insert(oUF.subTypes, function(self, unit)
 	if(self.Power) then
-		if(self.Power.frequentUpdates and unit == 'player') then
+		if(self.Power.frequentUpdates and (unit == 'player' or unit == 'pet')) then
 			self.Power:SetScript("OnUpdate", OnPowerUpdate)
 		else
 			self:RegisterEvent"UNIT_MANA"
