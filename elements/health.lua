@@ -1,7 +1,3 @@
-local ColorGradient = oUF.ColorGradient
-
-local min, max, bar
-
 local OnHealthUpdate
 do
 	local UnitHealth = UnitHealth
@@ -22,8 +18,8 @@ function oUF:UNIT_MAXHEALTH(event, unit)
 	if(self.unit ~= unit) then return end
 	if(self.PreUpdateHealth) then self:PreUpdateHealth(event, unit) end
 
-	min, max = UnitHealth(unit), UnitHealthMax(unit)
-	bar = self.Health
+	local min, max = UnitHealth(unit), UnitHealthMax(unit)
+	local bar = self.Health
 	bar:SetMinMaxValues(0, max)
 	bar:SetValue(min)
 
