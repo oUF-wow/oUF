@@ -68,7 +68,7 @@ oUF.UNIT_HEALTH = oUF.UNIT_MAXHEALTH
 
 table.insert(oUF.subTypes, function(self)
 	if(self.Health) then
-		if(self.Health.frequentUpdates) then
+		if(self.Health.frequentUpdates and (self.unit and not self.unit:match'%w+target$') or not self.unit) then
 			self.Health:SetScript('OnUpdate', OnHealthUpdate)
 		else
 			self:RegisterEvent"UNIT_HEALTH"
