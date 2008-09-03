@@ -169,11 +169,11 @@ function oUF:UNIT_AURA(event, unit)
 		local visibleBuffs, visibleDebuffs = 0, 0
 		for index = 1, max do
 			if(index > buffs) then
-				if(updateIcon(self, unit, auras, index % debuffs, buffs, auras.debuffFilter or 'HARMFUL', true, debuffs)) then
+				if(updateIcon(self, unit, auras, index % debuffs, buffs, auras.debuffFilter or auras.filter or 'HARMFUL', true, debuffs)) then
 					visibleBuffs = visibleBuffs + 1
 				end
 			else
-				if(updateIcon(self, unit, auras, index, 0, auras.buffFilter or 'HELPFUL')) then
+				if(updateIcon(self, unit, auras, index, 0, auras.buffFilter or  auras.filter or 'HELPFUL')) then
 					visibleDebuffs = visibleDebuffs + 1
 				end
 			end
