@@ -168,7 +168,13 @@ local onUpdate = function(self, elapsed)
 				self.Time:SetFormattedText("%.1f", self.maxValue - status)
 			end
 		end
-		self:SetValue( ((status - self.startTime) / (self.maxValue - self.startTime)))
+
+		local value = (status - self.startTime) / (self.maxValue - self.startTime)
+		self:SetValue(value)
+
+		if self.Spark then
+			self.Spark:SetPoint("CENTER", self, "LEFT", value * self:GetWidth(), 0)
+		end
 	elseif self.channeling then
 		local status = GetTime()
 		if ( status >= self.endTime ) then
@@ -183,7 +189,13 @@ local onUpdate = function(self, elapsed)
 				self.Time:SetFormattedText("%.1f", self.endTime - status)
 			end
 		end
-		self:SetValue( self.startTime + (self.endTime - status) )
+
+		local remainingTime = self.endTime - status
+		self:SetValue(self.startTime + remainingTime)
+
+		if self.Spark then
+			self.Spark:SetPoint("CENTER", self, "LEFT", (remainingTime / (self.endTime - self.startTime)) * self:GetWidth(), 0)
+		end
 	end
 end
 
