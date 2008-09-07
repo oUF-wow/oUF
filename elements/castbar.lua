@@ -22,9 +22,9 @@ function oUF:UNIT_SPELLCAST_START(event, unit, spell, spellrank)
 
 		castbar:SetMinMaxValues(0, 1)
 		castbar:SetValue(0)
-		if(castbar.text) then castbar.text:SetText(text) end
-		if castbar.icon then castbar.icon:SetTexture(texture) end
-		if castbar.casttime then castbar.casttime:SetText() end
+		if(castbar.Text) then castbar.Text:SetText(text) end
+		if castbar.Icon then castbar.Icon:SetTexture(texture) end
+		if castbar.Time then castbar.Time:SetText() end
 		castbar:Show()
 		castbar.casting = true
 		if unit == "target" or unit:sub(1,4) == "raid" then castbar.unitName = UnitName(unit) end
@@ -100,9 +100,9 @@ function oUF:UNIT_SPELLCAST_CHANNEL_START(event, unit, spellname, spellrank)
 		castbar.delay = 0
 		castbar:SetMinMaxValues(castbar.startTime, castbar.endTime)
 		castbar:SetValue(castbar.endTime)
-		if(castbar.text) then castbar.text:SetText(name) end
-		if castbar.icon then castbar.icon:SetTexture(texture) end
-		if castbar.casttime then castbar.casttime:SetText() end
+		if(castbar.Text) then castbar.Text:SetText(name) end
+		if castbar.Icon then castbar.Icon:SetTexture(texture) end
+		if castbar.Time then castbar.Time :SetText() end
 		castbar:Show()
 		castbar.channeling = true
 		if unit == "target" or unit:sub(1,4) == "raid" then castbar.unitName = UnitName(unit) end
@@ -161,11 +161,11 @@ local onUpdate = function(self, elapsed)
 			if safeZonePercent > 100 then safeZonePercent = 100 end
 			self.safezone:SetWidth((self:GetWidth() / 100) * safeZonePercent);
 		end
-		if self.casttime then
+		if self.Time then
 			if self.delay ~= 0 then
-				self.casttime:SetFormattedText("%.1f|cffff0000-%.1f|r", self.maxValue - status, self.delay)
+				self.Time:SetFormattedText("%.1f|cffff0000-%.1f|r", self.maxValue - status, self.delay)
 			else
-				self.casttime:SetFormattedText("%.1f", self.maxValue - status)
+				self.Time:SetFormattedText("%.1f", self.maxValue - status)
 			end
 		end
 		self:SetValue( ((status - self.startTime) / (self.maxValue - self.startTime)))
@@ -176,11 +176,11 @@ local onUpdate = function(self, elapsed)
 			self:Hide()
 			return
 		end
-		if self.casttime then
+		if self.Time then
 			if self.delay ~= 0 then
-				self.casttime:SetFormattedText("%.1f|cffff0000-%.1f|r", self.endTime - status, self.delay)
+				self.Time:SetFormattedText("%.1f|cffff0000-%.1f|r", self.endTime - status, self.delay)
 			else
-				self.casttime:SetFormattedText("%.1f", self.endTime - status)
+				self.Time:SetFormattedText("%.1f", self.endTime - status)
 			end
 		end
 		self:SetValue( self.startTime + (self.endTime - status) )
