@@ -28,7 +28,7 @@ function oUF:UNIT_SPELLCAST_START(event, unit, spell, spellrank)
 	if(castbar.Icon) then castbar.Icon:SetTexture(texture) end
 	if(castbar.Time) then castbar.Time:SetText() end
 
-	if(self.PostSpellcastStart) then self:PostSpellcastStart(event, unit, spell, spellrank) end
+	if(self.PostCastStart) then self:PostCastStart(event, unit, spell, spellrank) end
 	castbar:Show()
 end
 
@@ -41,7 +41,7 @@ function oUF:UNIT_SPELLCAST_FAILED(event, unit, spellname, spellrank)
 	castbar:SetValue(0)
 	castbar:Hide()
 
-	if(self.PostSpellcastFailed) then self:PostSpellcastFailed(event, unit, spellname, spellrank) end
+	if(self.PostCastFailed) then self:PostCastFailed(event, unit, spellname, spellrank) end
 end
 
 function oUF:UNIT_SPELLCAST_INTERRUPTED(event, unit, spellname, spellrank)
@@ -54,7 +54,7 @@ function oUF:UNIT_SPELLCAST_INTERRUPTED(event, unit, spellname, spellrank)
 	castbar:SetValue(0)
 	castbar:Hide()
 
-	if(self.PostSpellcastInterrupted) then self:PostSpellCastInterrupted(event, unit, spellname, spellrank) end
+	if(self.PostCastInterrupted) then self:PostSpellCastInterrupted(event, unit, spellname, spellrank) end
 end
 
 function oUF:UNIT_SPELLCAST_DELAYED(event, unit, spellname, spellrank)
@@ -71,7 +71,7 @@ function oUF:UNIT_SPELLCAST_DELAYED(event, unit, spellname, spellrank)
 	castbar.maxValue = endTime / 1000
 	castbar.delay = castbar.delay + (startTime - oldStart)
 
-	if(self.PostSpellcastDelayed) then self:PostSpellcastDelayed(event, unit, spellname, spellrank) end
+	if(self.PostCastDelayed) then self:PostCastDelayed(event, unit, spellname, spellrank) end
 end
 
 function oUF:UNIT_SPELLCAST_STOP(event, unit, spellname, spellrank)
@@ -84,7 +84,7 @@ function oUF:UNIT_SPELLCAST_STOP(event, unit, spellname, spellrank)
 	castbar:Hide()
 	castbar.casting = nil
 
-	if(self.PostSpellcastStop) then self:PostSpellcastStop(event, unit, spellname, spellrank) end
+	if(self.PostCastStop) then self:PostCastStop(event, unit, spellname, spellrank) end
 end
 
 function oUF:UNIT_SPELLCAST_CHANNEL_START(event, unit, spellname, spellrank)
@@ -111,7 +111,7 @@ function oUF:UNIT_SPELLCAST_CHANNEL_START(event, unit, spellname, spellrank)
 	if(castbar.Icon) then castbar.Icon:SetTexture(texture) end
 	if(castbar.Time) then castbar.Time:SetText() end
 
-	if(self.PostSpellcastChannelStart) then self:PostSpellcastChannelStart(event, unit, spellname, spellrank) end
+	if(self.PostChannelStart) then self:PostChannelStart(event, unit, spellname, spellrank) end
 	castbar:Show()
 end
 
@@ -131,7 +131,7 @@ function oUF:UNIT_SPELLCAST_CHANNEL_UPDATE(event, unit, spellname, spellrank)
 	castbar.maxValue = startTime
 	castbar.delay = castbar.delay + (oldStart - startTime)
 
-	if(self.PostSpellcastChannelUpdate) then self:PostSpellcastChannelUpdate(event, unit, spellname, spellrank) end
+	if(self.PostChannelUpdate) then self:PostChannelUpdate(event, unit, spellname, spellrank) end
 end
 
 function oUF:UNIT_SPELLCAST_CHANNEL_STOP(event, unit, spellname, spellrank)
@@ -143,7 +143,7 @@ function oUF:UNIT_SPELLCAST_CHANNEL_STOP(event, unit, spellname, spellrank)
 	castbar:SetValue(1)
 	castbar:Hide()
 
-	if(self.PostSpellcastChannelStop) then self:PostSpellcastChannelStop(event, unit, spellname, spellrank) end
+	if(self.PostChannelStop) then self:PostChannelStop(event, unit, spellname, spellrank) end
 end
 
 oUF.UNIT_SPELLCAST_CHANNEL_INTERRUPTED = oUF.UNIT_SPELLCAST_INTERRUPTED
