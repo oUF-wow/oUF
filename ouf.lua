@@ -1,4 +1,4 @@
-local wotlk = select(4, GetBuildInfo()) < 3e4
+local wotlk = select(4, GetBuildInfo()) >= 3e4
 
 local print = function(a) ChatFrame1:AddMessage("|cff33ff99oUF:|r "..tostring(a)) end
 local error = function(...) print("|cffff0000Error:|r "..string.format(...)) end
