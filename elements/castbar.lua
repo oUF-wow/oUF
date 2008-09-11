@@ -54,7 +54,7 @@ function oUF:UNIT_SPELLCAST_INTERRUPTED(event, unit, spellname, spellrank)
 	castbar:SetValue(0)
 	castbar:Hide()
 
-	if(self.PostCastInterrupted) then self:PostSpellCastInterrupted(event, unit, spellname, spellrank) end
+	if(self.PostCastInterrupted) then self:PostCastInterrupted(event, unit, spellname, spellrank) end
 end
 
 function oUF:UNIT_SPELLCAST_DELAYED(event, unit, spellname, spellrank)
