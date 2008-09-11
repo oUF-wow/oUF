@@ -42,6 +42,12 @@ for eclass, color in ipairs(UnitReactionColor) do
 end
 
 if(wotlk) then
+	for power, color in pairs(PowerBarColor) do
+		if(type(power) == 'string') then
+			colors.power[power] = {color.r, color.g, color.b}
+		end
+	end
+else
 	colors.power = {
 		[0] = { 48/255, 113/255, 191/255}, -- Mana
 		[1] = { 226/255, 45/255, 75/255}, -- Rage
@@ -49,12 +55,6 @@ if(wotlk) then
 		[3] = { 1, 1, 34/255}, -- Energy
 		[4] = { 0, 1, 1} -- Happiness
 	}
-else
-	for power, color in pairs(PowerBarColor) do
-		if(type(power) == 'string') then
-			colors.power[power] = {color.r, color.g, color.b}
-		end
-	end
 end
 
 -- add-on object
