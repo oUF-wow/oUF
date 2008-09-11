@@ -4,7 +4,7 @@
 	Settings:
 	 - inRangeAlpha - A number for frame alpha when unit is within player range.
 	 Required.
-	 - outsideRangeAlpha - A numbef for frame alpha when unit is outside player
+	 - outsideRangeAlpha - A number for frame alpha when unit is outside player
 	 range. Required.
 --]]
 
