@@ -134,7 +134,7 @@ local HandleUnit = function(unit, object)
 		if(wotlk) then
 			FocusFrame:UnregisterAllEvents()
 			FocusFrame.Show = dummy
-			FocusFrame:Hid()
+			FocusFrame:Hide()
 
 			FocusFrameHealthBar:UnregisterAllEvents()
 			FocusFrameManaBar:UnregisterAllEvents()
