@@ -18,7 +18,7 @@ table.insert(oUF.subTypes, function(self)
 	if(ricon) then
 		self:RegisterEvent"RAID_TARGET_UPDATE"
 
-		if(not ricon:GetTexture()) then
+		if(ricon:IsObjectType"Texture" and not ricon:GetTexture()) then
 			ricon:SetTexture[[Interface\TargetingFrame\UI-RaidTargetingIcons]]
 		end
 	end
