@@ -14,8 +14,13 @@ function oUF:RAID_TARGET_UPDATE(event)
 end
 
 table.insert(oUF.subTypes, function(self)
-	if(self.RaidIcon) then
+	local ricon = self.RaidIcon
+	if(ricon) then
 		self:RegisterEvent"RAID_TARGET_UPDATE"
+
+		if(not ricon:GetTexture()) then
+			ricon:SetTexture[[Interface\TargetingFrame\UI-RaidTargetingIcons]]
+		end
 	end
 end)
 oUF:RegisterSubTypeMapping"RAID_TARGET_UPDATE"
