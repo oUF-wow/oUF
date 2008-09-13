@@ -32,7 +32,7 @@ table.insert(oUF.subTypes, function(self)
 	if(happiness) then
 		self:RegisterEvent"UNIT_HAPPINESS"
 
-		if(not happiness:GetTexture()) then
+		if(happiness:IsObjectType"Texture" and not happiness:GetTexture()) then
 			happiness:SetTexture[[Interface\PetPaperDollFrame\UI-PetHappiness]]
 		end
 	end
