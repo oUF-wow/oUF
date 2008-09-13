@@ -10,6 +10,9 @@
 	 - colorReaction
 	 - colorSmooth - will use smoothGradient instead of the internal gradient if set.
 
+	Background:
+	 - multiplier - number used to manipulate the power background. (default: 1)
+
 	WotLK only:
 	 - frequentUpdates - do OnUpdate polling of health data.
 
@@ -72,8 +75,10 @@ function oUF:UNIT_MAXHEALTH(event, unit)
 		if(b) then
 			bar:SetStatusBarColor(r, g, b)
 
-			if(bar.bg) then
-				bar.bg:SetVertexColor(r, g, b)
+			local bg = bar.bg
+			if(bg) then
+				local mu = bg.multiplier or 1
+				bg:SetVertexColor(r * mu, g * mu, b * mu)
 			end
 		end
 	else
