@@ -117,9 +117,10 @@ oUF.UNIT_RUNIC_POWER = oUF.UNIT_MAXMANA
 oUF.UNIT_MAXRUNIC_POWER = oUF.UNIT_MAXMANA
 
 table.insert(oUF.subTypes, function(self, unit)
-	if(self.Power) then
-		if(self.Power.frequentUpdates and (unit == 'player' or unit == 'pet')) then
-			self.Power:SetScript("OnUpdate", OnPowerUpdate)
+	local power = self.Power
+	if(power) then
+		if(power.frequentUpdates and (unit == 'player' or unit == 'pet')) then
+			power:SetScript("OnUpdate", OnPowerUpdate)
 		else
 			self:RegisterEvent"UNIT_MANA"
 			self:RegisterEvent"UNIT_RAGE"
@@ -137,6 +138,10 @@ table.insert(oUF.subTypes, function(self, unit)
 		self:RegisterEvent'UNIT_HAPPINESS'
 		-- For tapping.
 		self:RegisterEvent'UNIT_FACTION'
+
+		if(not power:GetStatusBarTexture()) then
+			power:SetStatusBarTexture[[Interface\TargetingFrame\UI-StatusBar]]
+		end
 	end
 end)
 oUF:RegisterSubTypeMapping"UNIT_MANA"
