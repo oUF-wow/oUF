@@ -90,9 +90,10 @@ end
 oUF.UNIT_HEALTH = oUF.UNIT_MAXHEALTH
 
 table.insert(oUF.subTypes, function(self)
-	if(self.Health) then
-		if(self.Health.frequentUpdates and (self.unit and not self.unit:match'%w+target$') or not self.unit) then
-			self.Health:SetScript('OnUpdate', OnHealthUpdate)
+	local health = self.Health
+	if(health) then
+		if(health.frequentUpdates and (self.unit and not self.unit:match'%w+target$') or not self.unit) then
+			health:SetScript('OnUpdate', OnHealthUpdate)
 		else
 			self:RegisterEvent"UNIT_HEALTH"
 		end
@@ -100,6 +101,10 @@ table.insert(oUF.subTypes, function(self)
 		self:RegisterEvent'UNIT_HAPPINESS'
 		-- For tapping.
 		self:RegisterEvent'UNIT_FACTION'
+
+		if(not health:GetStatusBarTexture()) then
+			health:SetStatusBarTexture[[Interface\TargetingFrame\UI-StatusBar]]
+		end
 	end
 end)
 oUF:RegisterSubTypeMapping"UNIT_MAXHEALTH"
