@@ -33,13 +33,13 @@ do
 	local UnitMana = UnitMana
 	OnPowerUpdate = function(self)
 		if(self.disconnected) then return end
-		local power = UnitMana('player')
+		local power = UnitMana(self.unit)
 
 		if(power ~= self.min) then
 			self:SetValue(power)
 			self.min = power
 
-			self:GetParent():UNIT_MANA("OnPowerUpdate", 'player')
+			self:GetParent():UNIT_MANA("OnPowerUpdate", self.unit)
 		end
 	end
 end
@@ -52,7 +52,9 @@ function oUF:UNIT_MAXMANA(event, unit)
 	bar = self.Power
 	bar:SetMinMaxValues(0, max)
 	bar:SetValue(min)
+
 	bar.disconnected = not UnitIsConnected(unit)
+	bar.unit = unit
 
 	if(not self.OverrideUpdatePower) then
 		local r, g, b, t
