@@ -144,4 +144,4 @@ table.insert(oUF.subTypes, function(self, unit)
 		end
 	end
 end)
-oUF:RegisterSubTypeMapping"UNIT_MANA"
+oUF:RegisterSubTypeMapping"UNIT_MAXMANA"
