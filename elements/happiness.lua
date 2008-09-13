@@ -28,8 +28,13 @@ function oUF:UNIT_HAPPINESS(event, unit)
 end
 
 table.insert(oUF.subTypes, function(self)
-	if(self.Happiness) then
+	local happiness = self.Happiness
+	if(happiness) then
 		self:RegisterEvent"UNIT_HAPPINESS"
+
+		if(not happiness:GetTexture()) then
+			happiness:SetTexture[[Interface\PetPaperDollFrame\UI-PetHappiness]]
+		end
 	end
 end)
 oUF:RegisterSubTypeMapping"UNIT_HAPPINESS"
