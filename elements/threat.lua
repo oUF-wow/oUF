@@ -1,25 +1,26 @@
 --[[
-	Elements handled: .Threat, .ThreatText
+	Elements handled: .Threat
 
 	Functions that can be overridden from within a layout:
 	 - :PreUpdateThreat(event, unit)
-	 - :OverrideUpdateThreat(event, unit, unit2, isTanking, status, scaledPercent, rawPercent, threatValue)
-	 - :PostUpdateThreat(event, unit, unit2, isTanking, status, scaledPercent, rawPercent, threatValue)
+	 - :OverrideUpdateThreat(event, unit, status)
+	 - :PostUpdateThreat(event, unit, status)
 --]]
 
+local function Debug(...) ChatFrame6:AddMessage(string.join(", ", "oUF.threat", tostringall(...))) end
+
 function oUF:UNIT_THREAT_SITUATION_UPDATE(event, unit)
-	local threat, threattext = self.Threat, self.ThreatText
-	if not threat or not threattext then return end
+	local threat = self.Threat
+	if not threat then return end
 
 	if self.PreUpdateThreat then self:PreUpdateThreat(event, unit) end
 
-	if not unit or unit == self.feedbackUnit then
-		local unit2 = self.feedbackUnit ~= self.unit and self.unit or nil
-		local isTanking, status, scaledPercent, rawPercent, threatValue = UnitDetailedThreatSituation(self.feedbackUnit, unit2)
+	if not unit or unit == self.unit then
+		local status = UnitThreatSituation(self.unit)
 
-		if self.OverrideUpdateThreat then self:OverrideUpdateThreat(event, unit, unit2, isTanking, status, scaledPercent, rawPercent, threatValue)
+		if self.OverrideUpdateThreat then self:OverrideUpdateThreat(event, unit, status)
 		else
-			if status > 0 and IsThreatWarningEnabled() then
+			if status > 0 then
 				local r, g, b = GetThreatStatusColor(status)
 
 				if threat then
@@ -27,26 +28,17 @@ function oUF:UNIT_THREAT_SITUATION_UPDATE(event, unit)
 					threat:Show()
 				end
 
-				if threattext then
-					threattext:SetFormattedText("|cff%02x%02x%02x%d%%", r*255, g*255, b*255, percentage)
-					threattext:Show()
-				end
-			else
-				if threat then threat:Hide() end
-				if threattext then threattext:Hide() end
-			end
+			else threat:Hide() end
 		end
 
-		if self.PostUpdateThreat then self:PostUpdateThreat(event, unit, unit2, isTanking, status, scaledPercent, rawPercent, threatValue) end
+		if self.PostUpdateThreat then self:PostUpdateThreat(event, unit, status) end
 	end
 end
 
 table.insert(oUF.subTypes, function(self, unit)
-	if self.Threat or self.ThreatText then
+	if self.Threat then
 		self:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE")
-		if unit:match("target") or unit == "focus" then self.feedbackUnit = "player" end
-		if self.Threat then self.Threat:Hide() end
-		if self.ThreatText then self.ThreatText:Hide() end
+		self.Threat:Hide()
 	end
 end)
 oUF:RegisterSubTypeMapping("UNIT_THREAT_SITUATION_UPDATE")
