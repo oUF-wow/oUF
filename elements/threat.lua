@@ -45,6 +45,8 @@ table.insert(oUF.subTypes, function(self, unit)
 	if self.Threat or self.ThreatText then
 		self:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE")
 		if unit:match("target") or unit == "focus" then self.feedbackUnit = "player" end
+		if self.Threat then self.Threat:Hide() end
+		if self.ThreatText then self.ThreatText:Hide() end
 	end
 end)
 oUF:RegisterSubTypeMapping("UNIT_THREAT_SITUATION_UPDATE")
