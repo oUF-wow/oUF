@@ -1,5 +1,5 @@
 function oUF:PARTY_LEADER_CHANGED(event)
-	if(UnitIsPartyLeader(self.unit)) then
+	if(UnitInParty(self.unit) and UnitIsPartyLeader(self.unit)) then
 		self.Leader:Show()
 	else
 		self.Leader:Hide()
