@@ -22,9 +22,9 @@ function oUF:UNIT_THREAT_SITUATION_UPDATE(event, unit)
 			if status > 0 and IsThreatWarningEnabled() then
 				local r, g, b = GetThreatStatusColor(status)
 
-				if indicator then
-					indicator:SetVertexColor(r, g, b)
-					indicator:Show()
+				if threat then
+					threat:SetVertexColor(r, g, b)
+					threat:Show()
 				end
 
 				if threattext then
@@ -32,7 +32,7 @@ function oUF:UNIT_THREAT_SITUATION_UPDATE(event, unit)
 					threattext:Show()
 				end
 			else
-				if indicator then indicator:Hide() end
+				if threat then threat:Hide() end
 				if threattext then threattext:Hide() end
 			end
 		end
