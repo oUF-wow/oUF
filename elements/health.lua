@@ -69,7 +69,7 @@ function oUF:UNIT_MAXHEALTH(event, unit)
 			r, g, b = t[1], t[2], t[3]
 		end
 
-		if(r and g and b) then
+		if(b) then
 			bar:SetStatusBarColor(r, g, b)
 
 			if(bar.bg) then
