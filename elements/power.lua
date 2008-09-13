@@ -11,6 +11,9 @@
 	 - colorReaction
 	 - colorSmooth - will use smoothGradient instead of the internal gradient if set.
 
+	Background:
+	 - multiplier - number used to manipulate the power background. (default: 1)
+
 	WotLK only:
 	 This option will only enable for player and pet.
 	 - frequentUpdates - do OnUpdate polling of power data.
@@ -89,8 +92,10 @@ function oUF:UNIT_MAXMANA(event, unit)
 		if(b) then
 			bar:SetStatusBarColor(r, g, b)
 
-			if(bar.bg) then
-				bar.bg:SetVertexColor(r, g, b)
+			local bg = bar.bg
+			if(bg) then
+				local mu = bg.multiplier or 1
+				bg:SetVertexColor(r * mu, g * mu, b * mu)
 			end
 		end
 	else
