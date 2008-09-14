@@ -7,32 +7,27 @@
 	 - :PostUpdateThreat(event, unit, status)
 --]]
 
-local function Debug(...) ChatFrame6:AddMessage(string.join(", ", "oUF.threat", tostringall(...))) end
-
 function oUF:UNIT_THREAT_SITUATION_UPDATE(event, unit)
+	if(unit ~= self.unit) then return end
+	if(self.PreUpdateThreat) then self:PreUpdateThreat(event, unit) end
+
+	unit = unit or self.unit
 	local threat = self.Threat
-	if not threat then return end
+	local status = UnitThreatSituation(unit)
 
-	if self.PreUpdateThreat then self:PreUpdateThreat(event, unit) end
-
-	if not unit or unit == self.unit then
-		local status = UnitThreatSituation(self.unit)
-
-		if self.OverrideUpdateThreat then self:OverrideUpdateThreat(event, unit, status)
+	if(not self.OverrideUpdateThreat) then
+		if(status > 0) then
+			local r, g, b = GetThreatStatusColor(status)
+			threat:SetVertexColor(r, g, b)
+			threat:Show()
 		else
-			if status > 0 then
-				local r, g, b = GetThreatStatusColor(status)
-
-				if threat then
-					threat:SetVertexColor(r, g, b)
-					threat:Show()
-				end
-
-			else threat:Hide() end
+			threat:Hide()
 		end
-
-		if self.PostUpdateThreat then self:PostUpdateThreat(event, unit, status) end
+	else
+		self:OverrideUpdateThreat(event, unit, status)
 	end
+
+	if(self.PostUpdateThreat) then self:PostUpdateThreat(event, unit, status) end
 end
 
 table.insert(oUF.subTypes, function(self, unit)
