@@ -12,7 +12,7 @@ end
 local function processtags(taggedstring, unit)
 	if not unit then return taggedstring end
 	currentunit = unit
-	return (taggedstring:gsub("[[][%w]+[]]", subber):gsub("  ", " "))
+	return (taggedstring:gsub("[[][%w]+[]]", subber):gsub(" +", " "))
 end
 
 
