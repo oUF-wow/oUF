@@ -6,6 +6,7 @@
 	 - :OverrideUpdateThreat(event, unit, status)
 	 - :PostUpdateThreat(event, unit, status)
 --]]
+if(select(4, GetBuildInfo()) < 3e4) then return end
 
 function oUF:UNIT_THREAT_SITUATION_UPDATE(event, unit)
 	if(unit ~= self.unit) then return end
