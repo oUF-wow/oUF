@@ -19,3 +19,4 @@ elements\portraits.lua
 elements\range.lua
 elements\happiness.lua
 elements\castbar.lua
+elements\threat.lua
