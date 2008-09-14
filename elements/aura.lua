@@ -5,7 +5,7 @@
 	Shared:
 	 - spacing: Padding between aura icons. (Default: 0)
 	 - size: Size of the aura icons. (Default: 16)
-	 - initialAnchor: Initial anchor in the aura frame. (Default: "BOTTEMLEFT")
+	 - initialAnchor: Initial anchor in the aura frame. (Default: "BOTTOMLEFT")
 	 - growth-x: Growth direction, affected by initialAnchor. (Default: "UP")
 	 - growth-y: Growth direction, affected by initialAnchor. (Default: "RIGHT")
 	 - filter
