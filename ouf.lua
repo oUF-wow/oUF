@@ -374,4 +374,4 @@ oUF.objects = objects
 oUF.subTypes = subTypes
 oUF.subTypesMapping = subTypesMapping
 oUF.colors = colors
-_G[parent] = oUF
+_G[global] = oUF
