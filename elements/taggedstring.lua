@@ -1,7 +1,16 @@
 
+-------------------------------
+--      Tag definitions      --
+-------------------------------
+
 local tags = {
 	name = UnitName,
 }
+
+
+----------------------
+--      Tagger      --
+----------------------
 
 local currentunit
 local function subber(tag)
@@ -27,6 +36,10 @@ local function OnShow(self)
 	self.fontstring:SetText(processtags(self.tagstring, self.unit))
 end
 
+
+--------------------------------
+--      oUF Registration      --
+--------------------------------
 
 table.insert(oUF.subTypes, function(self, unit)
 	if self.TaggedStrings then
