@@ -10,10 +10,54 @@ local function subber(tag)
 end
 
 local function processtags(taggedstring, unit)
+	if not unit then return taggedstring end
 	currentunit = unit
 	return (taggedstring:gsub("[[][%w]+[]]", subber):gsub("  ", " "))
 end
 
+
+local unitlessevents = {PLAYER_TARGET_CHANGED = true, PLAYER_FOCUS_CHANGED = true}
+local function OnEvent(self, event, unit)
+	if not unitlessevents[event] and unit ~= self.unit then return end
+	self.fontstring:SetText(processtags(self.tagstring, self.unit))
+end
+
+
+local function OnShow(self)
+	self.fontstring:SetText(processtags(self.tagstring, self.unit))
+end
+
+
+table.insert(oUF.subTypes, function(self, unit)
+	if self.TaggedStrings then
+		for i,fs in pairs(self.TaggedStrings) do
+			local parent = fs:GetParent()
+			local tagstring = fs:GetText()
+
+			local f = CreateFrame("Frame", nit, parent)
+			f:SetScript("OnEvent", OnEvent)
+			f:SetScript("OnShow", OnShow)
+			f.tagstring, f.fontstring, f.unit = tagstring, fs, unit
+
+			-- Register any update events we need
+			for tag in string.gmatch(tagstring, "[[][%w]+[]]") do
+				local tagevents = events[string.sub(tag, 2, -2)]
+				if tagevents then
+					for event in string.gmatch(tagevents, "%S+") do
+						f:RegisterEvent(event)
+					end
+				end
+			end
+			if unit == "target" then f:RegisterEvent("PLAYER_TARGET_CHANGED") end
+			if unit == "focus" then f:RegisterEvent("PLAYER_FOCUS_CHANGED") end
+
+			OnShow(f)
+		end
+	end
+end)
+
+
+if true then return end
 
 
 local tags = {
