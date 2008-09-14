@@ -41,6 +41,10 @@ end
 --      oUF Registration      --
 --------------------------------
 
+-- Store our tables somewhere so people can add custom tags
+oUF.Tags, oUF.TagEvents, oUF.UnitlessTagEvents = tags, events, unitlessevents
+
+
 table.insert(oUF.subTypes, function(self, unit)
 	if self.TaggedStrings then
 		for i,fs in pairs(self.TaggedStrings) do
