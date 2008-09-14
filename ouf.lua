@@ -1,3 +1,8 @@
+local parent = debugstack():match[[Interface\AddOns\(.-)\]]
+local global = GetAddOnMetadata(parent, 'oUF')
+assert(global, 'X-oUF needs to be defined in the parent add-on.')
+
+local _VERSION = '1.1.1'
 local wotlk = select(4, GetBuildInfo()) >= 3e4
 
 local print = function(a) ChatFrame1:AddMessage("|cff33ff99oUF:|r "..tostring(a)) end
@@ -363,10 +368,10 @@ table.insert(subTypes, function(self)
 	end
 end)
 
-oUF.version = GetAddOnMetadata('oUF', 'version')
+oUF.version = _VERSION
 oUF.units = units
 oUF.objects = objects
 oUF.subTypes = subTypes
 oUF.subTypesMapping = subTypesMapping
 oUF.colors = colors
-_G.oUF = oUF
+_G[parent] = oUF

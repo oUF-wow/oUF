@@ -3,6 +3,7 @@
 ## Author: Haste
 ## Version: 1.1.1
 ## X-eMail: troeks@gmail.com
+## X-oUF: oUF
 ## Notes: Unit frame framework. Does nothing by itself.
 
 ouf.lua

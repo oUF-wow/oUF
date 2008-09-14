@@ -25,6 +25,10 @@
 	 will disable the above color settings.
 	 - :PostUpdatePower(event, unit, bar, min, max)
 --]]
+local parent = debugstack():match[[Interface\AddOns\(.-)\]]
+local global = GetAddOnMetadata(parent, 'oUF')
+assert(global, 'X-oUF needs to be defined in the parent add-on.')
+local oUF = _G[global]
 
 local wotlk = select(4, GetBuildInfo()) >= 3e4
 

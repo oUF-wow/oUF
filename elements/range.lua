@@ -7,6 +7,10 @@
 	 - outsideRangeAlpha - A number for frame alpha when unit is outside player
 	 range. Required.
 --]]
+local parent = debugstack():match[[Interface\AddOns\(.-)\]]
+local global = GetAddOnMetadata(parent, 'oUF')
+assert(global, 'X-oUF needs to be defined in the parent add-on.')
+local oUF = _G[global]
 
 local objects = oUF.objects
 local OnRangeFrame
