@@ -1,11 +1,6 @@
 
-local function UnitName(unit)
-	return "Joe"
-end
-
 local tags = {
 	name = UnitName,
-	blank = function() return "" end,
 }
 
 local currentunit
@@ -18,8 +13,6 @@ local function processtags(taggedstring, unit)
 	currentunit = unit
 	return (taggedstring:gsub("[[][%w]+[]]", subber):gsub("  ", " "))
 end
-
-print(processtags("[name] [asdfasdfafa] [] [[name]] (name) [blank] <name>", "player"))
 
 
 
