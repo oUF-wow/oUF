@@ -21,12 +21,20 @@
 	 - numDebuffs: The maximum number of debuffs that should be shown. (Default: 40)
 	 - buffFilter: See filter on Shared. (Default: "HELPFUL")
 	 - debuffFilter: See filter on Shared. (Default: "HARMFUL")
+	 - Variables set by .Auras:
+		 - visibleBuffs: Number of currently visible buff icons.
+		 - visibleDebuffs: Number of currently visible debuff icons.
+		 - visibleAuras: Total number of currently visible buffs + debuffs.
 
 	.Buffs only:
 	 - num: The maximum number of buffs that should be shown. (Default: 32)
+	 - Variables set by .Buffs:
+		 - visibleBuffs: Number of currently visible buff icons.
 
 	.Debuffs only:
 	 - num: The maximum number of debuffs that should be shown. (Default: 40)
+	 - Variables set by .Debuffs:
+		 - visibleDebuffs: Number of currently visible debuff icons.
 
 	Functions that can be overridden from within a layout:
 	 - :PostCreateAuraIcon(icon, icons, index, isDebuff)
