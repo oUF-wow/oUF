@@ -23,6 +23,44 @@ print(processtags("[name] [asdfasdfafa] [] [[name]] (name) [blank] <name>", "pla
 
 
 
+local tags = {
+	["[curhp]"] = function(u) return UnitHealth(u) end,
+	["[maxhp]"] = function(u) return UnitHealthMax(u) end,
+	["[perhp]"] = function(u) return math.floor((UnitHealth(u) / UnitHealthMax(u)) * 100) end,
+	["[perpp]"] = function(u) return math.floor((UnitPower(u) / UnitPowerMax(u)) * 100) end,
+	["[curpp]"] = function(u) return UnitMana(u) end,
+	["[maxpp]"] = function(u) return UnitManaMax(u) end,
+	["[level]"] = function(u) return UnitLevel(u) end,
+	["[class]"] = function(u) return UnitClass(u) end,
+	["[name]"] = function(u) return UnitName(u) end,
+	["[race]"] = function(u) return UnitRace(u) end,
+	["[missinghp]"] = function(u) return UnitHealthMax(u) - UnitHealth(u) end,
+	["[missingpp]"] = function(u) return UnitManaMax(u) - UnitMana(u) end,
+	["[smartcurhp]"] = function(u) return siVal(UnitHealthMax(u)) end,
+	["[smartmaxhp]"] = function(u) return siVal(UnitHealth(u)) end,
+	["[smartcurpp]"] = function(u) return siVal(UnitMana(u)) end,
+	["[smartmaxpp]"] = function(u) return siVal(UnitManaMax(u)) end,
+}
+
+local eventsTable = {
+	["[curhp]"] = {"UNIT_HEALTH"},
+	["[smartcurhp]"] = {"UNIT_HEALTH"},
+	["[perhp]"] = {"UNIT_HEALTH", "UNIT_MAXHEALTH"},
+	["[maxhp]"] = {"UNIT_MAXHEALTH"},
+	["[smartmaxhp]"] = {"UNIT_MAXHEALTH"},
+	["[curpp]"] = {"UNIT_ENERGY", "UNIT_FOCUS", "UNIT_MANA", "UNIT_RAGE"},
+	["[smartcurpp]"] = {"UNIT_ENERGY", "UNIT_FOCUS", "UNIT_MANA", "UNIT_RAGE"},
+	["[maxpp]"] = {"UNIT_MAXENERGY", "UNIT_MAXFOCUS", "UNIT_MAXMANA", "UNIT_MAXRAGE"},
+	["[smartmaxpp]"] = {"UNIT_MAXENERGY", "UNIT_MAXFOCUS", "UNIT_MAXMANA", "UNIT_MAXRAGE"},
+	["[perpp]"] = {"UNIT_MAXENERGY", "UNIT_MAXFOCUS", "UNIT_MAXMANA", "UNIT_MAXRAGE", "UNIT_ENERGY", "UNIT_FOCUS", "UNIT_MANA", "UNIT_RAGE"},
+	["[level]"] = {"UNIT_LEVEL"},
+	["[name]"] = {"UNIT_NAME_UPDATE"},
+	["[missinghp]"] = {"UNIT_HEALTH", "UNIT_MAXHEALTH"},
+	["[missingmp]"] = {"UNIT_MAXENERGY", "UNIT_MAXFOCUS", "UNIT_MAXMANA", "UNIT_MAXRAGE", "UNIT_ENERGY", "UNIT_FOCUS", "UNIT_MANA", "UNIT_RAGE"},
+}
+
+
+
 -- OMG ANCIENT TAGS FROM WATCHDOG
 WatchDog_UnitInformation = {
 	["name"] = function (u) if type(u) == "string" then return (UnitName(u) or "Unknown") elseif type(u) == "table" then local name = UnitName(u.unit) or "Unknown" if string.len(name) > u.length then return string.sub(name, 1, u.length) .. "..." else return name end else return "" end end,
