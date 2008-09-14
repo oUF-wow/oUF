@@ -16,7 +16,7 @@ end
 
 local function processtags(taggedstring, unit)
 	currentunit = unit
-	return (string.gsub(string.gsub(taggedstring, "[[][%w]+[]]", subber), "  ", " "))
+	return (taggedstring:gsub("[[][%w]+[]]", subber):gsub("  ", " "))
 end
 
 print(processtags("[name] [asdfasdfafa] [] [[name]] (name) [blank] <name>", "player"))
