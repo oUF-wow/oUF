@@ -156,11 +156,11 @@ local onUpdate = function(self, elapsed)
 			self:Hide()
 			return
 		end
-		if self.safezone then
+		if self.SafeZone then
 			local castTime = (self.maxValue - self.startTime) * 1000
 			local safeZonePercent = ( (self:GetWidth() / castTime ) * select(3,GetNetStats()) );
 			if safeZonePercent > 100 then safeZonePercent = 100 end
-			self.safezone:SetWidth((self:GetWidth() / 100) * safeZonePercent);
+			self.SafeZone:SetWidth((self:GetWidth() / 100) * safeZonePercent);
 		end
 		if self.Time then
 			if self.delay ~= 0 then
@@ -222,6 +222,11 @@ table.insert(oUF.subTypes, function(object, unit)
 
 	object.Castbar.parent = object
 	object.Castbar:SetScript("OnUpdate", object.OnCastbarUpdate or onUpdate)
+
+	-- TODO: Remove this in 1.2.
+	if(self.safezone) then
+		self.SafeZone = self.safezone
+	end
 
 	if object.unit == "player" then
 		CastingBarFrame:UnregisterAllEvents()

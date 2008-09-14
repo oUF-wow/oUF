@@ -6,7 +6,7 @@
 	 - colorTapping
 	 - colorDisconnected
 	 - colorHappiness
-	 - colorClass (Colors player units based on class
+	 - colorClass (Colors player units based on class)
 	 - colorClassNPC (Colors non-player units based on class)
 	 - colorReaction
 	 - colorSmooth - will use smoothGradient instead of the internal gradient if set.
