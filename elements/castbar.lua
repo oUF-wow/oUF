@@ -228,8 +228,8 @@ table.insert(oUF.subTypes, function(object, unit)
 	object.Castbar:SetScript("OnUpdate", object.OnCastbarUpdate or onUpdate)
 
 	-- TODO: Remove this in 1.2.
-	if(self.safezone) then
-		self.SafeZone = self.safezone
+	if(object.safezone) then
+		object.SafeZone = object.safezone
 	end
 
 	if object.unit == "player" then
