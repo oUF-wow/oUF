@@ -5,18 +5,4 @@
 ## X-eMail: troeks@gmail.com
 ## Notes: Unit frame framework. Does nothing by itself.
 
-ouf.lua
-
-elements\power.lua
-elements\aura.lua
-elements\health.lua
-elements\cpoints.lua
-elements\ricons.lua
-elements\leader.lua
-elements\status.lua
-elements\pvp.lua
-elements\portraits.lua
-elements\range.lua
-elements\happiness.lua
-elements\castbar.lua
-elements\threat.lua
+oUF.xml

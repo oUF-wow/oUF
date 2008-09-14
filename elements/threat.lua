@@ -9,7 +9,7 @@
 if(select(4, GetBuildInfo()) < 3e4) then return end
 
 function oUF:UNIT_THREAT_SITUATION_UPDATE(event, unit)
-	if(unit ~= self.unit) then return end
+	if(unit and unit ~= self.unit) then return end
 	if(self.PreUpdateThreat) then self:PreUpdateThreat(event, unit) end
 
 	unit = unit or self.unit
