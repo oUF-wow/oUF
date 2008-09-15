@@ -4,8 +4,58 @@
 -------------------------------
 
 local tags = {
-	name = UnitName,
+	class      = function(u) return UnitClass(u) or "" end,
+	creature   = function(u) return UnitCreatureFamily(u) or UnitCreatureType(u) or "" end,
+	curhp      = UnitHealth,
+	curpp      = UnitMana,
+	dead       = function(u) return UnitIsDead(u) and "Dead" or UnitIsGhost(u) and "Ghost" or "" end,
+	leader     = function(u) return UnitIsPartyLeader(u) and "(L)" or "" end,
+	leaderlong = function(u) return UnitIsPartyLeader(u) and "(Leader)" or "" end,
+	level      = function(u) local l = UnitLevel(u) return (l > 0) and l or "??" end,
+	maxhp      = UnitHealthMax,
+	maxpp      = UnitManaMax,
+	missinghp  = function(u) return UnitHealthMax(u) - UnitHealth(u) end,
+	missingpp  = function(u) return UnitManaMax(u) - UnitMana(u) end,
+	name       = UnitName,
+	offline    = function(u) return UnitIsConnected(u) and "" or "Offline" end,
+	perhp      = function(u) local m = UnitHealthMax(u); return m == 0 and 0 or math.floor(UnitHealth(u)/m*100+0.5) end,
+	perpp      = function(u) local m = UnitPowerMax(u); return m == 0 and 0 or math.floor(UnitPower(u)/m*100+0.5) end,
+	plus       = function(u) return UnitIsPlusMob(u) and "+" or "" end,
+	race       = function(u) return UnitRace(u) or "" end,
+	rare       = function(u) local c = UnitClassification(u); return (c == "rare" or c == "rareelite") and "Rare" or "" end,
+	resting    = function(u) return u == "player" and IsResting() and "zzz" or "" end,
+	smartclass = function(u) return UnitIsPlayer(u) and oUF.Tags.class(u) or oUF.Tags.creature(u) end,
+	smartlevel = function(u) return UnitClassification(u) == "worldboss" and "Boss" or UnitLevel(u).. oUF.Tags.plus(u) end,
+	status     = function(u) return UnitIsDead(u) and "Dead" or UnitIsGhost(u) and "Ghost" or not UnitIsConnected(u) and "Offline" or oUF.Tags.resting(u) end,
 }
+local events = {
+	curhp      = "UNIT_HEALTH",
+	curpp      = "UNIT_ENERGY UNIT_FOCUS UNIT_MANA UNIT_RAGE",
+	dead       = "UNIT_HEALTH",
+	leader     = "PARTY_LEADER_CHANGED",
+	leaderlong = "PARTY_LEADER_CHANGED",
+	level      = "UNIT_LEVEL",
+	maxhp      = "UNIT_MAXHEALTH",
+	maxpp      = "UNIT_MAXENERGY UNIT_MAXFOCUS UNIT_MAXMANA UNIT_MAXRAGE",
+	missinghp  = "UNIT_HEALTH UNIT_MAXHEALTH",
+	missingpp  = "UNIT_MAXENERGY UNIT_MAXFOCUS UNIT_MAXMANA UNIT_MAXRAGE UNIT_ENERGY UNIT_FOCUS UNIT_MANA UNIT_RAGE",
+	name       = "UNIT_NAME_UPDATE",
+	offline    = "UNIT_HEALTH",
+	perhp      = "UNIT_HEALTH UNIT_MAXHEALTH",
+	perpp      = "UNIT_MAXENERGY UNIT_MAXFOCUS UNIT_MAXMANA UNIT_MAXRAGE UNIT_ENERGY UNIT_FOCUS UNIT_MANA UNIT_RAGE",
+	resting    = "PLAYER_UPDATE_RESTING",
+	status     = "UNIT_HEALTH PLAYER_UPDATE_RESTING",
+}
+
+function tags.classification(u)
+	local c = UnitClassification(u)
+	return c == "rare" and "Rare" or c == "eliterare" and "Rare Elite" or c == "elite" and "Elite" or c == "worldboss" and "Boss" or ""
+end
+
+function tags.shortclassification(u)
+	local c = UnitClassification(u)
+	return c == "rare" and "R" or c == "eliterare" and "R+" or c == "elite" and "+" or c == "worldboss" and "B" or ""
+end
 
 
 ----------------------
@@ -78,18 +128,6 @@ if true then return end
 
 
 local tags = {
-	["[curhp]"] = function(u) return UnitHealth(u) end,
-	["[maxhp]"] = function(u) return UnitHealthMax(u) end,
-	["[perhp]"] = function(u) return math.floor((UnitHealth(u) / UnitHealthMax(u)) * 100) end,
-	["[perpp]"] = function(u) return math.floor((UnitPower(u) / UnitPowerMax(u)) * 100) end,
-	["[curpp]"] = function(u) return UnitMana(u) end,
-	["[maxpp]"] = function(u) return UnitManaMax(u) end,
-	["[level]"] = function(u) return UnitLevel(u) end,
-	["[class]"] = function(u) return UnitClass(u) end,
-	["[name]"] = function(u) return UnitName(u) end,
-	["[race]"] = function(u) return UnitRace(u) end,
-	["[missinghp]"] = function(u) return UnitHealthMax(u) - UnitHealth(u) end,
-	["[missingpp]"] = function(u) return UnitManaMax(u) - UnitMana(u) end,
 	["[smartcurhp]"] = function(u) return siVal(UnitHealthMax(u)) end,
 	["[smartmaxhp]"] = function(u) return siVal(UnitHealth(u)) end,
 	["[smartcurpp]"] = function(u) return siVal(UnitMana(u)) end,
@@ -97,58 +135,26 @@ local tags = {
 }
 
 local eventsTable = {
-	["[curhp]"] = {"UNIT_HEALTH"},
 	["[smartcurhp]"] = {"UNIT_HEALTH"},
-	["[perhp]"] = {"UNIT_HEALTH", "UNIT_MAXHEALTH"},
-	["[maxhp]"] = {"UNIT_MAXHEALTH"},
 	["[smartmaxhp]"] = {"UNIT_MAXHEALTH"},
-	["[curpp]"] = {"UNIT_ENERGY", "UNIT_FOCUS", "UNIT_MANA", "UNIT_RAGE"},
 	["[smartcurpp]"] = {"UNIT_ENERGY", "UNIT_FOCUS", "UNIT_MANA", "UNIT_RAGE"},
-	["[maxpp]"] = {"UNIT_MAXENERGY", "UNIT_MAXFOCUS", "UNIT_MAXMANA", "UNIT_MAXRAGE"},
 	["[smartmaxpp]"] = {"UNIT_MAXENERGY", "UNIT_MAXFOCUS", "UNIT_MAXMANA", "UNIT_MAXRAGE"},
-	["[perpp]"] = {"UNIT_MAXENERGY", "UNIT_MAXFOCUS", "UNIT_MAXMANA", "UNIT_MAXRAGE", "UNIT_ENERGY", "UNIT_FOCUS", "UNIT_MANA", "UNIT_RAGE"},
-	["[level]"] = {"UNIT_LEVEL"},
-	["[name]"] = {"UNIT_NAME_UPDATE"},
-	["[missinghp]"] = {"UNIT_HEALTH", "UNIT_MAXHEALTH"},
-	["[missingmp]"] = {"UNIT_MAXENERGY", "UNIT_MAXFOCUS", "UNIT_MAXMANA", "UNIT_MAXRAGE", "UNIT_ENERGY", "UNIT_FOCUS", "UNIT_MANA", "UNIT_RAGE"},
 }
 
 
 
 -- OMG ANCIENT TAGS FROM WATCHDOG
 WatchDog_UnitInformation = {
-	["name"] = function (u) if type(u) == "string" then return (UnitName(u) or "Unknown") elseif type(u) == "table" then local name = UnitName(u.unit) or "Unknown" if string.len(name) > u.length then return string.sub(name, 1, u.length) .. "..." else return name end else return "" end end,
-
-	["status"] = function (u) if UnitIsDead(u) then return "Dead" elseif UnitIsGhost(u) then return "Ghost" elseif (not UnitIsConnected(u)) then return "Offline" elseif (UnitAffectingCombat(u)) then return "Combat" elseif (u== "player" and IsResting()) then return "Resting" else return "" end end,
 	["statuscolor"] = function (u) if UnitIsDead(u) then return "|cffff0000" elseif UnitIsGhost(u) then return "|cff9d9d9d" elseif (not UnitIsConnected(u)) then return "|cffff8000" elseif (UnitAffectingCombat(u)) then return "|cffFF0000" elseif (u== "player" and IsResting()) then return GetHex(UnitReactionColor[4]) else return "" end end,
 	["happycolor"] = function (u) local x=GetPetHappiness() return ( (x==2) and "|cffFFFF00" or (x==1) and "|cffFF0000" or "" ) end,
 
-	["curhp"] = function (u) return wd_curhp end,
-	["maxhp"] = function (u) return wd_maxhp end,
-	["percenthp"] = function (u) return ( (wd_maxhp~=0) and floor(wd_curhp/wd_maxhp*100+0.5) or 0) end,
-	["missinghp"] = function (u) return ((wd_maxhp - wd_curhp) or 0) end,
-
-	["curmp"] = function (u) return wd_curmp end,
-	["maxmp"] = function (u) return wd_maxmp end,
-	["percentmp"] = function (u) return wd_permp end,
-	["missingmp"] = function (u) return (wd_maxmp - wd_curmp) end,
 	["typemp"] = function (u) local p=UnitPowerType(u) return ( (p==1) and "Rage" or (p==2) and "Focus" or (p==3) and "Energy" or "Mana" ) end,
-	["level"] = function (u) local x = UnitLevel(u) return ((x>0) and x or "??") end,
-	["class"] = function (u) return (UnitClass(u) or "Unknown") end,
-	["creature"] = function (u) return (UnitCreatureFamily(u) or UnitCreatureType(u) or "Unknown") end,
-	["smartclass"] = function (u) if UnitIsPlayer(u) then return WatchDog_UnitInformation["class"](u) else return WatchDog_UnitInformation["creature"](u) end end,
 	["combos"] = function (u) return (GetComboPoints() or 0) end,
 	["combos2"] = function (u) return string.rep("@", GetComboPoints()) end,
-	["classification"] = function (u) if UnitClassification(u) == "rare" then return "Rare " elseif UnitClassification(u) == "eliterare" then return "Rare Elite " elseif UnitClassification(u) == "elite" then return "Elite " elseif UnitClassification(u) == "worldboss" then return "Boss " else return "" end end,
 	["faction"] = function (u) return (UnitFactionGroup(u) or "") end,
-	["connect"] = function (u) return ( (UnitIsConnected(u)) and "" or "Offline" ) end,
-	["race"] = function (u) return ( UnitRace(u) or "") end,
 	["pvp"] = function (u) return ( UnitIsPVP(u) and "PvP" or "" ) end,
-	["plus"] = function (u) return ( UnitIsPlusMob(u) and "+" or "" ) end,
 	["sex"] = function (u) local x = UnitSex(u) return ( (x==0) and "Male" or (x==1) and "Female" or "" ) end,
 	["rested"] = function (u) return (GetRestState()==1 and "Rested" or "") end,
-	["leader"] = function (u) return (UnitIsPartyLeader(u) and "(L)" or "") end,
-	["leaderlong"] = function (u) return (UnitIsPartyLeader(u) and "(Leader)" or "") end,
 
 	["happynum"] = function (u) return (GetPetHappiness() or 0) end,
 	["happytext"] = function (u) return ( getglobal("PET_HAPPINESS"..(GetPetHappiness() or 0)) or "" ) end,
