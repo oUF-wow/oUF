@@ -4,7 +4,7 @@
 		http://svn.wowace.com/wowace/trunk/oUF_Castbar/
 --]]
 local parent = debugstack():match[[Interface\AddOns\(.-)\]]
-local global = GetAddOnMetadata(parent, 'oUF')
+local global = GetAddOnMetadata(parent, 'X-oUF')
 assert(global, 'X-oUF needs to be defined in the parent add-on.')
 local oUF = _G[global]
 
