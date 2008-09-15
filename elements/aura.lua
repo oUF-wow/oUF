@@ -5,7 +5,7 @@
 	Shared:
 	 - spacing: Padding between aura icons. (Default: 0)
 	 - size: Size of the aura icons. (Default: 16)
-	 - initialAnchor: Initial anchor in the aura frame. (Default: "BOTTEMLEFT")
+	 - initialAnchor: Initial anchor in the aura frame. (Default: "BOTTOMLEFT")
 	 - onlyShowDuration: Only display icons that have a duration (swirly circle of
 	   doom). (Default: nil)
 	 - growth-x: Growth direction, affected by initialAnchor. (Default: "UP")
