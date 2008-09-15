@@ -77,13 +77,13 @@ end
 
 local unitlessevents = {PLAYER_TARGET_CHANGED = true, PLAYER_FOCUS_CHANGED = true}
 local function OnEvent(self, event, unit)
-	if not unitlessevents[event] and unit ~= self.unit then return end
-	self.fontstring:SetText(processtags(self.tagstring, self.unit))
+	if not unitlessevents[event] and unit ~= self.parent.unit then return end
+	self.fontstring:SetText(processtags(self.tagstring, self.parent.unit))
 end
 
 
 local function OnShow(self)
-	self.fontstring:SetText(processtags(self.tagstring, self.unit))
+	self.fontstring:SetText(processtags(self.tagstring, self.parent.unit))
 end
 
 
@@ -104,7 +104,7 @@ table.insert(oUF.subTypes, function(self, unit)
 			local f = CreateFrame("Frame", nil, parent)
 			f:SetScript("OnEvent", OnEvent)
 			f:SetScript("OnShow", OnShow)
-			f.tagstring, f.fontstring, f.unit = tagstring, fs, unit
+			f.tagstring, f.fontstring, f.parent = tagstring, fs, self
 
 			-- Register any update events we need
 			for tag in string.gmatch(tagstring, "[[][%w]+[]]") do
