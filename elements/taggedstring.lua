@@ -101,7 +101,7 @@ table.insert(oUF.subTypes, function(self, unit)
 			local parent = fs:GetParent()
 			local tagstring = fs:GetText()
 
-			local f = CreateFrame("Frame", nit, parent)
+			local f = CreateFrame("Frame", nil, parent)
 			f:SetScript("OnEvent", OnEvent)
 			f:SetScript("OnShow", OnShow)
 			f.tagstring, f.fontstring, f.unit = tagstring, fs, unit
