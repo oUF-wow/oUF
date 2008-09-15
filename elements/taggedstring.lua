@@ -1,3 +1,7 @@
+local parent = debugstack():match[[Interface\AddOns\(.-)\]]
+local global = GetAddOnMetadata(parent, 'oUF')
+assert(global, 'X-oUF needs to be defined in the parent add-on.')
+local oUF = _G[global]
 
 -------------------------------
 --      Tag definitions      --
