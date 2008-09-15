@@ -11,65 +11,65 @@ local function Hex(r, g, b)
 end
 
 local tags = {
-	class       = function(u) return UnitClass(u) or "" end,
-	creature    = function(u) return UnitCreatureFamily(u) or UnitCreatureType(u) or "" end,
-	curhp       = UnitHealth,
-	curpp       = UnitMana,
-	dead        = function(u) return UnitIsDead(u) and "Dead" or UnitIsGhost(u) and "Ghost" or "" end,
-	difficulty  = function(u) if UnitCanAttack("player", u) then local l = UnitLevel(u); return Hex(GetDifficultyColor((l > 0) and l or 99)) else return "" end end,
-	faction     = function(u) return UnitFactionGroup(u) or "" end,
-	leader      = function(u) return UnitIsPartyLeader(u) and "(L)" or "" end,
-	leaderlong  = function(u) return UnitIsPartyLeader(u) and "(Leader)" or "" end,
-	level       = function(u) local l = UnitLevel(u) return (l > 0) and l or "??" end,
-	maxhp       = UnitHealthMax,
-	maxpp       = UnitManaMax,
-	missinghp   = function(u) return UnitHealthMax(u) - UnitHealth(u) end,
-	missingpp   = function(u) return UnitManaMax(u) - UnitMana(u) end,
-	name        = UnitName,
-	offline     = function(u) return UnitIsConnected(u) and "" or "Offline" end,
-	perhp       = function(u) local m = UnitHealthMax(u); return m == 0 and 0 or math.floor(UnitHealth(u)/m*100+0.5) end,
-	perpp       = function(u) local m = UnitPowerMax(u); return m == 0 and 0 or math.floor(UnitPower(u)/m*100+0.5) end,
-	plus        = function(u) return UnitIsPlusMob(u) and "+" or "" end,
-	pvp         = function(u) return UnitIsPVP(u) and "PvP" or "" end,
-	race        = function(u) return UnitRace(u) or "" end,
-	raidcolor   = function(u) local _, x = UnitClass(u); return x and Hex(RAID_CLASS_COLORS[x]) or "" end,
-	rare        = function(u) local c = UnitClassification(u); return (c == "rare" or c == "rareelite") and "Rare" or "" end,
-	resting     = function(u) return u == "player" and IsResting() and "zzz" or "" end,
-	sex         = function(u) local s = UnitSex(u) return s == 2 and "Male" or s == 1 and "Female" or "" end,
-	smartclass  = function(u) return UnitIsPlayer(u) and oUF.Tags.class(u) or oUF.Tags.creature(u) end,
-	smartlevel  = function(u) return UnitClassification(u) == "worldboss" and "Boss" or UnitLevel(u).. oUF.Tags.plus(u) end,
-	status      = function(u) return UnitIsDead(u) and "Dead" or UnitIsGhost(u) and "Ghost" or not UnitIsConnected(u) and "Offline" or oUF.Tags.resting(u) end,
-	threat      = function(u) local s = UnitThreatSituation(u) return s == 1 and "++" or s == 2 and "--" or s == 3 and "Aggro" or "" end,
-	threatcolor = function(u) return Hex(GetThreatStatusColor(UnitThreatSituation(u))) end,
+	["[class]"]       = function(u) return UnitClass(u) or "" end,
+	["[creature]"]    = function(u) return UnitCreatureFamily(u) or UnitCreatureType(u) or "" end,
+	["[curhp]"]       = UnitHealth,
+	["[curpp]"]       = UnitMana,
+	["[dead]"]        = function(u) return UnitIsDead(u) and "Dead" or UnitIsGhost(u) and "Ghost" or "" end,
+	["[difficulty]"]  = function(u) if UnitCanAttack("player", u) then local l = UnitLevel(u); return Hex(GetDifficultyColor((l > 0) and l or 99)) else return "" end end,
+	["[faction]"]     = function(u) return UnitFactionGroup(u) or "" end,
+	["[leader]"]      = function(u) return UnitIsPartyLeader(u) and "(L)" or "" end,
+	["[leaderlong]"]  = function(u) return UnitIsPartyLeader(u) and "(Leader)" or "" end,
+	["[level]"]       = function(u) local l = UnitLevel(u) return (l > 0) and l or "??" end,
+	["[maxhp]"]       = UnitHealthMax,
+	["[maxpp]"]       = UnitManaMax,
+	["[missinghp]"]   = function(u) return UnitHealthMax(u) - UnitHealth(u) end,
+	["[missingpp]"]   = function(u) return UnitManaMax(u) - UnitMana(u) end,
+	["[name]"]        = UnitName,
+	["[offline]"]     = function(u) return UnitIsConnected(u) and "" or "Offline" end,
+	["[perhp]"]       = function(u) local m = UnitHealthMax(u); return m == 0 and 0 or math.floor(UnitHealth(u)/m*100+0.5) end,
+	["[perpp]"]       = function(u) local m = UnitPowerMax(u); return m == 0 and 0 or math.floor(UnitPower(u)/m*100+0.5) end,
+	["[plus]"]        = function(u) return UnitIsPlusMob(u) and "+" or "" end,
+	["[pvp]"]         = function(u) return UnitIsPVP(u) and "PvP" or "" end,
+	["[race]"]        = function(u) return UnitRace(u) or "" end,
+	["[raidcolor]"]   = function(u) local _, x = UnitClass(u); return x and Hex(RAID_CLASS_COLORS[x]) or "" end,
+	["[rare]"]        = function(u) local c = UnitClassification(u); return (c == "rare" or c == "rareelite") and "Rare" or "" end,
+	["[resting]"]     = function(u) return u == "player" and IsResting() and "zzz" or "" end,
+	["[sex]"]         = function(u) local s = UnitSex(u) return s == 2 and "Male" or s == 1 and "Female" or "" end,
+	["[smartclass]"]  = function(u) return UnitIsPlayer(u) and oUF.Tags["[class]"](u) or oUF.Tags["[creature]"](u) end,
+	["[smartlevel]"]  = function(u) return UnitClassification(u) == "worldboss" and "Boss" or UnitLevel(u).. oUF.Tags["[plus]"](u) end,
+	["[status]"]      = function(u) return UnitIsDead(u) and "Dead" or UnitIsGhost(u) and "Ghost" or not UnitIsConnected(u) and "Offline" or oUF.Tags["[resting]"](u) end,
+	["[threat]"]      = function(u) local s = UnitThreatSituation(u) return s == 1 and "++" or s == 2 and "--" or s == 3 and "Aggro" or "" end,
+	["[threatcolor]"] = function(u) return Hex(GetThreatStatusColor(UnitThreatSituation(u))) end,
 }
 local events = {
-	curhp       = "UNIT_HEALTH",
-	curpp       = "UNIT_ENERGY UNIT_FOCUS UNIT_MANA UNIT_RAGE",
-	dead        = "UNIT_HEALTH",
-	leader      = "PARTY_LEADER_CHANGED",
-	leaderlong  = "PARTY_LEADER_CHANGED",
-	level       = "UNIT_LEVEL",
-	maxhp       = "UNIT_MAXHEALTH",
-	maxpp       = "UNIT_MAXENERGY UNIT_MAXFOCUS UNIT_MAXMANA UNIT_MAXRAGE",
-	missinghp   = "UNIT_HEALTH UNIT_MAXHEALTH",
-	missingpp   = "UNIT_MAXENERGY UNIT_MAXFOCUS UNIT_MAXMANA UNIT_MAXRAGE UNIT_ENERGY UNIT_FOCUS UNIT_MANA UNIT_RAGE",
-	name        = "UNIT_NAME_UPDATE",
-	offline     = "UNIT_HEALTH",
-	perhp       = "UNIT_HEALTH UNIT_MAXHEALTH",
-	perpp       = "UNIT_MAXENERGY UNIT_MAXFOCUS UNIT_MAXMANA UNIT_MAXRAGE UNIT_ENERGY UNIT_FOCUS UNIT_MANA UNIT_RAGE",
-	pvp         = "UNIT_FACTION",
-	resting     = "PLAYER_UPDATE_RESTING",
-	status      = "UNIT_HEALTH PLAYER_UPDATE_RESTING",
-	threat      = "UNIT_THREAT_SITUATION_UPDATE",
-	threatcolor = "UNIT_THREAT_SITUATION_UPDATE",
+	["[curhp]"]       = "UNIT_HEALTH",
+	["[curpp]"]       = "UNIT_ENERGY UNIT_FOCUS UNIT_MANA UNIT_RAGE",
+	["[dead]"]        = "UNIT_HEALTH",
+	["[leader]"]      = "PARTY_LEADER_CHANGED",
+	["[leaderlong]"]  = "PARTY_LEADER_CHANGED",
+	["[level]"]       = "UNIT_LEVEL",
+	["[maxhp]"]       = "UNIT_MAXHEALTH",
+	["[maxpp]"]       = "UNIT_MAXENERGY UNIT_MAXFOCUS UNIT_MAXMANA UNIT_MAXRAGE",
+	["[missinghp]"]   = "UNIT_HEALTH UNIT_MAXHEALTH",
+	["[missingpp]"]   = "UNIT_MAXENERGY UNIT_MAXFOCUS UNIT_MAXMANA UNIT_MAXRAGE UNIT_ENERGY UNIT_FOCUS UNIT_MANA UNIT_RAGE",
+	["[name]"]        = "UNIT_NAME_UPDATE",
+	["[offline]"]     = "UNIT_HEALTH",
+	["[perhp]"]       = "UNIT_HEALTH UNIT_MAXHEALTH",
+	["[perpp]"]       = "UNIT_MAXENERGY UNIT_MAXFOCUS UNIT_MAXMANA UNIT_MAXRAGE UNIT_ENERGY UNIT_FOCUS UNIT_MANA UNIT_RAGE",
+	["[pvp]"]         = "UNIT_FACTION",
+	["[resting]"]     = "PLAYER_UPDATE_RESTING",
+	["[status]"]      = "UNIT_HEALTH PLAYER_UPDATE_RESTING",
+	["[threat]"]      = "UNIT_THREAT_SITUATION_UPDATE",
+	["[threatcolor]"] = "UNIT_THREAT_SITUATION_UPDATE",
 }
 
-function tags.classification(u)
+tags["[classification]"] = function(u)
 	local c = UnitClassification(u)
 	return c == "rare" and "Rare" or c == "eliterare" and "Rare Elite" or c == "elite" and "Elite" or c == "worldboss" and "Boss" or ""
 end
 
-function tags.shortclassification(u)
+tags["[shortclassification]"] = function(u)
 	local c = UnitClassification(u)
 	return c == "rare" and "R" or c == "eliterare" and "R+" or c == "elite" and "+" or c == "worldboss" and "B" or ""
 end
@@ -81,7 +81,7 @@ end
 
 local currentunit
 local function subber(tag)
-	local f = tags[string.sub(tag, 2, -2)]
+	local f = tags[tag]
 	return f and f(currentunit) or tag
 end
 
@@ -125,7 +125,7 @@ table.insert(oUF.subTypes, function(self, unit)
 
 			-- Register any update events we need
 			for tag in string.gmatch(tagstring, "[[][%w]+[]]") do
-				local tagevents = events[string.sub(tag, 2, -2)]
+				local tagevents = events[tag]
 				if tagevents then
 					for event in string.gmatch(tagevents, "%S+") do
 						f:RegisterEvent(event)
