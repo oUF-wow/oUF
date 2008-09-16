@@ -7,7 +7,7 @@
 	 - :PostUpdateThreat(event, unit, status)
 --]]
 if(select(4, GetBuildInfo()) < 3e4) then return end
-local parent = debugstack():match[[Interface\AddOns\(.-)\]]
+local parent = debugstack():match[[\AddOns\(.-)\]]
 local global = GetAddOnMetadata(parent, 'X-oUF')
 assert(global, 'X-oUF needs to be defined in the parent add-on.')
 local oUF = _G[global]
