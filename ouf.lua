@@ -75,7 +75,6 @@ local	_G, select, type, tostring, math_modf =
 local	UnitExists, UnitName =
 		UnitExists, UnitName
 
-
 local subTypes = {}
 local subTypesMapping = {
 	"UNIT_NAME_UPDATE",
