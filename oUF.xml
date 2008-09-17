@@ -14,5 +14,5 @@
 	<Script file='elements\happiness.lua' />
 	<Script file='elements\castbar.lua' />
 	<Script file='elements\threat.lua' />
-	<Script file='elements\taggedstring.lua' />
+	<Script file='elements\tags.lua' />
 </Ui>
