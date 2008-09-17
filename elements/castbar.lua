@@ -20,12 +20,14 @@ function oUF:UNIT_SPELLCAST_START(event, unit, spell, spellrank)
 	if(not name) then return end
 
 	local castbar = self.Castbar
-	castbar.startTime = startTime / 1000
-	castbar.maxValue = endTime / 1000
+	local duration = (endTime - startTime) / 1000
+
+	castbar.duration = 0
+	castbar.max = duration
 	castbar.delay = 0
 	castbar.casting = true
 
-	castbar:SetMinMaxValues(0, 1)
+	castbar:SetMinMaxValues(0, duration)
 	castbar:SetValue(0)
 
 	if(castbar.Text) then castbar.Text:SetText(text) end
@@ -68,12 +70,13 @@ function oUF:UNIT_SPELLCAST_DELAYED(event, unit, spellname, spellrank)
 	if(not startTime) then return end
 
 	local castbar = self.Castbar
-	local oldStart = castbar.startTime
-	startTime = startTime / 1000
+	local duration = GetTime() - (startTime / 1000)
+	if(duration < 0) then duration = 0 end
 
-	castbar.startTime = startTime
-	castbar.maxValue = endTime / 1000
-	castbar.delay = castbar.delay + (startTime - oldStart)
+	castbar.delay = castbar.delay + castbar.duration - duration
+	castbar.duration = duration
+
+	castbar:SetValue(duration)
 
 	if(self.PostCastDelayed) then self:PostCastDelayed(event, unit, spellname, spellrank) end
 end
@@ -97,19 +100,16 @@ function oUF:UNIT_SPELLCAST_CHANNEL_START(event, unit, spellname, spellrank)
 	local name, rank, text, texture, startTime, endTime = UnitChannelInfo(unit)
 	if(not name) then return end
 
-	startTime = startTime / 1000
-	endTime = endTime / 1000
-
 	local castbar = self.Castbar
-	castbar.startTime = startTime
-	castbar.endTime = endTime
-	castbar.duration = endTime - startTime
-	castbar.maxValue = startTime
+	local duration = (endTime - startTime) / 1000
+
+	castbar.duration = duration
+	castbar.max = duration
 	castbar.delay = 0
 	castbar.channeling = true
 
-	castbar:SetMinMaxValues(startTime, endTime)
-	castbar:SetValue(endTime)
+	castbar:SetMinMaxValues(0, duration)
+	castbar:SetValue(duration)
 
 	if(castbar.Text) then castbar.Text:SetText(name) end
 	if(castbar.Icon) then castbar.Icon:SetTexture(texture) end
@@ -122,18 +122,16 @@ end
 function oUF:UNIT_SPELLCAST_CHANNEL_UPDATE(event, unit, spellname, spellrank)
 	if(self.unit ~= unit) then return end
 
-	local name, rank, text, texture, startTime, endTime, oldStart = UnitChannelInfo(unit);
-
-	endTime = endTime / 1000
-	startTime = startTime / 1000
-
+	local name, rank, text, texture, startTime, endTime, oldStart = UnitChannelInfo(unit)
 	local castbar = self.Castbar
-	local oldStart = castbar.startTime
+	local duration = (endTime / 1000) - GetTime()
 
-	castbar.startTime = startTime
-	castbar.endTime = endTime
-	castbar.maxValue = startTime
-	castbar.delay = castbar.delay + (oldStart - startTime)
+	castbar.delay = castbar.delay + castbar.duration - duration
+	castbar.duration = duration
+	castbar.max = (endTime - startTime) / 1000
+
+	castbar:SetMinMaxValues(0, castbar.max)
+	castbar:SetValue(duration)
 
 	if(self.PostChannelUpdate) then self:PostChannelUpdate(event, unit, spellname, spellrank) end
 end
@@ -144,7 +142,7 @@ function oUF:UNIT_SPELLCAST_CHANNEL_STOP(event, unit, spellname, spellrank)
 	local castbar = self.Castbar
 	castbar.channeling = nil
 
-	castbar:SetValue(1)
+	castbar:SetValue(castbar.max)
 	castbar:Hide()
 
 	if(self.PostChannelStop) then self:PostChannelStop(event, unit, spellname, spellrank) end
@@ -154,52 +152,55 @@ oUF.UNIT_SPELLCAST_CHANNEL_INTERRUPTED = oUF.UNIT_SPELLCAST_INTERRUPTED
 
 local onUpdate = function(self, elapsed)
 	if self.casting then
-		local status = GetTime()
-		if (status >= self.maxValue) then
+		local duration = self.duration + elapsed
+		if (duration >= self.max) then
 			self.casting = nil
 			self:Hide()
 			return
 		end
 		if self.SafeZone then
-			local castTime = (self.maxValue - self.startTime) * 1000
-			local safeZonePercent = ( (self:GetWidth() / castTime ) * select(3,GetNetStats()) );
-			if safeZonePercent > 100 then safeZonePercent = 100 end
-			self.SafeZone:SetWidth((self:GetWidth() / 100) * safeZonePercent);
+			local width = self:GetWidth()
+			local _, _ ms = GetNetStats()
+			-- MADNESS!
+			local safeZonePercent = (width / self.max) * (ms / 1e5)
+			if(safeZonePercent > 1) then safeZonePercent = 1 end
+			self.SafeZone:SetWidth(width * safeZonePercent)
 		end
 		if self.Time then
 			if self.delay ~= 0 then
-				self.Time:SetFormattedText("%.1f|cffff0000-%.1f|r", self.maxValue - status, self.delay)
+				self.Time:SetFormattedText("%.1f|cffff0000-%.1f|r", duration, self.delay)
 			else
-				self.Time:SetFormattedText("%.1f", self.maxValue - status)
+				self.Time:SetFormattedText("%.1f", duration)
 			end
 		end
 
-		local value = (status - self.startTime) / (self.maxValue - self.startTime)
-		self:SetValue(value)
+		self.duration = duration
+		self:SetValue(duration)
 
 		if self.Spark then
-			self.Spark:SetPoint("CENTER", self, "LEFT", value * self:GetWidth(), 0)
+			self.Spark:SetPoint("CENTER", self, "LEFT", duration * self:GetWidth(), 0)
 		end
 	elseif self.channeling then
-		local status = GetTime()
-		if ( status >= self.endTime ) then
+		local duration = self.duration - elapsed
+
+		if(duration <= 0) then
 			self.channeling = nil
 			self:Hide()
 			return
 		end
+
 		if self.Time then
 			if self.delay ~= 0 then
-				self.Time:SetFormattedText("%.1f|cffff0000-%.1f|r", self.endTime - status, self.delay)
+				self.Time:SetFormattedText("%.1f|cffff0000-%.1f|r", duration, self.delay)
 			else
-				self.Time:SetFormattedText("%.1f", self.endTime - status)
+				self.Time:SetFormattedText("%.1f", duration)
 			end
 		end
 
-		local remainingTime = self.endTime - status
-		self:SetValue(self.startTime + remainingTime)
-
+		self.duration = duration
+		self:SetValue(duration)
 		if self.Spark then
-			self.Spark:SetPoint("CENTER", self, "LEFT", (remainingTime / (self.endTime - self.startTime)) * self:GetWidth(), 0)
+			self.Spark:SetPoint("CENTER", self, "LEFT", (duration / self.max) * self:GetWidth(), 0)
 		end
 	else
 		self.unitName = nil
