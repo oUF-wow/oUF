@@ -42,6 +42,7 @@ function oUF:UNIT_SPELLCAST_FAILED(event, unit, spellname, spellrank)
 	if(self.unit ~= unit) then return end
 
 	local castbar = self.Castbar
+	if(not castbar.casting) then return end
 	castbar.casting = nil
 
 	castbar:SetValue(0)
