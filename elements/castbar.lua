@@ -25,7 +25,7 @@ function oUF:UNIT_SPELLCAST_START(event, unit, spell, spellrank)
 	local max = endTime - startTime
 
 	castbar.duration = GetTime() - startTime
-	castbar.max = duration
+	castbar.max = max
 	castbar.delay = 0
 	castbar.casting = true
 
@@ -107,8 +107,9 @@ function oUF:UNIT_SPELLCAST_CHANNEL_START(event, unit, spellname, spellrank)
 	endTime = endTime / 1e3
 	startTime = startTime / 1e3
 	local max = (endTime - startTime)
+	local duration = endTime - GetTime()
 
-	castbar.duration = (endTime / 1e3) - GetTime()
+	castbar.duration = duration
 	castbar.max = max
 	castbar.delay = 0
 	castbar.channeling = true
