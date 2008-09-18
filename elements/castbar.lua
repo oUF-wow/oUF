@@ -20,14 +20,16 @@ function oUF:UNIT_SPELLCAST_START(event, unit, spell, spellrank)
 	if(not name) then return end
 
 	local castbar = self.Castbar
-	local duration = (endTime - startTime) / 1000
+	endTime = endTime / 1e3
+	startTime = startTime / 1e3
+	local max = endTime - startTime
 
-	castbar.duration = 0
+	castbar.duration = GetTime() - startTime
 	castbar.max = duration
 	castbar.delay = 0
 	castbar.casting = true
 
-	castbar:SetMinMaxValues(0, duration)
+	castbar:SetMinMaxValues(0, max)
 	castbar:SetValue(0)
 
 	if(castbar.Text) then castbar.Text:SetText(text) end
@@ -102,14 +104,16 @@ function oUF:UNIT_SPELLCAST_CHANNEL_START(event, unit, spellname, spellrank)
 	if(not name) then return end
 
 	local castbar = self.Castbar
-	local duration = (endTime - startTime) / 1000
+	endTime = endTime / 1e3
+	startTime = startTime / 1e3
+	local max = (endTime - startTime)
 
-	castbar.duration = duration
-	castbar.max = duration
+	castbar.duration = (endTime / 1e3) - GetTime()
+	castbar.max = max
 	castbar.delay = 0
 	castbar.channeling = true
 
-	castbar:SetMinMaxValues(0, duration)
+	castbar:SetMinMaxValues(0, max)
 	castbar:SetValue(duration)
 
 	if(castbar.Text) then castbar.Text:SetText(name) end
