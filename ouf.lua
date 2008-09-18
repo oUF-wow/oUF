@@ -310,6 +310,12 @@ function oUF:RegisterSubTypeMapping(event)
 	table.insert(subTypesMapping, event)
 end
 
+oUF.Enable = RegisterUnitWatch
+function oUF:Disable()
+	UnregisterUnitWatch(self)
+	self:Hide()
+end
+
 --[[
 --:PLAYER_ENTERING_WORLD()
 --	Notes:
