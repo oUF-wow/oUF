@@ -85,7 +85,11 @@ function oUF:UNIT_MAXMANA(event, unit)
 			local _, class = UnitClass(unit)
 			t = self.colors.class[class]
 		elseif(bar.colorReaction) then
-			t = self.colors.reaction[UnitReaction(unit, "player")]
+			if(not wotlk) then
+				t = self.colors.reaction[UnitReaction(unit, "player")]
+			else
+				r, g, b = UnitSelectionColor(unit)
+			end
 		elseif(bar.colorSmooth) then
 			r, g, b = self.ColorGradient(min / max, unpack(bar.smoothGradient or self.colors.smooth))
 		end

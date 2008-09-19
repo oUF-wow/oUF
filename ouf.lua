@@ -42,8 +42,10 @@ for eclass, color in pairs(RAID_CLASS_COLORS) do
 	colors.class[eclass] = {color.r, color.g, color.b}
 end
 
-for eclass, color in ipairs(UnitReactionColor) do
-	colors.reaction[eclass] = {color.r, color.g, color.b}
+if(not wotlk) then
+	for eclass, color in ipairs(UnitReactionColor) do
+		colors.reaction[eclass] = {color.r, color.g, color.b}
+	end
 end
 
 if(wotlk) then
