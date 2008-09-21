@@ -169,7 +169,7 @@ local onUpdate = function(self, elapsed)
 			local _, _, ms = GetNetStats()
 			-- MADNESS!
 			local safeZonePercent = (width / self.max) * (ms / 1e6)
-			if(safeZonePercent > .1) then safeZonePercent = .1 end
+			if(safeZonePercent > 1) then safeZonePercent = 1 end
 			self.SafeZone:SetWidth(width * safeZonePercent)
 		end
 		if self.Time then
