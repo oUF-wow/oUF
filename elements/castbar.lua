@@ -17,7 +17,7 @@ function oUF:UNIT_SPELLCAST_START(event, unit, spell, spellrank)
 	if(self.unit ~= unit) then return end
 
 	local name, rank, text, texture, startTime, endTime = UnitCastingInfo(unit)
-	if(not name) then return end
+	if(not name) then return self.Castbar:Hide() end
 
 	local castbar = self.Castbar
 	endTime = endTime / 1e3
@@ -101,7 +101,7 @@ function oUF:UNIT_SPELLCAST_CHANNEL_START(event, unit, spellname, spellrank)
 	if(self.unit ~= unit) then return end
 
 	local name, rank, text, texture, startTime, endTime = UnitChannelInfo(unit)
-	if(not name) then return end
+	if(not name) then return self.Castbar:Hide() end
 
 	local castbar = self.Castbar
 	endTime = endTime / 1e3
