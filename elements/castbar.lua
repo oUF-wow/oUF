@@ -166,7 +166,7 @@ local onUpdate = function(self, elapsed)
 		end
 		if self.SafeZone then
 			local width = self:GetWidth()
-			local _, _ ms = GetNetStats()
+			local _, _, ms = GetNetStats()
 			-- MADNESS!
 			local safeZonePercent = (width / self.max) * (ms / 1e6)
 			if(safeZonePercent > .1) then safeZonePercent = .1 end
