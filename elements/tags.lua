@@ -39,7 +39,7 @@ local tags = {
 	["[raidcolor]"]   = function(u) local _, x = UnitClass(u); return x and Hex(RAID_CLASS_COLORS[x]) or "" end,
 	["[rare]"]        = function(u) local c = UnitClassification(u); return (c == "rare" or c == "rareelite") and "Rare" or "" end,
 	["[resting]"]     = function(u) return u == "player" and IsResting() and "zzz" or "" end,
-	["[sex]"]         = function(u) local s = UnitSex(u) return s == 2 and "Male" or s == 1 and "Female" or "" end,
+	["[sex]"]         = function(u) local s = UnitSex(u) return s == 2 and "Male" or s == 3 and "Female" or "" end,
 	["[smartclass]"]  = function(u) return UnitIsPlayer(u) and oUF.Tags["[class]"](u) or oUF.Tags["[creature]"](u) end,
 	["[smartlevel]"]  = function(u) return UnitClassification(u) == "worldboss" and "Boss" or UnitLevel(u).. oUF.Tags["[plus]"](u) end,
 	["[status]"]      = function(u) return UnitIsDead(u) and "Dead" or UnitIsGhost(u) and "Ghost" or not UnitIsConnected(u) and "Offline" or oUF.Tags["[resting]"](u) end,
