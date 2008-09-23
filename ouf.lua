@@ -2,7 +2,7 @@ local parent = debugstack():match[[\AddOns\(.-)\]]
 local global = GetAddOnMetadata(parent, 'X-oUF')
 assert(global, 'X-oUF needs to be defined in the parent add-on.')
 
-local _VERSION = '1.1.4'
+local _VERSION = '1.1.5'
 local wotlk = select(4, GetBuildInfo()) >= 3e4
 
 local print = function(a) ChatFrame1:AddMessage("|cff33ff99oUF:|r "..tostring(a)) end
