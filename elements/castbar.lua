@@ -184,7 +184,7 @@ local onUpdate = function(self, elapsed)
 		self:SetValue(duration)
 
 		if self.Spark then
-			self.Spark:SetPoint("CENTER", self, "LEFT", duration * self:GetWidth(), 0)
+			self.Spark:SetPoint("CENTER", self, "LEFT", (duration / self.max) * self:GetWidth(), 0)
 		end
 	elseif self.channeling then
 		local duration = self.duration - elapsed
