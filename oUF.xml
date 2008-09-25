@@ -15,4 +15,23 @@
 	<Script file='elements\castbar.lua' />
 	<Script file='elements\threat.lua' />
 	<Script file='elements\tags.lua' />
+
+	<!--
+		This template requires the layout to set the anchoring positions from the
+		sub-frame(s). These are feed to the layouts style functions as any other unit
+		spawned by a header. The main difference is that they have the unitsuffix
+		attribute set (and they are parented to their respective owener).
+	-->
+	<Button name="oUF_HeaderTargetTemplate" inherits="SecureUnitButtonTemplate" hidden="true" virtual="true">
+		<Frames>
+			<Button name="$parentTarget" inherits="SecureUnitButtonTemplate">
+				<Attributes>
+					<Attribute name="unitsuffix" type="string" value="target"/>
+					<Attribute name="useparent-unit" type="boolean" value="true"/>
+					<Attribute name="type1" type="string" value="target"/>
+					<Attribute name="initial-unitWatch" type="boolean" value="true"/>
+				</Attributes>
+			</Button>
+		</Frames>
+	</Button>
 </Ui>

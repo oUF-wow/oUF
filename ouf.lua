@@ -82,6 +82,26 @@ local subTypesMapping = {
 	"UNIT_NAME_UPDATE",
 }
 
+local enableTargetUpdate = function(object)
+	-- updating of "invalid" units.
+	local OnTargetUpdate
+	do
+		local timer = 0
+		OnTargetUpdate = function(self, elapsed)
+			if(not self.unit) then
+				return
+			elseif(timer >= .5) then
+				self:PLAYER_ENTERING_WORLD'OnTargetUpdate'
+				timer = 0
+			end
+
+			timer = timer + elapsed
+		end
+	end
+
+	object:SetScript("OnUpdate", OnTargetUpdate)
+end
+
 -- Events
 local OnEvent = function(self, event, ...)
 	if(not self:IsShown()) then return end
@@ -95,6 +115,12 @@ local OnAttributeChanged = function(self, name, value)
 		if(self.unit and self.unit == value) then
 			return
 		else
+			if(self.hasChildren) then
+				for _, object in ipairs(objects) do
+					object.unit = SecureButton_GetModifiedUnit(object)
+				end
+			end
+
 			self.unit = value
 			self.id = value:match"^.-(%d+)"
 			self:PLAYER_ENTERING_WORLD()
@@ -161,23 +187,7 @@ local HandleUnit = function(unit, object)
 			TargetofTargetManaBar:UnregisterAllEvents()
 		end
 
-		-- updating of "invalid" units.
-		local OnTargetUpdate
-		do
-			local timer = 0
-			OnTargetUpdate = function(self, elapsed)
-				if(not self.unit) then
-					return
-				elseif(timer >= .5) then
-					self:PLAYER_ENTERING_WORLD'OnTargetUpdate'
-					timer = 0
-				end
-
-				timer = timer + elapsed
-			end
-		end
-
-		object:SetScript("OnUpdate", OnTargetUpdate)
+		enableTargetUpdate(object)
 	elseif(unit == "party") then
 		for i=1,4 do
 			local party = "PartyMemberFrame"..i
@@ -193,52 +203,70 @@ local HandleUnit = function(unit, object)
 	end
 end
 
-local initObject = function(object, unit)
+local initObject = function(unit, style, ...)
+	local num = select('#', ...)
+	for i=1, num do
+		local object = select(i, ...)
+
+		object = setmetatable(object, metatable)
+		style(object, unit)
+
+		local mt = type(style) == 'table'
+		local height = object:GetAttribute'initial-height' or (mt and style['initial-height'])
+		local width = object:GetAttribute'initial-width' or (mt and style['initial-width'])
+		local scale = object:GetAttribute'initial-scale' or (mt and style['initial-scale'])
+		local suffix = object:GetAttribute'unitsuffix'
+
+		if(height) then
+			object:SetAttribute('initial-height', height)
+			if(unit) then object:SetHeight(height) end
+		end
+
+		if(width) then
+			object:SetAttribute("initial-width", width)
+			if(unit) then object:SetWidth(width) end
+		end
+
+		if(scale) then
+			object:SetAttribute("initial-scale", scale)
+			if(unit) then object:SetScale(scale) end
+		end
+
+		if(suffix == 'target') then
+			enableTargetUpdate(object)
+		end
+
+		if(num > 1 and i == 1) then
+			object.hasChildren = true
+		end
+
+		object:SetAttribute("*type1", "target")
+		object:SetScript("OnEvent", OnEvent)
+		object:SetScript("OnAttributeChanged", OnAttributeChanged)
+		object:SetScript("OnShow", object.PLAYER_ENTERING_WORLD)
+
+		object:RegisterEvent"PLAYER_ENTERING_WORLD"
+
+		for _, func in ipairs(subTypes) do
+			func(object, unit)
+		end
+
+		for _, func in ipairs(callback) do
+			func(object)
+		end
+
+		-- We could use ClickCastFrames only, but it will probably contain frames that
+		-- we don't care about.
+		table.insert(objects, object)
+		_G.ClickCastFrames = ClickCastFrames or {}
+		ClickCastFrames[object] = true
+	end
+end
+
+local walkObject = function(object, unit)
 	local style = object:GetParent().style or styles[style]
 
-	object = setmetatable(object, metatable)
-	style(object, unit)
-
-	local mt = type(style) == 'table'
-	local height = object:GetAttribute'initial-height' or (mt and style['initial-height'])
-	local width = object:GetAttribute'initial-width' or (mt and style['initial-width'])
-	local scale = object:GetAttribute'initial-scale' or (mt and style['initial-scale'])
-
-	if(height) then
-		object:SetAttribute('initial-height', height)
-		if(unit) then object:SetHeight(height) end
-	end
-
-	if(width) then
-		object:SetAttribute("initial-width", width)
-		if(unit) then object:SetWidth(width) end
-	end
-
-	if(scale) then
-		object:SetAttribute("initial-scale", scale)
-		if(unit) then object:SetScale(scale) end
-	end
-
-	object:SetAttribute("*type1", "target")
-	object:SetScript("OnEvent", OnEvent)
-	object:SetScript("OnAttributeChanged", OnAttributeChanged)
-	object:SetScript("OnShow", object.PLAYER_ENTERING_WORLD)
-
-	object:RegisterEvent"PLAYER_ENTERING_WORLD"
-
-	for _, func in ipairs(subTypes) do
-		func(object, unit)
-	end
-
-	for _, func in ipairs(callback) do
-		func(object)
-	end
-
-	-- We could use ClickCastFrames only, but it will probably contain frames that
-	-- we don't care about.
-	table.insert(objects, object)
-	_G.ClickCastFrames = ClickCastFrames or {}
-	ClickCastFrames[object] = true
+	initObject(unit, style, object, object:GetChildren())
 end
 
 function oUF:RegisterInitCallback(func)
@@ -264,25 +292,23 @@ function oUF:SetActiveStyle(name)
 	style = name
 end
 
-function oUF:Spawn(unit, name, isPet)
+function oUF:Spawn(unit, name, template, disableBlizz)
 	if(not unit) then return error("Bad argument #1 to 'Spawn' (string expected, got %s)", type(unit)) end
 	if(not style) then return error("Unable to create frame. No styles have been registered.") end
 
 	local style = styles[style]
 	local object
 	if(unit == "header") then
-		local template
-		if(isPet) then
-			template = "SecureGroupPetHeaderTemplate"
-		else
-			-- Yes, I know.
-			HandleUnit"party"
+		if(not template) then
+			disableBlizz = disableBlizz or 'party'
 			template = "SecureGroupHeaderTemplate"
 		end
 
+		HandleUnit(disableBlizz)
+
 		local header = CreateFrame("Frame", name, UIParent, template)
 		header:SetAttribute("template", "SecureUnitButtonTemplate")
-		header.initialConfigFunction = initObject
+		header.initialConfigFunction = walkObject
 		header.style = style
 		header.SetManyAttributes = SetManyAttributes
 
@@ -294,7 +320,7 @@ function oUF:Spawn(unit, name, isPet)
 		object.id = unit:match"^.-(%d+)"
 
 		units[unit] = object
-		initObject(object, unit)
+		walkObject(object, unit)
 		HandleUnit(unit, object)
 		RegisterUnitWatch(object)
 	end
