@@ -223,34 +223,45 @@ local onUpdate = function(self, elapsed)
 end
 
 table.insert(oUF.subTypes, function(object, unit)
-	if not object.Castbar or (unit and unit:match"%wtarget$") then return end
+	local castbar = object.Castbar
+	if(unit and unit:match'%wtarget$') then return end
 
-	object:RegisterEvent"UNIT_SPELLCAST_START"
-	object:RegisterEvent"UNIT_SPELLCAST_FAILED"
-	object:RegisterEvent"UNIT_SPELLCAST_STOP"
-	object:RegisterEvent"UNIT_SPELLCAST_INTERRUPTED"
-	object:RegisterEvent"UNIT_SPELLCAST_DELAYED"
-	object:RegisterEvent"UNIT_SPELLCAST_CHANNEL_START"
-	object:RegisterEvent"UNIT_SPELLCAST_CHANNEL_UPDATE"
-	object:RegisterEvent"UNIT_SPELLCAST_CHANNEL_INTERRUPTED"
-	object:RegisterEvent"UNIT_SPELLCAST_CHANNEL_STOP"
-	--~   object.timeSinceLastUpdate = 0
+	if(castbar) then
+		object:RegisterEvent"UNIT_SPELLCAST_START"
+		object:RegisterEvent"UNIT_SPELLCAST_FAILED"
+		object:RegisterEvent"UNIT_SPELLCAST_STOP"
+		object:RegisterEvent"UNIT_SPELLCAST_INTERRUPTED"
+		object:RegisterEvent"UNIT_SPELLCAST_DELAYED"
+		object:RegisterEvent"UNIT_SPELLCAST_CHANNEL_START"
+		object:RegisterEvent"UNIT_SPELLCAST_CHANNEL_UPDATE"
+		object:RegisterEvent"UNIT_SPELLCAST_CHANNEL_INTERRUPTED"
+		object:RegisterEvent"UNIT_SPELLCAST_CHANNEL_STOP"
 
-	object.Castbar.parent = object
-	object.Castbar:SetScript("OnUpdate", object.OnCastbarUpdate or onUpdate)
+		castbar.parent = object
+		castbar:SetScript("OnUpdate", object.OnCastbarUpdate or onUpdate)
 
-	-- TODO: Remove this in 1.2.
-	if(object.safezone) then
-		object.SafeZone = object.safezone
+		if object.unit == "player" then
+			CastingBarFrame:UnregisterAllEvents()
+			CastingBarFrame.Show = function() end
+			CastingBarFrame:Hide()
+		end
+
+		if(not castbar:GetStatusBarTexture()) then
+			castbar:SetStatusBarTexture[[Interface\TargetingFrame\UI-StatusBar]]
+		end
+
+		local spark = castbar.Spark
+		if(spark and spark:IsObjectType'Texture' and not spark:GetTexture()) then
+			spark:SetTexture[[Interface\CastingBar\UI-CastingBar-Spark]]
+		end
+
+		local sz = castbar.SafeZone
+		if(sz and sz:IsObjectType'Texture' and not sz:GetTexture()) then
+			sz:SetTexture(1, 0, 0)
+		end
+
+		castbar:Hide()
 	end
-
-	if object.unit == "player" then
-		CastingBarFrame:UnregisterAllEvents()
-		CastingBarFrame.Show = function() end
-		CastingBarFrame:Hide()
-	end
-
-	object.Castbar:Hide()
 end)
 
 oUF:RegisterSubTypeMapping"UNIT_SPELLCAST_START"
