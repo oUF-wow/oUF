@@ -16,10 +16,13 @@ local UnitChannelInfo = UnitChannelInfo
 function oUF:UNIT_SPELLCAST_START(event, unit, spell, spellrank)
 	if(self.unit ~= unit) then return end
 
-	local name, rank, text, texture, startTime, endTime = UnitCastingInfo(unit)
-	if(not name) then return self.Castbar:Hide() end
-
 	local castbar = self.Castbar
+	local name, rank, text, texture, startTime, endTime = UnitCastingInfo(unit)
+	if(not name) then
+		if(not castbar.channeling) then castbar:Hide() end
+		return
+	end
+
 	endTime = endTime / 1e3
 	startTime = startTime / 1e3
 	local max = endTime - startTime
@@ -100,10 +103,13 @@ end
 function oUF:UNIT_SPELLCAST_CHANNEL_START(event, unit, spellname, spellrank)
 	if(self.unit ~= unit) then return end
 
-	local name, rank, text, texture, startTime, endTime = UnitChannelInfo(unit)
-	if(not name) then return self.Castbar:Hide() end
-
 	local castbar = self.Castbar
+	local name, rank, text, texture, startTime, endTime = UnitChannelInfo(unit)
+	if(not name) then
+		if(not castbar.casting) then castbar:Hide() end
+		return
+	end
+
 	endTime = endTime / 1e3
 	startTime = startTime / 1e3
 	local max = (endTime - startTime)
@@ -162,7 +168,6 @@ local onUpdate = function(self, elapsed)
 		if (duration >= self.max) then
 			self.casting = nil
 			self:Hide()
-			return
 		end
 		if self.SafeZone then
 			local width = self:GetWidth()
