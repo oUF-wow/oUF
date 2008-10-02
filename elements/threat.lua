@@ -36,9 +36,15 @@ function oUF:UNIT_THREAT_SITUATION_UPDATE(event, unit)
 end
 
 table.insert(oUF.subTypes, function(self, unit)
-	if self.Threat then
+	local threat = self.Threat
+	if(threat) then
 		self:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE")
-		self.Threat:Hide()
+		threat:Hide()
+
+		if(threat:IsObjectType"Texture" and not threat:GetTexture()) then
+			threat:SetTexture[[Interface\Minimap\ObjectIcons]]
+			threat:SetTexCoord(6/8, 7/8, 1/2, 1)
+		end
 	end
 end)
 oUF:RegisterSubTypeMapping("UNIT_THREAT_SITUATION_UPDATE")
