@@ -56,7 +56,7 @@ local wotlk = select(4, GetBuildInfo()) >= 3e4
 local	select, table_insert, math_floor, UnitDebuff, UnitBuff, GetTime, DebuffTypeColor =
 		select, table.insert, math.floor, UnitDebuff, UnitBuff, GetTime, DebuffTypeColor
 
-local timeLeft, duration, dtype, count, texture, rank, name, color
+local timeLeft, duration, dtype, count, texture, rank, name
 local total, col, row, size, anchor, button, growthx, growthy, cols, rows, spacing, gap
 local auras, buffs, debuffs, mod, max, filter, index, icon
 
@@ -148,7 +148,8 @@ local updateIcon = function(self, unit, icons, index, offset, filter, isDebuff, 
 		end
 
 		if((isDebuff and icons.showDebuffType) or (not isDebuff and icons.showBuffType) or icons.showType) then
-			color = DebuffTypeColor[dtype or "none"]
+			local color = DebuffTypeColor[dtype] or DebuffTypeColor.none
+
 			icon.overlay:SetVertexColor(color.r, color.g, color.b)
 			icon.overlay:Show()
 			icon.count:SetText((count > 1 and count))
