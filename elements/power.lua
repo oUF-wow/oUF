@@ -30,8 +30,6 @@ local global = GetAddOnMetadata(parent, 'X-oUF')
 assert(global, 'X-oUF needs to be defined in the parent add-on.')
 local oUF = _G[global]
 
-local wotlk = select(4, GetBuildInfo()) >= 3e4
-
 local UnitManaMax = UnitManaMax
 local UnitPowerType = UnitPowerType
 local min, max, bar
@@ -73,23 +71,14 @@ function oUF:UNIT_MAXMANA(event, unit)
 		elseif(bar.colorHappiness and unit == "pet" and GetPetHappiness()) then
 			t = self.colors.happiness[GetPetHappiness()]
 		elseif(bar.colorPower) then
-			local _, ptype
-			if(wotlk) then
-				_, ptype = UnitPowerType(unit)
-			else
-				ptype = UnitPowerType(unit)
-			end
+			local _, ptype = UnitPowerType(unit)
 
 			t = self.colors.power[ptype]
 		elseif(bar.colorClass and UnitIsPlayer(unit)) or (bar.colorClassNPC and not UnitIsPlayer(unit)) then
 			local _, class = UnitClass(unit)
 			t = self.colors.class[class]
 		elseif(bar.colorReaction) then
-			if(not wotlk) then
-				t = self.colors.reaction[UnitReaction(unit, "player")]
-			else
-				r, g, b = UnitSelectionColor(unit)
-			end
+			r, g, b = UnitSelectionColor(unit)
 		elseif(bar.colorSmooth) then
 			r, g, b = self.ColorGradient(min / max, unpack(bar.smoothGradient or self.colors.smooth))
 		end

@@ -51,12 +51,9 @@ local global = GetAddOnMetadata(parent, 'X-oUF')
 assert(global, 'X-oUF needs to be defined in the parent add-on.')
 local oUF = _G[global]
 
-local wotlk = select(4, GetBuildInfo()) >= 3e4
-
 local	select, table_insert, math_floor, UnitDebuff, UnitBuff, GetTime, DebuffTypeColor =
 		select, table.insert, math.floor, UnitDebuff, UnitBuff, GetTime, DebuffTypeColor
 
-local timeLeft, duration, dtype, count, texture, rank, name
 local total, col, row, size, anchor, button, growthx, growthy, cols, rows, spacing, gap
 local auras, buffs, debuffs, mod, max, filter, index, icon
 
@@ -64,15 +61,7 @@ local OnEnter = function(self)
 	if(not self:IsVisible()) then return end
 
 	GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
-	if(wotlk) then
-		GameTooltip:SetUnitAura(self.frame.unit, self:GetID(), self.filter)
-	else
-		if(self.debuff) then
-			GameTooltip:SetUnitDebuff(self.frame.unit, self:GetID(), self.parent.filter)
-		else
-			GameTooltip:SetUnitBuff(self.frame.unit, self:GetID(), self.parent.filter)
-		end
-	end
+	GameTooltip:SetUnitAura(self.frame.unit, self:GetID(), self.filter)
 end
 
 local OnLeave = function()
@@ -122,26 +111,14 @@ end
 
 local updateIcon = function(self, unit, icons, index, offset, filter, isDebuff, max)
 	if(index == 0) then index = max end
-	if(wotlk) then
-		name, rank, texture, count, dtype, duration, timeLeft = UnitAura(unit, index, filter)
-	else
-		if(isDebuff) then
-			name, rank, texture, count, dtype, duration, timeLeft = UnitDebuff(unit, index, filter)
-		else
-			name, rank, texture, count, duration, timeLeft = UnitBuff(unit, index, filter)
-		end
-	end
+	local name, rank, texture, count, dtype, duration, timeLeft = UnitAura(unit, index, filter)
 
 	icon = icons[index + offset]
 	if((icons.onlyShowDuration and duration) or (not icons.onlyShowDuration and name)) then
 		if(not icon) then icon = (self.CreateAuraIcon and self:CreateAuraIcon(icons, index, isDebuff)) or createAuraIcon(self, icons, index, isDebuff) end
 
 		if(duration and duration > 0) then
-			if(wotlk) then
-				icon.cd:SetCooldown(timeLeft - duration, duration)
-			else
-				icon.cd:SetCooldown(GetTime()-(duration-timeLeft), duration)
-			end
+			icon.cd:SetCooldown(timeLeft - duration, duration)
 			icon.cd:Show()
 		else
 			icon.cd:Hide()
@@ -240,11 +217,7 @@ function oUF:UNIT_AURA(event, unit)
 		self:SetAuraPosition(auras, max)
 	else
 		if(buffs) then
-			if(wotlk) then
-				filter = buffs.filter or 'HELPFUL'
-			else
-				filter = buffs.filter
-			end
+			filter = buffs.filter or 'HELPFUL'
 			max = buffs.num or 32
 			local visibleBuffs = 0
 			for index = 1, max do
@@ -265,11 +238,7 @@ function oUF:UNIT_AURA(event, unit)
 			self:SetAuraPosition(buffs, max)
 		end
 		if(debuffs) then
-			if(wotlk) then
-				filter = debuffs.filter or 'HARMFUL'
-			else
-				filter = debuffs.filter
-			end
+			filter = debuffs.filter or 'HARMFUL'
 			max = debuffs.num or 40
 			local visibleDebuffs = 0
 			for index = 1, max do

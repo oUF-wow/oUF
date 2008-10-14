@@ -29,8 +29,6 @@ local global = GetAddOnMetadata(parent, 'X-oUF')
 assert(global, 'X-oUF needs to be defined in the parent add-on.')
 local oUF = _G[global]
 
-local wotlk = select(4, GetBuildInfo()) >= 3e4
-
 local OnHealthUpdate
 do
 	local UnitHealth = UnitHealth
@@ -71,11 +69,7 @@ function oUF:UNIT_MAXHEALTH(event, unit)
 			local _, class = UnitClass(unit)
 			t = self.colors.class[class]
 		elseif(bar.colorReaction) then
-			if(not wotlk) then
-				t = self.colors.reaction[UnitReaction(unit, "player")]
-			else
-				r, g, b = UnitSelectionColor(unit)
-			end
+			r, g, b = UnitSelectionColor(unit)
 		elseif(bar.colorSmooth and max ~= 0) then
 			r, g, b = self.ColorGradient(min / max, unpack(bar.smoothGradient or self.colors.smooth))
 		elseif(bar.colorHealth) then
