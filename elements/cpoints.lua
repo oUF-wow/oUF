@@ -6,10 +6,10 @@ local oUF = _G[global]
 local GetComboPoints = GetComboPoints
 local MAX_COMBO_POINTS = MAX_COMBO_POINTS
 
--- TODO: Fix it.
 function oUF:UNIT_COMBO_POINTS(event, unit)
-	local cp = GetComboPoints('player', 'target')
 	local cpoints = self.CPoints
+	if(self.unit ~= unit and (cpoints.unit and cpoints.unit ~= unit)) then return end
+	local cp = GetComboPoints(cpoints.unit or unit, 'target')
 
 	if(#cpoints == 0) then
 		cpoints:SetText((cp > 0) and cp)
@@ -24,9 +24,9 @@ function oUF:UNIT_COMBO_POINTS(event, unit)
 	end
 end
 
-table.insert(oUF.subTypes, function(self, unit)
-	if(self.CPoints and unit == "target") then
-		self:RegisterEvent(ename)
+table.insert(oUF.subTypes, function(self)
+	if(self.CPoints) then
+		self:RegisterEvent'UNIT_COMBO_POINTS'
 	end
 end)
-oUF:RegisterSubTypeMapping(ename)
+oUF:RegisterSubTypeMapping'UNIT_COMBO_POINTS'
