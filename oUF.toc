@@ -1,4 +1,4 @@
-## Interface: 20400
+## Interface: 30000
 ## Title: oUF
 ## Author: Haste
 ## Version: 1.2.1
