@@ -280,14 +280,10 @@ function oUF:Spawn(unit, name, template, disableBlizz)
 	local style = styles[style]
 	local object
 	if(unit == "header") then
-		if(not template) then
-			template = "SecureGroupHeaderTemplate"
-		end
-
 		HandleUnit(disableBlizz or 'party')
 
-		local header = CreateFrame("Frame", name, UIParent, template)
-		header:SetAttribute("template", "SecureUnitButtonTemplate")
+		local header = CreateFrame("Frame", name, UIParent, "SecureGroupHeaderTemplate")
+		header:SetAttribute("template", template or "SecureUnitButtonTemplate")
 		header.initialConfigFunction = walkObject
 		header.style = style
 		header.SetManyAttributes = SetManyAttributes
