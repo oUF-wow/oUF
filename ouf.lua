@@ -281,11 +281,10 @@ function oUF:Spawn(unit, name, template, disableBlizz)
 	local object
 	if(unit == "header") then
 		if(not template) then
-			disableBlizz = disableBlizz or 'party'
 			template = "SecureGroupHeaderTemplate"
 		end
 
-		HandleUnit(disableBlizz)
+		HandleUnit(disableBlizz or 'party')
 
 		local header = CreateFrame("Frame", name, UIParent, template)
 		header:SetAttribute("template", "SecureUnitButtonTemplate")
