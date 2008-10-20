@@ -40,6 +40,12 @@ function oUF:UNIT_SPELLCAST_START(event, unit, spell, spellrank)
 	if(castbar.Icon) then castbar.Icon:SetTexture(texture) end
 	if(castbar.Time) then castbar.Time:SetText() end
 
+	local sf = castbar.SafeZone
+	if(sf) then
+		sf:ClearAllPoints()
+		sf:SetPoint'RIGHT'
+	end
+
 	if(self.PostCastStart) then self:PostCastStart(event, unit, spell, spellrank, castid) end
 	castbar:Show()
 end
@@ -125,6 +131,12 @@ function oUF:UNIT_SPELLCAST_CHANNEL_START(event, unit, spellname, spellrank)
 	if(castbar.Icon) then castbar.Icon:SetTexture(texture) end
 	if(castbar.Time) then castbar.Time:SetText() end
 
+	local sf = castbar.SafeZone
+	if(sf) then
+		sf:ClearAllPoints()
+		sf:SetPoint'LEFT'
+	end
+
 	if(self.PostChannelStart) then self:PostChannelStart(event, unit, spellname, spellrank) end
 	castbar:Show()
 end
@@ -167,6 +179,7 @@ local onUpdate = function(self, elapsed)
 			self.casting = nil
 			self:Hide()
 		end
+
 		if self.SafeZone then
 			local width = self:GetWidth()
 			local _, _, ms = GetNetStats()
@@ -175,6 +188,7 @@ local onUpdate = function(self, elapsed)
 			if(safeZonePercent > 1) then safeZonePercent = 1 end
 			self.SafeZone:SetWidth(width * safeZonePercent)
 		end
+
 		if self.Time then
 			if self.delay ~= 0 then
 				self.Time:SetFormattedText("%.1f|cffff0000-%.1f|r", duration, self.delay)
@@ -197,6 +211,16 @@ local onUpdate = function(self, elapsed)
 			self:Hide()
 			return
 		end
+
+		if(self.SafeZone) then
+			local width = self:GetWidth()
+			local _, _, ms = GetNetStats()
+			-- MADNESS!
+			local safeZonePercent = (width / self.max) * (ms / 1e5)
+			if(safeZonePercent > 1) then safeZonePercent = 1 end
+			self.SafeZone:SetWidth(width * safeZonePercent)
+		end
+
 
 		if self.Time then
 			if self.delay ~= 0 then
