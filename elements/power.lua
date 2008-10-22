@@ -42,7 +42,6 @@ do
 		local power = UnitMana(self.unit)
 
 		if(power ~= self.min) then
-			self:SetValue(power)
 			self.min = power
 
 			self:GetParent():UNIT_MANA("OnPowerUpdate", self.unit)
