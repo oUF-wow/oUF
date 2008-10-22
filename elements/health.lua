@@ -37,7 +37,6 @@ do
 		local health = UnitHealth(self.unit)
 
 		if(health ~= self.min) then
-			self:SetValue(health)
 			self.min = health
 
 			self:GetParent():UNIT_MAXHEALTH("OnHealthUpdate", self.unit)
