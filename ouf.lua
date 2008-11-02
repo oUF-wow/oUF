@@ -61,9 +61,7 @@ local	UnitExists, UnitName =
 		UnitExists, UnitName
 
 local subTypes = {}
-local subTypesMapping = {
-	"UNIT_NAME_UPDATE",
-}
+local subTypesMapping = {}
 
 local enableTargetUpdate = function(object)
 	-- updating of "invalid" units.
@@ -365,21 +363,6 @@ end
 function oUF:PARTY_MEMBERS_CHANGED(event)
 	if(self:IsEventRegistered"PARTY_LEADER_CHANGED") then self:PARTY_LEADER_CHANGED() end
 end
-
-function oUF:UNIT_NAME_UPDATE(event, unit)
-	if(self.unit ~= unit) then return end
-	local name = UnitName(unit)
-
-	-- This is really really temporary, at least until someone writes a tag
-	-- library that doesn't eat babies and spew poison (or any other common
-	-- solution to this problem).
-	self.Name:SetText(name)
-end
-table.insert(subTypes, function(self)
-	if(self.Name) then
-		self:RegisterEvent"UNIT_NAME_UPDATE"
-	end
-end)
 
 oUF.version = _VERSION
 oUF.units = units
