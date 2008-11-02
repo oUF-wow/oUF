@@ -6,8 +6,7 @@
 	 - spacing: Padding between aura icons. (Default: 0)
 	 - size: Size of the aura icons. (Default: 16)
 	 - initialAnchor: Initial anchor in the aura frame. (Default: "BOTTOMLEFT")
-	 - onlyShowDuration: Only display icons that have a duration (swirly circle of
-	   doom). (Default: nil)
+	 - onlyShowPlayer: Only display icons casted by the player. (Default: nil)
 	 - growth-x: Growth direction, affected by initialAnchor. (Default: "UP")
 	 - growth-y: Growth direction, affected by initialAnchor. (Default: "RIGHT")
 	 - filter
@@ -111,10 +110,10 @@ end
 
 local updateIcon = function(self, unit, icons, index, offset, filter, isDebuff, max)
 	if(index == 0) then index = max end
-	local name, rank, texture, count, dtype, duration, timeLeft = UnitAura(unit, index, filter)
+	local name, rank, texture, count, dtype, duration, timeLeft, isPlayer = UnitAura(unit, index, filter)
 
 	icon = icons[index + offset]
-	if((icons.onlyShowDuration and duration) or (not icons.onlyShowDuration and name)) then
+	if((icons.onlyShowPlayer and isPlayer) or (not icons.onlyShowPlayer and name)) then
 		if(not icon) then icon = (self.CreateAuraIcon and self:CreateAuraIcon(icons, index, isDebuff)) or createAuraIcon(self, icons, index, isDebuff) end
 
 		if(duration and duration > 0) then
