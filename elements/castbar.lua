@@ -54,8 +54,11 @@ function oUF:UNIT_SPELLCAST_FAILED(event, unit, spellname, spellrank, castid)
 	if(self.unit ~= unit) then return end
 
 	local castbar = self.Castbar
-	if(castbar.castid ~= castid) then return end
+	if(castbar.castid ~= castid) then
+		return
+	end
 
+	castbar.casting = nil
 	castbar:SetValue(0)
 	castbar:Hide()
 
@@ -66,7 +69,10 @@ function oUF:UNIT_SPELLCAST_INTERRUPTED(event, unit, spellname, spellrank, casti
 	if(self.unit ~= unit) then return end
 
 	local castbar = self.Castbar
-	if(castbar.castid ~= castid) then return end
+	if(castbar.castid ~= castid) then
+		return
+	end
+	castbar.casting = nil
 	castbar.channeling = nil
 
 	castbar:SetValue(0)
@@ -97,8 +103,11 @@ function oUF:UNIT_SPELLCAST_STOP(event, unit, spellname, spellrank, castid)
 	if(self.unit ~= unit) then return end
 
 	local castbar = self.Castbar
-	if(castbar.castid ~= castid) then return end
+	if(castbar.castid ~= castid) then
+		return
+	end
 
+	castbar.casting = nil
 	castbar:SetValue(0)
 	castbar:Hide()
 
