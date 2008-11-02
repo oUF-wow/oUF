@@ -156,7 +156,7 @@ local pool = {}
 local tmp = {}
 
 local Tag = function(self, fs, tagstr)
-	if(not (fs or tag) or self == oUF) then return end
+	if(not fs or not tagstr or self == oUF) then return end
 
 	fs.parent = self
 
