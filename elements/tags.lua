@@ -219,7 +219,7 @@ end
 
 oUF.Tags = tags
 oUF.TagEvents = tagEvents
-oUF.UnitlesTagEvents = unitlessEvents
+oUF.UnitlessTagEvents = unitlessEvents
 
 oUF.Tag = Tag
 oUF.Untag = Untag
