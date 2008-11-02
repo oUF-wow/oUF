@@ -1,11 +1,20 @@
+--[[
+-- Experimental oUF tags
+-- Status: Untested, Incomplete
+--
+-- Credits: Vika, Cladhaire, Tekkub
+--
+-- TODO:
+--	- Do a full test, so we konw that it actually works.
+--	- Tag and Untag should be able to handle more than one fontstring at a time.
+--	- Eventless units needs a initial onshow update.
+--	- Report when we don't find a matching tag.
+]]
+
 local parent = debugstack():match[[\AddOns\(.-)\]]
 local global = GetAddOnMetadata(parent, 'X-oUF')
 assert(global, 'X-oUF needs to be defined in the parent add-on.')
 local oUF = _G[global]
-
--------------------------------
---      Tag definitions      --
--------------------------------
 
 local function Hex(r, g, b)
 	if type(r) == "table" then
@@ -14,7 +23,8 @@ local function Hex(r, g, b)
 	return string.format("|cff%02x%02x%02x", r*255, g*255, b*255)
 end
 
-local tags = {
+local tags
+tags = {
 	["[class]"]       = function(u) return UnitClass(u) or "" end,
 	["[creature]"]    = function(u) return UnitCreatureFamily(u) or UnitCreatureType(u) or "" end,
 	["[curhp]"]       = UnitHealth,
@@ -40,13 +50,23 @@ local tags = {
 	["[rare]"]        = function(u) local c = UnitClassification(u); return (c == "rare" or c == "rareelite") and "Rare" or "" end,
 	["[resting]"]     = function(u) return u == "player" and IsResting() and "zzz" or "" end,
 	["[sex]"]         = function(u) local s = UnitSex(u) return s == 2 and "Male" or s == 3 and "Female" or "" end,
-	["[smartclass]"]  = function(u) return UnitIsPlayer(u) and oUF.Tags["[class]"](u) or oUF.Tags["[creature]"](u) end,
-	["[smartlevel]"]  = function(u) return UnitClassification(u) == "worldboss" and "Boss" or UnitLevel(u).. oUF.Tags["[plus]"](u) end,
-	["[status]"]      = function(u) return UnitIsDead(u) and "Dead" or UnitIsGhost(u) and "Ghost" or not UnitIsConnected(u) and "Offline" or oUF.Tags["[resting]"](u) end,
+	["[smartclass]"]  = function(u) return UnitIsPlayer(u) and tags["[class]"](u) or tags["[creature]"](u) end,
+	["[smartlevel]"]  = function(u) return UnitClassification(u) == "worldboss" and "Boss" or tags["[level]"](u).. tags["[plus]"](u) end,
+	["[status]"]      = function(u) return UnitIsDead(u) and "Dead" or UnitIsGhost(u) and "Ghost" or not UnitIsConnected(u) and "Offline" or tags["[resting]"](u) end,
 	["[threat]"]      = function(u) local s = UnitThreatSituation(u) return s == 1 and "++" or s == 2 and "--" or s == 3 and "Aggro" or "" end,
 	["[threatcolor]"] = function(u) return Hex(GetThreatStatusColor(UnitThreatSituation(u))) end,
+
+	["[classification]"] = function(u)
+		local c = UnitClassification(u)
+		return c == "rare" and "Rare" or c == "eliterare" and "Rare Elite" or c == "elite" and "Elite" or c == "worldboss" and "Boss" or ""
+	end,
+
+	["[shortclassification]"] = function(u)
+		local c = UnitClassification(u)
+		return c == "rare" and "R" or c == "eliterare" and "R+" or c == "elite" and "+" or c == "worldboss" and "B" or ""
+	end,
 }
-local events = {
+local tagEvents = {
 	["[curhp]"]       = "UNIT_HEALTH",
 	["[curpp]"]       = "UNIT_ENERGY UNIT_FOCUS UNIT_MANA UNIT_RAGE",
 	["[dead]"]        = "UNIT_HEALTH",
@@ -68,132 +88,138 @@ local events = {
 	["[threatcolor]"] = "UNIT_THREAT_SITUATION_UPDATE",
 }
 
-tags["[classification]"] = function(u)
-	local c = UnitClassification(u)
-	return c == "rare" and "Rare" or c == "eliterare" and "Rare Elite" or c == "elite" and "Elite" or c == "worldboss" and "Boss" or ""
-end
+local unitlessEvents = {
+	PLAYER_TARGET_CHANGED = true,
+	PLAYER_FOCUS_CHANGED = true,
+}
 
-tags["[shortclassification]"] = function(u)
-	local c = UnitClassification(u)
-	return c == "rare" and "R" or c == "eliterare" and "R+" or c == "elite" and "+" or c == "worldboss" and "B" or ""
-end
-
-
-----------------------
---      Tagger      --
-----------------------
-
-local currentunit
-local function subber(tag)
-	local f = tags[tag]
-	return f and f(currentunit) or tag
-end
-
-local function processtags(taggedstring, unit)
-	if not unit then return taggedstring end
-	currentunit = unit
-	return (taggedstring:gsub("[[][%w]+[]]", subber):gsub(" +", " "))
-end
-
-
-local unitlessevents = {PLAYER_TARGET_CHANGED = true, PLAYER_FOCUS_CHANGED = true}
-local function OnEvent(self, event, unit)
-	if not unitlessevents[event] and unit ~= self.parent.unit then return end
-	self.fontstring:SetText(processtags(self.tagstring, self.parent.unit))
-end
-
-
-local function OnShow(self)
-	self.fontstring:SetText(processtags(self.tagstring, self.parent.unit))
-end
-
-
---------------------------------
---      oUF Registration      --
---------------------------------
-
--- Store our tables somewhere so people can add custom tags
-oUF.Tags, oUF.TagEvents, oUF.UnitlessTagEvents = tags, events, unitlessevents
-
-
-table.insert(oUF.subTypes, function(self, unit)
-	if self.TaggedStrings then
-		for i,fs in pairs(self.TaggedStrings) do
-			local parent = fs:GetParent()
-			local tagstring = fs:GetText()
-
-			local f = CreateFrame("Frame", nil, parent)
-			f:SetScript("OnEvent", OnEvent)
-			f:SetScript("OnShow", OnShow)
-			f.tagstring, f.fontstring, f.parent = tagstring, fs, self
-
-			-- Register any update events we need
-			for tag in string.gmatch(tagstring, "[[][%w]+[]]") do
-				local tagevents = events[tag]
-				if tagevents then
-					for event in string.gmatch(tagevents, "%S+") do
-						f:RegisterEvent(event)
-					end
-				end
+local events = {}
+local frame = CreateFrame"Frame"
+frame:SetScript('OnEvent', function(self, event, unit)
+	local strings = events[event]
+	if(strings) then
+		for k, fontstring in ipairs(strings) do
+			if(not unitlessEvents[event] and fontstring.parent.unit == unit) then
+				fontstring:UpdateTag()
 			end
-			if unit == "target" then f:RegisterEvent("PLAYER_TARGET_CHANGED") end
-			if unit == "focus" then f:RegisterEvent("PLAYER_FOCUS_CHANGED") end
-
-			OnShow(f)
 		end
 	end
 end)
 
+local eventlessUnits = {}
+local timer = .5
+local OnUpdate = function(self, elapsed)
+	if(timer >= .5) then
+		for k, fs in ipairs(eventlessUnits) do
+			if(fs.parent:IsShown() and UnitExists(fs.parent.unit)) then
+				fs:UpdateTag()
+			end
+		end
 
-if true then return end
+		timer = 0
+	end
 
+	timer = timer + elapsed
+end
 
-local tags = {
-	["[smartcurhp]"] = function(u) return siVal(UnitHealthMax(u)) end,
-	["[smartmaxhp]"] = function(u) return siVal(UnitHealth(u)) end,
-	["[smartcurpp]"] = function(u) return siVal(UnitMana(u)) end,
-	["[smartmaxpp]"] = function(u) return siVal(UnitManaMax(u)) end,
-}
+local RegisterEvent = function(fontstr, event)
+	if(not events[event]) then events[event] = {} end
 
-local eventsTable = {
-	["[smartcurhp]"] = {"UNIT_HEALTH"},
-	["[smartmaxhp]"] = {"UNIT_MAXHEALTH"},
-	["[smartcurpp]"] = {"UNIT_ENERGY", "UNIT_FOCUS", "UNIT_MANA", "UNIT_RAGE"},
-	["[smartmaxpp]"] = {"UNIT_MAXENERGY", "UNIT_MAXFOCUS", "UNIT_MAXMANA", "UNIT_MAXRAGE"},
-}
+	table.insert(events[event], fontstr)
+end
 
+local RegisterEvents = function(fontstr, tagstr)
+	for tag in tagstr:gmatch'[[][%w]+[]]' do
+		local tagevents = tagEvents[tag]
+		if(tagevents) then
+			for event in tagevents:gmatch'%S+' do
+				if(not events[event]) then events[event] = {} end
+				table.insert(events[event], fontstr)
+				frame:RegisterEvent(event)
+			end
+		end
+	end
+end
 
+local UnregisterEvents = function(fontstr)
+	for events, data in pairs(events) do
+		for k, tagfsstr in ipairs(data) do
+			if(tagfsstr == fontstr) then
+				if(#data[k] == 1) then frame:UnregisterEvent(event) end
+				data[k] = nil
+			end
+		end
+	end
+end
 
--- OMG ANCIENT TAGS FROM WATCHDOG
-WatchDog_UnitInformation = {
-	["statuscolor"] = function (u) if UnitIsDead(u) then return "|cffff0000" elseif UnitIsGhost(u) then return "|cff9d9d9d" elseif (not UnitIsConnected(u)) then return "|cffff8000" elseif (UnitAffectingCombat(u)) then return "|cffFF0000" elseif (u== "player" and IsResting()) then return GetHex(UnitReactionColor[4]) else return "" end end,
-	["happycolor"] = function (u) local x=GetPetHappiness() return ( (x==2) and "|cffFFFF00" or (x==1) and "|cffFF0000" or "" ) end,
+local pool = {}
+local tmp = {}
 
-	["typemp"] = function (u) local p=UnitPowerType(u) return ( (p==1) and "Rage" or (p==2) and "Focus" or (p==3) and "Energy" or "Mana" ) end,
-	["combos"] = function (u) return (GetComboPoints() or 0) end,
-	["combos2"] = function (u) return string.rep("@", GetComboPoints()) end,
-	["rested"] = function (u) return (GetRestState()==1 and "Rested" or "") end,
+local Tag = function(self, fs, tagstr)
+	if(not (fs or tag) or self == oUF) then return end
 
-	["happynum"] = function (u) return (GetPetHappiness() or 0) end,
-	["happytext"] = function (u) return ( getglobal("PET_HAPPINESS"..(GetPetHappiness() or 0)) or "" ) end,
-	["happyicon"] = function (u) local x=GetPetHappiness() return ( (x==3) and ":)" or (x==2) and ":|" or (x==1) and ":(" or "" ) end,
+	fs.parent = self
 
-	["curxp"] = function (u) return (UnitXP(u) or "") end,
-	["maxxp"] = function (u) return (UnitXPMax(u) or "") end,
-	["percentxp"] = function (u) local x=UnitXPMax(u) if (x>0) then return floor( UnitXP(u)/x*100+0.5) else return 0 end end,
-	["missingxp"] = function (u) return (UnitXPMax(u) - UnitXP(u)) end,
-	["restedxp"] = function (u) return (GetXPExhaustion() or "") end,
+	local func = pool[tagstr]
+	if(not func) then
+		local format = tagstr:gsub('%%', '%%%%'):gsub('[[][%w]+[]]', '%%s')
+		local args = {}
 
-	["tappedbyme"] = function (u) if UnitIsTappedByPlayer("target") then return "*" else return "" end end,
-	["istapped"] = function (u) if UnitIsTapped(u) and (not UnitIsTappedByPlayer("target")) then return "*" else return "" end end,
-	["pvpranknum"] = function (u) return (UnitPVPRank(u) or "") end,
-	["pvprank"] = function (u) if (UnitPVPRank(u) >= 1) then return (GetPVPRankInfo(UnitPVPRank(u), u) or "" ) else return "" end end,
-	["fkey"] = function (u) local _,_,fkey = string.find(u, "^party(%d)$") if not fkey then return "" else return "F"..fkey end end,
+		for tag in tagstr:gmatch'[[][%w]+[]]' do
+			local tfunc = tags[tag]
+			if(tfunc) then
+				table.insert(args,tfunc)
+			end
+		end
 
-	["aggro"] = function (u) local reaction = UnitReaction(u, "player"); return UnitPlayerControlled(u) and (UnitCanAttack(u, "player") and UnitCanAttack("player", u) and "|cffFF0000" or UnitCanAttack("player", u) and "|cffffff00" or UnitIsPVP("target") and "|cff00ff00" or "|cFFFFFFFF") or (UnitIsTapped(u) and (not UnitIsTappedByPlayer(u)) and "|cff808080") or ((reaction == 1) and "|cffff0000" or (reaction == 2) and "|cffff0000" or (reaction == 4) and "|cffffff00" or (reaction == 5) and "|cff00ff00") or "|cFFFFFFFF"; end,
-	["colormp"] = function (u) local x = ManaBarColor[UnitPowerType(u)] return GetHex(x.r, x.g, x.b) end,
-	["inmelee"] = function (u) if PlayerFrame.inCombat then return "|cffFF0000" else return "" end end,
-	["incombat"] = function (u) if UnitAffectingCombat(u) then return "|cffFF0000" else return "" end end,
-	["lowhpcolor"] = function (u) if wd_perhp <= 20 then return "|cffFF0000" else return "" end end,
-	["lowmpcolor"] = function (u) if wd_permp <= 20 then return "|cff0000FF" else return "" end end,
-}
+		func = function(self)
+			local unit = self.parent.unit
+
+			for i, func in ipairs(args) do
+				tmp[i] = func(unit)
+			end
+
+			self:SetFormattedText(format, unpack(tmp))
+		end
+
+		pool[tagstr] = func
+	end
+	fs.UpdateTag = func
+
+	local unit = self.unit
+	if(unit and unit:match'%w+target') then
+		table.insert(eventlessUnits, fs)
+
+		if(not frame:GetScript'OnUpdate') then
+			frame:SetScript('OnUpdate', OnUpdate)
+		end
+	else
+		RegisterEvents(fs, tagstr)
+
+		if(unit == 'focus') then
+			RegisterEvent(fs, 'PLAYER_FOCUS_CHANGED')
+		elseif(unit == 'target') then
+			RegisterEvent(fs, 'PLAYER_TARGET_CHANGED')
+		elseif(unit == 'mouseover') then
+			RegisterEvent(fs, 'UPDATE_MOUSEOVER_UNIT')
+		end
+	end
+end
+
+local Untag = function(self, fs)
+	if(not fs or self == oUF) then return end
+
+	UnregisterEvents(fs)
+	for k, fontstr in ipairs(eventlessUnits) do
+		if(fs == fontstr) then
+			table.remove(eventlessUnits, k)
+		end
+	end
+end
+
+oUF.Tags = tags
+oUF.TagEvents = tagEvents
+oUF.UnitlesTagEvents = unitlessEvents
+
+oUF.Tag = Tag
+oUF.Untag = Untag
