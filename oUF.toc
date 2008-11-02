@@ -1,7 +1,7 @@
 ## Interface: 30000
 ## Title: oUF
 ## Author: Haste
-## Version: 1.2.2
+## Version: 1.3
 ## X-eMail: troeks@gmail.com
 ## X-oUF: oUF
 ## Notes: Unit frame framework. Does nothing by itself.
