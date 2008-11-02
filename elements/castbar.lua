@@ -200,9 +200,17 @@ local onUpdate = function(self, elapsed)
 
 		if self.Time then
 			if self.delay ~= 0 then
-				self.Time:SetFormattedText("%.1f|cffff0000-%.1f|r", duration, self.delay)
+				if(self.CustomDelayText) then
+					self:CustomDelayText(duration)
+				else
+					self.Time:SetFormattedText("%.1f|cffff0000-%.1f|r", duration, self.delay)
+				end
 			else
-				self.Time:SetFormattedText("%.1f", duration)
+				if(self.CustomTimeText) then
+					self:CustomTimeText(duration)
+				else
+					self.Time:SetFormattedText("%.1f", duration)
+				end
 			end
 		end
 
@@ -233,9 +241,17 @@ local onUpdate = function(self, elapsed)
 
 		if self.Time then
 			if self.delay ~= 0 then
-				self.Time:SetFormattedText("%.1f|cffff0000-%.1f|r", duration, self.delay)
+				if(self.CustomDelayText) then
+					self:CustomDelayText(duration)
+				else
+					self.Time:SetFormattedText("%.1f|cffff0000-%.1f|r", duration, self.delay)
+				end
 			else
-				self.Time:SetFormattedText("%.1f", duration)
+				if(self.CustomTimeText) then
+					self:CustomTimeText(duration)
+				else
+					self.Time:SetFormattedText("%.1f", duration)
+				end
 			end
 		end
 
