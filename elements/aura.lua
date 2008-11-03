@@ -214,48 +214,49 @@ function oUF:UNIT_AURA(event, unit)
 		auras.visibleAuras = visibleBuffs + visibleDebuffs
 
 		self:SetAuraPosition(auras, max)
-	else
-		if(buffs) then
-			filter = buffs.filter or 'HELPFUL'
-			max = buffs.num or 32
-			local visibleBuffs = 0
-			for index = 1, max do
-				if(not updateIcon(self, unit, buffs, index, 0, filter)) then
-					max = index - 1
+	end
 
-					while(buffs[index]) do
-						buffs[index]:Hide()
-						index = index + 1
-					end
-					break
+	if(buffs) then
+		filter = buffs.filter or 'HELPFUL'
+		max = buffs.num or 32
+		local visibleBuffs = 0
+		for index = 1, max do
+			if(not updateIcon(self, unit, buffs, index, 0, filter)) then
+				max = index - 1
+
+				while(buffs[index]) do
+					buffs[index]:Hide()
+					index = index + 1
 				end
-
-				visibleBuffs = visibleBuffs + 1
+				break
 			end
 
-			buffs.visibleBuffs = visibleBuffs
-			self:SetAuraPosition(buffs, max)
+			visibleBuffs = visibleBuffs + 1
 		end
-		if(debuffs) then
-			filter = debuffs.filter or 'HARMFUL'
-			max = debuffs.num or 40
-			local visibleDebuffs = 0
-			for index = 1, max do
-				if(not updateIcon(self, unit, debuffs, index, 0, filter, true)) then
-					max = index - 1
 
-					while(debuffs[index]) do
-						debuffs[index]:Hide()
-						index = index + 1
-					end
-					break
+		buffs.visibleBuffs = visibleBuffs
+		self:SetAuraPosition(buffs, max)
+	end
+
+	if(debuffs) then
+		filter = debuffs.filter or 'HARMFUL'
+		max = debuffs.num or 40
+		local visibleDebuffs = 0
+		for index = 1, max do
+			if(not updateIcon(self, unit, debuffs, index, 0, filter, true)) then
+				max = index - 1
+
+				while(debuffs[index]) do
+					debuffs[index]:Hide()
+					index = index + 1
 				end
-
-				visibleDebuffs = visibleDebuffs + 1
+				break
 			end
-			debuffs.visibleDebuffs = visibleDebuffs
-			self:SetAuraPosition(debuffs, max)
+
+			visibleDebuffs = visibleDebuffs + 1
 		end
+		debuffs.visibleDebuffs = visibleDebuffs
+		self:SetAuraPosition(debuffs, max)
 	end
 
 	if(self.PostUpdateAura) then self:PostUpdateAura(event, unit) end
