@@ -152,8 +152,8 @@ function oUF:SetAuraPosition(icons, x)
 		local anchor = icons.initialAnchor or "BOTTOMLEFT"
 		local growthx = (icons["growth-x"] == "LEFT" and -1) or 1
 		local growthy = (icons["growth-y"] == "DOWN" and -1) or 1
-		local cols = math_floor(icons:GetWidth() / size + .5)
-		local rows = math_floor(icons:GetHeight() / size + .5)
+		local cols = math.floor(icons:GetWidth() / size + .5)
+		local rows = math.floor(icons:GetHeight() / size + .5)
 
 		for i = 1, x do
 			local button = icons[i]
