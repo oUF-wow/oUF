@@ -50,12 +50,6 @@ local global = GetAddOnMetadata(parent, 'X-oUF')
 assert(global, 'X-oUF needs to be defined in the parent add-on.')
 local oUF = _G[global]
 
-local	select, table_insert, math_floor, UnitDebuff, UnitBuff, GetTime, DebuffTypeColor =
-		select, table.insert, math.floor, UnitDebuff, UnitBuff, GetTime, DebuffTypeColor
-
-local total, col, row, size, anchor, button, growthx, growthy, cols, rows, spacing, gap
-local auras, buffs, debuffs, mod, max, filter, index, icon
-
 local OnEnter = function(self)
 	if(not self:IsVisible()) then return end
 
@@ -112,7 +106,7 @@ local updateIcon = function(self, unit, icons, index, offset, filter, isDebuff, 
 	if(index == 0) then index = max end
 	local name, rank, texture, count, dtype, duration, timeLeft, isPlayer = UnitAura(unit, index, filter)
 
-	icon = icons[index + offset]
+	local icon = icons[index + offset]
 	if((icons.onlyShowPlayer and isPlayer) or (not icons.onlyShowPlayer and name)) then
 		if(not icon) then icon = (self.CreateAuraIcon and self:CreateAuraIcon(icons, index, isDebuff)) or createAuraIcon(self, icons, index, isDebuff) end
 
@@ -150,19 +144,19 @@ end
 
 function oUF:SetAuraPosition(icons, x)
 	if(icons and x > 0) then
-		col = 0
-		row = 0
-		spacing = icons.spacing or 0
-		gap = icons.gap
-		size = (icons.size or 16) + spacing
-		anchor = icons.initialAnchor or "BOTTOMLEFT"
-		growthx = (icons["growth-x"] == "LEFT" and -1) or 1
-		growthy = (icons["growth-y"] == "DOWN" and -1) or 1
-		cols = math_floor(icons:GetWidth() / size + .5)
-		rows = math_floor(icons:GetHeight() / size + .5)
+		local col = 0
+		local row = 0
+		local spacing = icons.spacing or 0
+		local gap = icons.gap
+		local size = (icons.size or 16) + spacing
+		local anchor = icons.initialAnchor or "BOTTOMLEFT"
+		local growthx = (icons["growth-x"] == "LEFT" and -1) or 1
+		local growthy = (icons["growth-y"] == "DOWN" and -1) or 1
+		local cols = math_floor(icons:GetWidth() / size + .5)
+		local rows = math_floor(icons:GetHeight() / size + .5)
 
 		for i = 1, x do
-			button = icons[i]
+			local button = icons[i]
 			if(button and button:IsShown()) then
 				if(gap and button.debuff) then
 					if(col > 0) then
@@ -189,12 +183,12 @@ function oUF:UNIT_AURA(event, unit)
 	if(self.unit ~= unit) then return end
 	if(self.PreUpdateAura) then self:PreUpdateAura(event, unit) end
 
-	auras, buffs, debuffs = self.Auras, self.Buffs, self.Debuffs
+	local auras, buffs, debuffs = self.Auras, self.Buffs, self.Debuffs
 
 	if(auras) then
-		buffs = auras.numBuffs or 32
-		debuffs = auras.numDebuffs or 40
-		max = debuffs + buffs
+		local buffs = auras.numBuffs or 32
+		local debuffs = auras.numDebuffs or 40
+		local max = debuffs + buffs
 
 		local visibleBuffs, visibleDebuffs = 0, 0
 		for index = 1, max do
@@ -217,8 +211,8 @@ function oUF:UNIT_AURA(event, unit)
 	end
 
 	if(buffs) then
-		filter = buffs.filter or 'HELPFUL'
-		max = buffs.num or 32
+		local filter = buffs.filter or 'HELPFUL'
+		local max = buffs.num or 32
 		local visibleBuffs = 0
 		for index = 1, max do
 			if(not updateIcon(self, unit, buffs, index, 0, filter)) then
@@ -239,8 +233,8 @@ function oUF:UNIT_AURA(event, unit)
 	end
 
 	if(debuffs) then
-		filter = debuffs.filter or 'HARMFUL'
-		max = debuffs.num or 40
+		local filter = debuffs.filter or 'HARMFUL'
+		local max = debuffs.num or 40
 		local visibleDebuffs = 0
 		for index = 1, max do
 			if(not updateIcon(self, unit, debuffs, index, 0, filter, true)) then
