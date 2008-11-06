@@ -87,7 +87,7 @@ local createAuraIcon = function(self, icons, index, debuff)
 	button:SetScript("OnEnter", OnEnter)
 	button:SetScript("OnLeave", OnLeave)
 
-	table_insert(icons, button)
+	table.insert(icons, button)
 
 	button.parent = icons
 	button.frame = self
