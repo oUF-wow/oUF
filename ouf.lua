@@ -50,7 +50,7 @@ end
 -- add-on object
 local oUF = CreateFrame"Button"
 local RegisterEvent = oUF.RegisterEvent
-local metatable = {__index = oUF}
+local frame_metatable = {__index = oUF}
 
 local styles, style = {}
 local callback, units, objects = {}, {}, {}
@@ -187,7 +187,7 @@ local initObject = function(unit, style, ...)
 	for i=1, num do
 		local object = select(i, ...)
 
-		object = setmetatable(object, metatable)
+		object = setmetatable(object, frame_metatable)
 		style(object, unit)
 
 		local mt = type(style) == 'table'
