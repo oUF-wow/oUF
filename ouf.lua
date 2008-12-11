@@ -337,7 +337,10 @@ function oUF:RegisterEvent(event, func)
 	elseif(self:IsEventRegistered(event)) then
 		return
 	else
-		self[event] = func
+		if(func) then
+			self[event] = func
+		end
+
 		RegisterEvent(self, event)
 	end
 end
