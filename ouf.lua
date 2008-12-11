@@ -49,8 +49,14 @@ end
 
 -- add-on object
 local oUF = CreateFrame"Button"
-local RegisterEvent = oUF.RegisterEvent
 local frame_metatable = {__index = oUF}
+local event_metatable = {
+	__call = function(funcs, self, ...)
+		for _, func in ipairs(funcs) do
+			func(self, ...)
+		end
+	end,
+}
 
 local styles, style = {}
 local callback, units, objects = {}, {}, {}
@@ -304,6 +310,60 @@ function oUF:Spawn(unit, name, template, disableBlizz)
 	end
 
 	return object
+end
+
+local RegisterEvent = oUF.RegisterEvent
+function oUF:RegisterEvent(event, func)
+	if(not event) then return error('<TODO:event>') end
+
+	local curev = self[event]
+
+	if(curev and func) then
+		if(type(func) == 'string' and type(self[func]) == 'function') then
+			func = self[func]
+		else
+			error('<TODO:event>')
+		end
+
+		if(type(curev) == 'function') then
+			self[event] = setmetatable({curev, func}, event_metatable)
+		else
+			for _, infunc in ipairs(curev) do
+				if(infunc == func) then return end
+			end
+
+			table.insert(curev, func)
+		end
+	elseif(self:IsEventRegistered(event)) then
+		return
+	else
+		self[event] = func
+		RegisterEvent(self, event)
+	end
+end
+
+local UnregisterEvent = oUF.UnregisterEvent
+function oUF:UnregisterEvent(event, func)
+	if(not event) then return error('<TODO:event>') end
+
+	local curev = self[event]
+	if(curev and func) then
+		if(type(curev) == 'function') then
+			for k, infunc in ipairs(curev) do
+				if(infunc == func) then
+					curev[k] = nil
+
+					if(#curev == 0) then
+						table.remove(curev, k)
+						UnregisterEvent(self, event)
+					end
+				end
+			end
+		end
+	else
+		self[event] = nil
+		UnregisterEvent(self, event)
+	end
 end
 
 function oUF:RegisterSubTypeMapping(event)
