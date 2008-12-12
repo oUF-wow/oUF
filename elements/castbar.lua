@@ -44,6 +44,8 @@ local UNIT_SPELLCAST_START = function(self, event, unit, spell, spellrank)
 	if(sf) then
 		sf:ClearAllPoints()
 		sf:SetPoint'RIGHT'
+		sf:SetPoint'TOP'
+		sf:SetPoint'BOTTOM'
 	end
 
 	if(self.PostCastStart) then self:PostCastStart(event, unit, spell, spellrank, castid) end
@@ -144,6 +146,8 @@ local UNIT_SPELLCAST_CHANNEL_START = function(self, event, unit, spellname, spel
 	if(sf) then
 		sf:ClearAllPoints()
 		sf:SetPoint'LEFT'
+		sf:SetPoint'TOP'
+		sf:SetPoint'BOTTOM'
 	end
 
 	if(self.PostChannelStart) then self:PostChannelStart(event, unit, spellname, spellrank) end
