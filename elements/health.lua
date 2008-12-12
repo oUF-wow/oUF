@@ -44,7 +44,7 @@ do
 	end
 end
 
-function oUF:UNIT_MAXHEALTH(event, unit)
+local Update = function(self, event, unit)
 	if(self.unit ~= unit) then return end
 	if(self.PreUpdateHealth) then self:PreUpdateHealth(event, unit) end
 
@@ -94,24 +94,42 @@ function oUF:UNIT_MAXHEALTH(event, unit)
 
 	if(self.PostUpdateHealth) then self:PostUpdateHealth(event, unit, bar, min, max) end
 end
-oUF.UNIT_HEALTH = oUF.UNIT_MAXHEALTH
 
-table.insert(oUF.subTypes, function(self)
+local Enable = function(self)
 	local health = self.Health
 	if(health) then
 		if(health.frequentUpdates and (self.unit and not self.unit:match'%w+target$') or not self.unit) then
+			health.disconnected = true
 			health:SetScript('OnUpdate', OnHealthUpdate)
 		else
-			self:RegisterEvent"UNIT_HEALTH"
+			self:RegisterEvent("UNIT_HEALTH", Update)
 		end
-		self:RegisterEvent"UNIT_MAXHEALTH"
-		self:RegisterEvent'UNIT_HAPPINESS'
+		self:RegisterEvent("UNIT_MAXHEALTH", Update)
+		self:RegisterEvent('UNIT_HAPPINESS', Update)
 		-- For tapping.
-		self:RegisterEvent'UNIT_FACTION'
+		self:RegisterEvent('UNIT_FACTION', Update)
 
 		if(not health:GetStatusBarTexture()) then
 			health:SetStatusBarTexture[[Interface\TargetingFrame\UI-StatusBar]]
 		end
+
+		return true
 	end
-end)
-oUF:RegisterSubTypeMapping"UNIT_MAXHEALTH"
+end
+
+local Disable = function(self)
+	local health = self.Health
+	if(health) then
+		if(self:GetScript'OnUpdate') then
+			health:SetScript('OnUpdate', nil)
+		else
+			self:UnregisterEvent('UNIT_HEALTH', Update)
+		end
+
+		self:UnregisterEvent('UNIT_MAXHEALTH', Update)
+		self:UnregisterEvent('UNIT_HAPPINESS', Update)
+		self:UnregisterEvent('UNIT_FACTION', Update)
+	end
+end
+
+oUF:AddElement('Health', Update, Enable, Disable)

@@ -28,7 +28,7 @@ tags = {
 	["[class]"]       = function(u) return UnitClass(u) or "" end,
 	["[creature]"]    = function(u) return UnitCreatureFamily(u) or UnitCreatureType(u) or "" end,
 	["[curhp]"]       = UnitHealth,
-	["[curpp]"]       = UnitMana,
+	["[curpp]"]       = UnitPower,
 	["[dead]"]        = function(u) return UnitIsDead(u) and "Dead" or UnitIsGhost(u) and "Ghost" or "" end,
 	["[difficulty]"]  = function(u) if UnitCanAttack("player", u) then local l = UnitLevel(u); return Hex(GetDifficultyColor((l > 0) and l or 99)) else return "" end end,
 	["[faction]"]     = function(u) return UnitFactionGroup(u) or "" end,
@@ -36,9 +36,9 @@ tags = {
 	["[leaderlong]"]  = function(u) return UnitIsPartyLeader(u) and "(Leader)" or "" end,
 	["[level]"]       = function(u) local l = UnitLevel(u) return (l > 0) and l or "??" end,
 	["[maxhp]"]       = UnitHealthMax,
-	["[maxpp]"]       = UnitManaMax,
+	["[maxpp]"]       = UnitPowerMax,
 	["[missinghp]"]   = function(u) return UnitHealthMax(u) - UnitHealth(u) end,
-	["[missingpp]"]   = function(u) return UnitManaMax(u) - UnitMana(u) end,
+	["[missingpp]"]   = function(u) return UnitPowerMax(u) - UnitPower(u) end,
 	["[name]"]        = UnitName,
 	["[offline]"]     = function(u) return UnitIsConnected(u) and "" or "Offline" end,
 	["[perhp]"]       = function(u) local m = UnitHealthMax(u); return m == 0 and 0 or math.floor(UnitHealth(u)/m*100+0.5) end,
@@ -76,11 +76,11 @@ local tagEvents = {
 	["[maxhp]"]       = "UNIT_MAXHEALTH",
 	["[maxpp]"]       = "UNIT_MAXENERGY UNIT_MAXFOCUS UNIT_MAXMANA UNIT_MAXRAGE",
 	["[missinghp]"]   = "UNIT_HEALTH UNIT_MAXHEALTH",
-	["[missingpp]"]   = "UNIT_MAXENERGY UNIT_MAXFOCUS UNIT_MAXMANA UNIT_MAXRAGE UNIT_ENERGY UNIT_FOCUS UNIT_MANA UNIT_RAGE",
+	["[missingpp]"]   = "UNIT_MAXENERGY UNIT_MAXFOCUS UNIT_MAXMANA UNIT_MAXRAGE UNIT_ENERGY UNIT_FOCUS UNIT_MANA UNIT_RAGE UNIT_MAXRUNIC_POWER UNIT_RUNIC_POWER",
 	["[name]"]        = "UNIT_NAME_UPDATE",
 	["[offline]"]     = "UNIT_HEALTH",
 	["[perhp]"]       = "UNIT_HEALTH UNIT_MAXHEALTH",
-	["[perpp]"]       = "UNIT_MAXENERGY UNIT_MAXFOCUS UNIT_MAXMANA UNIT_MAXRAGE UNIT_ENERGY UNIT_FOCUS UNIT_MANA UNIT_RAGE",
+	["[perpp]"]       = "UNIT_MAXENERGY UNIT_MAXFOCUS UNIT_MAXMANA UNIT_MAXRAGE UNIT_ENERGY UNIT_FOCUS UNIT_MANA UNIT_RAGE UNIT_MAXRUNIC_POWER UNIT_RUNIC_POWER",
 	["[pvp]"]         = "UNIT_FACTION",
 	["[resting]"]     = "PLAYER_UPDATE_RESTING",
 	["[status]"]      = "UNIT_HEALTH PLAYER_UPDATE_RESTING",
@@ -122,6 +122,12 @@ local OnUpdate = function(self, elapsed)
 	timer = timer + elapsed
 end
 
+local OnShow = function(self)
+	for _, fs in ipairs(self.__tags) do
+		fs:UpdateTag()
+	end
+end
+
 local RegisterEvent = function(fontstr, event)
 	if(not events[event]) then events[event] = {} end
 
@@ -157,6 +163,11 @@ local tmp = {}
 
 local Tag = function(self, fs, tagstr)
 	if(not fs or not tagstr or self == oUF) then return end
+
+	if(not self.__tags) then
+		self.__tags = {}
+		table.insert(self.__elements, OnShow)
+	end
 
 	fs.parent = self
 
@@ -204,6 +215,14 @@ local Tag = function(self, fs, tagstr)
 			RegisterEvent(fs, 'UPDATE_MOUSEOVER_UNIT')
 		end
 	end
+
+	for k, tag in ipairs(self.__tags) do
+		if(fs == tag) then
+			return
+		end
+	end
+
+	table.insert(self.__tags, fs)
 end
 
 local Untag = function(self, fs)
@@ -213,6 +232,12 @@ local Untag = function(self, fs)
 	for k, fontstr in ipairs(eventlessUnits) do
 		if(fs == fontstr) then
 			table.remove(eventlessUnits, k)
+		end
+	end
+
+	for k, fontstr in ipairs(self.__tags) do
+		if(fontstr == fs) then
+			table.remove(self.__tags, k)
 		end
 	end
 end

@@ -3,36 +3,56 @@ local global = GetAddOnMetadata(parent, 'X-oUF')
 assert(global, 'X-oUF needs to be defined in the parent add-on.')
 local oUF = _G[global]
 
-function oUF:PLAYER_UPDATE_RESTING(event)
-	if(IsResting()) then
-		self.Resting:Show()
-	else
-		self.Resting:Hide()
+do
+	local Update = function(self, event)
+		if(IsResting()) then
+			self.Resting:Show()
+		else
+			self.Resting:Hide()
+		end
 	end
+
+	local Enable = function(self)
+		if(self.Resting and unit == 'player') then
+			self:RegisterEvent("PLAYER_UPDATE_RESTING", Update)
+
+			return true
+		end
+	end
+
+	local Disable = function(self)
+		if(self.Resting and unit == 'player') then
+			self:UnregisterEvent("PLAYER_UPDATE_RESTING", Update)
+		end
+	end
+
+	oUF:AddElement('Resting', Update, Enable, Disable)
 end
 
-function oUF:PLAYER_REGEN_DISABLED(event)
-	if(UnitAffectingCombat"player") then
-		self.Combat:Show()
-	else
-		self.Combat:Hide()
+do
+	local Update = function(self, event)
+		if(UnitAffectingCombat"player") then
+			self.Combat:Show()
+		else
+			self.Combat:Hide()
+		end
 	end
+
+	local Enable = function(self, unit)
+		if(self.Combat and unit == 'player') then
+			self:RegisterEvent("PLAYER_REGEN_DISABLED", Update)
+			self:RegisterEvent("PLAYER_REGEN_ENABLED", Update)
+
+			return true
+		end
+	end
+
+	local Disable = function(self)
+		if(self.Combat) then
+			self:UnregisterEvent("PLAYER_REGEN_DISABLED", Update)
+			self:UnregisterEvent("PLAYER_REGEN_ENABLED", Update)
+		end
+	end
+
+	oUF:AddElement('Combat', Update, Enable, Disable)
 end
-
-oUF.PLAYER_REGEN_ENABLED = oUF.PLAYER_REGEN_DISABLED
-
-table.insert(oUF.subTypes, function(self, unit)
-	if(self.Resting and unit == 'player') then
-		self:RegisterEvent"PLAYER_UPDATE_RESTING"
-	end
-end)
-
-table.insert(oUF.subTypes, function(self)
-	if(self.Combat) then
-		self:RegisterEvent"PLAYER_REGEN_DISABLED"
-		self:RegisterEvent"PLAYER_REGEN_ENABLED"
-	end
-end)
-
-oUF:RegisterSubTypeMapping"PLAYER_UPDATE_RESTING"
-oUF:RegisterSubTypeMapping"PLAYER_REGEN_DISABLED"

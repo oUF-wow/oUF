@@ -12,7 +12,7 @@ local global = GetAddOnMetadata(parent, 'X-oUF')
 assert(global, 'X-oUF needs to be defined in the parent add-on.')
 local oUF = _G[global]
 
-function oUF:UNIT_THREAT_SITUATION_UPDATE(event, unit)
+local Update = function(self, event, unit)
 	if(unit and unit ~= self.unit) then return end
 	if(self.PreUpdateThreat) then self:PreUpdateThreat(event, unit) end
 
@@ -35,16 +35,26 @@ function oUF:UNIT_THREAT_SITUATION_UPDATE(event, unit)
 	if(self.PostUpdateThreat) then self:PostUpdateThreat(event, unit, status) end
 end
 
-table.insert(oUF.subTypes, function(self, unit)
+local Enable = function(self)
 	local threat = self.Threat
 	if(threat) then
-		self:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE")
+		self:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE", Update)
 		threat:Hide()
 
 		if(threat:IsObjectType"Texture" and not threat:GetTexture()) then
 			threat:SetTexture[[Interface\Minimap\ObjectIcons]]
 			threat:SetTexCoord(6/8, 7/8, 1/2, 1)
 		end
+
+		return true
 	end
-end)
-oUF:RegisterSubTypeMapping("UNIT_THREAT_SITUATION_UPDATE")
+end
+
+local Disable = function(self)
+	local threat = self.Threat
+	if(threat) then
+		self:UnregisterEvent("UNIT_THREAT_SITUATION_UPDATE", Update)
+	end
+end
+
+oUF:AddElement('Threat', Update, Enable, Disable)

@@ -3,13 +3,8 @@ local global = GetAddOnMetadata(parent, 'X-oUF')
 assert(global, 'X-oUF needs to be defined in the parent add-on.')
 local oUF = _G[global]
 
-function oUF:UNIT_HAPPINESS(event, unit)
+local Update = function(self, event, unit)
 	if(self.unit ~= unit) then return end
-
-	if(event == 'UNIT_HAPPINESS') then
-		if(self:IsEventRegistered'UNIT_MAXHEALTH') then self:UNIT_MAXHEALTH(event, unit) end
-		if(self:IsEventRegistered'UNIT_MAXMANA') then self:UNIT_MAXMANA(event, unit) end
-	end
 
 	if(self.Happiness) then
 		local happiness = GetPetHappiness()
@@ -32,14 +27,24 @@ function oUF:UNIT_HAPPINESS(event, unit)
 	end
 end
 
-table.insert(oUF.subTypes, function(self)
+local Enable = function(self)
 	local happiness = self.Happiness
 	if(happiness) then
-		self:RegisterEvent"UNIT_HAPPINESS"
+		self:RegisterEvent("UNIT_HAPPINESS", Update)
 
 		if(happiness:IsObjectType"Texture" and not happiness:GetTexture()) then
 			happiness:SetTexture[[Interface\PetPaperDollFrame\UI-PetHappiness]]
 		end
+
+		return true
 	end
-end)
-oUF:RegisterSubTypeMapping"UNIT_HAPPINESS"
+end
+
+local Disable = function(self)
+	local happiness = self.Happiness
+	if(happiness) then
+		self:UnregisterEvent("UNIT_HAPPINESS", Update)
+	end
+end
+
+oUF:AddElement('Happiness', Update, Enable, Disable)

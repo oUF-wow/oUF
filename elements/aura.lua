@@ -142,7 +142,7 @@ local updateIcon = function(self, unit, icons, index, offset, filter, isDebuff, 
 	end
 end
 
-function oUF:SetAuraPosition(icons, x)
+local SetAuraPosition = function(self, icons, x)
 	if(icons and x > 0) then
 		local col = 0
 		local row = 0
@@ -179,7 +179,7 @@ function oUF:SetAuraPosition(icons, x)
 	end
 end
 
-function oUF:UNIT_AURA(event, unit)
+local Update = function(self, event, unit)
 	if(self.unit ~= unit) then return end
 	if(self.PreUpdateAura) then self:PreUpdateAura(event, unit) end
 
@@ -256,10 +256,20 @@ function oUF:UNIT_AURA(event, unit)
 	if(self.PostUpdateAura) then self:PostUpdateAura(event, unit) end
 end
 
-table.insert(oUF.subTypes, function(self)
+local Enable = function(self)
 	if(self.Buffs or self.Debuffs or self.Auras) then
-		self:RegisterEvent"UNIT_AURA"
-	end
-end)
+		self.SetAuraPosition = SetAuraPosition
+		self:RegisterEvent("UNIT_AURA", Update)
 
-oUF:RegisterSubTypeMapping"UNIT_AURA"
+		return true
+	end
+end
+
+local Disable = function(self)
+	if(self.Buffs or self.Debuffs or self.Auras) then
+		self.SetAuraPosition = nil
+		self:UnregisterEvent("UNIT_AURA", Update)
+	end
+end
+
+oUF:AddElement('Aura', Update, Enable, Disable)

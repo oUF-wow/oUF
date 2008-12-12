@@ -6,7 +6,7 @@ local oUF = _G[global]
 local GetComboPoints = GetComboPoints
 local MAX_COMBO_POINTS = MAX_COMBO_POINTS
 
-function oUF:UNIT_COMBO_POINTS(event, unit)
+local Update = function(self, event, unit)
 	local cpoints = self.CPoints
 	if(self.unit ~= unit and (cpoints.unit and cpoints.unit ~= unit)) then return end
 	local cp = GetComboPoints(cpoints.unit or unit, 'target')
@@ -24,9 +24,18 @@ function oUF:UNIT_COMBO_POINTS(event, unit)
 	end
 end
 
-table.insert(oUF.subTypes, function(self)
+local Enable = function(self)
 	if(self.CPoints) then
-		self:RegisterEvent'UNIT_COMBO_POINTS'
+		self:RegisterEvent('UNIT_COMBO_POINTS', Update)
+
+		return true
 	end
-end)
-oUF:RegisterSubTypeMapping'UNIT_COMBO_POINTS'
+end
+
+local Disable = function(self)
+	if(self.CPoints) then
+		self:UnregisterEvent('UNIT_COMBO_POINTS', Update)
+	end
+end
+
+oUF:AddElement('CPoints', Update, Enable, Disable)

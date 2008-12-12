@@ -66,8 +66,7 @@ local	_G, select, type, tostring, math_modf =
 local	UnitExists, UnitName =
 		UnitExists, UnitName
 
-local subTypes = {}
-local subTypesMapping = {}
+local elements = {}
 
 local enableTargetUpdate = function(object)
 	-- updating of "invalid" units.
@@ -232,8 +231,9 @@ local initObject = function(unit, style, ...)
 
 		object:RegisterEvent"PLAYER_ENTERING_WORLD"
 
-		for _, func in ipairs(subTypes) do
-			func(object, unit)
+		object.__elements = {}
+		for element in pairs(elements) do
+			object:EnableElement(element, unit)
 		end
 
 		for _, func in ipairs(callback) do
@@ -347,16 +347,14 @@ function oUF:UnregisterEvent(event, func)
 	if(not event) then return error('<TODO:event>') end
 
 	local curev = self[event]
-	if(curev and func) then
-		if(type(curev) == 'function') then
-			for k, infunc in ipairs(curev) do
-				if(infunc == func) then
-					curev[k] = nil
+	if(type(curev) == 'table' and func) then
+		for k, infunc in ipairs(curev) do
+			if(infunc == func) then
+				curev[k] = nil
 
-					if(#curev == 0) then
-						table.remove(curev, k)
-						UnregisterEvent(self, event)
-					end
+				if(#curev == 0) then
+					table.remove(curev, k)
+					UnregisterEvent(self, event)
 				end
 			end
 		end
@@ -366,14 +364,43 @@ function oUF:UnregisterEvent(event, func)
 	end
 end
 
-function oUF:RegisterSubTypeMapping(event)
-	for _, map in ipairs(subTypesMapping) do
-		if(map == event) then
-			return
+function oUF:AddElement(name, update, enable, disable)
+	if(elements[name]) then return error('<TODO:element>') end
+
+	elements[name] = {
+		update = update;
+		enable = enable;
+		disable = disable;
+	}
+end
+
+function oUF:EnableElement(name, unit)
+	local element = elements[name]
+	if(not element) then return end
+
+	if(element.enable(self, unit or self.unit)) then
+		table.insert(self.__elements, element.update)
+	end
+end
+
+function oUF:DisableElement(name)
+	local element = elements[name]
+	if(not element) then return end
+
+	for k, update in ipairs(self.__elements) do
+		if(update == element.update) then
+			table.remove(self.__elements, k)
+			element.disable(self)
+			break
 		end
 	end
+end
 
-	table.insert(subTypesMapping, event)
+function oUF:UpdateElement(name)
+	local element = elements[name]
+	if(not element) then return end
+
+	element.update(self, 'UpdateElement', self.unit)
 end
 
 oUF.Enable = RegisterUnitWatch
@@ -391,10 +418,8 @@ function oUF:PLAYER_ENTERING_WORLD(event)
 	local unit = self.unit
 	if(not UnitExists(unit)) then return end
 
-	for _, func in ipairs(subTypesMapping) do
-		if(self:IsEventRegistered(func)) then
-			self[func](self, event, unit)
-		end
+	for _, func in ipairs(self.__elements) do
+		func(self, event, unit)
 	end
 end
 
@@ -423,7 +448,5 @@ end
 oUF.version = _VERSION
 oUF.units = units
 oUF.objects = objects
-oUF.subTypes = subTypes
-oUF.subTypesMapping = subTypesMapping
 oUF.colors = colors
 _G[global] = oUF

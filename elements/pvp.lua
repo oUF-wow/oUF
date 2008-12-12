@@ -3,14 +3,8 @@ local global = GetAddOnMetadata(parent, 'X-oUF')
 assert(global, 'X-oUF needs to be defined in the parent add-on.')
 local oUF = _G[global]
 
-function oUF:UNIT_FACTION(event, unit)
+local Update = function(self, event, unit)
 	if(unit ~= self.unit) then return end
-
-	-- For tapping
-	if(event == 'UNIT_FACTION') then
-		if(self:IsEventRegistered'UNIT_MAXHEALTH') then self:UNIT_MAXHEALTH(event, unit) end
-		if(self:IsEventRegistered'UNIT_MAXMANA') then self:UNIT_MAXMANA(event, unit) end
-	end
 
 	if(self.PvP) then
 		local factionGroup = UnitFactionGroup(unit)
@@ -26,9 +20,18 @@ function oUF:UNIT_FACTION(event, unit)
 	end
 end
 
-table.insert(oUF.subTypes, function(self)
+local Enable = function(self)
 	if(self.PvP) then
-		self:RegisterEvent"UNIT_FACTION"
+		self:RegisterEvent("UNIT_FACTION", Update)
+
+		return true
 	end
-end)
-oUF:RegisterSubTypeMapping"UNIT_FACTION"
+end
+
+local Disable = function(self)
+	if(self.PvP) then
+		self:UnregisterEvent("UNIT_FACTION", Update)
+	end
+end
+
+oUF:AddElement('PvP', Update, Enable, Disable)

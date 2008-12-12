@@ -44,12 +44,12 @@ do
 		if(power ~= self.min) then
 			self.min = power
 
-			self:GetParent():UNIT_MANA("OnPowerUpdate", self.unit)
+			self:GetParent():UNIT_MAXMANA("OnPowerUpdate", self.unit)
 		end
 	end
 end
 
-function oUF:UNIT_MAXMANA(event, unit)
+local Update = function(self, event, unit)
 	if(self.unit ~= unit) then return end
 	if(self.PreUpdatePower) then self:PreUpdatePower(event, unit) end
 
@@ -102,43 +102,60 @@ function oUF:UNIT_MAXMANA(event, unit)
 	if(self.PostUpdatePower) then self:PostUpdatePower(event, unit, bar, min, max) end
 end
 
-oUF.UNIT_MANA = oUF.UNIT_MAXMANA
-oUF.UNIT_RAGE = oUF.UNIT_MAXMANA
-oUF.UNIT_FOCUS = oUF.UNIT_MAXMANA
-oUF.UNIT_ENERGY = oUF.UNIT_MAXMANA
-oUF.UNIT_MAXRAGE = oUF.UNIT_MAXMANA
-oUF.UNIT_MAXFOCUS = oUF.UNIT_MAXMANA
-oUF.UNIT_MAXENERGY = oUF.UNIT_MAXMANA
-oUF.UNIT_DISPLAYPOWER = oUF.UNIT_MAXMANA
-oUF.UNIT_RUNIC_POWER = oUF.UNIT_MAXMANA
-oUF.UNIT_MAXRUNIC_POWER = oUF.UNIT_MAXMANA
-
-table.insert(oUF.subTypes, function(self, unit)
+local Enable = function(self, unit)
 	local power = self.Power
 	if(power) then
 		if(power.frequentUpdates and (unit == 'player' or unit == 'pet')) then
+			power.disconnected = true
 			power:SetScript("OnUpdate", OnPowerUpdate)
 		else
-			self:RegisterEvent"UNIT_MANA"
-			self:RegisterEvent"UNIT_RAGE"
-			self:RegisterEvent"UNIT_FOCUS"
-			self:RegisterEvent"UNIT_ENERGY"
-			self:RegisterEvent"UNIT_RUNIC_POWER"
+			self:RegisterEvent("UNIT_MANA", Update)
+			self:RegisterEvent("UNIT_RAGE", Update)
+			self:RegisterEvent("UNIT_FOCUS", Update)
+			self:RegisterEvent("UNIT_ENERGY", Update)
+			self:RegisterEvent("UNIT_RUNIC_POWER", Update)
 		end
-		self:RegisterEvent"UNIT_MAXMANA"
-		self:RegisterEvent"UNIT_MAXRAGE"
-		self:RegisterEvent"UNIT_MAXFOCUS"
-		self:RegisterEvent"UNIT_MAXENERGY"
-		self:RegisterEvent"UNIT_DISPLAYPOWER"
-		self:RegisterEvent"UNIT_MAXRUNIC_POWER"
+		self:RegisterEvent("UNIT_MAXMANA", Update)
+		self:RegisterEvent("UNIT_MAXRAGE", Update)
+		self:RegisterEvent("UNIT_MAXFOCUS", Update)
+		self:RegisterEvent("UNIT_MAXENERGY", Update)
+		self:RegisterEvent("UNIT_DISPLAYPOWER", Update)
+		self:RegisterEvent("UNIT_MAXRUNIC_POWER", Update)
 
-		self:RegisterEvent'UNIT_HAPPINESS'
+		self:RegisterEvent('UNIT_HAPPINESS', Update)
 		-- For tapping.
-		self:RegisterEvent'UNIT_FACTION'
+		self:RegisterEvent('UNIT_FACTION', Update)
 
 		if(not power:GetStatusBarTexture()) then
 			power:SetStatusBarTexture[[Interface\TargetingFrame\UI-StatusBar]]
 		end
+
+		return true
 	end
-end)
-oUF:RegisterSubTypeMapping"UNIT_MAXMANA"
+end
+
+local Disable = function(self)
+	local power = self.Power
+	if(power) then
+		if(power:GetScript'OnUpdate') then
+			power:SetScript("OnUpdate", nil)
+		else
+			self:UnregisterEvent("UNIT_MANA", Update)
+			self:UnregisterEvent("UNIT_RAGE", Update)
+			self:UnregisterEvent("UNIT_FOCUS", Update)
+			self:UnregisterEvent("UNIT_ENERGY", Update)
+			self:UnregisterEvent("UNIT_RUNIC_POWER", Update)
+		end
+		self:UnregisterEvent("UNIT_MAXMANA", Update)
+		self:UnregisterEvent("UNIT_MAXRAGE", Update)
+		self:UnregisterEvent("UNIT_MAXFOCUS", Update)
+		self:UnregisterEvent("UNIT_MAXENERGY", Update)
+		self:UnregisterEvent("UNIT_DISPLAYPOWER", Update)
+		self:UnregisterEvent("UNIT_MAXRUNIC_POWER", Update)
+
+		self:UnregisterEvent('UNIT_HAPPINESS', Update)
+		self:UnregisterEvent('UNIT_FACTION', Update)
+	end
+end
+
+oUF:AddElement('Power', Update, Enable, Disable)

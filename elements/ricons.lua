@@ -6,7 +6,7 @@ local oUF = _G[global]
 local GetRaidTargetIndex = GetRaidTargetIndex
 local SetRaidTargetIconTexture = SetRaidTargetIconTexture
 
-function oUF:RAID_TARGET_UPDATE(event)
+local Update = function(self, event)
 	local index = GetRaidTargetIndex(self.unit)
 	local icon = self.RaidIcon
 
@@ -18,14 +18,24 @@ function oUF:RAID_TARGET_UPDATE(event)
 	end
 end
 
-table.insert(oUF.subTypes, function(self)
+local Enable = function(self)
 	local ricon = self.RaidIcon
 	if(ricon) then
-		self:RegisterEvent"RAID_TARGET_UPDATE"
+		self:RegisterEvent("RAID_TARGET_UPDATE", Update)
 
 		if(ricon:IsObjectType"Texture" and not ricon:GetTexture()) then
 			ricon:SetTexture[[Interface\TargetingFrame\UI-RaidTargetingIcons]]
 		end
+
+		return true
 	end
-end)
-oUF:RegisterSubTypeMapping"RAID_TARGET_UPDATE"
+end
+
+local Disable = function(self)
+	local ricon = self.RaidIcon
+	if(ricon) then
+		self:UnregisterEvent("RAID_TARGET_UPDATE", Update)
+	end
+end
+
+oUF:AddElement('RaidIcon', Update, Enable, Disable)

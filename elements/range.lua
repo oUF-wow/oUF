@@ -40,9 +40,11 @@ local OnRangeUpdate = function(self, elapsed)
 	end
 end
 
-table.insert(oUF.subTypes, function(self)
+local Enable = function(self)
 	if(self.Range and not OnRangeFrame) then
 		OnRangeFrame = CreateFrame"Frame"
 		OnRangeFrame:SetScript("OnUpdate", OnRangeUpdate)
 	end
-end)
+end
+
+oUF:AddElement('Range', nil, Enable)
