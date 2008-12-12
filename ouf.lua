@@ -148,7 +148,7 @@ local HandleUnit = function(unit, object)
 		ComboFrame:Hide()
 
 		-- Enable our shit
-		object:RegisterEvent"PLAYER_TARGET_CHANGED"
+		object:RegisterEvent("PLAYER_TARGET_CHANGED", 'PLAYER_ENTERING_WORLD')
 	elseif(unit == "focus") then
 		FocusFrame:UnregisterAllEvents()
 		FocusFrame.Show = dummy
@@ -158,9 +158,9 @@ local HandleUnit = function(unit, object)
 		FocusFrameManaBar:UnregisterAllEvents()
 		FocusFrameSpellBar:UnregisterAllEvents()
 
-		object:RegisterEvent"PLAYER_FOCUS_CHANGED"
+		object:RegisterEvent("PLAYER_FOCUS_CHANGED", 'PLAYER_ENTERING_WORLD')
 	elseif(unit == "mouseover") then
-		object:RegisterEvent"UPDATE_MOUSEOVER_UNIT"
+		object:RegisterEvent("UPDATE_MOUSEOVER_UNIT", 'PLAYER_ENTERING_WORLD')
 	elseif(unit:match"target") then
 		-- Hide the blizzard stuff
 		if(unit == "targettarget") then
@@ -316,15 +316,12 @@ local RegisterEvent = oUF.RegisterEvent
 function oUF:RegisterEvent(event, func)
 	if(not event) then return error('<TODO:event>') end
 
+	if(type(func) == 'string' and type(self[func]) == 'function') then
+		func = self[func]
+	end
+
 	local curev = self[event]
-
 	if(curev and func) then
-		if(type(func) == 'string' and type(self[func]) == 'function') then
-			func = self[func]
-		else
-			error('<TODO:event>')
-		end
-
 		if(type(curev) == 'function') then
 			self[event] = setmetatable({curev, func}, event_metatable)
 		else
@@ -400,10 +397,6 @@ function oUF:PLAYER_ENTERING_WORLD(event)
 		end
 	end
 end
-
-oUF.PLAYER_TARGET_CHANGED = oUF.PLAYER_ENTERING_WORLD
-oUF.PLAYER_FOCUS_CHANGED = oUF.PLAYER_ENTERING_WORLD
-oUF.UPDATE_MOUSEOVER_UNIT = oUF.PLAYER_ENTERING_WORLD
 
 -- http://www.wowwiki.com/ColorGradient
 function oUF.ColorGradient(perc, ...)
