@@ -171,7 +171,7 @@ local UNIT_SPELLCAST_CHANNEL_UPDATE = function(self, event, unit, spellname, spe
 	if(self.PostChannelUpdate) then self:PostChannelUpdate(event, unit, spellname, spellrank) end
 end
 
-local UNIT_SPELLCAST_CHANNEL_STOP = function(event, unit, spellname, spellrank)
+local UNIT_SPELLCAST_CHANNEL_STOP = function(self, event, unit, spellname, spellrank)
 	if(self.unit ~= unit) then return end
 
 	local castbar = self.Castbar
