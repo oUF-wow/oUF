@@ -39,7 +39,7 @@ tags = {
 	["[maxpp]"]       = UnitPowerMax,
 	["[missinghp]"]   = function(u) return UnitHealthMax(u) - UnitHealth(u) end,
 	["[missingpp]"]   = function(u) return UnitPowerMax(u) - UnitPower(u) end,
-	["[name]"]        = UnitName,
+	["[name]"]        = function(u) return UnitName(u) or '' end,
 	["[offline]"]     = function(u) return UnitIsConnected(u) and "" or "Offline" end,
 	["[perhp]"]       = function(u) local m = UnitHealthMax(u); return m == 0 and 0 or math.floor(UnitHealth(u)/m*100+0.5) end,
 	["[perpp]"]       = function(u) local m = UnitPowerMax(u); return m == 0 and 0 or math.floor(UnitPower(u)/m*100+0.5) end,
