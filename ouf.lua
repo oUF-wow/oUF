@@ -192,6 +192,8 @@ local initObject = function(unit, style, ...)
 	for i=1, num do
 		local object = select(i, ...)
 
+		object.__elements = {}
+
 		object = setmetatable(object, frame_metatable)
 		style(object, unit)
 
@@ -231,7 +233,6 @@ local initObject = function(unit, style, ...)
 
 		object:RegisterEvent"PLAYER_ENTERING_WORLD"
 
-		object.__elements = {}
 		for element in pairs(elements) do
 			object:EnableElement(element, unit)
 		end
