@@ -122,9 +122,9 @@ local OnUpdate = function(self, elapsed)
 	timer = timer + elapsed
 end
 
-local OnShow = function(self)
+local OnShow = function(self, event, unit)
 	for _, fs in ipairs(self.__tags) do
-		fs:UpdateTag()
+		fs:UpdateTag(unit)
 	end
 end
 
@@ -183,8 +183,8 @@ local Tag = function(self, fs, tagstr)
 			end
 		end
 
-		func = function(self)
-			local unit = self.parent.unit
+		func = function(self, unit)
+			unit = unit or self.parent.unit
 
 			for i, func in ipairs(args) do
 				tmp[i] = func(unit)
