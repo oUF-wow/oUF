@@ -442,10 +442,6 @@ function oUF.ColorGradient(perc, ...)
 	return r1 + (r2-r1)*relperc, g1 + (g2-g1)*relperc, b1 + (b2-b1)*relperc
 end
 
-function oUF:PARTY_MEMBERS_CHANGED(event)
-	if(self:IsEventRegistered"PARTY_LEADER_CHANGED") then self:PARTY_LEADER_CHANGED() end
-end
-
 oUF.version = _VERSION
 oUF.units = units
 oUF.objects = objects
