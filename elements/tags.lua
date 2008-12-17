@@ -39,7 +39,7 @@ tags = {
 	["[maxpp]"]       = UnitPowerMax,
 	["[missinghp]"]   = function(u) return UnitHealthMax(u) - UnitHealth(u) end,
 	["[missingpp]"]   = function(u) return UnitPowerMax(u) - UnitPower(u) end,
-	["[name]"]        = function(u) return UnitName(u) or '' end,
+	["[name]"]        = function(u, r) return UnitName(r or u) or '' end,
 	["[offline]"]     = function(u) return UnitIsConnected(u) and "" or "Offline" end,
 	["[perhp]"]       = function(u) local m = UnitHealthMax(u); return m == 0 and 0 or math.floor(UnitHealth(u)/m*100+0.5) end,
 	["[perpp]"]       = function(u) local m = UnitPowerMax(u); return m == 0 and 0 or math.floor(UnitPower(u)/m*100+0.5) end,
@@ -185,9 +185,10 @@ local Tag = function(self, fs, tagstr)
 
 		func = function(self)
 			local unit = self.parent.unit
+			local __unit = self.parent.__unit
 
 			for i, func in ipairs(args) do
-				tmp[i] = func(unit)
+				tmp[i] = func(unit, __unit)
 			end
 
 			self:SetFormattedText(format, unpack(tmp))
