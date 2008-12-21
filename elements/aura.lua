@@ -258,7 +258,9 @@ end
 
 local Enable = function(self)
 	if(self.Buffs or self.Debuffs or self.Auras) then
-		self.SetAuraPosition = SetAuraPosition
+		if(not self.SetAuraPosition) then 
+			self.SetAuraPosition = SetAuraPosition
+		end
 		self:RegisterEvent("UNIT_AURA", Update)
 
 		return true
@@ -267,7 +269,6 @@ end
 
 local Disable = function(self)
 	if(self.Buffs or self.Debuffs or self.Auras) then
-		self.SetAuraPosition = nil
 		self:UnregisterEvent("UNIT_AURA", Update)
 	end
 end
