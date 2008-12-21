@@ -12,7 +12,7 @@ do
 		end
 	end
 
-	local Enable = function(self)
+	local Enable = function(self, unit)
 		if(self.Resting and unit == 'player') then
 			self:RegisterEvent("PLAYER_UPDATE_RESTING", Update)
 
@@ -21,7 +21,7 @@ do
 	end
 
 	local Disable = function(self)
-		if(self.Resting and unit == 'player') then
+		if(self.Resting) then
 			self:UnregisterEvent("PLAYER_UPDATE_RESTING", Update)
 		end
 	end
