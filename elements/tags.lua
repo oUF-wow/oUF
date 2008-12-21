@@ -84,6 +84,7 @@ local tagEvents = {
 	["[pvp]"]         = "UNIT_FACTION",
 	["[resting]"]     = "PLAYER_UPDATE_RESTING",
 	["[status]"]      = "UNIT_HEALTH PLAYER_UPDATE_RESTING",
+	["[smartlevel]"]  = "UNIT_LEVEL PLAYER_LEVEL_UP",
 	["[threat]"]      = "UNIT_THREAT_SITUATION_UPDATE",
 	["[threatcolor]"] = "UNIT_THREAT_SITUATION_UPDATE",
 }
@@ -91,6 +92,7 @@ local tagEvents = {
 local unitlessEvents = {
 	PLAYER_TARGET_CHANGED = true,
 	PLAYER_FOCUS_CHANGED = true,
+	PLAYER_LEVEL_UP = true,
 }
 
 local events = {}
