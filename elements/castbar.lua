@@ -8,6 +8,7 @@ local global = GetAddOnMetadata(parent, 'X-oUF')
 assert(global, 'X-oUF needs to be defined in the parent add-on.')
 local oUF = _G[global]
 
+local noop = function() end
 local UnitName = UnitName
 local GetTime = GetTime
 local UnitCastingInfo = UnitCastingInfo
@@ -290,8 +291,12 @@ local Enable = function(object, unit)
 
 		if object.unit == "player" then
 			CastingBarFrame:UnregisterAllEvents()
-			CastingBarFrame.Show = function() end
+			CastingBarFrame.Show = noop
 			CastingBarFrame:Hide()
+		elseif(object.unit = 'pet') then
+			PetCastingBarFrame:UnregisterAllEvents()
+			PetCastingBarFrame.Show = noop
+			PetCastingBarFrame:Hide()
 		end
 
 		if(not castbar:GetStatusBarTexture()) then
