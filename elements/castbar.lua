@@ -293,7 +293,7 @@ local Enable = function(object, unit)
 			CastingBarFrame:UnregisterAllEvents()
 			CastingBarFrame.Show = noop
 			CastingBarFrame:Hide()
-		elseif(object.unit = 'pet') then
+		elseif(object.unit == 'pet') then
 			PetCastingBarFrame:UnregisterAllEvents()
 			PetCastingBarFrame.Show = noop
 			PetCastingBarFrame:Hide()
