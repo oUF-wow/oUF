@@ -34,6 +34,9 @@ local UNIT_ENTERED_VEHICLE = function(self, event, unit)
 	if(unit ~= self.unit) then return end
 
 	if(unit == 'player' and units.pet) then
+		-- Required for BuffFrame.lua
+		PlayerFrame.unit = 'vehicle'
+
 		toVehicle('vehicle', 'pet', 'player')
 	elseif(self.id) then
 		if(unit == 'party'..self.id and units['partypet'..self.id]) then
@@ -48,6 +51,9 @@ local UNIT_EXITED_VEHICLE = function(self, event, unit)
 	if(unit ~= self.__unit) then return end
 
 	if(unit == 'player' and units.pet) then
+		-- Required for BuffFrame.lua
+		PlayerFrame.unit = 'player'
+
 		toUnit('player', 'pet')
 	elseif(self.id) then
 		if(unit == 'party'..self.id and units['partypet'..self.id]) then
