@@ -55,6 +55,7 @@ tags = {
 	["[status]"]      = function(u) return UnitIsDead(u) and "Dead" or UnitIsGhost(u) and "Ghost" or not UnitIsConnected(u) and "Offline" or tags["[resting]"](u) end,
 	["[threat]"]      = function(u) local s = UnitThreatSituation(u) return s == 1 and "++" or s == 2 and "--" or s == 3 and "Aggro" or "" end,
 	["[threatcolor]"] = function(u) return Hex(GetThreatStatusColor(UnitThreatSituation(u))) end,
+	["[cpoints]"]     = function(u) local cp = GetComboPoints(u, 'target') return (cp > 0) and cp or '' end,
 
 	["[classification]"] = function(u)
 		local c = UnitClassification(u)
@@ -87,6 +88,7 @@ local tagEvents = {
 	["[smartlevel]"]  = "UNIT_LEVEL PLAYER_LEVEL_UP",
 	["[threat]"]      = "UNIT_THREAT_SITUATION_UPDATE",
 	["[threatcolor]"] = "UNIT_THREAT_SITUATION_UPDATE",
+	['[cpoints]']     = 'UNIT_COMBO_POINTS',
 }
 
 local unitlessEvents = {
