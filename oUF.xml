@@ -16,6 +16,7 @@
 	<Script file='elements\threat.lua' />
 	<Script file='elements\tags.lua' />
 	<Script file='elements\vehicle.lua' />
+	<Script file='elements\masterlooter.lua' />
 
 	<!--
 		This template requires the layout to set the anchoring positions from the
