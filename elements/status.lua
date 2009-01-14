@@ -18,7 +18,7 @@ do
 
 			if(self.Resting:IsObjectType"Texture" and not self.Resting:GetTexture()) then
 				self.Resting:SetTexture[[Interface\CharacterFrame\UI-StateIcon]]
-				self.Resting:SetTexCoords(0, .5, .421875)
+				self.Resting:SetTexCoord(0, .5, .421875)
 			end
 
 			return true
@@ -50,7 +50,7 @@ do
 
 			if(self.Combat:IsObjectType"Texture" and not self.Combat:GetTexture()) then
 				self.Combat:SetTexture[[Interface\CharacterFrame\UI-StateIcon]]
-				self.Combat:SetTexCoords(.5, 1, 0, .5)
+				self.Combat:SetTexCoord(.5, 1, 0, .5)
 			end
 
 			return true
