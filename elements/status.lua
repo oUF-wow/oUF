@@ -18,7 +18,7 @@ do
 
 			if(self.Resting:IsObjectType"Texture" and not self.Resting:GetTexture()) then
 				self.Resting:SetTexture[[Interface\CharacterFrame\UI-StateIcon]]
-				self.Resting:SetTexCoord(0, .5, .421875)
+				self.Resting:SetTexCoord(0, .5, 0, .421875)
 			end
 
 			return true
