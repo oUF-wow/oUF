@@ -80,6 +80,10 @@ local	_G, select, type, tostring, math_modf =
 local	UnitExists, UnitName =
 		UnitExists, UnitName
 
+local conv = {
+	['playerpet'] = 'pet',
+	['playertarget'] = 'target',
+}
 local elements = {}
 
 local enableTargetUpdate = function(object)
@@ -117,7 +121,9 @@ local OnAttributeChanged = function(self, name, value)
 		else
 			if(self.hasChildren) then
 				for _, object in ipairs(objects) do
-					object.unit = SecureButton_GetModifiedUnit(object)
+					local unit = SecureButton_GetModifiedUnit(object)
+					object.unit = conv[unit] or unit
+					object:PLAYER_ENTERING_WORLD()
 				end
 			end
 
