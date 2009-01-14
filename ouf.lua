@@ -4,9 +4,23 @@ assert(global, 'X-oUF needs to be defined in the parent add-on.')
 
 local _VERSION = '1.3.1'
 
+local function argcheck(value, num, ...)
+	assert(type(num) == 'number', "Bad argument #2 to 'argcheck' (number expected, got "..type(num)..")")
+
+	for i=1,select("#", ...) do
+		if type(value) == select(i, ...) then return end
+	end
+
+	local types = strjoin(", ", ...)
+	local name = string.match(debugstack(2,2,0), ": in function [`<](.-)['>]")
+	error("Bad argument #%d to '%s' (%s expected, got %s", num, name, types, type(value), 3)
+end
+
 local print = function(a) ChatFrame1:AddMessage("|cff33ff99oUF:|r "..tostring(a)) end
 local error = function(...) print("|cffff0000Error:|r "..string.format(...)) end
 local dummy = function() end
+
+
 local function SetManyAttributes(self, ...)
 	for i=1,select("#", ...),2 do
 		local att,val = select(i, ...)
@@ -260,26 +274,24 @@ function oUF:RegisterInitCallback(func)
 end
 
 function oUF:RegisterStyle(name, func)
-	if(type(name) ~= "string") then return error("Bad argument #1 to 'RegisterStyle' (string expected, got %s)", type(name)) end
-	if(type(func) == 'function' or (type(func) == 'table' and type(getmetatable(func).__call))) then
-		if(styles[name]) then return error("Style [%s] already registered.", name) end
-		if(not style) then style = name end
+	argcheck(name, 2, 'string')
+	argcheck(func, 3, 'function', 'table')
 
-		styles[name] = func
-	else
-		error("Bad argument #2 to 'RegisterStyle' (table/function expected, got %s)", type(func))
-	end
+	if(styles[name]) then return error("Style [%s] already registered.", name) end
+	if(not style) then style = name end
+
+	styles[name] = func
 end
 
 function oUF:SetActiveStyle(name)
-	if(type(name) ~= "string") then return error("Bad argument #1 to 'SetActiveStyle' (string expected, got %s)", type(name)) end
+	argcheck(name, 2, 'string')
 	if(not styles[name]) then return error("Style [%s] does not exist.", name) end
 
 	style = name
 end
 
 function oUF:Spawn(unit, name, template, disableBlizz)
-	if(not unit) then return error("Bad argument #1 to 'Spawn' (string expected, got %s)", type(unit)) end
+	argcheck(unit, 2, 'string')
 	if(not style) then return error("Unable to create frame. No styles have been registered.") end
 
 	local style = styles[style]
@@ -315,7 +327,7 @@ end
 
 local RegisterEvent = oUF.RegisterEvent
 function oUF:RegisterEvent(event, func)
-	if(not event) then return error('<TODO:event>') end
+	argcheck(event, 2, 'string')
 
 	if(type(func) == 'string' and type(self[func]) == 'function') then
 		func = self[func]
@@ -337,6 +349,8 @@ function oUF:RegisterEvent(event, func)
 	else
 		if(func) then
 			self[event] = func
+		elseif(not self[event]) then
+			error("Handler for event [%s] does not exist.", event)
 		end
 
 		RegisterEvent(self, event)
@@ -345,7 +359,7 @@ end
 
 local UnregisterEvent = oUF.UnregisterEvent
 function oUF:UnregisterEvent(event, func)
-	if(not event) then return error('<TODO:event>') end
+	argcheck(event, 2, 'string')
 
 	local curev = self[event]
 	if(type(curev) == 'table' and func) then
@@ -366,8 +380,12 @@ function oUF:UnregisterEvent(event, func)
 end
 
 function oUF:AddElement(name, update, enable, disable)
-	if(elements[name]) then return error('<TODO:element>') end
+	argcheck(name, 2, 'string')
+	argcheck(update, 3, 'function', 'nil')
+	argcheck(enable, 4, 'function', 'nil')
+	argcheck(disable, 5, 'function', 'nil')
 
+	if(elements[name]) then return error('Element [%s] is already registered.', name) end
 	elements[name] = {
 		update = update;
 		enable = enable;
@@ -376,6 +394,9 @@ function oUF:AddElement(name, update, enable, disable)
 end
 
 function oUF:EnableElement(name, unit)
+	argcheck(name, 2, 'string')
+	argcheck(unit, 3, 'string', 'nil')
+
 	local element = elements[name]
 	if(not element) then return end
 
@@ -385,6 +406,7 @@ function oUF:EnableElement(name, unit)
 end
 
 function oUF:DisableElement(name)
+	argcheck(name, 2, 'string')
 	local element = elements[name]
 	if(not element) then return end
 
@@ -398,6 +420,7 @@ function oUF:DisableElement(name)
 end
 
 function oUF:UpdateElement(name)
+	argcheck(name, 2, 'string')
 	local element = elements[name]
 	if(not element) then return end
 
