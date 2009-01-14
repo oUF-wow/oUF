@@ -16,6 +16,11 @@ do
 		if(self.Resting and unit == 'player') then
 			self:RegisterEvent("PLAYER_UPDATE_RESTING", Update)
 
+			if(self.Resting:IsObjectType"Texture" and not self.Resting:GetTexture()) then
+				self.Resting:SetTexture[[Interface\CharacterFrame\UI-StateIcon]]
+				self.Resting:SetTexCoords(0, .5, .421875)
+			end
+
 			return true
 		end
 	end
@@ -42,6 +47,11 @@ do
 		if(self.Combat and unit == 'player') then
 			self:RegisterEvent("PLAYER_REGEN_DISABLED", Update)
 			self:RegisterEvent("PLAYER_REGEN_ENABLED", Update)
+
+			if(self.Combat:IsObjectType"Texture" and not self.Combat:GetTexture()) then
+				self.Combat:SetTexture[[Interface\CharacterFrame\UI-StateIcon]]
+				self.Resting:SetTexCoords(.5, 1, 0, .5)
+			end
 
 			return true
 		end
