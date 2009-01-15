@@ -139,7 +139,8 @@ local RegisterEvent = function(fontstr, event)
 end
 
 local RegisterEvents = function(fontstr, tagstr)
-	for tag in tagstr:gmatch'[[][%w]+[]]' do
+	for tag in tagstr:gmatch'[[](.-)[]]' do
+		tag = tag:gsub('%b()', '')
 		local tagevents = tagEvents[tag]
 		if(tagevents) then
 			for event in tagevents:gmatch'%S+' do
@@ -192,32 +193,33 @@ local Tag = function(self, fs, tagstr)
 				if(not a) then a, t = bracket:match'[%[](%b())([%w]+)[%]]' end
 				if(not a) then b, t = bracket:match'[%[]([%w]+)(%b())[%]]' end
 				-- invalid tag...
+				t = tags[t]
 				if(not t) then return print'-- TODO!' end
 
-				if(a and b and tags[t]) then
+				if(a and b and t) then
 					a = a:sub(2,-2)
 					b = b:sub(2,-2)
 
 					tfunc = function(u)
-						local str = tags[t](u)
+						local str = t(u)
 						if(str) then
 							return a..str..b
 						end
 					end
-				elseif(a and t and tags[t]) then
+				elseif(a and t) then
 					a = a:sub(2,-2)
 
 					tfunc = function(u)
-						local str = tags[t](u)
+						local str = t(u)
 						if(str) then
 							return a..str
 						end
 					end
-				elseif(b and t and tags[t]) then
+				elseif(b and t) then
 					b = b:sub(2,-2)
 
 					tfunc = function(u)
-						local str = tags[t](u)
+						local str = t(u)
 						if(str) then
 							return str..b
 						end
