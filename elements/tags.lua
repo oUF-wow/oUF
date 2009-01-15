@@ -88,7 +88,7 @@ local tagEvents = {
 	["[smartlevel]"]  = "UNIT_LEVEL PLAYER_LEVEL_UP",
 	["[threat]"]      = "UNIT_THREAT_SITUATION_UPDATE",
 	["[threatcolor]"] = "UNIT_THREAT_SITUATION_UPDATE",
-	['[cpoints]']     = 'UNIT_COMBO_POINTS',
+	['[cpoints]']     = 'UNIT_COMBO_POINTS UNIT_TARGET',
 }
 
 local unitlessEvents = {
