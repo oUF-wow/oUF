@@ -4,7 +4,8 @@ assert(global, 'X-oUF needs to be defined in the parent add-on.')
 local oUF = _G[global]
 
 local Update = function(self, event)
-	if(UnitInParty(self.unit) and UnitIsPartyLeader(self.unit)) then
+	local unit = self.unit
+	if((UnitInParty(unit) or UnitInRaid(unit)) and UnitIsPartyLeader(unit)) then
 		self.Leader:Show()
 	else
 		self.Leader:Hide()
