@@ -139,8 +139,8 @@ local RegisterEvent = function(fontstr, event)
 end
 
 local RegisterEvents = function(fontstr, tagstr)
+	tagstr = tagstr:gsub('%b()', '')
 	for tag in tagstr:gmatch'[[](.-)[]]' do
-		tag = tag:gsub('%b()', '')
 		local tagevents = tagEvents[tag]
 		if(tagevents) then
 			for event in tagevents:gmatch'%S+' do
