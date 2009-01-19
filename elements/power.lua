@@ -14,8 +14,6 @@
 
 	Background:
 	 - multiplier - number used to manipulate the power background. (default: 1)
-
-	WotLK only:
 	 This option will only enable for player and pet.
 	 - frequentUpdates - do OnUpdate polling of power data.
 
