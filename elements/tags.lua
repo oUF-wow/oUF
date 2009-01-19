@@ -1,13 +1,11 @@
 --[[
 -- Experimental oUF tags
--- Status: Untested, Incomplete
+-- Status: Incomplete
 --
 -- Credits: Vika, Cladhaire, Tekkub
 --
 -- TODO:
---	- Do a full test, so we konw that it actually works.
 --	- Tag and Untag should be able to handle more than one fontstring at a time.
---	- Eventless units needs a initial onshow update.
 --	- Report when we don't find a matching tag.
 ]]
 
