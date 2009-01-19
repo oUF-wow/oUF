@@ -2,6 +2,16 @@
 	Original codebase:
 		oUF_Castbar by starlon.
 		http://svn.wowace.com/wowace/trunk/oUF_Castbar/
+
+	Elements handled: .Castbar
+	Sub-elements: .Text, .Icon, .Time, .SafeZone, .Spark
+	Notes: This element will not work on units that require a OnUpdate.
+	(eventless units).
+
+	Functions that can be overridden from within a layout:
+	 - :CustomDelayText(duration)
+	 - :CustomTimeText(duration)
+
 --]]
 local parent = debugstack():match[[\AddOns\(.-)\]]
 local global = GetAddOnMetadata(parent, 'X-oUF')
