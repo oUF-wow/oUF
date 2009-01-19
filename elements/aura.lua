@@ -1,6 +1,5 @@
 --[[
 	Elements handled: .Auras, .Buffs, .Debuffs
-	Notes: .Auras override .Buffs and .Debuffs if they exist on the same frame.
 
 	Shared:
 	 - spacing: Padding between aura icons. (Default: 0)
@@ -9,9 +8,7 @@
 	 - onlyShowPlayer: Only display icons casted by the player. (Default: nil)
 	 - growth-x: Growth direction, affected by initialAnchor. (Default: "UP")
 	 - growth-y: Growth direction, affected by initialAnchor. (Default: "RIGHT")
-	 - filter
-		- 2.x: Expects a boolean. (Default: nil)
-		- 3.x: Expects a string with filter. See the UnitAura[1] documentation for
+	 - filter: Expects a string with filter. See the UnitAura[1] documentation for
 		more information.
 
 	.Auras only:
