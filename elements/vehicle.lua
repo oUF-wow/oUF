@@ -36,6 +36,7 @@ local UNIT_ENTERED_VEHICLE = function(self, event, unit)
 	if(unit == 'player' and units.pet) then
 		-- Required for BuffFrame.lua
 		PlayerFrame.unit = 'vehicle'
+		BuffFrame_Update()
 
 		toVehicle('vehicle', 'pet', 'player')
 	elseif(self.id) then
