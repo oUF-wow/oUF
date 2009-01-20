@@ -212,7 +212,7 @@ local Tag = function(self, fs, tagstr)
 						tfunc = function(u)
 							local str = tag(u)
 							if(str) then
-								return a..str
+								return pre..str
 							end
 						end
 					elseif(ap) then
@@ -233,7 +233,7 @@ local Tag = function(self, fs, tagstr)
 			if(tfunc) then
 				table.insert(args,tfunc)
 			else
-				return print'Invalid tag %s.'
+				return error(('Attempted to use invalid tag %s.'):format(bracket), 3)
 			end
 		end
 
