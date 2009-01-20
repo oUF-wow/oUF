@@ -135,18 +135,18 @@ end
 local RegisterEvent = function(fontstr, event)
 	if(not events[event]) then events[event] = {} end
 
+	frame:RegisterEvent(event)
 	table.insert(events[event], fontstr)
 end
 
 local RegisterEvents = function(fontstr, tagstr)
+	-- Forcefully strip away any parentheses and the characters in them.
 	tagstr = tagstr:gsub('%b()', '')
 	for tag in tagstr:gmatch'[[](.-)[]]' do
 		local tagevents = tagEvents[tag]
 		if(tagevents) then
 			for event in tagevents:gmatch'%S+' do
-				if(not events[event]) then events[event] = {} end
-				table.insert(events[event], fontstr)
-				frame:RegisterEvent(event)
+				RegisterEvent(fontstr, event)
 			end
 		end
 	end
@@ -179,61 +179,61 @@ local Tag = function(self, fs, tagstr)
 
 	local func = tagPool[tagstr]
 	if(not func) then
-		-- Using .- in the match prevents use from supporting [] as prepend/postpend
+		-- Using .- in the match prevents use from supporting [] as prepend/append
 		-- characters. Supporting these and having a single pattern here is a real
 		-- headache however.
 		local format = tagstr:gsub('%%', '%%%%'):gsub('[[].-[]]', '%%s')
 		local args = {}
 
-		for bracket, tag in tagstr:gmatch'([[](.-)[]])' do
-			local tfunc = funcPool[bracket] or tags[tag]
+		for bracket in tagstr:gmatch'([[](.-)[]])' do
+			local tfunc = funcPool[bracket] or tags[bracket]
 			if(not tfunc) then
 				-- ...
-				local a, t, b = bracket:match'[%[](%b())([%w]+)(%b())[%]]'
-				if(not a) then a, t = bracket:match'[%[](%b())([%w]+)[%]]' end
-				if(not a) then b, t = bracket:match'[%[]([%w]+)(%b())[%]]' end
-				t = (t and '['.. t ..']')
-				-- invalid tag...
-				t = tags[t]
-				if(not t) then return print'-- TODO!' end
+				local pre, tag, ap = bracket:match'[%[](%b())([%w]+)(%b())[%]]'
+				if(not pre) then pre, tag = bracket:match'[%[](%b())([%w]+)[%]]' end
+				if(not pre) then b, tag = bracket:match'[%[]([%w]+)(%b())[%]]' end
+				tag = (tag and '['.. tag ..']')
+				tag = tags[tag]
 
-				if(a and b and t) then
-					a = a:sub(2,-2)
-					b = b:sub(2,-2)
+				if(tag) then
+					if(pre and ap) then
+						pre = pre:sub(2,-2)
+						ap = ap:sub(2,-2)
 
-					tfunc = function(u)
-						local str = t(u)
-						if(str) then
-							return a..str..b
+						tfunc = function(u)
+							local str = tag(u)
+							if(str) then
+								return pre..str..ap
+							end
+						end
+					elseif(pre) then
+						pre = pre:sub(2,-2)
+
+						tfunc = function(u)
+							local str = tag(u)
+							if(str) then
+								return a..str
+							end
+						end
+					elseif(ap) then
+						ap = ap:sub(2,-2)
+
+						tfunc = function(u)
+							local str = tag(u)
+							if(str) then
+								return str..ap
+							end
 						end
 					end
-				elseif(a and t) then
-					a = a:sub(2,-2)
 
-					tfunc = function(u)
-						local str = t(u)
-						if(str) then
-							return a..str
-						end
-					end
-				elseif(b and t) then
-					b = b:sub(2,-2)
-
-					tfunc = function(u)
-						local str = t(u)
-						if(str) then
-							return str..b
-						end
-					end
+					funcPool[bracket] = tfunc
 				end
-
-				funcPool[bracket] = tfunc
 			end
 
 			if(tfunc) then
 				table.insert(args,tfunc)
 			else
-				return print'-- TODO!'
+				return print'Invalid tag %s.'
 			end
 		end
 
