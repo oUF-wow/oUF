@@ -13,7 +13,7 @@ local function argcheck(value, num, ...)
 
 	local types = strjoin(", ", ...)
 	local name = string.match(debugstack(2,2,0), ": in function [`<](.-)['>]")
-	error("Bad argument #%d to '%s' (%s expected, got %s", num, name, types, type(value), 3)
+	error(("Bad argument #%d to '%s' (%s expected, got %s"):format(num, name, types, type(value)), 3)
 end
 
 local print = function(a) ChatFrame1:AddMessage("|cff33ff99oUF:|r "..tostring(a)) end
