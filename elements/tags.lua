@@ -6,7 +6,6 @@
 --
 -- TODO:
 --	- Tag and Untag should be able to handle more than one fontstring at a time.
---	- Report when we don't find a matching tag.
 ]]
 
 local parent = debugstack():match[[\AddOns\(.-)\]]
