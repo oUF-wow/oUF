@@ -170,6 +170,13 @@ local Tag = function(self, fs, tagstr)
 	if(not self.__tags) then
 		self.__tags = {}
 		table.insert(self.__elements, OnShow)
+	else
+		-- Drop out early if someone tries to double register a tag.
+		for _, tag in ipairs(self.__tags) do
+			if(fs == tag) then
+				return
+			end
+		end
 	end
 
 	fs.parent = self
@@ -265,12 +272,6 @@ local Tag = function(self, fs, tagstr)
 			RegisterEvent(fs, 'PLAYER_TARGET_CHANGED')
 		elseif(unit == 'mouseover') then
 			RegisterEvent(fs, 'UPDATE_MOUSEOVER_UNIT')
-		end
-	end
-
-	for k, tag in ipairs(self.__tags) do
-		if(fs == tag) then
-			return
 		end
 	end
 
