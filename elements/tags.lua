@@ -257,7 +257,7 @@ local Tag = function(self, fs, tagstr)
 	fs.UpdateTag = func
 
 	local unit = self.unit
-	if(unit and unit:match'%w+target') then
+	if((unit and unit:match'%w+target') or self.frequentTagUpdates) then
 		table.insert(eventlessUnits, fs)
 
 		if(not frame:GetScript'OnUpdate') then
