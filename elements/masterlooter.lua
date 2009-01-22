@@ -30,7 +30,9 @@ end
 local function Enable(self, unit)
 	local masterlooter = self.MasterLooter
 	if(masterlooter) then
-		self:RegisterEvent('PLAYER_MEMBERS_CHANGED', Update)
+		self:RegisterEvent('PARTY_LOOT_METHOD_CHANGED', Update)
+		-- Are these needed?
+		self:RegisterEvent('PARTY_MEMBERS_CHANGED', Update)
 		self:RegisterEvent('RAID_ROSTER_UPDATE', Update)
 
 		if(masterlooter:IsObjectType('Texture') and not masterlooter:GetTexture()) then
@@ -43,7 +45,9 @@ end
 
 local function Disable(self)
 	if(self.MasterLooter) then
-		self:UnregisterEvent('PLAYER_MEMBERS_CHANGED', Update)
+		self:UnregisterEvent('PARTY_LOOT_METHOD_CHANGED', Update)
+		-- Are these needed?
+		self:UeregisterEvent('PARTY_MEMBERS_CHANGED', Update)
 		self:UnregisterEvent('RAID_ROSTER_UPDATE', Update)
 	end
 end
