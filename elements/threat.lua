@@ -13,7 +13,7 @@ assert(global, 'X-oUF needs to be defined in the parent add-on.')
 local oUF = _G[global]
 
 local Update = function(self, event, unit)
-	if(unit and unit ~= self.unit) then return end
+	if(unit ~= self.unit) then return end
 	if(self.PreUpdateThreat) then self:PreUpdateThreat(event, unit) end
 
 	unit = unit or self.unit
