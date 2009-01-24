@@ -171,10 +171,13 @@ local Tag = function(self, fs, tagstr)
 		self.__tags = {}
 		table.insert(self.__elements, OnShow)
 	else
-		-- Drop out early if someone tries to double register a tag.
+		-- Since people ignore everything that's good practice - unregister the tag
+		-- if it already exists.
 		for _, tag in ipairs(self.__tags) do
 			if(fs == tag) then
-				return
+				-- We don't need to remove it from the __tags table as Untag handles
+				-- that for us.
+				self:Untag(fs)
 			end
 		end
 	end
