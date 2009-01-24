@@ -17,7 +17,7 @@ local function Update(self, event)
 			unit = 'raid'..rid
 		end
 
-		if(unit == self.unit) then
+		if(UnitIsUnit(unit, self.unit)) then
 			self.MasterLooter:Show()
 		elseif(self.MasterLooter:IsShown()) then
 			self.MasterLooter:Hide()
