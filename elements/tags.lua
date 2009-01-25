@@ -48,11 +48,25 @@ tags = {
 	["[resting]"]     = function(u) return u == "player" and IsResting() and "zzz" end,
 	["[sex]"]         = function(u) local s = UnitSex(u) return s == 2 and "Male" or s == 3 and "Female" end,
 	["[smartclass]"]  = function(u) return UnitIsPlayer(u) and tags["[class]"](u) or tags["[creature]"](u) end,
-	["[smartlevel]"]  = function(u) return UnitClassification(u) == "worldboss" and "Boss" or tags["[level]"](u).. tags["[plus]"](u) end,
 	["[status]"]      = function(u) return UnitIsDead(u) and "Dead" or UnitIsGhost(u) and "Ghost" or not UnitIsConnected(u) and "Offline" or tags["[resting]"](u) end,
 	["[threat]"]      = function(u) local s = UnitThreatSituation(u) return s == 1 and "++" or s == 2 and "--" or s == 3 and "Aggro" end,
 	["[threatcolor]"] = function(u) return Hex(GetThreatStatusColor(UnitThreatSituation(u))) end,
 	["[cpoints]"]     = function(u) local cp = GetComboPoints(u, 'target') return (cp > 0) and cp end,
+
+	['[smartlevel]'] = function(u)
+		local c = UnitClassification(u)
+		if(c == 'worldboss') then
+			return 'Boss'
+		else
+			local plus = tags['[plus]'](u)
+			local level = tags['[level]'](u)
+			if(plus) then
+				return level .. plus
+			else
+				return level
+			end
+		end
+	end,
 
 	["[classification]"] = function(u)
 		local c = UnitClassification(u)
