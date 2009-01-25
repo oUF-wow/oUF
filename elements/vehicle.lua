@@ -13,7 +13,13 @@ local toUnit = function(...)
 		for k, object in ipairs(objects) do
 			if(object.__unit == unit) then
 				object.__unit = nil
-				object:SetAttribute('unit', unit)
+
+				if(not InCombatLockdown()) then
+					object:SetAttribute('unit', unit)
+				else
+					object.unit = unit
+					object:PLAYER_ENTERING_WORLD()
+				end
 			end
 		end
 	end
