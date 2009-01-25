@@ -12,9 +12,9 @@ local toUnit = function(...)
 
 		for k, object in ipairs(objects) do
 			if(object.__unit == unit) then
-				object.__unit = nil
 
 				if(not InCombatLockdown()) then
+					object.__unit = nil
 					object:SetAttribute('unit', unit)
 				else
 					object.unit = unit
@@ -87,6 +87,7 @@ end
 local PLAYER_REGEN_ENABLED = function(self)
 	local unit = self.unit
 	if(self:GetAttribute'unit' ~= unit) then
+		self.__unit = nil
 		self:SetAttribute('unit', unit)
 	end
 end
@@ -102,10 +103,13 @@ oUF:AddElement(
 
 	-- Enable
 	function(self, unit)
-		if(self.disallowVehicleSwap or unit == 'pet') then return end
+		if(self.disallowVehicleSwap) then return end
 
-		self:RegisterEvent('UNIT_ENTERED_VEHICLE', UNIT_ENTERED_VEHICLE)
-		self:RegisterEvent('UNIT_EXITED_VEHICLE', UNIT_EXITED_VEHICLE)
+		if(unit ~= 'pet') then
+			self:RegisterEvent('UNIT_ENTERED_VEHICLE', UNIT_ENTERED_VEHICLE)
+			self:RegisterEvent('UNIT_EXITED_VEHICLE', UNIT_EXITED_VEHICLE)
+		end
+
 		self:RegisterEvent('PLAYER_REGEN_ENABLED', PLAYER_REGEN_ENABLED)
 	end,
 
