@@ -2,7 +2,7 @@ local parent = debugstack():match[[\AddOns\(.-)\]]
 local global = GetAddOnMetadata(parent, 'X-oUF')
 assert(global, 'X-oUF needs to be defined in the parent add-on.')
 
-local _VERSION = '1.3.1'
+local _VERSION = GetAddOnMetadata(parent, 'version')
 
 local function argcheck(value, num, ...)
 	assert(type(num) == 'number', "Bad argument #2 to 'argcheck' (number expected, got "..type(num)..")")
