@@ -212,7 +212,7 @@ local Tag = function(self, fs, tagstr)
 				-- ...
 				local pre, tag, ap = bracket:match'[%[](%b())([%w]+)(%b())[%]]'
 				if(not pre) then pre, tag = bracket:match'[%[](%b())([%w]+)[%]]' end
-				if(not pre) then b, tag = bracket:match'[%[]([%w]+)(%b())[%]]' end
+				if(not pre) then tag, ap = bracket:match'[%[]([%w]+)(%b())[%]]' end
 				tag = (tag and '['.. tag ..']')
 				tag = tags[tag]
 
