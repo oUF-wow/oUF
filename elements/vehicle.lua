@@ -26,8 +26,20 @@ local toVehicle = function(aUnit, bUnit, override)
 	aFrame.__unit = aFrame.unit
 	bFrame.__unit = bFrame.unit
 
-	aFrame:SetAttribute('unit', bUnit)
-	bFrame:SetAttribute('unit', override or aUnit)
+	if(not InCombatLockdown()) then
+		aFrame:SetAttribute('unit', bUnit)
+		bFrame:SetAttribute('unit', override or aUnit)
+	else
+		-- We manually change the unit here, so we can check if it's correct when
+		-- we drop combat.
+		aFrame.unit = bUnit
+		bFrame.unit = override or aUnit
+
+		-- Force an update to all the information is correct. This is usually done
+		-- by OnAttributeChanged.
+		aFrame:PLAYER_ENTERING_WORLD()
+		bFrame:PLAYER_ENTERING_WORLD()
+	end
 end
 
 local UNIT_ENTERED_VEHICLE = function(self, event, unit)
@@ -65,6 +77,14 @@ local UNIT_EXITED_VEHICLE = function(self, event, unit)
 	end
 end
 
+-- Swap the unit - I hate this solution and hope it's me whose stupid.
+local PLAYER_REGEN_ENABLED = function(self)
+	local unit = self.unit
+	if(self:GetAttribute'unit' ~= unit) then
+		self:SetAttribute('unit', unit)
+	end
+end
+
 oUF:AddElement(
 	'VehicleSwitch',
 
@@ -80,11 +100,13 @@ oUF:AddElement(
 
 		self:RegisterEvent('UNIT_ENTERED_VEHICLE', UNIT_ENTERED_VEHICLE)
 		self:RegisterEvent('UNIT_EXITED_VEHICLE', UNIT_EXITED_VEHICLE)
+		self:RegisterEvent('PLAYER_REGEN_ENABLED', PLAYER_REGEN_ENABLED)
 	end,
 
 	-- Disable
 	function(self)
 		self:UnregisterEvent('UNIT_ENTERED_VEHICLE', UNIT_ENTERED_VEHICLE)
 		self:UnregisterEvent('UNIT_EXITED_VEHICLE', UNIT_EXITED_VEHICLE)
+		self:UnregisterEvent('PLAYER_REGEN_ENABLED', PLAYER_REGEN_ENABLED)
 	end
 )
