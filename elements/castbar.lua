@@ -109,7 +109,7 @@ local UNIT_SPELLCAST_DELAYED = function(self, event, unit, spellname, spellrank)
 
 	castbar:SetValue(duration)
 
-	if(self.PostCastDelayed) then self:PostCastDelayed(event, unit, spellname, spellrank) end
+	if(self.PostCastDelayed) then self:PostCastDelayed(event, unit, name, rank, text) end
 end
 
 local UNIT_SPELLCAST_STOP = function(self, event, unit, spellname, spellrank, castid)
