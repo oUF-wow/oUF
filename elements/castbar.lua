@@ -59,7 +59,7 @@ local UNIT_SPELLCAST_START = function(self, event, unit, spell, spellrank)
 		sf:SetPoint'BOTTOM'
 	end
 
-	if(self.PostCastStart) then self:PostCastStart(event, unit, spell, spellrank, castid) end
+	if(self.PostCastStart) then self:PostCastStart(event, unit, name, rank, text, castid) end
 	castbar:Show()
 end
 
