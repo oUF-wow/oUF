@@ -161,7 +161,7 @@ local UNIT_SPELLCAST_CHANNEL_START = function(self, event, unit, spellname, spel
 		sf:SetPoint'BOTTOM'
 	end
 
-	if(self.PostChannelStart) then self:PostChannelStart(event, unit, spellname, spellrank) end
+	if(self.PostChannelStart) then self:PostChannelStart(event, unit, name, rank, text) end
 	castbar:Show()
 end
 
