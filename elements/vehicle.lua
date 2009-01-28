@@ -57,12 +57,6 @@ local UNIT_ENTERED_VEHICLE = function(self, event, unit)
 		BuffFrame_Update()
 
 		toVehicle('vehicle', 'pet', 'player')
-	elseif(self.id) then
-		if(unit == 'party'..self.id and units['partypet'..self.id]) then
-			toVehicle(unit, 'partypet'..self.id)
-		elseif(unit == 'raid'..self.id and units['raidpet'..self.id]) then
-			toVehicle(unit, 'raidpet'..self.id)
-		end
 	end
 end
 
@@ -74,12 +68,6 @@ local UNIT_EXITED_VEHICLE = function(self, event, unit)
 		PlayerFrame.unit = 'player'
 
 		toUnit('player', 'pet')
-	elseif(self.id) then
-		if(unit == 'party'..self.id and units['partypet'..self.id]) then
-			toUnit(unit, 'partypet'..self.id)
-		elseif(unit == 'raid'..self.id and units['raidpet'..self.id]) then
-			toUnit(unit, 'raidpet'..self.id)
-		end
 	end
 end
 
@@ -105,12 +93,13 @@ oUF:AddElement(
 	function(self, unit)
 		if(self.disallowVehicleSwap) then return end
 
-		if(unit ~= 'pet') then
+		if(unit == 'player') then
 			self:RegisterEvent('UNIT_ENTERED_VEHICLE', UNIT_ENTERED_VEHICLE)
 			self:RegisterEvent('UNIT_EXITED_VEHICLE', UNIT_EXITED_VEHICLE)
+		elseif(unit == 'pet') then
+			self:RegisterEvent('PLAYER_REGEN_ENABLED', PLAYER_REGEN_ENABLED)
 		end
 
-		self:RegisterEvent('PLAYER_REGEN_ENABLED', PLAYER_REGEN_ENABLED)
 	end,
 
 	-- Disable
