@@ -49,7 +49,7 @@ local toVehicle = function(aUnit, bUnit, override)
 end
 
 local UNIT_ENTERED_VEHICLE = function(self, event, unit)
-	if(unit ~= self.unit) then return end
+	if(unit ~= self.unit or not UnitHasVehicleUI(unit)) then return end
 
 	if(unit == 'player' and units.pet) then
 		-- Required for BuffFrame.lua
@@ -84,9 +84,12 @@ oUF:AddElement(
 	'VehicleSwitch',
 
 	-- Update
-	function(...)
-		UNIT_ENTERED_VEHICLE(...)
-		UNIT_EXITED_VEHICLE(...)
+	function(self, event, unit)
+		if(UnitHasVehicleUI(unit)) then
+			UNIT_ENTERED_VEHICLE(self, event, unit)
+		else
+			UNIT_EXITED_VEHICLE(self, event, unit)
+		end
 	end,
 
 	-- Enable
