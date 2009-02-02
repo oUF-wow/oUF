@@ -297,7 +297,6 @@ local Enable = function(object, unit)
 			object:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP", UNIT_SPELLCAST_CHANNEL_STOP)
 		end
 
-		castbar.parent = object
 		castbar:SetScript("OnUpdate", object.OnCastbarUpdate or onUpdate)
 
 		if object.unit == "player" then
@@ -344,7 +343,6 @@ local Disable = function(object, unit)
 		object:UnregisterEvent("UNIT_SPELLCAST_CHANNEL_INTERRUPTED", UNIT_SPELLCAST_CHANNEL_INTERRUPTED)
 		object:UnregisterEvent("UNIT_SPELLCAST_CHANNEL_STOP", UNIT_SPELLCAST_CHANNEL_STOP)
 
-		castbar.parent = nil
 		castbar:SetScript("OnUpdate", nil)
 	end
 end
