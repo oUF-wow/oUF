@@ -127,6 +127,7 @@ local updateIcon = function(self, unit, icons, index, offset, filter, isDebuff, 
 		icon:Show()
 		icon:SetID(index)
 
+		icon.isPlayer = isPlayer
 		icon.filter = filter
 		icon.debuff = isDebuff
 		icon.icon:SetTexture(texture)
