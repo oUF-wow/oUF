@@ -169,6 +169,10 @@ local UNIT_SPELLCAST_CHANNEL_UPDATE = function(self, event, unit, spellname, spe
 	if(self.unit ~= unit) then return end
 
 	local name, rank, text, texture, startTime, endTime, oldStart = UnitChannelInfo(unit)
+	if(not name) then
+		return
+	end
+
 	local castbar = self.Castbar
 	local duration = (endTime / 1000) - GetTime()
 
@@ -186,12 +190,14 @@ local UNIT_SPELLCAST_CHANNEL_STOP = function(self, event, unit, spellname, spell
 	if(self.unit ~= unit) then return end
 
 	local castbar = self.Castbar
-	castbar.channeling = nil
+	if(castbar:IsShown()) then
+		castbar.channeling = nil
 
-	castbar:SetValue(castbar.max)
-	castbar:Hide()
+		castbar:SetValue(castbar.max)
+		castbar:Hide()
 
-	if(self.PostChannelStop) then self:PostChannelStop(event, unit, spellname, spellrank) end
+		if(self.PostChannelStop) then self:PostChannelStop(event, unit, spellname, spellrank) end
+	end
 end
 
 local onUpdate = function(self, elapsed)
