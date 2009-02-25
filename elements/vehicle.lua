@@ -14,7 +14,7 @@ local Update = function()
 			object.unit = object.normalUnit
 		end
 
-		if object.unit ~= object:GetAttribute("unit") then
+		if object.unit ~= object:GetAttribute("unit") then
 			object:SetAttribute("unit", object.unit)
 
 			if object.normalUnit == "player" then
