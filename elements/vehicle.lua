@@ -4,111 +4,63 @@ assert(global, 'X-oUF needs to be defined in the parent add-on.')
 local oUF = _G[global]
 
 local objects = oUF.objects
-local units = oUF.units
 
-local toUnit = function(...)
-	for i=1, select('#', ...) do
-		local unit = select(i, ...)
+local Update = function()
+	local hasVehicle = UnitHasVehicleUI("player")
+	for _, object in next, objects do
+		if hasVehicle and object.vehicleUnit then
+			object.unit = object.vehicleUnit
+		elseif object.normalUnit then
+			object.unit = object.normalUnit
+		end
 
-		for k, object in ipairs(objects) do
-			if(object.__unit == unit) then
+		if object.unit ~= object:GetAttribute("unit") then
+			object:SetAttribute("unit", object.unit)
 
-				if(not InCombatLockdown()) then
-					object.__unit = nil
-					object:SetAttribute('unit', unit)
-				else
-					object.unit = unit
-					object:PLAYER_ENTERING_WORLD()
-				end
+			if object.normalUnit == "player" then
+				PlayerFrame.unit = object.unit
+				BuffFrame_Update()
 			end
 		end
 	end
 end
 
-local toVehicle = function(aUnit, bUnit, override)
-	local aFrame = units[override or aUnit]
-	local bFrame = units[bUnit]
-
-	aFrame.__unit = aFrame.unit
-	bFrame.__unit = bFrame.unit
-
-	if(not InCombatLockdown()) then
-		aFrame:SetAttribute('unit', bUnit)
-		bFrame:SetAttribute('unit', override or aUnit)
-	else
-		-- We manually change the unit here, so we can check if it's correct when
-		-- we drop combat.
-		aFrame.unit = bUnit
-		bFrame.unit = override or aUnit
-
-		-- Force an update to all the information is correct. This is usually done
-		-- by OnAttributeChanged.
-		aFrame:PLAYER_ENTERING_WORLD()
-		bFrame:PLAYER_ENTERING_WORLD()
-	end
+local PLAYER_REGEN_ENABLED = function(self, event)
+	Update()
 end
 
 local UNIT_ENTERED_VEHICLE = function(self, event, unit)
-	if(unit ~= self.unit or not UnitHasVehicleUI(unit)) then return end
-
-	if(unit == 'player' and units.pet) then
-		-- Required for BuffFrame.lua
-		PlayerFrame.unit = 'vehicle'
-		BuffFrame_Update()
-
-		toVehicle('vehicle', 'pet', 'player')
+	if not InCombatLockdown() then
+		Update()
 	end
 end
 
 local UNIT_EXITED_VEHICLE = function(self, event, unit)
-	if(unit ~= self.__unit) then return end
-
-	if(unit == 'player' and units.pet) then
-		-- Required for BuffFrame.lua
-		PlayerFrame.unit = 'player'
-
-		toUnit('player', 'pet')
+	if not InCombatLockdown() then
+		Update()
 	end
 end
 
--- Swap the unit - I hate this solution and hope it's me whose stupid.
-local PLAYER_REGEN_ENABLED = function(self)
-	local unit = self.unit
-	if(self:GetAttribute'unit' ~= unit) then
-		self.__unit = nil
-		self:SetAttribute('unit', unit)
+local Enable = function(self, unit)
+	if self.disallowVehicleSwap then return end
+
+	self.normalUnit = unit
+
+	if unit == "player" then
+		self.vehicleUnit = "vehicle"
+
+		self:RegisterEvent("UNIT_ENTERED_VEHICLE", UNIT_ENTERED_VEHICLE)
+		self:RegisterEvent("UNIT_EXITED_VEHICLE", UNIT_EXITED_VEHICLE)
+		self:RegisterEvent("PLAYER_REGEN_ENABLED", PLAYER_REGEN_ENABLED)
+	elseif unit == "pet" then
+		self.vehicleUnit = "player"
 	end
 end
 
-oUF:AddElement(
-	'VehicleSwitch',
+local Disable = function(self)
+	self:UnregisterEvent("UNIT_ENTERED_VEHICLE", UNIT_ENTERED_VEHICLE)
+	self:UnregisterEvent("UNIT_EXITED_VEHICLE", UNIT_EXITED_VEHICLE)
+	self:UnregisterEvent("PLAYER_REGEN_ENABLED", PLAYER_REGEN_ENABLED)
+end
 
-	-- Update
-	function(self, event, unit)
-		if(UnitHasVehicleUI(unit)) then
-			UNIT_ENTERED_VEHICLE(self, event, unit)
-		else
-			UNIT_EXITED_VEHICLE(self, event, unit)
-		end
-	end,
-
-	-- Enable
-	function(self, unit)
-		if(self.disallowVehicleSwap) then return end
-
-		if(unit == 'player') then
-			self:RegisterEvent('UNIT_ENTERED_VEHICLE', UNIT_ENTERED_VEHICLE)
-			self:RegisterEvent('UNIT_EXITED_VEHICLE', UNIT_EXITED_VEHICLE)
-		elseif(unit == 'pet') then
-			self:RegisterEvent('PLAYER_REGEN_ENABLED', PLAYER_REGEN_ENABLED)
-		end
-
-	end,
-
-	-- Disable
-	function(self)
-		self:UnregisterEvent('UNIT_ENTERED_VEHICLE', UNIT_ENTERED_VEHICLE)
-		self:UnregisterEvent('UNIT_EXITED_VEHICLE', UNIT_EXITED_VEHICLE)
-		self:UnregisterEvent('PLAYER_REGEN_ENABLED', PLAYER_REGEN_ENABLED)
-	end
-)
+oUF:AddElement("VehicleSwitch", Update, Enable, Disable)

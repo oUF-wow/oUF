@@ -108,7 +108,7 @@ end
 
 -- Events
 local OnEvent = function(self, event, ...)
-	if(not self:IsShown() and not self.__unit) then return end
+	if(not self:IsShown() and not self.vehicleUnit) then return end
 	self[event](self, event, ...)
 end
 
