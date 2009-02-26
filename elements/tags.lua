@@ -116,7 +116,7 @@ local frame = CreateFrame"Frame"
 frame:SetScript('OnEvent', function(self, event, unit)
 	local strings = events[event]
 	if(strings) then
-		for k, fontstring in ipairs(strings) do
+		for k, fontstring in next, strings do
 			if(not unitlessEvents[event] and fontstring.parent.unit == unit and fontstring:IsVisible()) then
 				fontstring:UpdateTag()
 			end
@@ -129,7 +129,7 @@ local timer = .5
 local lowestTimer = .5
 local OnUpdate = function(self, elapsed)
 	if(timer >= lowestTimer) then
-		for k, fs in ipairs(eventlessUnits) do
+		for k, fs in next, eventlessUnits do
 			if(fs.parent:IsShown() and UnitExists(fs.parent.unit)) then
 				fs:UpdateTag()
 			end
@@ -142,7 +142,7 @@ local OnUpdate = function(self, elapsed)
 end
 
 local OnShow = function(self)
-	for _, fs in ipairs(self.__tags) do
+	for _, fs in next, self.__tags do
 		fs:UpdateTag()
 	end
 end
@@ -169,7 +169,7 @@ end
 
 local UnregisterEvents = function(fontstr)
 	for events, data in pairs(events) do
-		for k, tagfsstr in ipairs(data) do
+		for k, tagfsstr in pairs(data) do
 			if(tagfsstr == fontstr) then
 				if(#data[k] == 1) then frame:UnregisterEvent(event) end
 				data[k] = nil
@@ -191,7 +191,7 @@ local Tag = function(self, fs, tagstr)
 	else
 		-- Since people ignore everything that's good practice - unregister the tag
 		-- if it already exists.
-		for _, tag in ipairs(self.__tags) do
+		for _, tag in pairs(self.__tags) do
 			if(fs == tag) then
 				-- We don't need to remove it from the __tags table as Untag handles
 				-- that for us.
@@ -266,7 +266,7 @@ local Tag = function(self, fs, tagstr)
 			local unit = self.parent.unit
 			local __unit = self.parent.__unit
 
-			for i, func in ipairs(args) do
+			for i, func in next, args do
 				tmp[i] = func(unit, __unit) or ''
 			end
 
@@ -307,13 +307,13 @@ local Untag = function(self, fs)
 	if(not fs or self == oUF) then return end
 
 	UnregisterEvents(fs)
-	for k, fontstr in ipairs(eventlessUnits) do
+	for k, fontstr in next, eventlessUnits do
 		if(fs == fontstr) then
 			table.remove(eventlessUnits, k)
 		end
 	end
 
-	for k, fontstr in ipairs(self.__tags) do
+	for k, fontstr in next, (self.__tags do
 		if(fontstr == fs) then
 			table.remove(self.__tags, k)
 		end
