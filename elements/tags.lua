@@ -80,13 +80,13 @@ tags = {
 }
 local tagEvents = {
 	["[curhp]"]               = "UNIT_HEALTH",
-	["[curpp]"]               = "UNIT_ENERGY UNIT_FOCUS UNIT_MANA UNIT_RAGE",
+	["[curpp]"]               = "UNIT_ENERGY UNIT_FOCUS UNIT_MANA UNIT_RAGE UNIT_RUNIC_POWER",
 	["[dead]"]                = "UNIT_HEALTH",
 	["[leader]"]              = "PARTY_LEADER_CHANGED",
 	["[leaderlong]"]          = "PARTY_LEADER_CHANGED",
 	["[level]"]               = "UNIT_LEVEL PLAYER_LEVEL_UP",
 	["[maxhp]"]               = "UNIT_MAXHEALTH",
-	["[maxpp]"]               = "UNIT_MAXENERGY UNIT_MAXFOCUS UNIT_MAXMANA UNIT_MAXRAGE",
+	["[maxpp]"]               = "UNIT_MAXENERGY UNIT_MAXFOCUS UNIT_MAXMANA UNIT_MAXRAGE UNIT_MAXRUNIC_POWER",
 	["[missinghp]"]           = "UNIT_HEALTH UNIT_MAXHEALTH",
 	["[missingpp]"]           = "UNIT_MAXENERGY UNIT_MAXFOCUS UNIT_MAXMANA UNIT_MAXRAGE UNIT_ENERGY UNIT_FOCUS UNIT_MANA UNIT_RAGE UNIT_MAXRUNIC_POWER UNIT_RUNIC_POWER",
 	["[name]"]                = "UNIT_NAME_UPDATE",
