@@ -7,6 +7,7 @@
 	 - colorDisconnected
 	 - colorHappiness
 	 - colorClass (Colors player units based on class)
+	 - colorClassPet (Colors pet units based on class)
 	 - colorClassNPC (Colors non-player units based on class)
 	 - colorReaction
 	 - colorSmooth - will use smoothGradient instead of the internal gradient if set.
@@ -64,7 +65,9 @@ local Update = function(self, event, unit)
 			t = self.colors.disconnected
 		elseif(bar.colorHappiness and unit == "pet" and GetPetHappiness()) then
 			t = self.colors.happiness[GetPetHappiness()]
-		elseif(bar.colorClass and UnitIsPlayer(unit)) or (bar.colorClassNPC and not UnitIsPlayer(unit)) then
+		elseif(bar.colorClass and UnitIsPlayer(unit)) or
+			(bar.colorClassNPC and not UnitIsPlayer(unit)) or
+			(bar.colorClassPet and UnitPlayerControlled(unit) and not UnitIsPlayer(unit)) then
 			local _, class = UnitClass(unit)
 			t = self.colors.class[class]
 		elseif(bar.colorReaction) then
