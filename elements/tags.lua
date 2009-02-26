@@ -40,7 +40,7 @@ tags = {
 	["[offline]"]     = function(u) return  (not UnitIsConnected(u) and "Offline") end,
 	["[perhp]"]       = function(u) local m = UnitHealthMax(u); return m == 0 and 0 or math.floor(UnitHealth(u)/m*100+0.5) end,
 	["[perpp]"]       = function(u) local m = UnitPowerMax(u); return m == 0 and 0 or math.floor(UnitPower(u)/m*100+0.5) end,
-	["[plus]"]        = function(u) return UnitIsPlusMob(u) and "+" end,
+	["[plus]"]        = function(u) local c = UnitClassification(u); return (c == "elite" or c == "rareelite") and "+" end,
 	["[pvp]"]         = function(u) return UnitIsPVP(u) and "PvP" end,
 	["[race]"]        = function(u) return UnitRace(u) end,
 	["[raidcolor]"]   = function(u) local _, x = UnitClass(u); return x and Hex(RAID_CLASS_COLORS[x]) end,
