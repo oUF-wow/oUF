@@ -126,8 +126,9 @@ end)
 
 local eventlessUnits = {}
 local timer = .5
+local lowestTimer = .5
 local OnUpdate = function(self, elapsed)
-	if(timer >= .5) then
+	if(timer >= lowestTimer) then
 		for k, fs in ipairs(eventlessUnits) do
 			if(fs.parent:IsShown() and UnitExists(fs.parent.unit)) then
 				fs:UpdateTag()
@@ -278,6 +279,10 @@ local Tag = function(self, fs, tagstr)
 
 	local unit = self.unit
 	if((unit and unit:match'%w+target') or fs.frequentUpdates) then
+		if(type(fs.frequentUpdates) == 'number') then
+			lowestTimer = math.min(fs.frequentUpdates, lowestTimer)
+		end
+
 		table.insert(eventlessUnits, fs)
 
 		if(not frame:GetScript'OnUpdate') then
