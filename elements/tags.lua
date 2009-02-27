@@ -313,7 +313,7 @@ local Untag = function(self, fs)
 		end
 	end
 
-	for k, fontstr in next, (self.__tags do
+	for k, fontstr in next, self.__tags do
 		if(fontstr == fs) then
 			table.remove(self.__tags, k)
 		end
