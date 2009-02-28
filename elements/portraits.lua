@@ -8,14 +8,17 @@ local Update = function(self, event, unit)
 
 	local portrait = self.Portrait
 	if(portrait:IsObjectType'Model') then
+		local name = UnitName(unit)
 		if(not UnitExists(unit) or not UnitIsConnected(unit) or not UnitIsVisible(unit)) then
 			portrait:SetModelScale(4.25)
 			portrait:SetPosition(0, 0, -1.5)
 			portrait:SetModel"Interface\\Buttons\\talktomequestionmark.mdx"
-		else
+		elseif(portrait.name ~= name) then
 			portrait:SetUnit(unit)
 			portrait:SetCamera(0)
 			portrait:Show()
+
+			portrait.name = name
 		end
 	else
 		SetPortraitTexture(portrait, unit)
