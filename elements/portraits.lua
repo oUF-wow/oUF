@@ -16,9 +16,10 @@ local Update = function(self, event, unit)
 		elseif(portrait.name ~= name) then
 			portrait:SetUnit(unit)
 			portrait:SetCamera(0)
-			portrait:Show()
 
 			portrait.name = name
+		else
+			portrait:SetCamera(0)
 		end
 	else
 		SetPortraitTexture(portrait, unit)
