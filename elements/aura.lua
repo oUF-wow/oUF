@@ -8,6 +8,7 @@
 	 - onlyShowPlayer: Only display icons casted by the player. (Default: nil)
 	 - growth-x: Growth direction, affected by initialAnchor. (Default: "UP")
 	 - growth-y: Growth direction, affected by initialAnchor. (Default: "RIGHT")
+	 - disableCooldown: Disable the Cooldown Spiral on the Aura Icons. (Default: nil)
 	 - filter: Expects a string with filter. See the UnitAura[1] documentation for
 		more information.
 
@@ -107,7 +108,7 @@ local updateIcon = function(self, unit, icons, index, offset, filter, isDebuff, 
 	if((icons.onlyShowPlayer and isPlayer) or (not icons.onlyShowPlayer and name)) then
 		if(not icon) then icon = (self.CreateAuraIcon and self:CreateAuraIcon(icons, index, isDebuff)) or createAuraIcon(self, icons, index, isDebuff) end
 
-		if(duration and duration > 0) then
+		if(not icons.disableCooldown and duration and duration > 0) then
 			icon.cd:SetCooldown(timeLeft - duration, duration)
 			icon.cd:Show()
 		else
