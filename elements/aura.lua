@@ -192,7 +192,7 @@ local Update = function(self, event, unit)
 		local visibleBuffs, visibleDebuffs = 0, 0
 		for index = 1, max do
 			if(index > buffs) then
-				if(updateIcon(self, unit, auras, index % debuffs, buffs, auras.debuffFilter or auras.filter or 'HARMFUL', true, debuffs)) then
+				if(updateIcon(self, unit, auras, index % debuffs, visibleBuffs, auras.debuffFilter or auras.filter or 'HARMFUL', true, debuffs)) then
 					visibleDebuffs = visibleDebuffs + 1
 				end
 			else
