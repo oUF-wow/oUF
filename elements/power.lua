@@ -78,7 +78,7 @@ local Update = function(self, event, unit)
 			local _, class = UnitClass(unit)
 			t = self.colors.class[class]
 		elseif(bar.colorReaction) then
-			r, g, b = UnitSelectionColor(unit)
+			t = self.colors.reaction[UnitReaction(unit, "player")]
 		elseif(bar.colorSmooth) then
 			r, g, b = self.ColorGradient(min / max, unpack(bar.smoothGradient or self.colors.smooth))
 		end
