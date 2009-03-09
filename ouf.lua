@@ -51,14 +51,18 @@ local colors = {
 
 -- We do this because people edit the vars directly, and changing the default
 -- globals makes SPICE FLOW!
-for eclass, color in pairs(RAID_CLASS_COLORS) do
+for eclass, color in next, RAID_CLASS_COLORS do
 	colors.class[eclass] = {color.r, color.g, color.b}
 end
 
-for power, color in pairs(PowerBarColor) do
+for power, color in next, PowerBarColor do
 	if(type(power) == 'string') then
 		colors.power[power] = {color.r, color.g, color.b}
 	end
+end
+
+for eclass, color in next, FACTION_BAR_COLORS do
+	colors.reaction[eclass] = {color.r, color.g, color.b}
 end
 
 -- add-on object
