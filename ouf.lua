@@ -124,7 +124,7 @@ local OnAttributeChanged = function(self, name, value)
 			return
 		else
 			if(self.hasChildren) then
-				for _, object in ipairs(objects) do
+				for _, object in next, objects do
 					local unit = SecureButton_GetModifiedUnit(object)
 					object.unit = conv[unit] or unit
 					object:PLAYER_ENTERING_WORLD()
@@ -257,11 +257,11 @@ local initObject = function(unit, style, ...)
 
 		object:RegisterEvent"PLAYER_ENTERING_WORLD"
 
-		for element in pairs(elements) do
+		for element in next, elements do
 			object:EnableElement(element, unit)
 		end
 
-		for _, func in ipairs(callback) do
+		for _, func in next, callback do
 			func(object)
 		end
 
@@ -452,7 +452,7 @@ function oUF:PLAYER_ENTERING_WORLD(event)
 	local unit = self.unit
 	if(not UnitExists(unit)) then return end
 
-	for _, func in ipairs(self.__elements) do
+	for _, func in next, self.__elements do
 		func(self, event, unit)
 	end
 end
