@@ -318,6 +318,8 @@ local Untag = function(self, fs)
 			table.remove(self.__tags, k)
 		end
 	end
+
+	fs.UpdateTag = nil
 end
 
 oUF.Tags = tags
