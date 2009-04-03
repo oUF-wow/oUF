@@ -106,7 +106,7 @@ local customFilter = function(icons, unit, icon, name, rank, texture, count, dty
 	local isPlayer = caster
 
 	if(ulduar) then
-		caster = caster == unit
+		isPlayer = caster == unit
 	end
 
 	if((icons.onlyShowPlayer and isPlayer) or (not icons.onlyShowPlayer and name)) then
