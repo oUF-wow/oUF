@@ -48,6 +48,8 @@ local global = GetAddOnMetadata(parent, 'X-oUF')
 assert(global, 'X-oUF needs to be defined in the parent add-on.')
 local oUF = _G[global]
 
+local ulduar = select(4, GetBuildInfo()) >= 30100
+
 local OnEnter = function(self)
 	if(not self:IsVisible()) then return end
 
@@ -100,14 +102,14 @@ local createAuraIcon = function(self, icons, index, debuff)
 	return button
 end
 
-local updateIcon = function(self, unit, icons, index, offset, filter, isDebuff, max)
-	if(index == 0) then index = max end
-	local name, rank, texture, count, dtype, duration, timeLeft, isPlayer = UnitAura(unit, index, filter)
+local customFilter = function(icons, unit, icon, name, rank, texture, count, dtype, duration, timeLeft, caster)
+	local isPlayer = caster
 
-	local icon = icons[index + offset]
+	if(ulduar) then
+		caster = caster == unit
+	end
+
 	if((icons.onlyShowPlayer and isPlayer) or (not icons.onlyShowPlayer and name)) then
-		if(not icon) then icon = (self.CreateAuraIcon and self:CreateAuraIcon(icons, index, isDebuff)) or createAuraIcon(self, icons, index, isDebuff) end
-
 		if(not icons.disableCooldown and duration and duration > 0) then
 			icon.cd:SetCooldown(timeLeft - duration, duration)
 			icon.cd:Show()
@@ -125,18 +127,34 @@ local updateIcon = function(self, unit, icons, index, offset, filter, isDebuff, 
 			icon.overlay:Hide()
 		end
 
-		icon:Show()
-		icon:SetID(index)
-
 		icon.isPlayer = isPlayer
 		icon.filter = filter
 		icon.debuff = isDebuff
 		icon.icon:SetTexture(texture)
 		icon.count:SetText((count > 1 and count))
 
-		if(self.PostUpdateAuraIcon) then self:PostUpdateAuraIcon(icons, unit, icon, index, offset, filter, isDebuff) end
 		return true
-	elseif(icon) then
+	end
+end
+
+local updateIcon = function(self, unit, icons, index, offset, filter, isDebuff, max)
+	if(index == 0) then index = max end
+
+	local icon = icons[index + offset]
+	if(not icon) then
+		icon = (self.CreateAuraIcon or createAuraIcon) (self, icons, index, isDebuff)
+	end
+
+	if((self.CustomAuraFilter or customFilter) (icons, unit, icon, UnitAura(unit, index, filter))) then
+		icon:Show()
+		icon:SetID(index)
+
+		if(self.PostUpdateAuraIcon) then
+			self:PostUpdateAuraIcon(icons, unit, icon, index, offset, filter, isDebuff)
+		end
+
+		return true
+	else
 		icon:Hide()
 	end
 end
