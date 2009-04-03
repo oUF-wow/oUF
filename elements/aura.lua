@@ -107,32 +107,13 @@ local customFilter = function(icons, unit, icon, name, rank, texture, count, dty
 
 	if(ulduar) then
 		isPlayer = caster == unit
+	else
+		caster = nil
 	end
 
 	if((icons.onlyShowPlayer and isPlayer) or (not icons.onlyShowPlayer and name)) then
-		if(not icons.disableCooldown and duration and duration > 0) then
-			icon.cd:SetCooldown(timeLeft - duration, duration)
-			icon.cd:Show()
-		else
-			icon.cd:Hide()
-		end
-
-		if((isDebuff and icons.showDebuffType) or (not isDebuff and icons.showBuffType) or icons.showType) then
-			local color = DebuffTypeColor[dtype] or DebuffTypeColor.none
-
-			icon.overlay:SetVertexColor(color.r, color.g, color.b)
-			icon.overlay:Show()
-			icon.count:SetText((count > 1 and count))
-		else
-			icon.overlay:Hide()
-		end
-
 		icon.isPlayer = isPlayer
-		icon.filter = filter
-		icon.debuff = isDebuff
-		icon.icon:SetTexture(texture)
-		icon.count:SetText((count > 1 and count))
-
+		icon.owner = caster
 		return true
 	end
 end
@@ -145,9 +126,33 @@ local updateIcon = function(self, unit, icons, index, offset, filter, isDebuff, 
 		icon = (self.CreateAuraIcon or createAuraIcon) (self, icons, index, isDebuff)
 	end
 
-	if((self.CustomAuraFilter or customFilter) (icons, unit, icon, UnitAura(unit, index, filter))) then
-		icon:Show()
+	local name, rank, texture, count, dtype, duration, timeLeft, caster = UnitAura(unit, index, filter)
+	local show = (self.CustomAuraFilter or customFilter) (icons, unit, icon, name, rank, texture, count, dtype, duration, timeLeft, caster)
+	if(show) then
+		if(not icons.disableCooldown and duration and duration > 0) then
+			icon.cd:SetCooldown(timeLeft - duration, duration)
+			icon.cd:Show()
+		else
+			icon.cd:Hide()
+		end
+
+		if((isDebuff and icons.showDebuffType) or (not isDebuff and icons.showBuffType) or icons.showType) then
+			local color = DebuffTypeColor[dtype] or DebuffTypeColor.none
+
+			icon.overlay:SetVertexColor(color.r, color.g, color.b)
+			icon.overlay:Show()
+		else
+			icon.overlay:Hide()
+		end
+
+		icon.icon:SetTexture(texture)
+		icon.count:SetText((count > 1 and count))
+
+		icon.filter = filter
+		icon.debuff = isDebuff
+
 		icon:SetID(index)
+		icon:Show()
 
 		if(self.PostUpdateAuraIcon) then
 			self:PostUpdateAuraIcon(icons, unit, icon, index, offset, filter, isDebuff)
