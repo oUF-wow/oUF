@@ -5,62 +5,70 @@ local oUF = _G[global]
 
 local objects = oUF.objects
 
-local Update = function()
-	local hasVehicle = UnitHasVehicleUI("player")
-	for _, object in next, objects do
-		if hasVehicle and object.vehicleUnit then
-			object.unit = object.vehicleUnit
-		elseif object.normalUnit then
-			object.unit = object.normalUnit
-		end
+local VehicleDriverFrame
 
-		if object.unit ~= object:GetAttribute("unit") then
-			object:SetAttribute("unit", object.unit)
-
-			if object.normalUnit == "player" then
-				PlayerFrame.unit = object.unit
-				BuffFrame_Update()
-			end
-		end
+local UpdateVehicleSwitch = function(self, attr, value)
+	if attr == "unit" then
+		self.unit = value
 	end
-end
 
-local PLAYER_REGEN_ENABLED = function(self, event)
-	Update()
-end
-
-local UNIT_ENTERED_VEHICLE = function(self, event, unit)
-	if not InCombatLockdown() then
-		Update()
-	end
-end
-
-local UNIT_EXITED_VEHICLE = function(self, event, unit)
-	if not InCombatLockdown() then
-		Update()
+	if self:GetAttribute("normalUnit") == "player" then
+		PlayerFrame.unit = self.unit
+		BuffFrame_Update()
 	end
 end
 
 local Enable = function(self, unit)
-	if self.disallowVehicleSwap then return end
+	if self.disallowVehicleSwap or (unit ~= "player" and unit ~= "pet") then return end
 
-	self.normalUnit = unit
+	if not VehicleDriverFrame then
+		VehicleDriverFrame = CreateFrame("Frame", nil, UIParent, "SecureHandlerStateTemplate")
+		RegisterStateDriver(VehicleDriverFrame, "vehicle", "[target=vehicle,exists,bonusbar:5]vehicle;novehicle")
+		VehicleDriverFrame:SetAttribute("_onstate-vehicle", [[
+			if newstate == "vehicle" then
+				for idx, frame in pairs(VEHICLE_FRAMES) do
+					frame:SetAttribute("unit", frame:GetAttribute("vehicleUnit"))
+				end
+			else
+				for idx, frame in pairs(VEHICLE_FRAMES) do
+					frame:SetAttribute("unit", frame:GetAttribute("normalUnit"))
+				end
+			end
+		]])
+		VehicleDriverFrame:Execute([[
+			VEHICLE_FRAMES = newtable()
+		]])
+	end
+
+	self:SetAttribute("normalUnit", unit)
 
 	if unit == "player" then
-		self.vehicleUnit = "vehicle"
-
-		self:RegisterEvent("UNIT_ENTERED_VEHICLE", UNIT_ENTERED_VEHICLE)
-		self:RegisterEvent("UNIT_EXITED_VEHICLE", UNIT_EXITED_VEHICLE)
-		self:RegisterEvent("PLAYER_REGEN_ENABLED", PLAYER_REGEN_ENABLED)
+		self:SetAttribute("vehicleUnit", "pet")
 	elseif unit == "pet" then
-		self.vehicleUnit = "player"
+		self:SetAttribute("vehicleUnit", "player")
 	end
+
+	VehicleDriverFrame:SetFrameRef("vehicleFrame", self)
+	VehicleDriverFrame:Execute([[
+		local frame = self:GetFrameRef("vehicleFrame")
+		table.insert(VEHICLE_FRAMES, frame)
+	]])
+
+	self:HookScript("OnAttributeChanged", UpdateVehicleSwitch)
 end
 
 local Disable = function(self)
-	self:UnregisterEvent("UNIT_ENTERED_VEHICLE", UNIT_ENTERED_VEHICLE)
-	self:UnregisterEvent("UNIT_EXITED_VEHICLE", UNIT_EXITED_VEHICLE)
-	self:UnregisterEvent("PLAYER_REGEN_ENABLED", PLAYER_REGEN_ENABLED)
+	self:SetAttribute("unit", self:GetAttribute("normalUnit"))
+	VehicleDriverFrame:SetFrameRef("vehicleFrame", self)
+	VehicleDriverFrame:Execute([[
+		local frame = self:GetFrameRef("vehicleFrame")
+		for idx, value in pairs(VEHICLE_FRAMES) do
+			if value == frame then
+				table.remove(VEHICLE_FRAMES, idx)
+				return
+			end
+		end
+	]])
 end
 
-oUF:AddElement("VehicleSwitch", Update, Enable, Disable)
+oUF:AddElement("VehicleSwitch", nil, Enable, Disable)
