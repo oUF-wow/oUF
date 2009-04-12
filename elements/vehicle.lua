@@ -10,11 +10,11 @@ local VehicleDriverFrame
 local UpdateVehicleSwitch = function(self, attr, value)
 	if attr == "unit" then
 		self.unit = value
-	end
 
-	if self:GetAttribute("normalUnit") == "player" then
-		PlayerFrame.unit = self.unit
-		BuffFrame_Update()
+		if self:GetAttribute("normalUnit") == "player" then
+			PlayerFrame.unit = self.unit
+			BuffFrame_Update()
+		end
 	end
 end
 
