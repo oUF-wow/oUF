@@ -21,7 +21,7 @@ local Update = function(self, event, unit)
 	local status = UnitThreatSituation(unit)
 
 	if(not self.OverrideUpdateThreat) then
-		if(status > 0) then
+		if(status and status > 0) then
 			local r, g, b = GetThreatStatusColor(status)
 			threat:SetVertexColor(r, g, b)
 			threat:Show()
