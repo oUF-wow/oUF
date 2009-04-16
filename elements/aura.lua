@@ -48,8 +48,6 @@ local global = GetAddOnMetadata(parent, 'X-oUF')
 assert(global, 'X-oUF needs to be defined in the parent add-on.')
 local oUF = _G[global]
 
-local ulduar = select(4, GetBuildInfo()) >= 30100
-
 local OnEnter = function(self)
 	if(not self:IsVisible()) then return end
 
@@ -103,12 +101,10 @@ local createAuraIcon = function(self, icons, index, debuff)
 end
 
 local customFilter = function(icons, unit, icon, name, rank, texture, count, dtype, duration, timeLeft, caster)
-	local isPlayer = caster
+	local isPlayer
 
-	if(ulduar) then
-		isPlayer = caster == unit
-	else
-		caster = nil
+	if(caster == 'player' or caster == 'vehicle') then
+		isPlayer = true
 	end
 
 	if((icons.onlyShowPlayer and isPlayer) or (not icons.onlyShowPlayer and name)) then
