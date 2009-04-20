@@ -154,11 +154,12 @@ local updateIcon = function(self, unit, icons, index, offset, filter, isDebuff, 
 			if(self.PostUpdateAuraIcon) then
 				self:PostUpdateAuraIcon(icons, unit, icon, index, offset, filter, isDebuff)
 			end
-
-			return true
 		else
+			-- Hide the icon in-case we are in the middle of the stack.
 			icon:Hide()
 		end
+
+		return true
 	end
 end
 
