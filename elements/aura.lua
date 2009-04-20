@@ -123,40 +123,42 @@ local updateIcon = function(self, unit, icons, index, offset, filter, isDebuff, 
 	end
 
 	local name, rank, texture, count, dtype, duration, timeLeft, caster = UnitAura(unit, index, filter)
-	local show = (self.CustomAuraFilter or customFilter) (icons, unit, icon, name, rank, texture, count, dtype, duration, timeLeft, caster)
-	if(show) then
-		if(not icons.disableCooldown and duration and duration > 0) then
-			icon.cd:SetCooldown(timeLeft - duration, duration)
-			icon.cd:Show()
+	if(name) then
+		local show = (self.CustomAuraFilter or customFilter) (icons, unit, icon, name, rank, texture, count, dtype, duration, timeLeft, caster)
+		if(show) then
+			if(not icons.disableCooldown and duration and duration > 0) then
+				icon.cd:SetCooldown(timeLeft - duration, duration)
+				icon.cd:Show()
+			else
+				icon.cd:Hide()
+			end
+
+			if((isDebuff and icons.showDebuffType) or (not isDebuff and icons.showBuffType) or icons.showType) then
+				local color = DebuffTypeColor[dtype] or DebuffTypeColor.none
+
+				icon.overlay:SetVertexColor(color.r, color.g, color.b)
+				icon.overlay:Show()
+			else
+				icon.overlay:Hide()
+			end
+
+			icon.icon:SetTexture(texture)
+			icon.count:SetText((count > 1 and count))
+
+			icon.filter = filter
+			icon.debuff = isDebuff
+
+			icon:SetID(index)
+			icon:Show()
+
+			if(self.PostUpdateAuraIcon) then
+				self:PostUpdateAuraIcon(icons, unit, icon, index, offset, filter, isDebuff)
+			end
+
+			return true
 		else
-			icon.cd:Hide()
+			icon:Hide()
 		end
-
-		if((isDebuff and icons.showDebuffType) or (not isDebuff and icons.showBuffType) or icons.showType) then
-			local color = DebuffTypeColor[dtype] or DebuffTypeColor.none
-
-			icon.overlay:SetVertexColor(color.r, color.g, color.b)
-			icon.overlay:Show()
-		else
-			icon.overlay:Hide()
-		end
-
-		icon.icon:SetTexture(texture)
-		icon.count:SetText((count > 1 and count))
-
-		icon.filter = filter
-		icon.debuff = isDebuff
-
-		icon:SetID(index)
-		icon:Show()
-
-		if(self.PostUpdateAuraIcon) then
-			self:PostUpdateAuraIcon(icons, unit, icon, index, offset, filter, isDebuff)
-		end
-
-		return true
-	else
-		icon:Hide()
 	end
 end
 
