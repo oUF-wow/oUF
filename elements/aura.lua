@@ -160,6 +160,10 @@ local updateIcon = function(self, unit, icons, index, offset, filter, isDebuff, 
 		end
 
 		return true
+	else
+		-- TODO: We shouldn't really create one icon for each "empty" debuff on the Auras element.
+		-- This is just a hack around the fact that we do it.
+		icon:Hide()
 	end
 end
 
