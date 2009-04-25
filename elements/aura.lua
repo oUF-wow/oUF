@@ -117,13 +117,13 @@ end
 local updateIcon = function(self, unit, icons, index, offset, filter, isDebuff, max)
 	if(index == 0) then index = max end
 
-	local icon = icons[index + offset]
-	if(not icon) then
-		icon = (self.CreateAuraIcon or createAuraIcon) (self, icons, index, isDebuff)
-	end
-
 	local name, rank, texture, count, dtype, duration, timeLeft, caster = UnitAura(unit, index, filter)
 	if(name) then
+		local icon = icons[index + offset]
+		if(not icon) then
+			icon = (self.CreateAuraIcon or createAuraIcon) (self, icons, index, isDebuff)
+		end
+
 		local show = (self.CustomAuraFilter or customFilter) (icons, unit, icon, name, rank, texture, count, dtype, duration, timeLeft, caster)
 		if(show) then
 			if(not icons.disableCooldown and duration and duration > 0) then
@@ -160,10 +160,6 @@ local updateIcon = function(self, unit, icons, index, offset, filter, isDebuff, 
 		end
 
 		return true
-	else
-		-- TODO: We shouldn't really create one icon for each "empty" debuff on the Auras element.
-		-- This is just a hack around the fact that we do it.
-		icon:Hide()
 	end
 end
 
@@ -226,6 +222,12 @@ local Update = function(self, event, unit)
 					visibleBuffs = visibleBuffs + 1
 				end
 			end
+		end
+
+		local index = visibleBuffs + visibleDebuffs + 1
+		while(auras[index]) do
+			auras[index]:Hide()
+			index = index + 1
 		end
 
 		auras.visibleBuffs = visibleBuffs
