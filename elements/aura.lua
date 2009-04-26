@@ -126,11 +126,17 @@ local updateIcon = function(self, unit, icons, index, offset, filter, isDebuff, 
 
 		local show = (self.CustomAuraFilter or customFilter) (icons, unit, icon, name, rank, texture, count, dtype, duration, timeLeft, caster)
 		if(show) then
-			if(not icons.disableCooldown and duration and duration > 0) then
-				icon.cd:SetCooldown(timeLeft - duration, duration)
-				icon.cd:Show()
-			else
-				icon.cd:Hide()
+			-- We might want to consider delaying the creation of an actual cooldown
+			-- object to this point, but I think that will just make things needlessly
+			-- complicated.
+			local cd = icon.cd
+			if(cd and not icons.disableCooldown) then
+				if(duration and duration > 0) then
+					cd:SetCooldown(timeLeft - duration, duration)
+					cd:Show()
+				else
+					cd:Hide()
+				end
 			end
 
 			if((isDebuff and icons.showDebuffType) or (not isDebuff and icons.showBuffType) or icons.showType) then
