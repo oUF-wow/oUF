@@ -77,7 +77,7 @@ local Update = function(self, event, unit)
 			(bar.colorClassPet and UnitPlayerControlled(unit) and not UnitIsPlayer(unit)) then
 			local _, class = UnitClass(unit)
 			t = self.colors.class[class]
-		elseif(bar.colorReaction) then
+		elseif(bar.colorReaction and UnitReaction(unit, 'player')) then
 			t = self.colors.reaction[UnitReaction(unit, "player")]
 		elseif(bar.colorSmooth) then
 			r, g, b = self.ColorGradient(min / max, unpack(bar.smoothGradient or self.colors.smooth))
