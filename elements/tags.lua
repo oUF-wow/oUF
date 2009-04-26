@@ -168,11 +168,14 @@ local RegisterEvents = function(fontstr, tagstr)
 end
 
 local UnregisterEvents = function(fontstr)
-	for events, data in pairs(events) do
+	for event, data in pairs(events) do
 		for k, tagfsstr in pairs(data) do
 			if(tagfsstr == fontstr) then
-				if(#data[k] == 1) then frame:UnregisterEvent(event) end
-				data[k] = nil
+				if(#data == 1) then
+					frame:UnregisterEvent(event)
+				end
+
+				table.remove(data, k)
 			end
 		end
 	end
