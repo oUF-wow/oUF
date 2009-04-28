@@ -245,6 +245,11 @@ local onUpdate = function(self, elapsed)
 		if(duration <= 0) then
 			self.channeling = nil
 			self:Hide()
+
+			-- We temporary get our parent to do this.
+			local parent = self:GetParent()
+			if(parent.PostChannelStop) then parent:PostChannelStop('OnUpdate', parent.unit) end
+
 			return
 		end
 
