@@ -206,6 +206,12 @@ local onUpdate = function(self, elapsed)
 		if (duration >= self.max) then
 			self.casting = nil
 			self:Hide()
+
+			-- We temporary get our parent to do this.
+			local parent = self:GetParent()
+			if(parent.PostCastStop) then parent:PostCastStop('OnUpdate', parent.unit) end
+
+			return
 		end
 
 		if self.SafeZone then
