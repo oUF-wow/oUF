@@ -274,7 +274,7 @@ local initObject = function(unit, style, ...)
 end
 
 local walkObject = function(object, unit)
-	local style = object:GetParent().style or styles[style]
+	local style = styles[object:GetParent().style] or styles[style]
 
 	initObject(unit, style, object, object:GetChildren())
 end
@@ -304,7 +304,6 @@ function oUF:Spawn(unit, name, template, disableBlizz)
 	argcheck(unit, 2, 'string')
 	if(not style) then return error("Unable to create frame. No styles have been registered.") end
 
-	local style = styles[style]
 	local object
 	if(unit == "header") then
 		if(not template) then
