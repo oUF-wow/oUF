@@ -106,8 +106,6 @@ local tagEvents = {
 }
 
 local unitlessEvents = {
-	PLAYER_TARGET_CHANGED = true,
-	PLAYER_FOCUS_CHANGED = true,
 	PLAYER_LEVEL_UP = true,
 }
 
@@ -293,14 +291,6 @@ local Tag = function(self, fs, tagstr)
 		end
 	else
 		RegisterEvents(fs, tagstr)
-
-		if(unit == 'focus') then
-			RegisterEvent(fs, 'PLAYER_FOCUS_CHANGED')
-		elseif(unit == 'target') then
-			RegisterEvent(fs, 'PLAYER_TARGET_CHANGED')
-		elseif(unit == 'mouseover') then
-			RegisterEvent(fs, 'UPDATE_MOUSEOVER_UNIT')
-		end
 	end
 
 	table.insert(self.__tags, fs)
