@@ -13,6 +13,8 @@ local global = GetAddOnMetadata(parent, 'X-oUF')
 assert(global, 'X-oUF needs to be defined in the parent add-on.')
 local oUF = _G[global]
 
+local classColors = oUF.colors.class
+
 local function Hex(r, g, b)
 	if type(r) == "table" then
 		if r.r then r, g, b = r.r, r.g, r.b else r, g, b = unpack(r) end
@@ -43,7 +45,7 @@ tags = {
 	["[plus]"]        = function(u) local c = UnitClassification(u); return (c == "elite" or c == "rareelite") and "+" end,
 	["[pvp]"]         = function(u) return UnitIsPVP(u) and "PvP" end,
 	["[race]"]        = function(u) return UnitRace(u) end,
-	["[raidcolor]"]   = function(u) local _, x = UnitClass(u); return x and Hex(RAID_CLASS_COLORS[x]) end,
+	["[raidcolor]"]   = function(u) local _, x = UnitClass(u); return x and Hex(classColors[x]) end,
 	["[rare]"]        = function(u) local c = UnitClassification(u); return (c == "rare" or c == "rareelite") and "Rare" end,
 	["[resting]"]     = function(u) return u == "player" and IsResting() and "zzz" end,
 	["[sex]"]         = function(u) local s = UnitSex(u) return s == 2 and "Male" or s == 3 and "Female" end,
