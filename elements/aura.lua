@@ -59,9 +59,16 @@ local OnLeave = function()
 	GameTooltip:Hide()
 end
 
+-- We don't really need to validate much here as the filter should prevent us
+-- from doing something we shouldn't.
+local OnClick = function(self)
+	CancelUnitBuff(self.frame.unit, self:GetID(), self.filter)
+end
+
 local createAuraIcon = function(self, icons, index, debuff)
-	local button = CreateFrame("Frame", nil, icons)
+	local button = CreateFrame("Button", nil, icons)
 	button:EnableMouse(true)
+	button:RegisterForClicks'RightButtonUp'
 
 	button:SetWidth(icons.size or 16)
 	button:SetHeight(icons.size or 16)
@@ -84,6 +91,10 @@ local createAuraIcon = function(self, icons, index, debuff)
 
 	button:SetScript("OnEnter", OnEnter)
 	button:SetScript("OnLeave", OnLeave)
+
+	if(self.unit == 'player') then
+		button:SetScript('OnClick', OnClick)
+	end
 
 	table.insert(icons, button)
 
