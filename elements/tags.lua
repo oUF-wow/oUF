@@ -124,22 +124,35 @@ frame:SetScript('OnEvent', function(self, event, unit)
 	end
 end)
 
+local OnUpdates = {}
 local eventlessUnits = {}
-local timer = .5
-local lowestTimer = .5
-local OnUpdate = function(self, elapsed)
-	if(timer >= lowestTimer) then
-		for k, fs in next, eventlessUnits do
-			if(fs.parent:IsShown() and UnitExists(fs.parent.unit)) then
-				fs:UpdateTag()
+
+local createOnUpdate = function(timer)
+	local OnUpdate = OnUpdates[timer]
+
+	if(not OnUpdate) then
+		local total = timer
+		local frame = CreateFrame'Frame'
+		local strings = eventlessUnits[timer]
+
+		frame:SetScript('OnUpdate', function(self, elapsed)
+			if(total >= timer) then
+				for k, fs in next, strings do
+					if(fs.parent:IsShown() and UnitExists(fs.parent.unit)) then
+						fs:UpdateTag()
+					end
+				end
+
+				total = 0
 			end
-		end
 
-		timer = 0
+			total = total + elapsed
+		end)
+
+		OnUpdates[timer] = OnUpdate
 	end
-
-	timer = timer + elapsed
 end
+
 
 local OnShow = function(self)
 	for _, fs in next, self.__tags do
@@ -282,15 +295,17 @@ local Tag = function(self, fs, tagstr)
 
 	local unit = self.unit
 	if((unit and unit:match'%w+target') or fs.frequentUpdates) then
+		local timer
 		if(type(fs.frequentUpdates) == 'number') then
-			lowestTimer = math.min(fs.frequentUpdates, lowestTimer)
+			timer = fs.frequentUpdates
+		else
+			timer = .5
 		end
 
-		table.insert(eventlessUnits, fs)
+		if(not eventlessUnits[timer]) then eventlessUnits[timer] = {} end
+		table.insert(eventlessUnits[timer], fs)
 
-		if(not frame:GetScript'OnUpdate') then
-			frame:SetScript('OnUpdate', OnUpdate)
-		end
+		createOnUpdate(timer)
 	else
 		RegisterEvents(fs, tagstr)
 	end
@@ -302,9 +317,11 @@ local Untag = function(self, fs)
 	if(not fs or self == oUF) then return end
 
 	UnregisterEvents(fs)
-	for k, fontstr in next, eventlessUnits do
-		if(fs == fontstr) then
-			table.remove(eventlessUnits, k)
+	for _, timers in next, eventlessUnits do
+		for k, fontstr in next, timers do
+			if(fs == fontstr) then
+				table.remove(eventlessUnits, k)
+			end
 		end
 	end
 
