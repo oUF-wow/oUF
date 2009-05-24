@@ -406,6 +406,8 @@ function oUF:UnregisterEvent(event, func)
 end
 
 function oUF:AddElement(name, update, enable, disable)
+	if(self == oUF) then return nil, 'Invalid oUF object.' end
+
 	argcheck(name, 2, 'string')
 	argcheck(update, 3, 'function', 'nil')
 	argcheck(enable, 4, 'function', 'nil')
@@ -420,6 +422,8 @@ function oUF:AddElement(name, update, enable, disable)
 end
 
 function oUF:EnableElement(name, unit)
+	if(self == oUF) then return nil, 'Invalid oUF object.' end
+
 	argcheck(name, 2, 'string')
 	argcheck(unit, 3, 'string', 'nil')
 
@@ -432,6 +436,8 @@ function oUF:EnableElement(name, unit)
 end
 
 function oUF:DisableElement(name)
+	if(self == oUF) then return nil, 'Invalid oUF object.' end
+
 	argcheck(name, 2, 'string')
 	local element = elements[name]
 	if(not element) then return end
@@ -446,6 +452,8 @@ function oUF:DisableElement(name)
 end
 
 function oUF:UpdateElement(name)
+	if(self == oUF) then return nil, 'Invalid oUF object.' end
+
 	argcheck(name, 2, 'string')
 	local element = elements[name]
 	if(not element) then return end
