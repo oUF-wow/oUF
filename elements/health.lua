@@ -123,7 +123,7 @@ end
 local Disable = function(self)
 	local health = self.Health
 	if(health) then
-		if(self:GetScript'OnUpdate') then
+		if(health:GetScript'OnUpdate') then
 			health:SetScript('OnUpdate', nil)
 		else
 			self:UnregisterEvent('UNIT_HEALTH', Update)
