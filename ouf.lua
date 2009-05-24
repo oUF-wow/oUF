@@ -406,8 +406,6 @@ function oUF:UnregisterEvent(event, func)
 end
 
 function oUF:AddElement(name, update, enable, disable)
-	if(self == oUF) then return nil, 'Invalid oUF object.' end
-
 	argcheck(name, 2, 'string')
 	argcheck(update, 3, 'function', 'nil')
 	argcheck(enable, 4, 'function', 'nil')
