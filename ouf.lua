@@ -444,6 +444,11 @@ function oUF:DisableElement(name)
 		if(update == element.update) then
 			table.remove(self.__elements, k)
 			element.disable(self)
+
+			-- We need to run a new update as we knocked ourself out of sync. The main
+			-- reason we do this is to make sure the full update is completed if an
+			-- element for some reason removes itself _during_ the update progress.
+			self:PLAYER_ENTERING_WORLD('DisableElement', name)
 			break
 		end
 	end
