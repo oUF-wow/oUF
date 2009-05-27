@@ -79,6 +79,16 @@ tags = {
 		local c = UnitClassification(u)
 		return c == "rare" and "R" or c == "eliterare" and "R+" or c == "elite" and "+" or c == "worldboss" and "B"
 	end,
+
+	["group"] = function(unit)
+		local name = UnitName(unit)
+		for i=1, GetNumRaidMembers() do
+			local raidName, _, group = GetRaidRosterInfo(i)
+			if( raidName == name ) then
+				return group
+			end
+		end
+	end,
 }
 local tagEvents = {
 	["[curhp]"]               = "UNIT_HEALTH",
@@ -105,10 +115,12 @@ local tagEvents = {
 	['[rare]']                = 'UNIT_CLASSIFICATION_CHANGED',
 	['[classification]']      = 'UNIT_CLASSIFICATION_CHANGED',
 	['[shortclassification]'] = 'UNIT_CLASSIFICATION_CHANGED',
+	["[group]"]                 = "RAID_ROSTER_UPDATE",
 }
 
 local unitlessEvents = {
 	PLAYER_LEVEL_UP = true,
+	RAID_ROSTER_UPDATE = true,
 }
 
 local events = {}
