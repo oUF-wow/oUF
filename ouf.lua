@@ -130,7 +130,7 @@ end
 -- Events
 local OnEvent = function(self, event, ...)
 	if(not self:IsShown() and not self.vehicleUnit) then return end
-	self[event](self, event, ...)
+	return self[event](self, event, ...)
 end
 
 local OnAttributeChanged = function(self, name, value)
