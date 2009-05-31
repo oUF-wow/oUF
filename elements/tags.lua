@@ -169,7 +169,6 @@ local createOnUpdate = function(timer)
 	end
 end
 
-
 local OnShow = function(self)
 	for _, fs in next, self.__tags do
 		fs:UpdateTag()
