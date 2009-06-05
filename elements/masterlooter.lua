@@ -15,6 +15,8 @@ local function Update(self, event)
 			end
 		elseif(rid) then
 			unit = 'raid'..rid
+		else
+			return
 		end
 
 		if(UnitIsUnit(unit, self.unit)) then
