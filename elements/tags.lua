@@ -93,6 +93,10 @@ tags = {
 			end
 		end
 	end,
+
+	["[defict:name]"] = function(u)
+		return tags['[missinghp]'](u) or tags['[name]'](u)
+	end,
 }
 local tagEvents = {
 	["[curhp]"]               = "UNIT_HEALTH",
