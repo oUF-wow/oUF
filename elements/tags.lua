@@ -80,7 +80,7 @@ tags = {
 		return c == "rare" and "R" or c == "eliterare" and "R+" or c == "elite" and "+" or c == "worldboss" and "B"
 	end,
 
-	["group"] = function(unit)
+	["[group]"] = function(unit)
 		local name, server = UnitName(unit)
 		if(server and server ~= "") then
 			name = string.format("%s-%s", name, server)
