@@ -18,7 +18,7 @@ local Enable = function(self)
 		self:RegisterEvent("PARTY_MEMBERS_CHANGED", Update)
 
 		if(assistant:IsObjectType"Texture" and not assistant:GetTexture()) then
-			assistant:SetTexture[[Interface\\GroupFrame\\UI-Group-AssistantIcon]]
+			assistant:SetTexture[[Interface\GroupFrame\UI-Group-AssistantIcon]]
 		end
 
 		return true
