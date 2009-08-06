@@ -26,7 +26,9 @@ local OnUpdate = function(self, elapsed)
 
 		time = GetTime() - start
 
-		rune:SetValue(time)
+		if time <= dur then
+			rune:SetValue(time)
+		end
 	end
 end
 
@@ -75,6 +77,8 @@ end
 local Enable = function(self)
 	local runes = self.runes
 	if not runes or self.unit ~= "player" then return end
+
+	RuneFrame:Hide()
 
 	local spacing = runes.spacing or 1
 	local anchor = runes.anchor or "BOTTOMLEFT"
@@ -126,6 +130,7 @@ end
 
 local Disable = function(self)
 	self.runes:Hide()
+	RuneFrame:Show()
 end
 
 oUF:AddElement("Runes", Update, Enable, Disable)
