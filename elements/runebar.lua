@@ -38,7 +38,7 @@ local Update = function(self, event, ...)
 
 	local runes = self.runes
 
-	local colors = runes.color and runes.color or colors
+	local colors = runes.color or colors
 
 	for i = 1, 6 do
 		rune = runes[i]
