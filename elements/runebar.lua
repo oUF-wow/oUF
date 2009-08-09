@@ -96,7 +96,7 @@ local Enable = function(self)
 		bar:SetWidth(width)
 		bar:SetHeight(height)
 		bar:SetStatusBarTexture(texture)
-		bar:SetMinMaxValues(0, 6)
+		bar:SetMinMaxValues(0, 10)
 
 		-- Horizontal? Who wants vertical ones you freaks
 		bar:SetPoint(anchor, runes, anchor, (i - 1) * (width + spacing) * growth, 0)
