@@ -29,7 +29,7 @@ tags = {
 	["[curhp]"]       = UnitHealth,
 	["[curpp]"]       = UnitPower,
 	["[dead]"]        = function(u) return UnitIsDead(u) and "Dead" or UnitIsGhost(u) and "Ghost" end,
-	["[difficulty]"]  = function(u) if UnitCanAttack("player", u) then local l = UnitLevel(u); return Hex(GetDifficultyColor((l > 0) and l or 99)) end end,
+	["[difficulty]"]  = function(u) if UnitCanAttack("player", u) then local l = UnitLevel(u); return Hex(GetQuestDifficultyColor((l > 0) and l or 99)) end end,
 	["[faction]"]     = function(u) return UnitFactionGroup(u) end,
 	["[leader]"]      = function(u) return UnitIsPartyLeader(u) and "(L)" end,
 	["[leaderlong]"]  = function(u) return UnitIsPartyLeader(u) and "(Leader)" end,
