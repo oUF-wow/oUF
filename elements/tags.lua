@@ -62,7 +62,8 @@ tags = {
 	end,
 
 	["[level]"] = function(u)
-		local l = UnitLevel(u) return (l > 0) and l or "??"
+		local l = UnitLevel(u)
+		return (l > 0) and l or "??"
 	end,
 
 	["[missinghp]"] = function(u)
