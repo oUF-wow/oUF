@@ -259,16 +259,27 @@ local initObject = function(unit, style, ...)
 			if(unit) then object:SetScale(scale) end
 		end
 
-		if(suffix == 'target') then
-			enableTargetUpdate(object)
+		local parent = (i == 1) and object:GetParent()
+		local showPlayer
+		if(parent) then
+			showPlayer = parent:GetAttribute'showPlayer' or parent:GetAttribute'showSolo'
 		end
 
-		if(num > 1 and i == 1) then
-			object.hasChildren = true
+		if(num > 1) then
+			if(i == 1) then
+				object.hasChildren = true
+			else
+				object.isChild = true
+			end
+		end
+
+		if(suffix == 'target' and (i == 1 and not showPlayer)) then
+			enableTargetUpdate(object)
+		else
+			object:SetScript("OnEvent", OnEvent)
 		end
 
 		object:SetAttribute("*type1", "target")
-		object:SetScript("OnEvent", OnEvent)
 		object:SetScript("OnAttributeChanged", OnAttributeChanged)
 		object:SetScript("OnShow", object.PLAYER_ENTERING_WORLD)
 
