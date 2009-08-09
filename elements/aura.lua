@@ -38,6 +38,7 @@
 	 - :CreateAuraIcon(icons, index, isDebuff)
 	 - :PostUpdateAuraIcon(icons, unit, icon, index, offset, filter, isDebuff)
 	 - :PreUpdateAura(event, unit)
+	 - :PreAuraSetPosition(auras, max)
 	 - :SetAuraPosition(auras, max)
 	 - :PostUpdateAura(event, unit)
 
@@ -251,6 +252,7 @@ local Update = function(self, event, unit)
 		auras.visibleDebuffs = visibleDebuffs
 		auras.visibleAuras = visibleBuffs + visibleDebuffs
 
+		if(self.PreAuraSetPosition) then self:PreAuraSetPosition(auras, max) end
 		self:SetAuraPosition(auras, max)
 	end
 
@@ -273,6 +275,8 @@ local Update = function(self, event, unit)
 		end
 
 		buffs.visibleBuffs = visibleBuffs
+
+		if(self.PreAuraSetPosition) then self:PreAuraSetPosition(buffs, max) end
 		self:SetAuraPosition(buffs, max)
 	end
 
@@ -294,6 +298,8 @@ local Update = function(self, event, unit)
 			visibleDebuffs = visibleDebuffs + 1
 		end
 		debuffs.visibleDebuffs = visibleDebuffs
+
+		if(self.PreAuraSetPosition) then self:PreAuraSetPosition(debuffs, max) end
 		self:SetAuraPosition(debuffs, max)
 	end
 
