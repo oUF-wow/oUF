@@ -66,7 +66,10 @@ tags = {
 	end,
 
 	["[missinghp]"] = function(u)
-		return UnitHealthMax(u) - UnitHealth(u)
+		local current = UnitHealthMax(u) - UnitHealth(u)
+		if(current > 0) then
+			return current
+		end
 	end,
 
 	["[missingpp]"] = function(u)
