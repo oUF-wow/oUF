@@ -73,7 +73,10 @@ tags = {
 	end,
 
 	["[missingpp]"] = function(u)
-		return UnitPowerMax(u) - UnitPower(u)
+		local current = UnitPowerMax(u) - UnitPower(u)
+		if(current > 0) then
+			return current
+		end
 	end,
 
 	["[name]"] = function(u, r)
