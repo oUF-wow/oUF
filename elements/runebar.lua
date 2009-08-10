@@ -17,6 +17,9 @@ oUF.colors.runes = {
 
 -- TODO: We should cache the endtime instead of doing this.
 -- TODO: We should set this on a per rune basis.
+--
+-- Can do multiple OnUpdates, I prefere not to. Personal preferance, see
+-- comment later about caching.
 local OnUpdate = function(self, elapsed)
 	for i = 1, 6 do
 		local start, dur = GetRuneCooldown(i)
@@ -28,13 +31,30 @@ local OnUpdate = function(self, elapsed)
 	end
 end
 
+local TypeUpdate = function(self, event)
+	local runes = self.runes
+	for i = 1, 6 do
+		local r, g, b = unpack(self.colors.runes[GetRuneType(i)])
+		local bar = runes[i]
+		bar:SetStatusBarColor(r, g, b)
+
+		if(bar.bg) then
+			local mu = bg.multiplier or 1
+			bar.bg:SetVertexColor(r * mu, g * mu, b * mu)
+		end
+	end
+end
+
 local Update = function(self, event, ...)
+	if event == "PLAYER_ENTERING_WORLD" then TypeUpdate(self) end
 	local runes = self.runes
 
 	local update
 	for i = 1, 6 do
 		local start, dur, ready = GetRuneCooldown(i)
 
+		-- If we cache the end time here we would need to finish the
+		-- loop.
 		if not ready then
 			update = true
 			break
@@ -45,13 +65,6 @@ local Update = function(self, event, ...)
 		runes:SetScript("OnUpdate", OnUpdate)
 	else
 		runes:SetScript("OnUpdate", nil)
-	end
-end
-
-local TypeUpdate = function(self, event)
-	local runes = self.runes
-	for i = 1, 6 do
-		runes[i]:SetStatusBarColor(unpack(self.colors.runes[GetRuneType(i)]))
 	end
 end
 
@@ -69,9 +82,6 @@ local Enable = function(self)
 	local colors = self.colors.runes
 
 	for i = 1, 6 do
-		-- Zariel: Explain this one to me.
-		local color = colors[GetRuneType(i) or math.ceil(i / 2)]
-
 		local bar = runes[i]
 		if(bar) then
 			bar:SetWidth(width)
@@ -81,24 +91,13 @@ local Enable = function(self)
 			-- Horizontal? Who wants vertical ones you freaks
 			bar:SetPoint(anchor, runes, anchor, (i - 1) * (width + spacing) * growth, 0)
 
-			local r, g, b = unpack(color)
-			bar:SetStatusBarColor(r, g, b)
-
 			local bg = bar.bg
 			if(bg) then
 				bg:SetAllPoints(bar)
 				bg:SetTexture(texture)
-
-				local mu = bg.multiplier or 1
-				bg:SetVertexColor(r * mu, g * mu, b * mu)
 			end
 		end
 	end
-
-	-- Zariel: Any reason you run an update when the element is enabled?
-	-- It should really only be needed when the element is shown. oUF
-	-- actually runs the Update function OnShow.
-	Update(self)
 
 	self:RegisterEvent("RUNE_POWER_UPDATE", Update)
 	self:RegisterEvent("RUNE_TYPE_UPDATE", TypeUpdate)
