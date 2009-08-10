@@ -15,6 +15,7 @@ oUF.colors.runes = {
 	{ 0.8, 0.1, 1 },
 }
 
+-- TODO: We should cache the endtime instead of doing this.
 local OnUpdate = function(self, elapsed)
 	for i = 1, 6 do
 		local start, dur = GetRuneCooldown(i)
