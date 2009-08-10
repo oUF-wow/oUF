@@ -15,34 +15,23 @@ local colors = {
 	[4] = { 0.8, 0.1, 1 },
 }
 
-local rune
-local start, dur
-local time
-
 local OnUpdate = function(self, elapsed)
 	for i = 1, 6 do
-		rune = self.runes[i]
-		start, dur = GetRuneCooldown(i)
-
-		time = GetTime() - start
+		local start, dur = GetRuneCooldown(i)
+		local time = GetTime() - start
 
 		if time <= dur then
-			rune:SetValue(time)
+			self.runes[i]:SetValue(time)
 		end
 	end
 end
 
 local Update = function(self, event, ...)
-	local rune, update
-	local start, dur, ready
-
 	local runes = self.runes
 
-	local colors = runes.color or colors
-
+	local update
 	for i = 1, 6 do
-		rune = runes[i]
-		start, dur, ready = GetRuneCooldown(i)
+		local start, dur, ready = GetRuneCooldown(i)
 
 		if not ready then
 			update = true
