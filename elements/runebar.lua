@@ -69,26 +69,25 @@ local Enable = function(self)
 	for i = 1, 6 do
 		local color = colors[GetRuneType(i) or math.ceil(i / 2)]
 
-		local bar = CreateFrame("Statusbar", nil, runes)
-		bar:SetWidth(width)
-		bar:SetHeight(height)
-		bar:SetStatusBarTexture(texture)
-		bar:SetMinMaxValues(0, 10)
+		local bar = runes[i]
+		if(bar) then
+			bar:SetWidth(width)
+			bar:SetHeight(height)
+			bar:SetMinMaxValues(0, 10)
 
-		-- Horizontal? Who wants vertical ones you freaks
-		bar:SetPoint(anchor, runes, anchor, (i - 1) * (width + spacing) * growth, 0)
+			-- Horizontal? Who wants vertical ones you freaks
+			bar:SetPoint(anchor, runes, anchor, (i - 1) * (width + spacing) * growth, 0)
 
-		local bg = bar:CreateTexture(nil, "BACKGROUND")
-		bg:SetAllPoints(bar)
-		bg:SetTexture(texture)
+			local r, g, b = unpack(color)
+			bar:SetStatusBarColor(r, g, b)
 
-		local r, g, b = unpack(color)
-		bar:SetStatusBarColor(r, g, b)
-		bg:SetVertexColor(r, g, b, 0.3)
+			if(bar.bg) then
+				bg:SetAllPoints(bar)
+				bg:SetTexture(texture)
 
-		bar.bg = bg
-
-		runes[i] = bar
+				bg:SetVertexColor(r, g, b, 0.3)
+			end
+		end
 	end
 
 	Update(self)
