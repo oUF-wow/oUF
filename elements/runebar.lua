@@ -121,6 +121,9 @@ end
 local Disable = function(self)
 	self.runes:Hide()
 	RuneFrame:Show()
+
+	self:UnregisterEvent("RUNE_POWER_UPDATE", Update)
+	self:UnregisterEvent("RUNE_TYPE_UPDATE", TypeUpdate)
 end
 
 oUF:AddElement("Runes", Update, Enable, Disable)
