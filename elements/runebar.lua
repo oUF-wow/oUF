@@ -21,13 +21,11 @@ oUF.colors.runes = {
 -- Can do multiple OnUpdates, I prefere not to. Personal preferance, see
 -- comment later about caching.
 local OnUpdate = function(self, elapsed)
-	for i = 1, 6 do
-		local start, dur = GetRuneCooldown(i)
-		local time = GetTime() - start
-
-		if time <= dur then
-			self[i]:SetValue(time)
-		end
+	local time = GetTime()
+	if self.finish >= time then
+		self:SetValue(10 - (self.finish - time))
+	else
+		self:SetScript("OnUpdate", nil)
 	end
 end
 
@@ -40,31 +38,25 @@ local TypeUpdate = function(self, event)
 
 		if(bar.bg) then
 			local mu = bar.bg.multiplier or 1
-			bar.bg:SetVertexColor(r * mu, g * mu, b * mu, bar.bg.alpha or 1)
+			bar.bg:SetVertexColor(r * mu, g * mu, b * mu)
 		end
 	end
 end
 
-local Update = function(self, event, ...)
-	if event == "PLAYER_ENTERING_WORLD" then TypeUpdate(self, event) end
-	local runes = self.runes
+local Update = function(self, event, rune)
+	if event == "PLAYER_ENTERING_WORLD" then return TypeUpdate(self, event) end
 
-	local update
-	for i = 1, 6 do
-		local start, dur, ready = GetRuneCooldown(i)
+	local bar = self.runes[rune]
 
-		-- If we cache the end time here we would need to finish the
-		-- loop.
-		if not ready then
-			update = true
-			break
-		end
-	end
+	if not bar then return end
 
-	if update then
-		runes:SetScript("OnUpdate", OnUpdate)
+	local start, dur, ready = GetRuneCooldown(rune)
+
+	if not ready then
+		bar.finish = start + dur
+		bar:SetScript("OnUpdate", OnUpdate)
 	else
-		runes:SetScript("OnUpdate", nil)
+		bar:SetScript("OnUpdate", nil)
 	end
 end
 
