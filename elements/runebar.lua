@@ -62,8 +62,7 @@ local Enable = function(self)
 	local anchor = runes.anchor or "BOTTOMLEFT"
 	local growth = runes.growth == "LEFT" and - 1 or 1
 	local width = runes.width or (runes:GetWidth() / 6) - spacing
-	local height = runes.height or runes:GetHeight() or 10
-	local texture = runes.texture or self.Health:GetStatusBarTexture():GetTexture()
+	local height = runes.height or runes:GetHeight()
 	local colors = self.colors.runes
 
 	for i = 1, 6 do
