@@ -95,13 +95,7 @@ local Enable = function(self)
 		bg:SetAllPoints(bar)
 		bg:SetTexture(texture)
 
-		local r, g, b
-		if color.r then
-			r, g, b = color.r, color.g, color.b
-		else
-			r, g, b = unpack(color)
-		end
-
+		local r, g, b = unpack(color)
 		bar:SetStatusBarColor(r, g, b)
 		bg:SetVertexColor(r, g, b, 0.3)
 
