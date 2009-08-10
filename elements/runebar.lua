@@ -39,14 +39,14 @@ local TypeUpdate = function(self, event)
 		bar:SetStatusBarColor(r, g, b)
 
 		if(bar.bg) then
-			local mu = bg.multiplier or 1
-			bar.bg:SetVertexColor(r * mu, g * mu, b * mu)
+			local mu = bar.bg.multiplier or 1
+			bar.bg:SetVertexColor(r * mu, g * mu, b * mu, bar.bg.alpha or 1)
 		end
 	end
 end
 
 local Update = function(self, event, ...)
-	if event == "PLAYER_ENTERING_WORLD" then TypeUpdate(self) end
+	if event == "PLAYER_ENTERING_WORLD" then TypeUpdate(self, event) end
 	local runes = self.runes
 
 	local update
@@ -79,7 +79,6 @@ local Enable = function(self)
 	local growth = runes.growth == "LEFT" and - 1 or 1
 	local width = runes.width or (runes:GetWidth() / 6) - spacing
 	local height = runes.height or runes:GetHeight()
-	local colors = self.colors.runes
 
 	for i = 1, 6 do
 		local bar = runes[i]
@@ -90,12 +89,6 @@ local Enable = function(self)
 
 			-- Horizontal? Who wants vertical ones you freaks
 			bar:SetPoint(anchor, runes, anchor, (i - 1) * (width + spacing) * growth, 0)
-
-			local bg = bar.bg
-			if(bg) then
-				bg:SetAllPoints(bar)
-				bg:SetTexture(texture)
-			end
 		end
 	end
 
