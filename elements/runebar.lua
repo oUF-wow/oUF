@@ -1,3 +1,15 @@
+--[[ Runebar:
+	Author: Zariel
+	Usage: expects self.runes to be a frame, setup and positiononed by the layout itself, it also requires self.runes[1] through 6 to be a statusbar again setup by the user.
+
+	Options: (All optional)
+	.spacing: (float)       Spacing between each bar
+	.anchor: (string)       Initial anchor to the parent rune frame
+	.growth: (string)       LEFT or RIGHT
+	.height: (int)          Height of the bar
+	.width: (int)           Width of each frame
+]]
+
 if select(2, UnitClass("player")) ~= "DEATHKNIGHT" then return end
 
 local parent = debugstack():match[[\AddOns\(.-)\]]
@@ -15,11 +27,6 @@ oUF.colors.runes = {
 	{ 0.8, 0.1, 1 },
 }
 
--- TODO: We should cache the endtime instead of doing this.
--- TODO: We should set this on a per rune basis.
---
--- Can do multiple OnUpdates, I prefere not to. Personal preferance, see
--- comment later about caching.
 local OnUpdate = function(self, elapsed)
 	local time = GetTime()
 	if self.finish >= time then
