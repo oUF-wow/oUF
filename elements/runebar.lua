@@ -83,11 +83,13 @@ local Enable = function(self)
 			local r, g, b = unpack(color)
 			bar:SetStatusBarColor(r, g, b)
 
-			if(bar.bg) then
+			local bg = bar.bg
+			if(bg) then
 				bg:SetAllPoints(bar)
 				bg:SetTexture(texture)
 
-				bg:SetVertexColor(r, g, b, 0.3)
+				local mu = bg.multiplier or 1
+				bg:SetVertexColor(r * mu, g * mu, b * mu)
 			end
 		end
 	end
