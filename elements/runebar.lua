@@ -8,7 +8,7 @@ local oUF = _G[global]
 local GetTime = GetTime
 local GetRuneCooldown = GetRuneCooldown
 
-local colors = {
+oUF.colors.runes = {
 	{ 1, 0, 0  },
 	{ 0, 0.5, 0 },
 	{ 0, 1, 1 },
@@ -48,7 +48,7 @@ end
 local TypeUpdate = function(self, event)
 	local runes = self.runes
 	for i = 1, 6 do
-		runes[i]:SetStatusBarColor(unpack(colors[GetRuneType(i)]))
+		runes[i]:SetStatusBarColor(unpack(self.colors.runes[GetRuneType(i)]))
 	end
 end
 
@@ -64,7 +64,7 @@ local Enable = function(self)
 	local width = runes.width or (runes:GetWidth() / 6) - spacing
 	local height = runes.height or runes:GetHeight() or 10
 	local texture = runes.texture or self.Health:GetStatusBarTexture():GetTexture()
-	local colors = runes.color or colors
+	local colors = self.colors.runes
 
 	for i = 1, 6 do
 		local color = colors[GetRuneType(i) or math.ceil(i / 2)]
