@@ -16,13 +16,14 @@ oUF.colors.runes = {
 }
 
 -- TODO: We should cache the endtime instead of doing this.
+-- TODO: We should set this on a per rune basis.
 local OnUpdate = function(self, elapsed)
 	for i = 1, 6 do
 		local start, dur = GetRuneCooldown(i)
 		local time = GetTime() - start
 
 		if time <= dur then
-			self.runes[i]:SetValue(time)
+			self[i]:SetValue(time)
 		end
 	end
 end
@@ -41,9 +42,9 @@ local Update = function(self, event, ...)
 	end
 
 	if update then
-		self:SetScript("OnUpdate", OnUpdate)
+		runes:SetScript("OnUpdate", OnUpdate)
 	else
-		self:SetScript("OnUpdate", nil)
+		runes:SetScript("OnUpdate", nil)
 	end
 end
 
