@@ -47,9 +47,8 @@ end
 
 local TypeUpdate = function(self, event)
 	local runes = self.runes
-
 	for i = 1, 6 do
-		self.runes[i]:SetStatusBarColor(unpack(colors[GetRuneType(i)]))
+		runes[i]:SetStatusBarColor(unpack(colors[GetRuneType(i)]))
 	end
 end
 
