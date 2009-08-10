@@ -66,6 +66,7 @@ local Enable = function(self)
 	local colors = self.colors.runes
 
 	for i = 1, 6 do
+		-- Zariel: Explain this one to me.
 		local color = colors[GetRuneType(i) or math.ceil(i / 2)]
 
 		local bar = runes[i]
@@ -89,6 +90,9 @@ local Enable = function(self)
 		end
 	end
 
+	-- Zariel: Any reason you run an update when the element is enabled?
+	-- It should really only be needed when the element is shown. oUF
+	-- actually runs the Update function OnShow.
 	Update(self)
 
 	self:RegisterEvent("RUNE_POWER_UPDATE", Update)
