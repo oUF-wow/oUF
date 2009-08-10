@@ -36,6 +36,7 @@ local Update = function(self, event, ...)
 
 		if not ready then
 			update = true
+			break
 		end
 	end
 
