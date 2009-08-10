@@ -9,10 +9,10 @@ local GetTime = GetTime
 local GetRuneCooldown = GetRuneCooldown
 
 local colors = {
-	[1] = { 1, 0, 0  },
-	[2] = { 0, 0.5, 0 },
-	[3] = { 0, 1, 1 },
-	[4] = { 0.8, 0.1, 1 },
+	{ 1, 0, 0  },
+	{ 0, 0.5, 0 },
+	{ 0, 1, 1 },
+	{ 0.8, 0.1, 1 },
 }
 
 local OnUpdate = function(self, elapsed)
@@ -71,7 +71,6 @@ local Enable = function(self)
 		local color = colors[GetRuneType(i) or math.ceil(i / 2)]
 
 		local bar = CreateFrame("Statusbar", nil, runes)
-
 		bar:SetWidth(width)
 		bar:SetHeight(height)
 		bar:SetStatusBarTexture(texture)
