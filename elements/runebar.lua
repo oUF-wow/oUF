@@ -17,9 +17,6 @@ local global = GetAddOnMetadata(parent, 'X-oUF')
 assert(global, 'X-oUF needs to be defined in the parent add-on.')
 local oUF = _G[global]
 
--- Incase we dont get PEW
-local coloured = false
-
 local GetTime = GetTime
 local GetRuneCooldown = GetRuneCooldown
 
@@ -57,7 +54,6 @@ local Update = function(self, event, rune)
 		for i = 1, 6 do
 			TypeUpdate(self, event, i)
 		end
-		coloured = true
 		return
 	end
 
