@@ -28,7 +28,7 @@ local UNIT_SPELLCAST_START = function(self, event, unit, spell, spellrank)
 	if(self.unit ~= unit) then return end
 
 	local castbar = self.Castbar
-	local name, rank, text, texture, startTime, endTime, _, castid, interupt = UnitCastingInfo(unit)
+	local name, rank, text, texture, startTime, endTime, _, castid, interrupt = UnitCastingInfo(unit)
 	if(not name) then
 		castbar:Hide()
 		return
@@ -43,7 +43,7 @@ local UNIT_SPELLCAST_START = function(self, event, unit, spell, spellrank)
 	castbar.max = max
 	castbar.delay = 0
 	castbar.casting = true
-	castbar.interupt = interupt
+	castbar.interrupt = interrupt
 
 	castbar:SetMinMaxValues(0, max)
 	castbar:SetValue(0)
@@ -60,7 +60,7 @@ local UNIT_SPELLCAST_START = function(self, event, unit, spell, spellrank)
 		sf:SetPoint'BOTTOM'
 	end
 
-	if(self.PostCastStart) then self:PostCastStart(event, unit, name, rank, text, castid, interupt) end
+	if(self.PostCastStart) then self:PostCastStart(event, unit, name, rank, text, castid, interrupt) end
 	castbar:Show()
 end
 
@@ -73,7 +73,7 @@ local UNIT_SPELLCAST_FAILED = function(self, event, unit, spellname, spellrank, 
 	end
 
 	castbar.casting = nil
-	castbar.interupt = nil
+	castbar.interrupt = nil
 	castbar:SetValue(0)
 	castbar:Hide()
 
@@ -123,7 +123,7 @@ local UNIT_SPELLCAST_STOP = function(self, event, unit, spellname, spellrank, ca
 	end
 
 	castbar.casting = nil
-	castbar.interupt = nil
+	castbar.interrupt = nil
 	castbar:SetValue(0)
 	castbar:Hide()
 
@@ -134,7 +134,7 @@ local UNIT_SPELLCAST_CHANNEL_START = function(self, event, unit, spellname, spel
 	if(self.unit ~= unit) then return end
 
 	local castbar = self.Castbar
-	local name, rank, text, texture, startTime, endTime, isTrade, interupt = UnitChannelInfo(unit)
+	local name, rank, text, texture, startTime, endTime, isTrade, interrupt = UnitChannelInfo(unit)
 	if(not name) then
 		return
 	end
@@ -148,7 +148,7 @@ local UNIT_SPELLCAST_CHANNEL_START = function(self, event, unit, spellname, spel
 	castbar.max = max
 	castbar.delay = 0
 	castbar.channeling = true
-	castbar.interupt = interupt
+	castbar.interrupt = interrupt
 
 	castbar:SetMinMaxValues(0, max)
 	castbar:SetValue(duration)
@@ -165,7 +165,7 @@ local UNIT_SPELLCAST_CHANNEL_START = function(self, event, unit, spellname, spel
 		sf:SetPoint'BOTTOM'
 	end
 
-	if(self.PostChannelStart) then self:PostChannelStart(event, unit, name, rank, text, interupt) end
+	if(self.PostChannelStart) then self:PostChannelStart(event, unit, name, rank, text, interrupt) end
 	castbar:Show()
 end
 
@@ -187,7 +187,7 @@ local UNIT_SPELLCAST_CHANNEL_UPDATE = function(self, event, unit, spellname, spe
 	castbar:SetMinMaxValues(0, castbar.max)
 	castbar:SetValue(duration)
 
-	if(self.PostChannelUpdate) then self:PostChannelUpdate(event, unit, name, rank, text, castbar.interupt) end
+	if(self.PostChannelUpdate) then self:PostChannelUpdate(event, unit, name, rank, text, castbar.interrupt) end
 end
 
 local UNIT_SPELLCAST_CHANNEL_STOP = function(self, event, unit, spellname, spellrank)
@@ -196,7 +196,7 @@ local UNIT_SPELLCAST_CHANNEL_STOP = function(self, event, unit, spellname, spell
 	local castbar = self.Castbar
 	if(castbar:IsShown()) then
 		castbar.channeling = nil
-		castbar.interupt = nil
+		castbar.interrupt = nil
 
 		castbar:SetValue(castbar.max)
 		castbar:Hide()
