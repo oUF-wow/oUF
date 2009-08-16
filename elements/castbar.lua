@@ -187,7 +187,7 @@ local UNIT_SPELLCAST_CHANNEL_UPDATE = function(self, event, unit, spellname, spe
 	castbar:SetMinMaxValues(0, castbar.max)
 	castbar:SetValue(duration)
 
-	if(self.PostChannelUpdate) then self:PostChannelUpdate(event, unit, name, rank, text, castbar.interrupt) end
+	if(self.PostChannelUpdate) then self:PostChannelUpdate(event, unit, name, rank, text) end
 end
 
 local UNIT_SPELLCAST_CHANNEL_STOP = function(self, event, unit, spellname, spellrank)
