@@ -286,7 +286,7 @@ end
 local RegisterEvents = function(fontstr, tagstr)
 	-- Forcefully strip away any parentheses and the characters in them.
 	tagstr = tagstr:gsub('%b()', '')
-	for tag in tagstr:gmatch'[%[]%w+[%]]' do
+	for tag in tagstr:gmatch'[%[].-[%]]' do
 		local tagevents = tagEvents[tag]
 		if(tagevents) then
 			for event in tagevents:gmatch'%S+' do
