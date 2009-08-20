@@ -40,7 +40,7 @@ local TypeUpdate = function(self, event, i)
 	local bar = (self.Runes or self.runes)[i]
 	if not bar then return end -- Just in case
 
-	local r, g, b = unpack(self.colors.Runes[GetRuneType(i)])
+	local r, g, b = unpack(self.colors.runes[GetRuneType(i)])
 	bar:SetStatusBarColor(r, g, b)
 
 	if(bar.bg) then
