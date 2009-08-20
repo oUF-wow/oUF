@@ -50,7 +50,7 @@ local TypeUpdate = function(self, event, i)
 end
 
 local Update = function(self, event, rune)
-	if event == "PLAYER_ENTERING_WORLD" or not coloured then
+	if event == "PLAYER_ENTERING_WORLD" then
 		for i = 1, 6 do
 			TypeUpdate(self, event, i)
 		end
