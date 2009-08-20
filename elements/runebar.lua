@@ -20,7 +20,7 @@ local oUF = _G[global]
 local GetTime = GetTime
 local GetRuneCooldown = GetRuneCooldown
 
-oUF.colors.Runes = {
+oUF.colors.runes = {
 	{ 1, 0, 0  },
 	{ 0, 0.5, 0 },
 	{ 0, 1, 1 },
