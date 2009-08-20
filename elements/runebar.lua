@@ -1,6 +1,6 @@
 --[[ Runebar:
 	Author: Zariel
-	Usage: expects self.runes to be a frame, setup and positiononed by the layout itself, it also requires self.runes[1] through 6 to be a statusbar again setup by the user.
+	Usage: expects self.Runes or self.runes to be a frame, setup and positiononed by the layout itself, it also requires self.Runes or self.runes[1] through 6 to be a statusbar again setup by the user.
 
 	Options: (All optional)
 	.spacing: (float)       Spacing between each bar
@@ -20,7 +20,7 @@ local oUF = _G[global]
 local GetTime = GetTime
 local GetRuneCooldown = GetRuneCooldown
 
-oUF.colors.runes = {
+oUF.colors.Runes = {
 	{ 1, 0, 0  },
 	{ 0, 0.5, 0 },
 	{ 0, 1, 1 },
@@ -37,10 +37,10 @@ local OnUpdate = function(self, elapsed)
 end
 
 local TypeUpdate = function(self, event, i)
-	local bar = self.runes[i]
+	local bar = (self.Runes or self.runes)[i]
 	if not bar then return end -- Just in case
 
-	local r, g, b = unpack(self.colors.runes[GetRuneType(i)])
+	local r, g, b = unpack(self.colors.Runes[GetRuneType(i)])
 	bar:SetStatusBarColor(r, g, b)
 
 	if(bar.bg) then
@@ -58,7 +58,7 @@ local Update = function(self, event, rune)
 	end
 
 	-- Bar could be 7, 8 for some reason
-	local bar = self.runes[rune]
+	local bar = (self.Runes or self.runes)[rune]
 	if not bar then return end
 
 	local start, dur, ready = GetRuneCooldown(rune)
@@ -72,7 +72,7 @@ local Update = function(self, event, rune)
 end
 
 local Enable = function(self)
-	local runes = self.runes
+	local runes = self.Runes or self.runes
 	if not runes or self.unit ~= "player" then return end
 
 	RuneFrame:Hide()
@@ -102,7 +102,8 @@ local Enable = function(self)
 end
 
 local Disable = function(self)
-	self.runes:Hide()
+	(self.Runes or self.runes):Hide()
+
 	RuneFrame:Show()
 
 	self:UnregisterEvent("RUNE_POWER_UPDATE", Update)
