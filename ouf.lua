@@ -273,7 +273,7 @@ local initObject = function(unit, style, ...)
 			end
 		end
 
-		if(suffix == 'target' and (i == 1 and not showPlayer)) then
+		if(suffix and suffix:match'%w+target' and (i == 1 and not showPlayer)) then
 			enableTargetUpdate(object)
 		else
 			object:SetScript("OnEvent", OnEvent)
