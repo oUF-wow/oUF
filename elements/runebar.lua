@@ -1,6 +1,6 @@
 --[[ Runebar:
 	Author: Zariel
-	Usage: expects self.Runes or self.runes to be a frame, setup and positiononed by the layout itself, it also requires self.Runes or self.runes[1] through 6 to be a statusbar again setup by the user.
+	Usage: expects self.Runes to be a frame, setup and positiononed by the layout itself, it also requires self.Runes through 6 to be a statusbar again setup by the user.
 
 	Options: (All optional)
 	.spacing: (float)       Spacing between each bar
@@ -37,9 +37,7 @@ local OnUpdate = function(self, elapsed)
 end
 
 local TypeUpdate = function(self, event, i)
-	local bar = (self.Runes or self.runes)[i]
-	if not bar then return end -- Just in case
-
+	local bar = self.Runes[i]
 	local r, g, b = unpack(self.colors.runes[GetRuneType(i)])
 	bar:SetStatusBarColor(r, g, b)
 
@@ -58,7 +56,7 @@ local Update = function(self, event, rune)
 	end
 
 	-- Bar could be 7, 8 for some reason
-	local bar = (self.Runes or self.runes)[rune]
+	local bar = self.Runes[rune]
 	if not bar then return end
 
 	local start, dur, ready = GetRuneCooldown(rune)
@@ -72,7 +70,7 @@ local Update = function(self, event, rune)
 end
 
 local Enable = function(self)
-	local runes = self.Runes or self.runes
+	local runes = self.Runes
 	if not runes or self.unit ~= "player" then return end
 
 	RuneFrame:Hide()
@@ -102,7 +100,7 @@ local Enable = function(self)
 end
 
 local Disable = function(self)
-	(self.Runes or self.runes):Hide()
+	self.Runes:Hide()
 
 	RuneFrame:Show()
 
