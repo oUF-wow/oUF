@@ -59,7 +59,7 @@ if(IsAddOnLoaded'!ClassColors' and CUSTOM_CLASS_COLORS) then
 
 		if(oUF) then
 			for _, obj in next, oUF.objects do
-				obj:PLAYER_ENTERING_WORLD()
+				obj:PLAYER_ENTERING_WORLD"PLAYER_ENTERING_WORLD"
 			end
 		end
 	end
@@ -142,7 +142,7 @@ local iterateChildren = function(...)
 			local subUnit = conv[unit] or unit
 			units[subUnit] = obj
 			obj.unit = subUnit
-			obj:PLAYER_ENTERING_WORLD()
+			obj:PLAYER_ENTERING_WORLD"PLAYER_ENTERING_WORLD"
 		end
 	end
 end
@@ -161,7 +161,7 @@ local OnAttributeChanged = function(self, name, value)
 
 			self.unit = value
 			self.id = value:match"^.-(%d+)"
-			self:PLAYER_ENTERING_WORLD()
+			self:PLAYER_ENTERING_WORLD"PLAYER_ENTERING_WORLD"
 		end
 	end
 end
