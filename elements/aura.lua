@@ -44,10 +44,8 @@
 
 	[1] http://www.wowwiki.com/API_UnitAura
 --]]
-local parent = debugstack():match[[\AddOns\(.-)\]]
-local global = GetAddOnMetadata(parent, 'X-oUF')
-assert(global, 'X-oUF needs to be defined in the parent add-on.')
-local oUF = _G[global]
+local parent, ns = ...
+local oUF = ns.oUF
 
 local OnEnter = function(self)
 	if(not self:IsVisible()) then return end

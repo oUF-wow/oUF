@@ -25,10 +25,8 @@
 	 will disable the above color settings.
 	 - :PostUpdateHealth(event, unit, bar, min, max)
 --]]
-local parent = debugstack():match[[\AddOns\(.-)\]]
-local global = GetAddOnMetadata(parent, 'X-oUF')
-assert(global, 'X-oUF needs to be defined in the parent add-on.')
-local oUF = _G[global]
+local parent, ns = ...
+local oUF = ns.oUF
 
 local OnHealthUpdate
 do

@@ -1,6 +1,6 @@
-local parent = debugstack():match[[\AddOns\(.-)\]]
+assert(select(4, GetBuildInfo()) >= 30300, "This version of oUF requires patch 3.3 or higher.")
+local parent, ns = ...
 local global = GetAddOnMetadata(parent, 'X-oUF')
-assert(global, 'X-oUF needs to be defined in the parent add-on.')
 
 local _VERSION = GetAddOnMetadata(parent, 'version')
 
@@ -529,4 +529,5 @@ oUF.version = _VERSION
 oUF.units = units
 oUF.objects = objects
 oUF.colors = colors
-_G[global] = oUF
+ns.oUF = oUF
+if global then _G[global] = oUF end
