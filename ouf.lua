@@ -1,7 +1,11 @@
-assert(select(4, GetBuildInfo()) >= 30300, "This version of oUF requires patch 3.3 or higher.")
-local parent, ns = ...
-local global = GetAddOnMetadata(parent, 'X-oUF')
+local parent
+if(...) then
+	parent = ...
+else
+	parent = debugstack():match[[\AddOns\(.-)\]]
+end
 
+local global = GetAddOnMetadata(parent, 'X-oUF')
 local _VERSION = GetAddOnMetadata(parent, 'version')
 
 local function argcheck(value, num, ...)
@@ -529,5 +533,10 @@ oUF.version = _VERSION
 oUF.units = units
 oUF.objects = objects
 oUF.colors = colors
-ns.oUF = oUF
+
+if(...) then
+	local _, ns = ...
+	ns.oUF = oUF
+end
+
 if global then _G[global] = oUF end

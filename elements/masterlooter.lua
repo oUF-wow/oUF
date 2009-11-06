@@ -1,7 +1,19 @@
-local parent = debugstack():match[[\AddOns\(.-)\]]
+local oUF
+local parent
+if(...) then
+	parent = ...
+else
+	parent = debugstack():match[[\AddOns\(.-)\]]
+end
+
 local global = GetAddOnMetadata(parent, 'X-oUF')
 assert(global, 'X-oUF needs to be defined in the parent add-on.')
-local oUF = _G[global]
+if(...) then
+	local _, ns
+	oUF = ns.oUF
+else
+	oUF = _G[global]
+end
 
 local function Update(self, event)
 	local unit
