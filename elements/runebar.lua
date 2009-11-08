@@ -28,7 +28,7 @@ end
 local global = GetAddOnMetadata(parent, 'X-oUF')
 assert(global, 'X-oUF needs to be defined in the parent add-on.')
 if(...) then
-	local _, ns
+	local _, ns = ...
 	oUF = ns.oUF
 else
 	oUF = _G[global]
