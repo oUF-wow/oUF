@@ -219,12 +219,21 @@ local HandleUnit = function(unit, object)
 	elseif(unit:match"target") then
 		-- Hide the blizzard stuff
 		if(unit == "targettarget") then
-			TargetofTargetFrame:UnregisterAllEvents()
-			TargetofTargetFrame.Show = dummy
-			TargetofTargetFrame:Hide()
+			if TargetFrameToT then -- 3.3
+				TargetFrameToT:UnregisterAllEvents()
+				TargetFrameToT.Show = dummy
+				TargetFrameToT:Hide()
 
-			TargetofTargetHealthBar:UnregisterAllEvents()
-			TargetofTargetManaBar:UnregisterAllEvents()
+				TargetFrameToTHealthBar:UnregisterAllEvents()
+				TargetFrameToTManaBar:UnregisterAllEvents()
+			else -- 3.2
+				TargetofTargetFrame:UnregisterAllEvents()
+				TargetofTargetFrame.Show = dummy
+				TargetofTargetFrame:Hide()
+
+				TargetofTargetHealthBar:UnregisterAllEvents()
+				TargetofTargetManaBar:UnregisterAllEvents()
+			end
 		end
 
 		enableTargetUpdate(object)
