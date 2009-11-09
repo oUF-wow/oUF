@@ -532,6 +532,8 @@ function oUF.ColorGradient(perc, ...)
 
 	local num = select('#', ...) / 3
 
+	-- Translate divison by zeros into 1, so we don't blow select.
+	if(perc == math.huge) then perc = 1 end
 	local segment, relperc = math.modf(perc*(num-1))
 	local r1, g1, b1, r2, g2, b2 = select((segment*3)+1, ...)
 
