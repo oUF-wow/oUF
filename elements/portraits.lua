@@ -17,6 +17,7 @@ end
 
 local Update = function(self, event, unit)
 	if(not UnitIsUnit(self.unit, unit)) then return end
+	if(self.PreUpdatePortrait) then self:PreUpdatePortrait(event, unit) end
 
 	local portrait = self.Portrait
 	if(portrait:IsObjectType'Model') then
@@ -36,6 +37,8 @@ local Update = function(self, event, unit)
 	else
 		SetPortraitTexture(portrait, unit)
 	end
+
+	if(self.PostUpdatePortrait) then self:PostUpdatePortrait(event, unit) end
 end
 
 local Enable = function(self)
