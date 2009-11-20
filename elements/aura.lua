@@ -315,7 +315,9 @@ local Update = function(self, event, unit)
 		self:SetAuraPosition(debuffs, max)
 	end
 
-	if(self.PostUpdateAura) then self:PostUpdateAura(event, unit) end
+	if(self.PostUpdateAura) then
+		return self:PostUpdateAura(event, unit)
+	end
 end
 
 local Enable = function(self)

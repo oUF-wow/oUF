@@ -52,7 +52,7 @@ do
 		if(health ~= self.min) then
 			self.min = health
 
-			self:GetParent():UNIT_MAXHEALTH("OnHealthUpdate", self.unit)
+			return self:GetParent():UNIT_MAXHEALTH("OnHealthUpdate", self.unit)
 		end
 	end
 end
@@ -107,7 +107,9 @@ local Update = function(self, event, unit)
 		self:OverrideUpdateHealth(event, unit, bar, min, max)
 	end
 
-	if(self.PostUpdateHealth) then self:PostUpdateHealth(event, unit, bar, min, max) end
+	if(self.PostUpdateHealth) then
+		return self:PostUpdateHealth(event, unit, bar, min, max)
+	end
 end
 
 local Enable = function(self)

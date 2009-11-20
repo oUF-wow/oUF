@@ -55,7 +55,7 @@ do
 		if(power ~= self.min) then
 			self.min = power
 
-			self:GetParent():UNIT_MAXMANA("OnPowerUpdate", self.unit)
+			return self:GetParent():UNIT_MAXMANA("OnPowerUpdate", self.unit)
 		end
 	end
 end
@@ -112,7 +112,9 @@ local Update = function(self, event, unit)
 		self:OverrideUpdatePower(event, unit, bar, min, max)
 	end
 
-	if(self.PostUpdatePower) then self:PostUpdatePower(event, unit, bar, min, max) end
+	if(self.PostUpdatePower) then
+		return self:PostUpdatePower(event, unit, bar, min, max)
+	end
 end
 
 local Enable = function(self, unit)

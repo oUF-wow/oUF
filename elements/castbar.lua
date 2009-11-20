@@ -89,7 +89,9 @@ local UNIT_SPELLCAST_FAILED = function(self, event, unit, spellname, spellrank, 
 	castbar:SetValue(0)
 	castbar:Hide()
 
-	if(self.PostCastFailed) then self:PostCastFailed(event, unit, spellname, spellrank, castid) end
+	if(self.PostCastFailed) then
+		return self:PostCastFailed(event, unit, spellname, spellrank, castid)
+	end
 end
 
 local UNIT_SPELLCAST_INTERRUPTED = function(self, event, unit, spellname, spellrank, castid)
@@ -105,7 +107,9 @@ local UNIT_SPELLCAST_INTERRUPTED = function(self, event, unit, spellname, spellr
 	castbar:SetValue(0)
 	castbar:Hide()
 
-	if(self.PostCastInterrupted) then self:PostCastInterrupted(event, unit, spellname, spellrank, castid) end
+	if(self.PostCastInterrupted) then
+		return self:PostCastInterrupted(event, unit, spellname, spellrank, castid)
+	end
 end
 
 local UNIT_SPELLCAST_DELAYED = function(self, event, unit, spellname, spellrank)
@@ -123,7 +127,9 @@ local UNIT_SPELLCAST_DELAYED = function(self, event, unit, spellname, spellrank)
 
 	castbar:SetValue(duration)
 
-	if(self.PostCastDelayed) then self:PostCastDelayed(event, unit, name, rank, text) end
+	if(self.PostCastDelayed) then
+		return self:PostCastDelayed(event, unit, name, rank, text)
+	end
 end
 
 local UNIT_SPELLCAST_STOP = function(self, event, unit, spellname, spellrank, castid)
@@ -139,7 +145,9 @@ local UNIT_SPELLCAST_STOP = function(self, event, unit, spellname, spellrank, ca
 	castbar:SetValue(0)
 	castbar:Hide()
 
-	if(self.PostCastStop) then self:PostCastStop(event, unit, spellname, spellrank, castid) end
+	if(self.PostCastStop) then
+		return self:PostCastStop(event, unit, spellname, spellrank, castid)
+	end
 end
 
 local UNIT_SPELLCAST_CHANNEL_START = function(self, event, unit, spellname, spellrank)
@@ -199,7 +207,9 @@ local UNIT_SPELLCAST_CHANNEL_UPDATE = function(self, event, unit, spellname, spe
 	castbar:SetMinMaxValues(0, castbar.max)
 	castbar:SetValue(duration)
 
-	if(self.PostChannelUpdate) then self:PostChannelUpdate(event, unit, name, rank, text) end
+	if(self.PostChannelUpdate) then
+		return self:PostChannelUpdate(event, unit, name, rank, text)
+	end
 end
 
 local UNIT_SPELLCAST_CHANNEL_STOP = function(self, event, unit, spellname, spellrank)
@@ -213,7 +223,9 @@ local UNIT_SPELLCAST_CHANNEL_STOP = function(self, event, unit, spellname, spell
 		castbar:SetValue(castbar.max)
 		castbar:Hide()
 
-		if(self.PostChannelStop) then self:PostChannelStop(event, unit, spellname, spellrank) end
+		if(self.PostChannelStop) then
+			return self:PostChannelStop(event, unit, spellname, spellrank)
+		end
 	end
 end
 
@@ -383,5 +395,5 @@ end
 
 oUF:AddElement('Castbar', function(...)
 	UNIT_SPELLCAST_START(...)
-	UNIT_SPELLCAST_CHANNEL_START(...)
+	return UNIT_SPELLCAST_CHANNEL_START(...)
 end, Enable, Disable)

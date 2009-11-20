@@ -38,7 +38,9 @@ local Update = function(self, event, unit)
 		SetPortraitTexture(portrait, unit)
 	end
 
-	if(self.PostUpdatePortrait) then self:PostUpdatePortrait(event, unit) end
+	if(self.PostUpdatePortrait) then
+		return self:PostUpdatePortrait(event, unit)
+	end
 end
 
 local Enable = function(self)

@@ -35,7 +35,9 @@ local Update = function(self, event, unit)
 			self.Happiness:SetTexCoord(0, 0.1875, 0, 0.359375)
 		end
 
-		if(self.PostUpdateHappiness) then self:PostUpdateHappiness(event, unit, happiness) end
+		if(self.PostUpdateHappiness) then
+			return self:PostUpdateHappiness(event, unit, happiness)
+		end
 	end
 end
 

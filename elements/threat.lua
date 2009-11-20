@@ -43,7 +43,9 @@ local Update = function(self, event, unit)
 		self:OverrideUpdateThreat(event, unit, status)
 	end
 
-	if(self.PostUpdateThreat) then self:PostUpdateThreat(event, unit, status) end
+	if(self.PostUpdateThreat) then
+		return self:PostUpdateThreat(event, unit, status)
+	end
 end
 
 local Enable = function(self)
