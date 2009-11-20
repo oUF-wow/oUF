@@ -252,7 +252,7 @@ local HandleUnit = function(unit, object)
 	end
 end
 
-local initObject = function(unit, style, ...)
+local initObject = function(unit, style, styleFunc, ...)
 	local num = select('#', ...)
 	for i=1, num do
 		local object = select(i, ...)
@@ -260,12 +260,12 @@ local initObject = function(unit, style, ...)
 		object.__elements = {}
 
 		object = setmetatable(object, frame_metatable)
-		style(object, unit)
+		styleFunc(object, unit)
 
-		local mt = type(style) == 'table'
-		local height = object:GetAttribute'initial-height' or (mt and style['initial-height'])
-		local width = object:GetAttribute'initial-width' or (mt and style['initial-width'])
-		local scale = object:GetAttribute'initial-scale' or (mt and style['initial-scale'])
+		local mt = type(styleFunc) == 'table'
+		local height = object:GetAttribute'initial-height' or (mt and styleFunc['initial-height'])
+		local width = object:GetAttribute'initial-width' or (mt and styleFunc['initial-width'])
+		local scale = object:GetAttribute'initial-scale' or (mt and styleFunc['initial-scale'])
 		local suffix = object:GetAttribute'unitsuffix'
 
 		if(height) then
@@ -297,6 +297,8 @@ local initObject = function(unit, style, ...)
 			end
 		end
 
+		object.style = style
+
 		if(suffix and suffix:match'target' and (i ~= 1 and not showPlayer)) then
 			enableTargetUpdate(object)
 		else
@@ -326,9 +328,10 @@ local initObject = function(unit, style, ...)
 end
 
 local walkObject = function(object, unit)
-	local style = styles[object:GetParent().style] or styles[style]
+	local style = object:GetParent().style or style
+	local styleFunc = styles[style] or styles[style]
 
-	initObject(unit, style, object, object:GetChildren())
+	initObject(unit, style, styleFunc, object, object:GetChildren())
 end
 
 function oUF:RegisterInitCallback(func)
