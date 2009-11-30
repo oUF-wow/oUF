@@ -251,73 +251,72 @@ local HandleUnit = function(unit, object)
 end
 
 local frame_metatable = {
-	__index = {
-		colors = colors;
-
-		EnableElement = function(self, name, unit)
-			argcheck(name, 2, 'string')
-			argcheck(unit, 3, 'string', 'nil')
-
-			local element = elements[name]
-			if(not element) then return end
-
-			if(element.enable(self, unit or self.unit)) then
-				table.insert(self.__elements, element.update)
-			end
-		end,
-
-		DisableElement = function(self, name)
-			argcheck(name, 2, 'string')
-			local element = elements[name]
-			if(not element) then return end
-
-			for k, update in ipairs(self.__elements) do
-				if(update == element.update) then
-					table.remove(self.__elements, k)
-					element.disable(self)
-
-					-- We need to run a new update cycle incase we knocked ourself out of sync.
-					-- The main reason we do this is to make sure the full update is completed
-					-- if an element for some reason removes itself _during_ the update
-					-- progress.
-					self:PLAYER_ENTERING_WORLD('DisableElement', name)
-					break
-				end
-			end
-		end,
-
-		UpdateElement = function(self, name)
-			argcheck(name, 2, 'string')
-			local element = elements[name]
-			if(not element) then return end
-
-			element.update(self, 'UpdateElement', self.unit)
-		end,
-
-		Enable = RegisterUnitWatch,
-		Disable = function(self)
-			UnregisterUnitWatch(self)
-			self:Hide()
-		end,
-
-		--[[
-		--:PLAYER_ENTERING_WORLD()
-		--	Notes:
-		--		- Does a full update of all elements on the object.
-		--]]
-		PLAYER_ENTERING_WORLD = function(self, event)
-			local unit = self.unit
-			if(not UnitExists(unit)) then return end
-
-			for _, func in next, self.__elements do
-				func(self, event, unit)
-			end
-		end,
-	},
+	__index = CreateFrame"Button"
 }
 
--- I do this to avoid yet another layer of metatable.
-for k, v in pairs(getmetatable(CreateFrame"Button").__index) do
+for k, v in pairs{
+	colors = colors;
+
+	EnableElement = function(self, name, unit)
+		argcheck(name, 2, 'string')
+		argcheck(unit, 3, 'string', 'nil')
+
+		local element = elements[name]
+		if(not element) then return end
+
+		if(element.enable(self, unit or self.unit)) then
+			table.insert(self.__elements, element.update)
+		end
+	end,
+
+	DisableElement = function(self, name)
+		argcheck(name, 2, 'string')
+		local element = elements[name]
+		if(not element) then return end
+
+		for k, update in ipairs(self.__elements) do
+			if(update == element.update) then
+				table.remove(self.__elements, k)
+				element.disable(self)
+
+				-- We need to run a new update cycle incase we knocked ourself out of sync.
+				-- The main reason we do this is to make sure the full update is completed
+				-- if an element for some reason removes itself _during_ the update
+				-- progress.
+				self:PLAYER_ENTERING_WORLD('DisableElement', name)
+				break
+			end
+		end
+	end,
+
+	UpdateElement = function(self, name)
+		argcheck(name, 2, 'string')
+		local element = elements[name]
+		if(not element) then return end
+
+		element.update(self, 'UpdateElement', self.unit)
+	end,
+
+	Enable = RegisterUnitWatch,
+	Disable = function(self)
+		UnregisterUnitWatch(self)
+		self:Hide()
+	end,
+
+	--[[
+	--:PLAYER_ENTERING_WORLD()
+	--	Notes:
+	--		- Does a full update of all elements on the object.
+	--]]
+	PLAYER_ENTERING_WORLD = function(self, event)
+		local unit = self.unit
+		if(not UnitExists(unit)) then return end
+
+		for _, func in next, self.__elements do
+			func(self, event, unit)
+		end
+	end,
+} do
 	frame_metatable.__index[k] = v
 end
 
