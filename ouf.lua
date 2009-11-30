@@ -24,7 +24,6 @@ local print = function(a) ChatFrame1:AddMessage("|cff33ff99oUF:|r "..tostring(a)
 local error = function(...) print("|cffff0000Error:|r "..string.format(...)) end
 local dummy = function() end
 
-
 local function SetManyAttributes(self, ...)
 	for i=1,select("#", ...),2 do
 		local att,val = select(i, ...)
@@ -87,8 +86,7 @@ for eclass, color in next, FACTION_BAR_COLORS do
 end
 
 -- add-on object
-local oUF = CreateFrame"Button"
-local frame_metatable = {__index = oUF}
+local oUF = {}
 local event_metatable = {
 	__call = function(funcs, self, ...)
 		for _, func in ipairs(funcs) do
@@ -150,7 +148,6 @@ local iterateChildren = function(...)
 		end
 	end
 end
-
 
 local OnAttributeChanged = function(self, name, value)
 	if(name == "unit" and value) then
@@ -249,6 +246,159 @@ local HandleUnit = function(unit, object)
 			_G[party..'HealthBar']:UnregisterAllEvents()
 			_G[party..'ManaBar']:UnregisterAllEvents()
 		end
+	end
+end
+
+local frame_metatable = {
+	__index = {
+		colors = colors;
+
+		EnableElement = function(self, name, unit)
+			argcheck(name, 2, 'string')
+			argcheck(unit, 3, 'string', 'nil')
+
+			local element = elements[name]
+			if(not element) then return end
+
+			if(element.enable(self, unit or self.unit)) then
+				table.insert(self.__elements, element.update)
+			end
+		end,
+
+		DisableElement = function(self, name)
+			argcheck(name, 2, 'string')
+			local element = elements[name]
+			if(not element) then return end
+
+			for k, update in ipairs(self.__elements) do
+				if(update == element.update) then
+					table.remove(self.__elements, k)
+					element.disable(self)
+
+					-- We need to run a new update cycle incase we knocked ourself out of sync.
+					-- The main reason we do this is to make sure the full update is completed
+					-- if an element for some reason removes itself _during_ the update
+					-- progress.
+					self:PLAYER_ENTERING_WORLD('DisableElement', name)
+					break
+				end
+			end
+		end,
+
+		UpdateElement = function(self, name)
+			argcheck(name, 2, 'string')
+			local element = elements[name]
+			if(not element) then return end
+
+			element.update(self, 'UpdateElement', self.unit)
+		end,
+
+		Enable = RegisterUnitWatch,
+		Disable = function(self)
+			UnregisterUnitWatch(self)
+			self:Hide()
+		end,
+
+		--[[
+		--:PLAYER_ENTERING_WORLD()
+		--	Notes:
+		--		- Does a full update of all elements on the object.
+		--]]
+		PLAYER_ENTERING_WORLD = function(self, event)
+			local unit = self.unit
+			if(not UnitExists(unit)) then return end
+
+			for _, func in next, self.__elements do
+				func(self, event, unit)
+			end
+		end,
+	},
+}
+
+-- I do this to avoid yet another layer of metatable.
+for k, v in pairs(getmetatable(CreateFrame"Button").__index) do
+	frame_metatable.__index[k] = v
+end
+
+do
+	local RegisterEvent = frame_metatable.__index.RegisterEvent
+	function frame_metatable.__index:RegisterEvent(event, func)
+		argcheck(event, 2, 'string')
+
+		if(type(func) == 'string' and type(self[func]) == 'function') then
+			func = self[func]
+		end
+
+		local curev = self[event]
+		if(curev and func) then
+			if(type(curev) == 'function') then
+				self[event] = setmetatable({curev, func}, event_metatable)
+			else
+				for _, infunc in ipairs(curev) do
+					if(infunc == func) then return end
+				end
+
+				table.insert(curev, func)
+			end
+		elseif(self:IsEventRegistered(event)) then
+			return
+		else
+			if(func) then
+				self[event] = func
+			elseif(not self[event]) then
+				return error("Handler for event [%s] on unit [%s] does not exist.", event, self.unit or 'unknown')
+			end
+
+			RegisterEvent(self, event)
+		end
+	end
+end
+
+do
+	local UnregisterEvent = frame_metatable.__index.UnregisterEvent
+	function frame_metatable.__index:UnregisterEvent(event, func)
+		argcheck(event, 2, 'string')
+
+		local curev = self[event]
+		if(type(curev) == 'table' and func) then
+			for k, infunc in ipairs(curev) do
+				if(infunc == func) then
+					curev[k] = nil
+
+					if(#curev == 0) then
+						table.remove(curev, k)
+						UnregisterEvent(self, event)
+					end
+				end
+			end
+		else
+			self[event] = nil
+			UnregisterEvent(self, event)
+		end
+	end
+end
+
+do
+	local inf = math.huge
+	-- http://www.wowwiki.com/ColorGradient
+	function frame_metatable.__index.ColorGradient(perc, ...)
+		if perc >= 1 then
+			local r, g, b = select(select('#', ...) - 2, ...)
+			return r, g, b
+		elseif perc <= 0 then
+			local r, g, b = ...
+			return r, g, b
+		end
+
+		local num = select('#', ...) / 3
+
+		-- Translate divison by zeros into 0, so we don't blow select.
+		-- We check perc against itself because we rely on the fact that NaN can't equal NaN.
+		if(perc ~= perc or perc == inf) then perc = 0 end
+		local segment, relperc = math.modf(perc*(num-1))
+		local r1, g1, b1, r2, g2, b2 = select((segment*3)+1, ...)
+
+		return r1 + (r2-r1)*relperc, g1 + (g2-g1)*relperc, b1 + (b2-b1)*relperc
 	end
 end
 
@@ -389,60 +539,6 @@ function oUF:Spawn(unit, name, template, disableBlizz)
 	return object
 end
 
-local RegisterEvent = oUF.RegisterEvent
-function oUF:RegisterEvent(event, func)
-	argcheck(event, 2, 'string')
-
-	if(type(func) == 'string' and type(self[func]) == 'function') then
-		func = self[func]
-	end
-
-	local curev = self[event]
-	if(curev and func) then
-		if(type(curev) == 'function') then
-			self[event] = setmetatable({curev, func}, event_metatable)
-		else
-			for _, infunc in ipairs(curev) do
-				if(infunc == func) then return end
-			end
-
-			table.insert(curev, func)
-		end
-	elseif(self:IsEventRegistered(event)) then
-		return
-	else
-		if(func) then
-			self[event] = func
-		elseif(not self[event]) then
-			return error("Handler for event [%s] on unit [%s] does not exist.", event, self.unit or 'unknown')
-		end
-
-		RegisterEvent(self, event)
-	end
-end
-
-local UnregisterEvent = oUF.UnregisterEvent
-function oUF:UnregisterEvent(event, func)
-	argcheck(event, 2, 'string')
-
-	local curev = self[event]
-	if(type(curev) == 'table' and func) then
-		for k, infunc in ipairs(curev) do
-			if(infunc == func) then
-				curev[k] = nil
-
-				if(#curev == 0) then
-					table.remove(curev, k)
-					UnregisterEvent(self, event)
-				end
-			end
-		end
-	else
-		self[event] = nil
-		UnregisterEvent(self, event)
-	end
-end
-
 function oUF:AddElement(name, update, enable, disable)
 	argcheck(name, 2, 'string')
 	argcheck(update, 3, 'function', 'nil')
@@ -457,99 +553,14 @@ function oUF:AddElement(name, update, enable, disable)
 	}
 end
 
-function oUF:EnableElement(name, unit)
-	if(self == oUF) then return nil, 'Invalid oUF object.' end
-
-	argcheck(name, 2, 'string')
-	argcheck(unit, 3, 'string', 'nil')
-
-	local element = elements[name]
-	if(not element) then return end
-
-	if(element.enable(self, unit or self.unit)) then
-		table.insert(self.__elements, element.update)
-	end
-end
-
-function oUF:DisableElement(name)
-	if(self == oUF) then return nil, 'Invalid oUF object.' end
-
-	argcheck(name, 2, 'string')
-	local element = elements[name]
-	if(not element) then return end
-
-	for k, update in ipairs(self.__elements) do
-		if(update == element.update) then
-			table.remove(self.__elements, k)
-			element.disable(self)
-
-			-- We need to run a new update cycle incase we knocked ourself out of sync.
-			-- The main reason we do this is to make sure the full update is completed
-			-- if an element for some reason removes itself _during_ the update
-			-- progress.
-			self:PLAYER_ENTERING_WORLD('DisableElement', name)
-			break
-		end
-	end
-end
-
-function oUF:UpdateElement(name)
-	if(self == oUF) then return nil, 'Invalid oUF object.' end
-
-	argcheck(name, 2, 'string')
-	local element = elements[name]
-	if(not element) then return end
-
-	element.update(self, 'UpdateElement', self.unit)
-end
-
-oUF.Enable = RegisterUnitWatch
-function oUF:Disable()
-	UnregisterUnitWatch(self)
-	self:Hide()
-end
-
---[[
---:PLAYER_ENTERING_WORLD()
---	Notes:
---		- Does a full update of all elements on the object.
---]]
-function oUF:PLAYER_ENTERING_WORLD(event)
-	local unit = self.unit
-	if(not UnitExists(unit)) then return end
-
-	for _, func in next, self.__elements do
-		func(self, event, unit)
-	end
-end
-
-
-local inf = math.huge
--- http://www.wowwiki.com/ColorGradient
-function oUF.ColorGradient(perc, ...)
-	if perc >= 1 then
-		local r, g, b = select(select('#', ...) - 2, ...)
-		return r, g, b
-	elseif perc <= 0 then
-		local r, g, b = ...
-		return r, g, b
-	end
-
-	local num = select('#', ...) / 3
-
-	-- Translate divison by zeros into 0, so we don't blow select.
-	-- We check perc against itself because we rely on the fact that NaN can't equal NaN.
-	if(perc ~= perc or perc == inf) then perc = 0 end
-	local segment, relperc = math.modf(perc*(num-1))
-	local r1, g1, b1, r2, g2, b2 = select((segment*3)+1, ...)
-
-	return r1 + (r2-r1)*relperc, g1 + (g2-g1)*relperc, b1 + (b2-b1)*relperc
-end
-
 oUF.version = _VERSION
 oUF.units = units
 oUF.objects = objects
 oUF.colors = colors
+
+-- Temporary stuff, hopefully
+oUF.frame_metatable = frame_metatable
+oUF.ColorGradient = frame_metatable.__index.ColorGradient
 
 if(...) then
 	local _, ns = ...
