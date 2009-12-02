@@ -206,7 +206,7 @@ local SetAuraPosition = function(self, icons, x)
 		local cols = math.floor(icons:GetWidth() / size + .5)
 		local rows = math.floor(icons:GetHeight() / size + .5)
 
-		for i = 1, x do
+		for i = 1, #icons do
 			local button = icons[i]
 			if(button and button:IsShown()) then
 				if(gap and button.debuff) then
@@ -225,6 +225,8 @@ local SetAuraPosition = function(self, icons, x)
 				button:SetPoint(anchor, icons, anchor, col * size * growthx, row * size * growthy)
 
 				col = col + 1
+			elseif(not button) then
+				break
 			end
 		end
 	end
