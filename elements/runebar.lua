@@ -37,13 +37,13 @@ if(...) then
 else
 	oUF = _G[global]
 end
-local runes = {
+
+oUF.colors.runes = {
 	{1, 0, 0};
 	{0, .5, 0};
 	{0, 1, 1};
 	{.9, .1, 1};
 }
-oUF.colors.runes = runes
 
 local OnUpdate = function(self, elapsed)
 	local duration = self.duration + elapsed
@@ -56,7 +56,7 @@ local OnUpdate = function(self, elapsed)
 end
 
 local UpdateType = function(self, event, rune, alt)
-	local colors = runes[GetRuneType(rune) or alt]
+	local colors = self.colors.runes[GetRuneType(rune) or alt]
 	local rune = self.Runes[rune]
 	local r, g, b = colors[1], colors[2], colors[3]
 
