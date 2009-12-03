@@ -55,8 +55,8 @@ local OnUpdate = function(self, elapsed)
 	end
 end
 
-local UpdateType = function(self, event, rune)
-	local colors = runes[GetRuneType(rune)]
+local UpdateType = function(self, event, rune, alt)
+	local colors = runes[GetRuneType(rune) or alt]
 	local rune = self.Runes[rune]
 	local r, g, b = colors[1], colors[2], colors[3]
 
@@ -89,7 +89,9 @@ local Enable = function(self, unit)
 		for i=1, 6 do
 			local rune = runes[i]
 			rune:SetID(i)
-			UpdateType(self, nil, i)
+			-- From my minor testing this is a okey solution. A full login always remove
+			-- the death runes, or at least the clients knowledge about them.
+			UpdateType(self, nil, i, math.floor((i+1)/2))
 		end
 
 		self:RegisterEvent("RUNE_POWER_UPDATE", Update)
