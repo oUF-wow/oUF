@@ -6,22 +6,8 @@
 	 - :OverrideUpdateThreat(event, unit, status)
 	 - :PostUpdateThreat(event, unit, status)
 --]]
-local oUF
-local parent
-if(...) then
-	parent = ...
-else
-	parent = debugstack():match[[\AddOns\(.-)\]]
-end
-
-local global = GetAddOnMetadata(parent, 'X-oUF')
-assert(global, 'X-oUF needs to be defined in the parent add-on.')
-if(...) then
-	local _, ns = ...
-	oUF = ns.oUF
-else
-	oUF = _G[global]
-end
+local parent, ns = ...
+local oUF = ns.oUF
 
 local Update = function(self, event, unit)
 	if(unit ~= self.unit) then return end

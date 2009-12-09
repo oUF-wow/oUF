@@ -21,22 +21,8 @@
 
 if select(2, UnitClass("player")) ~= "DEATHKNIGHT" then return end
 
-local oUF
-local parent
-if(...) then
-	parent = ...
-else
-	parent = debugstack():match[[\AddOns\(.-)\]]
-end
-
-local global = GetAddOnMetadata(parent, 'X-oUF')
-assert(global, 'X-oUF needs to be defined in the parent add-on.')
-if(...) then
-	local _, ns = ...
-	oUF = ns.oUF
-else
-	oUF = _G[global]
-end
+local parent, ns = ...
+local oUF = ns.oUF
 
 oUF.colors.runes = {
 	{1, 0, 0};

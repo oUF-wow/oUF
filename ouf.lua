@@ -1,10 +1,4 @@
-local parent
-if(...) then
-	parent = ...
-else
-	parent = debugstack():match[[\AddOns\(.-)\]]
-end
-
+local parent, ns = ...
 local global = GetAddOnMetadata(parent, 'X-oUF')
 local _VERSION = GetAddOnMetadata(parent, 'version')
 
@@ -562,9 +556,5 @@ oUF.colors = colors
 oUF.frame_metatable = frame_metatable
 oUF.ColorGradient = frame_metatable.__index.ColorGradient
 
-if(...) then
-	local _, ns = ...
-	ns.oUF = oUF
-end
-
-if global then _G[global] = oUF end
+if(global) then _G[global] = oUF end
+ns.oUF = oUF
