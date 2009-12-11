@@ -11,7 +11,7 @@
 local parent, ns = ...
 local oUF = ns.oUF
 
-local classColors = oUF.colors.class
+local classColors
 
 local function Hex(r, g, b)
 	if type(r) == "table" then
@@ -218,7 +218,7 @@ local tagEvents = {
 	['[rare]']                = 'UNIT_CLASSIFICATION_CHANGED',
 	['[classification]']      = 'UNIT_CLASSIFICATION_CHANGED',
 	['[shortclassification]'] = 'UNIT_CLASSIFICATION_CHANGED',
-	["[group]"]                 = "RAID_ROSTER_UPDATE",
+	["[group]"]               = "RAID_ROSTER_UPDATE",
 }
 
 local unitlessEvents = {
@@ -233,6 +233,8 @@ frame:SetScript('OnEvent', function(self, event, unit)
 	if(strings) then
 		for k, fontstring in next, strings do
 			if(not unitlessEvents[event] and fontstring.parent.unit == unit and fontstring:IsVisible()) then
+				-- XXX: Fix this for 1.4
+				classColors = fontstring.parent.unit.colors.class
 				fontstring:UpdateTag()
 			end
 		end
@@ -254,6 +256,8 @@ local createOnUpdate = function(timer)
 			if(total >= timer) then
 				for k, fs in next, strings do
 					if(fs.parent:IsShown() and UnitExists(fs.parent.unit)) then
+						-- XXX: Fix this for 1.4.
+						classColors = fs.parent.colors.class
 						fs:UpdateTag()
 					end
 				end
