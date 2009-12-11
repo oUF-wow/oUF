@@ -364,6 +364,8 @@ do
 						table.remove(curev, k)
 						UnregisterEvent(self, event)
 					end
+
+					break
 				end
 			end
 		else
