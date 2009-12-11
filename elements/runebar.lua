@@ -78,6 +78,10 @@ local Enable = function(self, unit)
 			-- From my minor testing this is a okey solution. A full login always remove
 			-- the death runes, or at least the clients knowledge about them.
 			UpdateType(self, nil, i, math.floor((i+1)/2))
+
+			if(not rune:GetStatusBarTexture()) then
+				rune:SetStatusBarTexture[[Interface\TargetingFrame\UI-StatusBar]]
+			end
 		end
 
 		self:RegisterEvent("RUNE_POWER_UPDATE", Update)
