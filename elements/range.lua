@@ -13,8 +13,7 @@ local oUF = ns.oUF
 local objects = oUF.objects
 local OnRangeFrame
 
-local	UnitInRange, UnitIsConnected =
-		UnitInRange, UnitIsConnected
+local UnitInRange, UnitIsConnected = UnitInRange, UnitIsConnected
 
 -- updating of range.
 local timer = 0
@@ -22,7 +21,7 @@ local OnRangeUpdate = function(self, elapsed)
 	timer = timer + elapsed
 
 	if(timer >= .25) then
-		for _, object in ipairs(objects) do
+		for _, object in next, objects do
 			if(object:IsShown() and object.Range) then
 				if(UnitIsConnected(object.unit) and not UnitInRange(object.unit)) then
 					if(object:GetAlpha() == object.inRangeAlpha) then
@@ -45,4 +44,4 @@ local Enable = function(self)
 	end
 end
 
-oUF:AddElement('Range', nil, Enable)
+oUF:RegisterInitCallback(Enable)
