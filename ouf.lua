@@ -84,7 +84,7 @@ end
 local oUF = {}
 local event_metatable = {
 	__call = function(funcs, self, ...)
-		for _, func in ipairs(funcs) do
+		for _, func in next, funcs do
 			func(self, ...)
 		end
 	end,
@@ -268,7 +268,7 @@ for k, v in pairs{
 		local element = elements[name]
 		if(not element) then return end
 
-		for k, update in ipairs(self.__elements) do
+		for k, update in next, self.__elements do
 			if(update == element.update) then
 				table.remove(self.__elements, k)
 
@@ -329,7 +329,7 @@ do
 			if(type(curev) == 'function') then
 				self[event] = setmetatable({curev, func}, event_metatable)
 			else
-				for _, infunc in ipairs(curev) do
+				for _, infunc in next, curev do
 					if(infunc == func) then return end
 				end
 
@@ -356,7 +356,7 @@ do
 
 		local curev = self[event]
 		if(type(curev) == 'table' and func) then
-			for k, infunc in ipairs(curev) do
+			for k, infunc in next, curev do
 				if(infunc == func) then
 					curev[k] = nil
 
