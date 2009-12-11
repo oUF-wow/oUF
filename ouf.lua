@@ -271,7 +271,6 @@ for k, v in pairs{
 		for k, update in ipairs(self.__elements) do
 			if(update == element.update) then
 				table.remove(self.__elements, k)
-				element.disable(self)
 
 				-- We need to run a new update cycle incase we knocked ourself out of sync.
 				-- The main reason we do this is to make sure the full update is completed
@@ -281,6 +280,8 @@ for k, v in pairs{
 				break
 			end
 		end
+
+		return element.disable(self)
 	end,
 
 	UpdateElement = function(self, name)
