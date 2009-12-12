@@ -101,6 +101,7 @@ local Enable = function(self, unit)
 			runes[4], runes[6] = runes[6], runes[4]
 		end
 
+		-- XXX: Fix this for 1.4.
 		-- I really hate how this is done:
 		local width = runes.width
 		local height = runes.height
