@@ -273,6 +273,8 @@ local createOnUpdate = function(timer)
 end
 
 local OnShow = function(self)
+	-- XXX: Fix this for 1.4.
+	classColors = self.colors.class
 	for _, fs in next, self.__tags do
 		fs:UpdateTag()
 	end
