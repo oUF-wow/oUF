@@ -234,7 +234,7 @@ frame:SetScript('OnEvent', function(self, event, unit)
 		for k, fontstring in next, strings do
 			if(not unitlessEvents[event] and fontstring.parent.unit == unit and fontstring:IsVisible()) then
 				-- XXX: Fix this for 1.4
-				classColors = fontstring.parent.unit.colors.class
+				classColors = fontstring.parent.colors.class
 				fontstring:UpdateTag()
 			end
 		end
