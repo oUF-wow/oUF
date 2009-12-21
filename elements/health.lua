@@ -28,21 +28,6 @@
 local parent, ns = ...
 local oUF = ns.oUF
 
-local OnHealthUpdate
-do
-	local UnitHealth = UnitHealth
-	OnHealthUpdate = function(self)
-		if(self.disconnected) then return end
-		local health = UnitHealth(self.unit)
-
-		if(health ~= self.min) then
-			self.min = health
-
-			return self:GetParent():UNIT_MAXHEALTH("OnHealthUpdate", self.unit)
-		end
-	end
-end
-
 local Update = function(self, event, unit)
 	if(self.unit ~= unit) then return end
 	if(self.PreUpdateHealth) then self:PreUpdateHealth(event, unit) end
@@ -98,15 +83,35 @@ local Update = function(self, event, unit)
 	end
 end
 
-local Enable = function(self)
+local OnHealthUpdate
+do
+	local UnitHealth = UnitHealth
+	OnHealthUpdate = function(self)
+		if(self.disconnected) then return end
+		local health = UnitHealth(self.unit)
+
+		if(health ~= self.min) then
+			self.min = health
+
+			return Update(self:GetParent(), "OnHealthUpdate", self.unit)
+		end
+	end
+end
+
+local Enable = function(self, unit)
 	local health = self.Health
 	if(health) then
-		if(health.frequentUpdates and (self.unit and not self.unit:match'%w+target$') or not self.unit) then
-			health.disconnected = true
+		if(health.frequentUpdates and (unit and not unit:match'%w+target$') or not unit) then
 			health:SetScript('OnUpdate', OnHealthUpdate)
+
+			-- The party frames need this to handle disconnect states correctly.
+			if(not unit) then
+				self:RegisterEvent("UNIT_HEALTH", Update)
+			end
 		else
 			self:RegisterEvent("UNIT_HEALTH", Update)
 		end
+
 		self:RegisterEvent("UNIT_MAXHEALTH", Update)
 		self:RegisterEvent('UNIT_HAPPINESS', Update)
 		-- For tapping.
