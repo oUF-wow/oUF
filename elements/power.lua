@@ -29,29 +29,13 @@ local oUF = ns.oUF
 
 local UnitManaMax = UnitManaMax
 local UnitPowerType = UnitPowerType
-local min, max, bar
-
-local OnPowerUpdate
-do
-	local UnitMana = UnitMana
-	OnPowerUpdate = function(self)
-		if(self.disconnected) then return end
-		local power = UnitMana(self.unit)
-
-		if(power ~= self.min) then
-			self.min = power
-
-			return self:GetParent():UNIT_MAXMANA("OnPowerUpdate", self.unit)
-		end
-	end
-end
 
 local Update = function(self, event, unit)
 	if(self.unit ~= unit) then return end
 	if(self.PreUpdatePower) then self:PreUpdatePower(event, unit) end
 
-	min, max = UnitMana(unit), UnitManaMax(unit)
-	bar = self.Power
+	local min, max = UnitMana(unit), UnitManaMax(unit)
+	local bar = self.Power
 	bar:SetMinMaxValues(0, max)
 	bar:SetValue(min)
 
@@ -103,11 +87,25 @@ local Update = function(self, event, unit)
 	end
 end
 
+local OnPowerUpdate
+do
+	local UnitMana = UnitMana
+	OnPowerUpdate = function(self)
+		if(self.disconnected) then return end
+		local power = UnitMana(self.unit)
+
+		if(power ~= self.min) then
+			self.min = power
+
+			return Update(self:GetParent(), 'OnPowerUpdate', self.unit)
+		end
+	end
+end
+
 local Enable = function(self, unit)
 	local power = self.Power
 	if(power) then
 		if(power.frequentUpdates and (unit == 'player' or unit == 'pet')) then
-			power.disconnected = true
 			power:SetScript("OnUpdate", OnPowerUpdate)
 		else
 			self:RegisterEvent("UNIT_MANA", Update)
