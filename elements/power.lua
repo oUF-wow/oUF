@@ -51,9 +51,12 @@ local Update = function(self, event, unit)
 		elseif(bar.colorHappiness and unit == "pet" and GetPetHappiness()) then
 			t = self.colors.happiness[GetPetHappiness()]
 		elseif(bar.colorPower) then
-			local _, ptype = UnitPowerType(unit)
+			local ptype, ptoken, altR, altG, altB  = UnitPowerType(unit)
 
-			t = self.colors.power[ptype]
+			t = self.colors.power[ptoken]
+			if(not t and altR) then
+				r, g, b = altR, altG, altB
+			end
 		elseif(bar.colorClass and UnitIsPlayer(unit)) or
 			(bar.colorClassNPC and not UnitIsPlayer(unit)) or
 			(bar.colorClassPet and UnitPlayerControlled(unit) and not UnitIsPlayer(unit)) then
