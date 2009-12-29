@@ -13,8 +13,10 @@ local Update = function(self, event, unit)
 			portrait:SetPosition(0, 0, -1.5)
 			portrait:SetModel"Interface\\Buttons\\talktomequestionmark.mdx"
 		elseif(portrait.name ~= name or event == 'UNIT_MODEL_CHANGED') then
+			local alpha = portrait:GetAlpha()
 			portrait:SetUnit(unit)
 			portrait:SetCamera(0)
+			portrait:SetAlpha(alpha)
 
 			portrait.name = name
 		else
