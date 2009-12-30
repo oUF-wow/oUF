@@ -127,14 +127,14 @@ end
 local updateIcon = function(self, unit, icons, index, offset, filter, isDebuff, max)
 	if(index == 0) then index = max end
 
-	local name, rank, texture, count, dtype, duration, timeLeft, caster = UnitAura(unit, index, filter)
+	local name, rank, texture, count, dtype, duration, timeLeft, caster, isStealable, shouldConsolidate, spellID = UnitAura(unit, index, filter)
 	if(name) then
 		local icon = icons[index + offset]
 		if(not icon) then
 			icon = (self.CreateAuraIcon or createAuraIcon) (self, icons, index, isDebuff)
 		end
 
-		local show = (self.CustomAuraFilter or customFilter) (icons, unit, icon, name, rank, texture, count, dtype, duration, timeLeft, caster)
+		local show = (self.CustomAuraFilter or customFilter) (icons, unit, icon, name, rank, texture, count, dtype, duration, timeLeft, caster, isStealable, shouldConsolidate, spellID)
 		if(show) then
 			-- We might want to consider delaying the creation of an actual cooldown
 			-- object to this point, but I think that will just make things needlessly
