@@ -163,6 +163,7 @@ local OnAttributeChanged = function(self, name, value)
 end
 
 -- Gigantic function of doom
+-- XXX: Clean it up for 1.4.
 local HandleUnit = function(unit, object)
 	if(unit == "player") then
 		-- Hide the blizzard stuff
@@ -208,6 +209,20 @@ local HandleUnit = function(unit, object)
 		object:RegisterEvent("PLAYER_FOCUS_CHANGED", 'PLAYER_ENTERING_WORLD')
 	elseif(unit == "mouseover") then
 		object:RegisterEvent("UPDATE_MOUSEOVER_UNIT", 'PLAYER_ENTERING_WORLD')
+	elseif(unit:match'boss%d') then
+		for i=1,MAX_BOSS_FRAMES do
+			local name = "Boss" .. i .."TargetFrame"
+			local frame = _G[name]
+
+			frame:UnregisterAllEvents()
+			frame.Show = dummy
+			frame:Hide()
+
+			_G[name..'HealthBar']:UnregisterAllEvents()
+			_G[name..'ManaBar']:UnregisterAllEvents()
+		end
+
+		enableTargetUpdate(object)
 	elseif(unit:match"target") then
 		-- Hide the blizzard stuff
 		if(unit == "targettarget") then
