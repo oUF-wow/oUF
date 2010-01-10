@@ -4,7 +4,7 @@ local oUF = ns.oUF
 local objects = oUF.objects
 
 local updateBlizzardBuffFrames = function(self, unit)
-	if(self.realUnit == 'player') then
+	if(unit == 'player') then
 		PlayerFrame.unit = self.unit
 		BuffFrame_Update()
 	end
@@ -58,7 +58,7 @@ local UNIT_ENTERED_VEHICLE = function(self, event, unit)
 		end
 	end
 
-	updateBlizzardBuffFrames(self)
+	updateBlizzardBuffFrames(self, unit)
 
 	return self:PLAYER_ENTERING_WORLD('VehicleSwitch')
 end
@@ -101,7 +101,7 @@ local UNIT_EXITED_VEHICLE = function(self, event, unit)
 	end
 
 	self.unit = SecureButton_GetModifiedUnit(self)
-	updateBlizzardBuffFrames(self)
+	updateBlizzardBuffFrames(self, self.unit)
 
 	return self:PLAYER_ENTERING_WORLD('VehicleSwitch')
 end
