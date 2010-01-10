@@ -155,7 +155,7 @@ local OnAttributeChanged = function(self, name, value)
 				iterateChildren(self:GetChildren())
 			end
 
-			self.unit = value
+			self.unit = SecureButton_GetModifiedUnit(self)
 			self.id = value:match"^.-(%d+)"
 			self:PLAYER_ENTERING_WORLD"PLAYER_ENTERING_WORLD"
 		end

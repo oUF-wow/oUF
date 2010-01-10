@@ -400,7 +400,7 @@ local Tag = function(self, fs, tagstr)
 
 		func = function(self)
 			local unit = self.parent.unit
-			local __unit = self.parent.__unit
+			local __unit = self.parent.realUnit
 
 			for i, func in next, args do
 				tmp[i] = func(unit, __unit) or ''
