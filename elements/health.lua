@@ -33,11 +33,17 @@ local Update = function(self, event, unit)
 	if(self.PreUpdateHealth) then self:PreUpdateHealth(event, unit) end
 
 	local min, max = UnitHealth(unit), UnitHealthMax(unit)
+	local disconnected = not UnitIsConnected(unit)
 	local bar = self.Health
 	bar:SetMinMaxValues(0, max)
-	bar:SetValue(min)
 
-	bar.disconnected = not UnitIsConnected(unit)
+	if(disconnected) then
+		bar:SetValue(max)
+	else
+		bar:SetValue(min)
+	end
+
+	bar.disconnected = disconnected
 	bar.unit = unit
 
 	if(not self.OverrideUpdateHealth) then
