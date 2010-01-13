@@ -27,14 +27,11 @@
 local parent, ns = ...
 local oUF = ns.oUF
 
-local UnitManaMax = UnitManaMax
-local UnitPowerType = UnitPowerType
-
 local Update = function(self, event, unit)
 	if(self.unit ~= unit) then return end
 	if(self.PreUpdatePower) then self:PreUpdatePower(event, unit) end
 
-	local min, max = UnitMana(unit), UnitManaMax(unit)
+	local min, max = UnitPower(unit), UnitPowerMax(unit)
 	local bar = self.Power
 	bar:SetMinMaxValues(0, max)
 	bar:SetValue(min)
