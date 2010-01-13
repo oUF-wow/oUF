@@ -32,7 +32,7 @@ local Update = function(self, event, unit)
 	if(self.PreUpdatePower) then self:PreUpdatePower(event, unit) end
 
 	local min, max = UnitPower(unit), UnitPowerMax(unit)
-	local disconnected = not UnitPowerMax(unit)
+	local disconnected = not UnitIsConnected(unit)
 	local bar = self.Power
 	bar:SetMinMaxValues(0, max)
 
