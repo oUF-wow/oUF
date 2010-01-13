@@ -79,7 +79,7 @@ local UNIT_EXITED_VEHICLE = function(self, event, unit)
 
 		while(child) do
 			if(child:GetAttribute'unitsuffix' == 'pet') then
-				child.unit = obj.realUnit
+				child.unit = child.realUnit
 				child.realUnit = nil
 
 				child:PLAYER_ENTERING_WORLD('VehicleSwitch')
