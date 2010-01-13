@@ -28,7 +28,6 @@ end
 
 -- Colors
 local colors = {
-	health = {49/255, 207/255, 37/255}, -- Health
 	happiness = {
 		[1] = {1, 0, 0}, -- need.... | unhappy
 		[2] = {1, 1, 0}, -- new..... | content

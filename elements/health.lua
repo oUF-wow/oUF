@@ -28,6 +28,8 @@
 local parent, ns = ...
 local oUF = ns.oUF
 
+oUF.colors.health = {49/255, 207/255, 37/255}
+
 local Update = function(self, event, unit)
 	if(self.unit ~= unit) then return end
 	if(self.PreUpdateHealth) then self:PreUpdateHealth(event, unit) end
