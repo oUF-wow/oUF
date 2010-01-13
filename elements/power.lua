@@ -27,6 +27,13 @@
 local parent, ns = ...
 local oUF = ns.oUF
 
+oUF.colors.power = {}
+for power, color in next, PowerBarColor do
+	if(type(power) == 'string') then
+		oUF.colors.power[power] = {color.r, color.g, color.b}
+	end
+end
+
 local Update = function(self, event, unit)
 	if(self.unit ~= unit) then return end
 	if(self.PreUpdatePower) then self:PreUpdatePower(event, unit) end

@@ -43,7 +43,6 @@ local colors = {
 	tapped = {.6,.6,.6},
 	class = {},
 	reaction = {},
-	power = {},
 }
 
 -- We do this because people edit the vars directly, and changing the default
@@ -67,12 +66,6 @@ if(IsAddOnLoaded'!ClassColors' and CUSTOM_CLASS_COLORS) then
 else
 	for eclass, color in next, RAID_CLASS_COLORS do
 		colors.class[eclass] = {color.r, color.g, color.b}
-	end
-end
-
-for power, color in next, PowerBarColor do
-	if(type(power) == 'string') then
-		colors.power[power] = {color.r, color.g, color.b}
 	end
 end
 
