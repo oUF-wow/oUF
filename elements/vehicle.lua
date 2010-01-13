@@ -10,8 +10,8 @@ local updateBlizzardBuffFrames = function(self, unit)
 	end
 end
 
-local UNIT_ENTERED_VEHICLE = function(self, event, unit)
-	if(self.unit ~= unit) then return end
+local UNIT_ENTERED_VEHICLE = function(self, event, unit, hasUI)
+	if(not hasUI or self.unit ~= unit) then return end
 
 	local modUnit = SecureButton_GetModifiedUnit(self)
 	self.realUnit = unit
@@ -49,7 +49,7 @@ local UNIT_ENTERED_VEHICLE = function(self, event, unit)
 		end
 	else
 		for _, obj in next, objects do
-			if(not(obj.hasChildren or obj.isChild) and modUnit == obj.unit) then
+			if(not(obj.hasChildren or obj.isChild) and modUnit == obj.unit and not obj.realUnit) then
 				obj.realUnit = obj.unit
 				obj.unit = self.realUnit
 
