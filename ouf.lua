@@ -85,10 +85,8 @@ local event_metatable = {
 local styles, style = {}
 local callback, units, objects = {}, {}, {}
 
-local	_G, select, type, tostring, math_modf =
-		_G, select, type, tostring, math.modf
-local	UnitExists, UnitName =
-		UnitExists, UnitName
+local select  = select
+local UnitExists = UnitExists
 
 local conv = {
 	['playerpet'] = 'pet',
