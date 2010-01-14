@@ -512,6 +512,7 @@ function oUF:Spawn(unit, name, template, disableBlizz)
 	if(not style) then return error("Unable to create frame. No styles have been registered.") end
 
 	local object
+	unit = unit:lower()
 	if(unit == "header") then
 		if(not template) then
 			template = "SecureGroupHeaderTemplate"
