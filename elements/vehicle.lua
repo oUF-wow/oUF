@@ -20,8 +20,15 @@ local Update = function(self, event, unit)
 	-- Avoid unnecessary changes
 	if modUnit == self.unit then return end
 	
-	-- Update the frame unit and refresh the frame
+	-- Update the frame unit properties
 	self.unit = modUnit
+	if modUnit ~= realUnit then
+		self.realUnit = realUnit
+	else
+		self.realUnit = nil
+	end
+	
+	-- Refresh the frame
 	self:PLAYER_ENTERING_WORLD('VehicleSwitch')
 
 	-- Update player buff frames
