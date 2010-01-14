@@ -1,15 +1,11 @@
 local parent, ns = ...
 local oUF = ns.oUF
 
--- Rough optimization
-local petUnits = { player = "pet" }
-for i = 1, 4 do petUnits['party'..i] = 'partypet'..i end
-for i = 1, 40 do petUnits['raid'..i] = 'raidpet'..i end
-
 local Update = function(self, event, unit)
 	local realUnit = SecureButton_GetUnit(self)
+	
 	-- Smart filter to update both master and pet/vehicle frames with a single event
-	if not (unit == realUnit or petUnits[unit] == realUnit) then return end
+	if not (unit == realUnit or (unit == "player" and realUnit == "pet") or (unit == string.gsub(realUnit, "pet", ""))) then return end
 	
 	-- Evaluate the unit to display
 	local	modUnit = SecureButton_GetModifiedUnit(self)
