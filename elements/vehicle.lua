@@ -3,9 +3,9 @@ local oUF = ns.oUF
 
 local Update = function(self, event, unit)
 	-- Calculate units to work with
-	local	realUnit, modUnit = SecureButton_GetUnit(self), SecureButton_GetModifiedUnit(self)
-	if modUnit == "pet" and realUnit ~= "pet" then 
-		modUnit = "vehicle" 
+	local realUnit, modUnit = SecureButton_GetUnit(self), SecureButton_GetModifiedUnit(self)
+	if modUnit == "pet" and realUnit ~= "pet" then
+		modUnit = "vehicle"
 	end
 
 	-- Avoid unnecessary changes
@@ -25,7 +25,7 @@ local Update = function(self, event, unit)
 	-- Update player buff frames
 	if realUnit == "player" then
 		PlayerFrame.unit = modUnit
-		BuffFrame_Update()	
+		BuffFrame_Update()
 	end
 end
 
