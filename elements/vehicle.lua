@@ -2,13 +2,8 @@ local parent, ns = ...
 local oUF = ns.oUF
 
 local Update = function(self, event, unit)
-	local realUnit = SecureButton_GetUnit(self)
-	
-	-- Smart filter to update both master and pet/vehicle frames with a single event
-	if not (unit == realUnit or (unit == "player" and realUnit == "pet") or (unit == string.gsub(realUnit, "pet", ""))) then return end
-	
-	-- Evaluate the unit to display
-	local	modUnit = SecureButton_GetModifiedUnit(self)
+	-- Calculate units to work with
+	local	realUnit, modUnit = SecureButton_GetUnit(self), SecureButton_GetModifiedUnit(self)
 	if modUnit == "pet" and realUnit ~= "pet" then 
 		modUnit = "vehicle" 
 	end
