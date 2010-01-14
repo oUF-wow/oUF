@@ -4,16 +4,16 @@ local oUF = ns.oUF
 local Update = function(self, event, unit)
 	-- Calculate units to work with
 	local realUnit, modUnit = SecureButton_GetUnit(self), SecureButton_GetModifiedUnit(self)
-	if modUnit == "pet" and realUnit ~= "pet" then
+	if(modUnit == "pet" and realUnit ~= "pet") then
 		modUnit = "vehicle"
 	end
 
 	-- Avoid unnecessary changes
-	if modUnit == self.unit then return end
+	if(modUnit == self.unit) then return end
 	
 	-- Update the frame unit properties
 	self.unit = modUnit
-	if modUnit ~= realUnit then
+	if(modUnit ~= realUnit) then
 		self.realUnit = realUnit
 	else
 		self.realUnit = nil
