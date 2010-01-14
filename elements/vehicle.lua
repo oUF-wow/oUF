@@ -23,7 +23,7 @@ local Update = function(self, event, unit)
 	self:PLAYER_ENTERING_WORLD('VehicleSwitch')
 
 	-- Update player buff frames
-	if realUnit == "player" then
+	if(realUnit == "player") then
 		PlayerFrame.unit = modUnit
 		BuffFrame_Update()
 	end
