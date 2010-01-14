@@ -36,6 +36,8 @@ local Enable = function(self, unit)
 	self:RegisterEvent('UNIT_EXITED_VEHICLE', Update)
 
 	self:SetAttribute('toggleForVehicle', true)
+
+	return true
 end
 
 local Disable = function(self)
@@ -45,4 +47,4 @@ local Disable = function(self)
 	self:SetAttribute('toggleForVehicle', nil)
 end
 
-oUF:AddElement("VehicleSwitch", nil, Enable, Disable)
+oUF:AddElement("VehicleSwitch", Update, Enable, Disable)
