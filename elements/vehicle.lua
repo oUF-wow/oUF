@@ -32,7 +32,11 @@ local Update = function(self, event, unit)
 end
 
 local Enable = function(self, unit)
-	if(self.disallowVehicleSwap or (unit and unit:match'target')) then return end
+	if(
+		self.disallowVehicleSwap or
+		(unit and unit:match'target') or
+		self:GetAttribute'unitsuffix' == 'target'
+	) then return end
 
 	self:RegisterEvent('UNIT_ENTERED_VEHICLE', Update)
 	self:RegisterEvent('UNIT_EXITED_VEHICLE', Update)
