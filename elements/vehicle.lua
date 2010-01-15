@@ -2,6 +2,8 @@ local parent, ns = ...
 local oUF = ns.oUF
 
 local Update = function(self, event, unit)
+	if(event == 'VehicleSwitch') then return end
+
 	-- Calculate units to work with
 	local realUnit, modUnit = SecureButton_GetUnit(self), SecureButton_GetModifiedUnit(self)
 	if(modUnit == "pet" and realUnit ~= "pet") then
