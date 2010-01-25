@@ -243,7 +243,7 @@ do
 				HandleFrame'Boss2TargetFrame'
 				return HandleFrame'Boss3TargetFrame'
 			end
-		elseif(unit:match'(party)%d$' == 'party') then
+		elseif(unit:match'(party)%d?$' == 'party') then
 			local id = unit:match'party(%d)'
 			if(id) then
 				baseName = 'PartyMemberFrame' .. id
