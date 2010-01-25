@@ -152,90 +152,87 @@ local OnAttributeChanged = function(self, name, value)
 	end
 end
 
--- Gigantic function of doom
--- XXX: Clean it up for 1.4.
-local HandleUnit = function(unit, object)
-	if(unit == "player") then
-		-- Hide the blizzard stuff
-		PlayerFrame:UnregisterAllEvents()
-		PlayerFrame.Show = dummy
-		PlayerFrame:Hide()
-
-		PlayerFrameHealthBar:UnregisterAllEvents()
-		PlayerFrameManaBar:UnregisterAllEvents()
-	elseif(unit == "pet")then
-		-- Hide the blizzard stuff
-		PetFrame:UnregisterAllEvents()
-		PetFrame.Show = dummy
-		PetFrame:Hide()
-
-		PetFrameHealthBar:UnregisterAllEvents()
-		PetFrameManaBar:UnregisterAllEvents()
-	elseif(unit == "target") then
-		-- Hide the blizzard stuff
-		TargetFrame:UnregisterAllEvents()
-		TargetFrame.Show = dummy
-		TargetFrame:Hide()
-
-		TargetFrameHealthBar:UnregisterAllEvents()
-		TargetFrameManaBar:UnregisterAllEvents()
-		TargetFrameSpellBar:UnregisterAllEvents()
-
-		ComboFrame:UnregisterAllEvents()
-		ComboFrame.Show = dummy
-		ComboFrame:Hide()
-
-		-- Enable our shit
-		object:RegisterEvent("PLAYER_TARGET_CHANGED", 'PLAYER_ENTERING_WORLD')
-	elseif(unit == "focus") then
-		FocusFrame:UnregisterAllEvents()
-		FocusFrame.Show = dummy
-		FocusFrame:Hide()
-
-		FocusFrameHealthBar:UnregisterAllEvents()
-		FocusFrameManaBar:UnregisterAllEvents()
-		FocusFrameSpellBar:UnregisterAllEvents()
-
-		object:RegisterEvent("PLAYER_FOCUS_CHANGED", 'PLAYER_ENTERING_WORLD')
-	elseif(unit == "mouseover") then
-		object:RegisterEvent("UPDATE_MOUSEOVER_UNIT", 'PLAYER_ENTERING_WORLD')
-	elseif(unit:match'boss%d') then
-		for i=1,MAX_BOSS_FRAMES do
-			local name = "Boss" .. i .."TargetFrame"
-			local frame = _G[name]
-
+do
+	local HandleFrame = function(baseName)
+		local frame = _G[baseName]
+		if(frame) then
 			frame:UnregisterAllEvents()
 			frame.Show = dummy
 			frame:Hide()
 
-			_G[name..'HealthBar']:UnregisterAllEvents()
-			_G[name..'ManaBar']:UnregisterAllEvents()
+			local health = frame.healthbar
+			if(health) then
+				healt:UnregisterAllEvents()
+			end
+
+			local power = frame.manabar
+			if(power) then
+				power:UnregisterAllEvents()
+			end
+
+			local spell = frame.spellbar
+			if(spell) then
+				spell:UnregisterAllEvents()
+			end
+		end
+	end
+
+	function oUF:DisableBlizzard(unit, object)
+		if(not unit) then return end
+
+		local baseName
+		if(unit == 'player') then
+			baseName = 'PlayerFrame'
+		elseif(unit == 'pet') then
+			baseName = 'PetFrame'
+		elseif(unit == 'target') then
+			if(object) then
+				object:RegisterEvent('PLAYER_TARGET_CHANGED', 'PLAYER_ENTERING_WORLD')
+			end
+
+			HandleFrame'TargetFrame'
+			return HandleFrame'ComboFrame'
+		elseif(unit == 'mouseover') then
+			if(object) then
+				return object:RegisterEvent('UPDATE_MOUSEOVER_UNIT', 'PLAYER_ENTERING_WORLD')
+			end
+		elseif(unit == 'focus') then
+			if(object) then
+				object:RegisterEvent('PLAYER_FOCUS_CHANGED', 'PLAYER_ENTERING_WORLD')
+			end
+
+			baseName = 'FocusFrame'
+		elseif(unit:match'%w+target') then
+			if(unit == 'targettarget') then
+				baseName = 'TargetFrameToTManaBar'
+			end
+
+			enableTargetUpdate(object)
+		elseif(unit:match'(boss)%d?$' == 'boss') then
+			enableTargetUpdate(object)
+
+			local id = unit:match'boss(%d)'
+			if(id) then
+				baseName = 'Boss' .. id .. 'TargetFrame'
+			else
+				HandleFrame'Boss1TargetFrame'
+				HandleFrame'Boss2TargetFrame'
+				return HandleFrame'Boss3TargetFrame'
+			end
+		elseif(unit:match'(party)%d$' == 'party') then
+			local id = unit:match'party(%d)'
+			if(id) then
+				baseName = 'PartyMemberFrame' .. id
+			else
+				HandleFrame'PartyMemberFrame1'
+				HandleFrame'PartyMemberFrame2'
+				HandleFrame'PartyMemberFrame3'
+				return HandleFrame'PartyMemberFrame4'
+			end
 		end
 
-		enableTargetUpdate(object)
-	elseif(unit:match"target") then
-		-- Hide the blizzard stuff
-		if(unit == "targettarget") then
-			TargetFrameToT:UnregisterAllEvents()
-			TargetFrameToT.Show = dummy
-			TargetFrameToT:Hide()
-
-			TargetFrameToTHealthBar:UnregisterAllEvents()
-			TargetFrameToTManaBar:UnregisterAllEvents()
-		end
-
-		enableTargetUpdate(object)
-	elseif(unit == "party") then
-		for i=1,4 do
-			local party = "PartyMemberFrame"..i
-			local frame = _G[party]
-
-			frame:UnregisterAllEvents()
-			frame.Show = dummy
-			frame:Hide()
-
-			_G[party..'HealthBar']:UnregisterAllEvents()
-			_G[party..'ManaBar']:UnregisterAllEvents()
+		if(baseName) then
+			return HandleFrame(baseName)
 		end
 	end
 end
@@ -526,7 +523,7 @@ function oUF:Spawn(unit, name, template, disableBlizz)
 
 		units[unit] = object
 		walkObject(object, unit)
-		HandleUnit(unit, object)
+		self:DisableBlizzard(unit, object)
 		RegisterUnitWatch(object)
 	end
 
