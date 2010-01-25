@@ -565,5 +565,11 @@ oUF.colors = colors
 oUF.frame_metatable = frame_metatable
 oUF.ColorGradient = frame_metatable.__index.ColorGradient
 
-if(global) then _G[global] = oUF end
+if(global) then
+	if(parent ~= 'oUF' and global == 'oUF' and IsAddOnLoaded'oUF') then
+		error("%s attempted to override oUF's default global with its internal oUF.", parent)
+	else
+		_G[global] = oUF
+	end
+end
 ns.oUF = oUF
