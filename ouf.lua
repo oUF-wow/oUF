@@ -72,6 +72,29 @@ for eclass, color in next, FACTION_BAR_COLORS do
 	colors.reaction[eclass] = {color.r, color.g, color.b}
 end
 
+local _STATEFORMAT = [[
+local header = self:GetFrameRef('%s')
+if(newstate == 'party') then
+	if(header:GetAttribute'showParty') then
+		header:Show()
+	else
+		header:Hide()
+	end
+elseif(newstate == 'raid') then
+	if(header:GetAttribute'showRaid') then
+		header:Show()
+	else
+		header:Hide()
+	end
+elseif(newstate == 'solo') then
+	if(header:GetAttribute'showSolo') then
+		header:Show()
+	else
+		header:Hide()
+	end
+end
+]]
+
 -- add-on object
 local _STATE = CreateFrame("Frame", nil, nil, "SecureHandlerStateTemplate")
 local oUF = {}
@@ -497,7 +520,7 @@ function oUF:SetActiveStyle(name)
 end
 
 --- XXX: Currently incomplete.
-function oUF:SpawnHeader(overrideName, template, showParty, showRaid)
+function oUF:SpawnHeader(overrideName, template, showSolo, showParty, showRaid)
 	if(not style) then return error("Unable to create frame. No styles have been registered.") end
 
 	template = (template or 'SecureGroupHeaderTemplate')
@@ -510,6 +533,10 @@ function oUF:SpawnHeader(overrideName, template, showParty, showRaid)
 
 	header:SetAttribute("template", "SecureUnitButtonTemplate")
 
+	if(showSolo) then
+		header:SetAttribute('showSolo', true)
+	end
+
 	if(showParty) then
 		header:SetAttribute('showParty', true)
 		self:DisableBlizzard'party'
@@ -517,6 +544,14 @@ function oUF:SpawnHeader(overrideName, template, showParty, showRaid)
 
 	if(showRaid) then
 		header:SetAttribute('showRaid', true)
+	end
+
+	-- We want to show the frame while in a party, but not while in raids.
+	if(showParty and not showRaid) then
+		local state = 'oUF:' .. style .. '-' .. name
+		_STATE:SetFrameRef(state, header)
+		_STATE:SetAttribute('_onstate-' .. state, _STATEFORMAT:format(state))
+		RegisterStateDriver(_STATE, state, '[group:raid] raid; [group:party] party; solo')
 	end
 
 	return header
