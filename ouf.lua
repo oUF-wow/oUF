@@ -162,7 +162,7 @@ do
 
 			local health = frame.healthbar
 			if(health) then
-				healt:UnregisterAllEvents()
+				health:UnregisterAllEvents()
 			end
 
 			local power = frame.manabar
