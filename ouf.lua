@@ -75,19 +75,19 @@ end
 local _STATEFORMAT = [[
 local header = self:GetFrameRef('%s')
 if(newstate == 'party') then
-	if(header:GetAttribute'showParty') then
+	if(header:GetAttribute'visibleParty') then
 		header:Show()
 	else
 		header:Hide()
 	end
 elseif(newstate == 'raid') then
-	if(header:GetAttribute'showRaid') then
+	if(header:GetAttribute'visibleRaid') then
 		header:Show()
 	else
 		header:Hide()
 	end
 elseif(newstate == 'solo') then
-	if(header:GetAttribute'showSolo') then
+	if(header:GetAttribute'visibleSolo') then
 		header:Show()
 	else
 		header:Hide()
@@ -533,16 +533,16 @@ function oUF:SpawnHeader(overrideName, template, showSolo, showParty, showRaid)
 	header:SetAttribute("template", "SecureUnitButtonTemplate")
 
 	if(showSolo) then
-		header:SetAttribute('showSolo', true)
+		header:SetAttribute('visibleSolo', true)
 	end
 
 	if(showParty) then
-		header:SetAttribute('showParty', true)
+		header:SetAttribute('visibleParty', true)
 		self:DisableBlizzard'party'
 	end
 
 	if(showRaid) then
-		header:SetAttribute('showRaid', true)
+		header:SetAttribute('visibleRaid', true)
 	end
 
 	-- We want to show the frame while in a party, but not while in raids.
