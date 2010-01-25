@@ -519,7 +519,6 @@ function oUF:SetActiveStyle(name)
 	style = name
 end
 
---- XXX: Currently incomplete.
 function oUF:SpawnHeader(overrideName, template, showSolo, showParty, showRaid)
 	if(not style) then return error("Unable to create frame. No styles have been registered.") end
 
