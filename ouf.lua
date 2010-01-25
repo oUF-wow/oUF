@@ -73,6 +73,7 @@ for eclass, color in next, FACTION_BAR_COLORS do
 end
 
 -- add-on object
+local _STATE = CreateFrame("Frame", nil, nil, "SecureHandlerStateTemplate")
 local oUF = {}
 local event_metatable = {
 	__call = function(funcs, self, ...)
@@ -495,37 +496,50 @@ function oUF:SetActiveStyle(name)
 	style = name
 end
 
-function oUF:Spawn(unit, name, template, disableBlizz)
+--- XXX: Currently incomplete.
+function oUF:SpawnHeader(overrideName, template, showParty, showRaid)
+	if(not style) then return error("Unable to create frame. No styles have been registered.") end
+
+	template = (template or 'SecureGroupHeaderTemplate')
+
+	local name = overrideName
+	local header = CreateFrame('Frame', name, UIParent, template)
+	header.initialConfigFunction = walkObject
+	header.style = style
+	header.SetManyAttributes = SetManyAttributes
+
+	header:SetAttribute("template", "SecureUnitButtonTemplate")
+
+	if(showParty) then
+		header:SetAttribute('showParty', true)
+		self:DisableBlizzard'party'
+	end
+
+	if(showRaid) then
+		header:SetAttribute('showRaid', true)
+	end
+
+	return header
+end
+
+function oUF:Spawn(unit, overrideName)
 	argcheck(unit, 2, 'string')
 	if(not style) then return error("Unable to create frame. No styles have been registered.") end
 
-	local object
 	unit = unit:lower()
-	if(unit == "header") then
-		if(not template) then
-			template = "SecureGroupHeaderTemplate"
-		end
 
-		HandleUnit(disableBlizz or 'party')
+	local name = overrideName
+	local object = CreateFrame("Button", name, UIParent, "SecureUnitButtonTemplate")
+	object.unit = unit
+	object.id = unit:match"^.-(%d+)"
 
-		local header = CreateFrame("Frame", name, UIParent, template)
-		header:SetAttribute("template", "SecureUnitButtonTemplate")
-		header.initialConfigFunction = walkObject
-		header.style = style
-		header.SetManyAttributes = SetManyAttributes
+	units[unit] = object
+	walkObject(object, unit)
 
-		return header
-	else
-		object = CreateFrame("Button", name, UIParent, "SecureUnitButtonTemplate")
-		object:SetAttribute("unit", unit)
-		object.unit = unit
-		object.id = unit:match"^.-(%d+)"
+	object:SetAttribute("unit", unit)
+	RegisterUnitWatch(object)
 
-		units[unit] = object
-		walkObject(object, unit)
-		self:DisableBlizzard(unit, object)
-		RegisterUnitWatch(object)
-	end
+	self:DisableBlizzard(unit, object)
 
 	return object
 end
