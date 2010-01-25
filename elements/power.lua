@@ -102,10 +102,10 @@ end
 
 local OnPowerUpdate
 do
-	local UnitMana = UnitMana
+	local UnitPower = UnitPower
 	OnPowerUpdate = function(self)
 		if(self.disconnected) then return end
-		local power = UnitMana(self.unit)
+		local power = UnitPower(self.unit)
 
 		if(power ~= self.min) then
 			self.min = power
