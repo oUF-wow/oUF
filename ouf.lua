@@ -545,13 +545,10 @@ function oUF:SpawnHeader(overrideName, template, showSolo, showParty, showRaid)
 		header:SetAttribute('visibleRaid', true)
 	end
 
-	-- We want to show the frame while in a party, but not while in raids.
-	if(showParty and not showRaid) then
-		local state = 'oUF:' .. style .. '-' .. name
-		_STATE:SetFrameRef(state, header)
-		_STATE:SetAttribute('_onstate-' .. state, _STATEFORMAT:format(state))
-		RegisterStateDriver(_STATE, state, '[group:raid] raid; [group:party] party; solo')
-	end
+	local state = 'oUF:' .. style .. '-' .. name
+	_STATE:SetFrameRef(state, header)
+	_STATE:SetAttribute('_onstate-' .. state, _STATEFORMAT:format(state))
+	RegisterStateDriver(_STATE, state, '[group:raid] raid; [group:party] party; solo')
 
 	return header
 end
