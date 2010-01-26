@@ -55,7 +55,7 @@ if(IsAddOnLoaded'!ClassColors' and CUSTOM_CLASS_COLORS) then
 		local oUF = ns.oUF or _G[parent]
 		if(oUF) then
 			for _, obj in next, oUF.objects do
-				obj:PLAYER_ENTERING_WORLD"PLAYER_ENTERING_WORLD"
+				obj:UpdateAllElements("CUSTOM_CLASS_COLORS")
 			end
 		end
 	end
@@ -127,7 +127,7 @@ local enableTargetUpdate = function(object)
 			if(not self.unit) then
 				return
 			elseif(timer >= .5) then
-				self:PLAYER_ENTERING_WORLD'OnTargetUpdate'
+				self:UpdateAllElements'OnTargetUpdate'
 				timer = 0
 			end
 
@@ -153,7 +153,7 @@ local iterateChildren = function(...)
 			local subUnit = conv[unit] or unit
 			units[subUnit] = obj
 			obj.unit = subUnit
-			obj:PLAYER_ENTERING_WORLD"PLAYER_ENTERING_WORLD"
+			obj:UpdateAllElements"PLAYER_ENTERING_WORLD"
 		end
 	end
 end
@@ -171,7 +171,7 @@ local OnAttributeChanged = function(self, name, value)
 
 			self.unit = SecureButton_GetModifiedUnit(self)
 			self.id = value:match"^.-(%d+)"
-			self:PLAYER_ENTERING_WORLD"PLAYER_ENTERING_WORLD"
+			self:UpdateAllElements"PLAYER_ENTERING_WORLD"
 		end
 	end
 end
@@ -211,18 +211,18 @@ do
 			baseName = 'PetFrame'
 		elseif(unit == 'target') then
 			if(object) then
-				object:RegisterEvent('PLAYER_TARGET_CHANGED', 'PLAYER_ENTERING_WORLD')
+				object:RegisterEvent('PLAYER_TARGET_CHANGED', object.UpdateAllElements)
 			end
 
 			HandleFrame'TargetFrame'
 			return HandleFrame'ComboFrame'
 		elseif(unit == 'mouseover') then
 			if(object) then
-				return object:RegisterEvent('UPDATE_MOUSEOVER_UNIT', 'PLAYER_ENTERING_WORLD')
+				return object:RegisterEvent('UPDATE_MOUSEOVER_UNIT', object.UpdateAllElements)
 			end
 		elseif(unit == 'focus') then
 			if(object) then
-				object:RegisterEvent('PLAYER_FOCUS_CHANGED', 'PLAYER_ENTERING_WORLD')
+				object:RegisterEvent('PLAYER_FOCUS_CHANGED', object.UpdateAllElements)
 			end
 
 			baseName = 'FocusFrame'
@@ -293,7 +293,7 @@ for k, v in pairs{
 				-- The main reason we do this is to make sure the full update is completed
 				-- if an element for some reason removes itself _during_ the update
 				-- progress.
-				self:PLAYER_ENTERING_WORLD('DisableElement', name)
+				self:UpdateAllElements('DisableElement', name)
 				break
 			end
 		end
@@ -315,12 +315,7 @@ for k, v in pairs{
 		self:Hide()
 	end,
 
-	--[[
-	--:PLAYER_ENTERING_WORLD()
-	--	Notes:
-	--		- Does a full update of all elements on the object.
-	--]]
-	PLAYER_ENTERING_WORLD = function(self, event)
+	UpdateAllElements = function(self, event)
 		local unit = self.unit
 		if(not UnitExists(unit)) then return end
 
@@ -471,9 +466,9 @@ local initObject = function(unit, style, styleFunc, ...)
 
 		object:SetAttribute("*type1", "target")
 		object:SetScript("OnAttributeChanged", OnAttributeChanged)
-		object:SetScript("OnShow",  object.PLAYER_ENTERING_WORLD)
+		object:SetScript("OnShow",  object.UpdateAllElements)
 
-		object:RegisterEvent"PLAYER_ENTERING_WORLD"
+		object:RegisterEvent("PLAYER_ENTERING_WORLD", object.UpdateAllElements)
 
 		for element in next, elements do
 			object:EnableElement(element, unit)

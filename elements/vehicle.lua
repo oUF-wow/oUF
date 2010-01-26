@@ -28,7 +28,7 @@ local Update = function(self, event, unit)
 	end
 
 	-- Refresh the frame
-	return self:PLAYER_ENTERING_WORLD('VehicleSwitch')
+	return self:UpdateAllElements('VehicleSwitch')
 end
 
 local Enable = function(self, unit)
