@@ -596,7 +596,6 @@ oUF.colors = colors
 
 -- Temporary stuff, hopefully
 oUF.frame_metatable = frame_metatable
-oUF.ColorGradient = frame_metatable.__index.ColorGradient
 
 if(global) then
 	if(parent ~= 'oUF' and global == 'oUF' and IsAddOnLoaded'oUF') then
