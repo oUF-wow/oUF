@@ -490,7 +490,7 @@ local walkObject = function(object, unit)
 	local style = object:GetParent().style or style
 	local styleFunc = styles[style] or styles[style]
 
-	initObject(unit, style, styleFunc, object, object:GetChildren())
+	return initObject(unit, style, styleFunc, object, object:GetChildren())
 end
 
 function oUF:RegisterInitCallback(func)
