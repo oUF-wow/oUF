@@ -228,7 +228,7 @@ do
 			baseName = 'FocusFrame'
 		elseif(unit:match'%w+target') then
 			if(unit == 'targettarget') then
-				baseName = 'TargetFrameToTManaBar'
+				baseName = 'TargetFrameToT'
 			end
 
 			enableTargetUpdate(object)
