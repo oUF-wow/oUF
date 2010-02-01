@@ -37,7 +37,7 @@ local UpdateType = function(self, event, rune, alt)
 	end
 end
 
-local Update = function(self, event, rid, usable)
+local Update = function(self, event, rid)
 	local rune = self.Runes[rid]
 	if(rune) then
 		local start, duration, runeReady = GetRuneCooldown(rune:GetID())
