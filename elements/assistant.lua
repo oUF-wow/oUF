@@ -13,7 +13,7 @@ end
 local Enable = function(self)
 	local assistant = self.Assistant
 	if(assistant) then
-		self:RegisterEvent("PARTY_MEMBERS_CHANGED", Update)
+		self:RegisterEvent("PARTY_MEMBERS_CHANGED", assistant.Update or Update)
 
 		if(assistant:IsObjectType"Texture" and not assistant:GetTexture()) then
 			assistant:SetTexture[[Interface\GroupFrame\UI-Group-AssistantIcon]]
@@ -26,7 +26,7 @@ end
 local Disable = function(self)
 	local assistant = self.Assistant
 	if(assistant) then
-		self:UnregisterEvent("PARTY_MEMBERS_CHANGED", Update)
+		self:UnregisterEvent("PARTY_MEMBERS_CHANGED", assistant.Update or Update)
 	end
 end
 
