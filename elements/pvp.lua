@@ -19,16 +19,18 @@ local Update = function(self, event, unit)
 end
 
 local Enable = function(self)
-	if(self.PvP) then
-		self:RegisterEvent("UNIT_FACTION", Update)
+	local pvp = self.PvP
+	if(pvp) then
+		self:RegisterEvent("UNIT_FACTION", pvp.Update or Update)
 
 		return true
 	end
 end
 
 local Disable = function(self)
-	if(self.PvP) then
-		self:UnregisterEvent("UNIT_FACTION", Update)
+	local pvp = self.PvP
+	if(pvp) then
+		self:UnregisterEvent("UNIT_FACTION", pvp.Update or Update)
 	end
 end
 
