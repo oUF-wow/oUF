@@ -13,6 +13,7 @@ end
 local Enable = function(self)
 	local leader = self.Leader
 	if(leader) then
+		local Update = leader.Update or Update
 		self:RegisterEvent("PARTY_LEADER_CHANGED", Update)
 		self:RegisterEvent("PARTY_MEMBERS_CHANGED", Update)
 
@@ -27,6 +28,7 @@ end
 local Disable = function(self)
 	local leader = self.Leader
 	if(leader) then
+		local Update = leader.Update or Update
 		self:UnregisterEvent("PARTY_LEADER_CHANGED", Update)
 		self:UnregisterEvent("PARTY_MEMBERS_CHANGED", Update)
 	end
