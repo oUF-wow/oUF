@@ -37,7 +37,7 @@ local UpdateType = function(self, event, rune, alt)
 	end
 end
 
-local Update = function(self, event, rid)
+local UpdateRune = function(self, event, rid)
 	local rune = self.Runes[rid]
 	if(rune) then
 		local start, duration, runeReady = GetRuneCooldown(rune:GetID())
@@ -50,6 +50,12 @@ local Update = function(self, event, rid)
 			rune:SetMinMaxValues(1, duration)
 			rune:SetScript("OnUpdate", OnUpdate)
 		end
+	end
+end
+
+local Update = function(self, event)
+	for i=1, 6 do
+		UpdateRune(self, event, i)
 	end
 end
 
@@ -68,7 +74,7 @@ local Enable = function(self, unit)
 			end
 		end
 
-		self:RegisterEvent("RUNE_POWER_UPDATE", Update)
+		self:RegisterEvent("RUNE_POWER_UPDATE", UpdateRune)
 		self:RegisterEvent("RUNE_TYPE_UPDATE", UpdateType)
 
 		runes:Show()
@@ -103,7 +109,7 @@ local Disable = function(self)
 	self.Runes:Hide()
 	RuneFrame:Show()
 
-	self:UnregisterEvent("RUNE_POWER_UPDATE", Update)
+	self:UnregisterEvent("RUNE_POWER_UPDATE", UpdateRune)
 	self:UnregisterEvent("RUNE_TYPE_UPDATE", UpdateType)
 end
 
