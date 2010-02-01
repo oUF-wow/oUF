@@ -19,7 +19,7 @@ end
 local Enable = function(self)
 	local ricon = self.RaidIcon
 	if(ricon) then
-		self:RegisterEvent("RAID_TARGET_UPDATE", Update)
+		self:RegisterEvent("RAID_TARGET_UPDATE", ricon.Update or Update)
 
 		if(ricon:IsObjectType"Texture" and not ricon:GetTexture()) then
 			ricon:SetTexture[[Interface\TargetingFrame\UI-RaidTargetingIcons]]
@@ -32,7 +32,7 @@ end
 local Disable = function(self)
 	local ricon = self.RaidIcon
 	if(ricon) then
-		self:UnregisterEvent("RAID_TARGET_UPDATE", Update)
+		self:UnregisterEvent("RAID_TARGET_UPDATE", ricon.Update or Update)
 	end
 end
 
