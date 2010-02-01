@@ -5,7 +5,7 @@ local GetComboPoints = GetComboPoints
 local MAX_COMBO_POINTS = MAX_COMBO_POINTS
 
 local Update = function(self, event, unit)
-	if(unit == pet) then return end
+	if(unit == 'pet') then return end
 
 	local cp
 	if(UnitExists'vehicle') then
