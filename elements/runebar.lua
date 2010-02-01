@@ -1,22 +1,5 @@
 --[[ Runebar:
 	Authors: Zariel, Haste
-
-	Usage: expects self.Runes to be a frame, setup and positiononed by the layout
-	itself, it also requires self.Runes through 6 to be a statusbar again setup by
-	the user.
-
-	Options
-
-	Required:
-	.height: (int)          Height of the bar
-	.width: (int)           Width of each bar
-
-	Optional:
-	.spacing: (float)       Spacing between each bar
-	.anchor: (string)       Initial anchor to the parent rune frame
-	.growth: (string)       LEFT or RIGHT or UP or DOWN
-	.runeMap: (table)       Set custom order, only remapped runes are required.
-	                        Example: .runeMap = {[3] = 5, [4] = 6}
 ]]
 
 if select(2, UnitClass("player")) ~= "DEATHKNIGHT" then return end
@@ -100,34 +83,6 @@ local Enable = function(self, unit)
 		else
 			runes[3], runes[5] = runes[5], runes[3]
 			runes[4], runes[6] = runes[6], runes[4]
-		end
-
-		-- XXX: Fix this for 1.4.
-		-- I really hate how this is done:
-		local width = runes.width
-		local height = runes.height
-		local spacing = runes.spacing or 0
-		local anchor = runes.anchor or "BOTTOMLEFT"
-		local growthX, growthY = 0, 0
-
-		if runes.growth == "LEFT" then
-			growthX = - 1
-		elseif runes.growth == "DOWN" then
-			growthY = - 1
-		elseif runes.growth == "UP" then
-			growthY = 1
-		else
-			growthX = 1
-		end
-
-		for i=1, 6 do
-			local bar = runes[i]
-			if(bar) then
-				bar:SetWidth(width)
-				bar:SetHeight(height)
-
-				bar:SetPoint(anchor, runes, anchor, (i - 1) * (width + spacing) * growthX, (i - 1) * (height + spacing) * growthY)
-			end
 		end
 
 		-- ええ、兄様。
