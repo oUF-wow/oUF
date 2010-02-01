@@ -3,9 +3,10 @@ local oUF = ns.oUF
 
 local Update = function(self, event, unit)
 	if(not UnitIsUnit(self.unit, unit)) then return end
-	if(self.PreUpdatePortrait) then self:PreUpdatePortrait(event, unit) end
 
 	local portrait = self.Portrait
+	if(portrait.PreUpdate) then portrait:PreUpdate(unit) end
+
 	if(portrait:IsObjectType'Model') then
 		local name = UnitName(unit)
 		if(not UnitExists(unit) or not UnitIsConnected(unit) or not UnitIsVisible(unit)) then
@@ -26,13 +27,15 @@ local Update = function(self, event, unit)
 		SetPortraitTexture(portrait, unit)
 	end
 
-	if(self.PostUpdatePortrait) then
-		return self:PostUpdatePortrait(event, unit)
+	if(portrait.PostUpdate) then
+		return portrait:PostUpdate(unit)
 	end
 end
 
 local Enable = function(self)
-	if(self.Portrait) then
+	local portrait = self.Portrait
+	if(portrait) then
+		local Update = portrait.Update or Update
 		self:RegisterEvent("UNIT_PORTRAIT_UPDATE", Update)
 		self:RegisterEvent("UNIT_MODEL_CHANGED", Update)
 
@@ -41,7 +44,9 @@ local Enable = function(self)
 end
 
 local Disable = function(self)
-	if(self.Portrait) then
+	local portrait = self.Portrait
+	if(portrait) then
+		local Update = portrait.Update or Update
 		self:UnregisterEvent("UNIT_PORTRAIT_UPDATE", Update)
 		self:UnregisterEvent("UNIT_MODEL_CHANGED", Update)
 	end
