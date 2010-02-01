@@ -18,7 +18,7 @@ local OnClick = function(self)
 	CancelUnitBuff(self.parent:GetParent().unit, self:GetID(), self.filter)
 end
 
-local createAuraIcon = function(icons, unit, index, debuff)
+local createAuraIcon = function(icons, index)
 	local button = CreateFrame("Button", nil, icons)
 	button:EnableMouse(true)
 	button:RegisterForClicks'RightButtonUp'
@@ -45,6 +45,7 @@ local createAuraIcon = function(icons, unit, index, debuff)
 	button:SetScript("OnEnter", OnEnter)
 	button:SetScript("OnLeave", OnLeave)
 
+	local unit = icons:GetParent().unit
 	if(unit == 'player') then
 		button:SetScript('OnClick', OnClick)
 	end
@@ -52,8 +53,6 @@ local createAuraIcon = function(icons, unit, index, debuff)
 	table.insert(icons, button)
 
 	button.parent = icons
-	button.debuff = debuff
-
 	button.icon = icon
 	button.count = count
 	button.cd = cd
@@ -84,7 +83,7 @@ local updateIcon = function(unit, icons, index, offset, filter, isDebuff, max)
 	if(name) then
 		local icon = icons[index + offset]
 		if(not icon) then
-			icon = (icons.CreateIcon or createAuraIcon) (icons, unit, index, isDebuff)
+			icon = (icons.CreateIcon or createAuraIcon) (icons, index)
 		end
 
 		local show = (icons.CustomFilter or customFilter) (icons, unit, icon, name, rank, texture, count, dtype, duration, timeLeft, caster, isStealable, shouldConsolidate, spellID)
