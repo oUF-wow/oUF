@@ -22,6 +22,7 @@ end
 local Enable = function(self)
 	local lfdrole = self.LFDRole
 	if(lfdrole) then
+		local Update = lfdrole.Update or Update
 		if(self.unit == "player") then
 			self:RegisterEvent("PLAYER_ROLES_ASSIGNED", Update)
 		else
@@ -39,6 +40,7 @@ end
 local Disable = function(self)
 	local lfdrole = self.LFDRole
 	if(lfdrole) then
+		local Update = lfdrole.Update or Update
 		self:UnregisterEvent("PLAYER_ROLES_ASSIGNED", Update)
 		self:UnregisterEvent("PARTY_MEMBERS_CHANGED", Update)
 	end
