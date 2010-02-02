@@ -55,7 +55,9 @@ local UNIT_SPELLCAST_START = function(self, event, unit, spell, spellrank)
 		sf:SetPoint'BOTTOM'
 	end
 
-	if(castbar.PostCastStart) then castbar:PostCastStart(unit, name, rank) end
+	if(castbar.PostCastStart) then
+		castbar:PostCastStart(unit, name, rank, castid)
+	end
 	castbar:Show()
 end
 
@@ -121,7 +123,7 @@ local UNIT_SPELLCAST_NOT_INTERRUPTIBLE = function(self, event, unit)
 	end
 end
 
-local UNIT_SPELLCAST_DELAYED = function(self, event, unit, spellname, spellrank)
+local UNIT_SPELLCAST_DELAYED = function(self, event, unit, spellname, spellrank, castid)
 	if(self.unit ~= unit) then return end
 
 	local name, rank, text, texture, startTime, endTime = UnitCastingInfo(unit)
@@ -137,7 +139,7 @@ local UNIT_SPELLCAST_DELAYED = function(self, event, unit, spellname, spellrank)
 	castbar:SetValue(duration)
 
 	if(castbar.PostCastDelayed) then
-		return castbar:PostCastDelayed(unit, name, rank)
+		return castbar:PostCastDelayed(unit, name, rank, castid)
 	end
 end
 
