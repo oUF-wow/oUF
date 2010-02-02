@@ -458,5 +458,5 @@ oUF.Tags = tags
 oUF.TagEvents = tagEvents
 oUF.UnitlessTagEvents = unitlessEvents
 
-oUF.frame_metatable.__index.Tag = Tag
-oUF.frame_metatable.__index.Untag = Untag
+oUF:RegisterMetaFunction('Tag', Tag)
+oUF:RegisterMetaFunction('Untag', Untag)

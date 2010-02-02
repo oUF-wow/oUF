@@ -515,6 +515,17 @@ function oUF:RegisterInitCallback(func)
 	table.insert(callback, func)
 end
 
+function oUF:RegisterMetaFunction(name, func)
+	argcheck(name, 2, 'string')
+	argcheck(func, 3, 'function', 'table')
+
+	if(frame_metatable.__index[name]) then
+		return
+	end
+
+	frame_metatable.__index[name] = func
+end
+
 function oUF:RegisterStyle(name, func)
 	argcheck(name, 2, 'string')
 	argcheck(func, 3, 'function', 'table')
@@ -606,9 +617,6 @@ oUF.version = _VERSION
 oUF.units = units
 oUF.objects = objects
 oUF.colors = colors
-
--- Temporary stuff, hopefully
-oUF.frame_metatable = frame_metatable
 
 if(global) then
 	if(parent ~= 'oUF' and global == 'oUF') then
