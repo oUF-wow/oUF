@@ -40,6 +40,13 @@ local UNIT_SPELLCAST_START = function(self, event, unit, spell, spellrank)
 	if(castbar.Icon) then castbar.Icon:SetTexture(texture) end
 	if(castbar.Time) then castbar.Time:SetText() end
 
+	local shield = castbar.Shield
+	if(shield and interrupt) then
+		shield:Show()
+	elseif(shield) then
+		shield:Hide()
+	end
+
 	local sf = castbar.SafeZone
 	if(sf) then
 		sf:ClearAllPoints()
@@ -85,6 +92,32 @@ local UNIT_SPELLCAST_INTERRUPTED = function(self, event, unit, spellname, spellr
 
 	if(castbar.PostCastInterrupted) then
 		return castbar:PostCastInterrupted(unit, spellname, spellrank, castid)
+	end
+end
+
+local UNIT_SPELLCAST_INTERRUPTIBLE = function(self, event, unit)
+	if(self.unit ~= unit) then return end
+
+	local shield = self.Castbar.Shield
+	if(shield) then
+		shield:Hide()
+
+		if(castbar.PostCastInterruptible) then
+			return castbar:PostCastInterruptible(unit)
+		end
+	end
+end
+
+local UNIT_SPELLCAST_NOT_INTERRUPTIBLE = function(self, event, unit)
+	if(self.unit ~= unit) then return end
+
+	local shield = self.Castbar.Shield
+	if(shield) then
+		shield:Hide()
+
+		if(castbar.PostCastNotInterruptible) then
+			return castbar:PostCastNotInterruptible(unit)
+		end
 	end
 end
 
@@ -152,6 +185,13 @@ local UNIT_SPELLCAST_CHANNEL_START = function(self, event, unit, spellname, spel
 	if(castbar.Text) then castbar.Text:SetText(name) end
 	if(castbar.Icon) then castbar.Icon:SetTexture(texture) end
 	if(castbar.Time) then castbar.Time:SetText() end
+
+	local shield = castbar.Shield
+	if(shield and interrupt) then
+		shield:Show()
+	elseif(shield) then
+		shield:Hide()
+	end
 
 	local sf = castbar.SafeZone
 	if(sf) then
@@ -305,10 +345,11 @@ local Enable = function(object, unit)
 			object:RegisterEvent("UNIT_SPELLCAST_FAILED", UNIT_SPELLCAST_FAILED)
 			object:RegisterEvent("UNIT_SPELLCAST_STOP", UNIT_SPELLCAST_STOP)
 			object:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED", UNIT_SPELLCAST_INTERRUPTED)
+			object:RegisterEvent("UNIT_SPELLCAST_INTERRUPTIBLE", UNIT_SPELLCAST_INTERRUPTIBLE)
+			object:RegisterEvent("UNIT_SPELLCAST_NOT_INTERRUPTIBLE", UNIT_SPELLCAST_NOT_INTERRUPTIBLE)
 			object:RegisterEvent("UNIT_SPELLCAST_DELAYED", UNIT_SPELLCAST_DELAYED)
 			object:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START", UNIT_SPELLCAST_CHANNEL_START)
 			object:RegisterEvent("UNIT_SPELLCAST_CHANNEL_UPDATE", UNIT_SPELLCAST_CHANNEL_UPDATE)
-			object:RegisterEvent("UNIT_SPELLCAST_CHANNEL_INTERRUPTED", 'UNIT_SPELLCAST_INTERRUPTED')
 			object:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP", UNIT_SPELLCAST_CHANNEL_STOP)
 		end
 
@@ -333,6 +374,11 @@ local Enable = function(object, unit)
 			spark:SetTexture[[Interface\CastingBar\UI-CastingBar-Spark]]
 		end
 
+		local shield = castbar.Shield
+		if(shield and shield:IsObjectType'Texture' and not shield:GetTexture()) then
+			shield:SetTexture[[Interface\CastingBar\UI-CastingBar-Small-Shield]]
+		end
+
 		local sz = castbar.SafeZone
 		if(sz and sz:IsObjectType'Texture' and not sz:GetTexture()) then
 			sz:SetTexture(1, 0, 0)
@@ -352,10 +398,11 @@ local Disable = function(object, unit)
 		object:UnregisterEvent("UNIT_SPELLCAST_FAILED", UNIT_SPELLCAST_FAILED)
 		object:UnregisterEvent("UNIT_SPELLCAST_STOP", UNIT_SPELLCAST_STOP)
 		object:UnregisterEvent("UNIT_SPELLCAST_INTERRUPTED", UNIT_SPELLCAST_INTERRUPTED)
+		object:UnregisterEvent("UNIT_SPELLCAST_INTERRUPTIBLE", UNIT_SPELLCAST_INTERRUPTIBLE)
+		object:UnregisterEvent("UNIT_SPELLCAST_NOT_INTERRUPTIBLE", UNIT_SPELLCAST_NOT_INTERRUPTIBLE)
 		object:UnregisterEvent("UNIT_SPELLCAST_DELAYED", UNIT_SPELLCAST_DELAYED)
 		object:UnregisterEvent("UNIT_SPELLCAST_CHANNEL_START", UNIT_SPELLCAST_CHANNEL_START)
 		object:UnregisterEvent("UNIT_SPELLCAST_CHANNEL_UPDATE", UNIT_SPELLCAST_CHANNEL_UPDATE)
-		object:UnregisterEvent("UNIT_SPELLCAST_CHANNEL_INTERRUPTED", UNIT_SPELLCAST_CHANNEL_INTERRUPTED)
 		object:UnregisterEvent("UNIT_SPELLCAST_CHANNEL_STOP", UNIT_SPELLCAST_CHANNEL_STOP)
 
 		castbar:SetScript("OnUpdate", nil)
