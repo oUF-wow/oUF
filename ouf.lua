@@ -551,7 +551,7 @@ function oUF:SetActiveStyle(name)
 	style = name
 end
 
-function oUF:SpawnHeader(overrideName, template, showSolo, showParty, showRaid, ...)
+function oUF:SpawnHeader(overrideName, template, showSolo, showParty, showRaid)
 	if(not style) then return error("Unable to create frame. No styles have been registered.") end
 
 	template = (template or 'SecureGroupHeaderTemplate')
@@ -560,9 +560,9 @@ function oUF:SpawnHeader(overrideName, template, showSolo, showParty, showRaid, 
 	local header = CreateFrame('Frame', name, UIParent, template)
 	header.initialConfigFunction = walkObject
 	header.style = style
-	header:SetAttribute("template", "SecureUnitButtonTemplate")
+	header.SetManyAttributes = SetManyAttributes
 
-	SetManyAttributes(header, ...)
+	header:SetAttribute("template", "SecureUnitButtonTemplate")
 
 	if(showSolo) then
 		header:SetAttribute('visibleSolo', true)
