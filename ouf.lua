@@ -18,11 +18,22 @@ local print = function(...) print("|cff33ff99oUF:|r", ...) end
 local error = function(...) print("|cffff0000Error:|r "..string.format(...)) end
 local dummy = function() end
 
-local function SetManyAttributes(self, ...)
+local function SafeSetManyAttributes(self, ...)
+	local post = {}
+
 	for i=1,select("#", ...),2 do
 		local att,val = select(i, ...)
-		if not att then return end
-		self:SetAttribute(att,val)
+		if(not att) then
+			break
+		elseif(att:match'^show') then
+			post[att] = val
+		else
+			self:SetAttribute(att,val)
+		end
+	end
+
+	for att, val in next, post do
+		self:SetAttribute(att, val)
 	end
 end
 
@@ -560,7 +571,7 @@ function oUF:SpawnHeader(overrideName, template, showSolo, showParty, showRaid)
 	local header = CreateFrame('Frame', name, UIParent, template)
 	header.initialConfigFunction = walkObject
 	header.style = style
-	header.SetManyAttributes = SetManyAttributes
+	header.SetManyAttributes = SafeSetManyAttributes
 
 	header:SetAttribute("template", "SecureUnitButtonTemplate")
 
