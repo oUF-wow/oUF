@@ -184,6 +184,14 @@ do
 			frame.Show = dummy
 			frame:Hide()
 
+			-- For the damn vehicle support:
+			if(baseName == 'PlayerFrame') then
+				frame:RegisterEvent('UNIT_ENTERING_VEHICLE')
+				frame:RegisterEvent('UNIT_ENTERED_VEHICLE')
+				frame:RegisterEvent('UNIT_EXITING_VEHICLE')
+				frame:RegisterEvent('UNIT_EXITED_VEHICLE')
+			end
+
 			local health = frame.healthbar
 			if(health) then
 				health:UnregisterAllEvents()
