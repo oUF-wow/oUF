@@ -36,7 +36,11 @@ tags = {
 	end,
 
 	["dead"] = function(u)
-		return UnitIsDead(u) and "Dead" or UnitIsGhost(u) and "Ghost"
+		if(UnitIsDead(u)) then
+			return 'Dead'
+		elseif(UnitIsGhost(u)) then
+			return 'Ghost'
+		end
 	end,
 
 	["difficulty"]  = function(u)
@@ -51,16 +55,24 @@ tags = {
 	end,
 
 	["leader"] = function(u)
-		return UnitIsPartyLeader(u) and "(L)"
+		if(UnitIsPartyLeader(u)) then
+			return 'L'
+		end
 	end,
 
 	["leaderlong"]  = function(u)
-		return UnitIsPartyLeader(u) and "(Leader)"
+		if(UnitIsPartyLeader(u)) then
+			return 'Leader'
+		end
 	end,
 
 	["level"] = function(u)
 		local l = UnitLevel(u)
-		return (l > 0) and l or "??"
+		if(l > 0) then
+			return l
+		else
+			return '??'
+		end
 	end,
 
 	["missinghp"] = function(u)
@@ -82,26 +94,40 @@ tags = {
 	end,
 
 	["offline"] = function(u)
-		return  (not UnitIsConnected(u) and "Offline")
+		if(not UnitIsConnected(u)) then
+			return 'Offline'
+		end
 	end,
 
 	["perhp"] = function(u)
 		local m = UnitHealthMax(u)
-		return m == 0 and 0 or math.floor(UnitHealth(u)/m*100+0.5)
+		if(m == 0) then
+			return 0
+		else
+			return math.floor(UnitHealthMax(u)/m*100+.5)
+		end
 	end,
 
 	["perpp"] = function(u)
 		local m = UnitPowerMax(u)
-		return m == 0 and 0 or math.floor(UnitPower(u)/m*100+0.5)
+		if(m == 0) then
+			return 0
+		else
+			return math.floor(UnitPowerMax(u)/m*100+.5)
+		end
 	end,
 
 	["plus"] = function(u)
 		local c = UnitClassification(u)
-		return (c == "elite" or c == "rareelite") and "+"
+		if(c == 'elite' or c == 'rareelite') then
+			return '+'
+		end
 	end,
 
 	["pvp"] = function(u)
-		return UnitIsPVP(u) and "PvP"
+		if(UnitIsPVP(u)) then
+			return 'PvP'
+		end
 	end,
 
 	["race"] = function(u)
@@ -110,34 +136,62 @@ tags = {
 
 	["raidcolor"]   = function(u)
 		local _, x = UnitClass(u)
-		return x and Hex(classColors[x])
+		if(x) then
+			return Hex(classColors[x])
+		end
 	end,
 
 	["rare"] = function(u)
 		local c = UnitClassification(u)
-		return (c == "rare" or c == "rareelite") and "Rare"
+		if(c == 'rare' or c == 'rareelite') then
+			return 'Rare'
+		end
 	end,
 
 	["resting"] = function(u)
-		return u == "player" and IsResting() and "zzz"
+		if(u == 'player' and IsResting()) then
+			return 'zzz'
+		end
 	end,
 
 	["sex"] = function(u)
 		local s = UnitSex(u)
-		return s == 2 and "Male" or s == 3 and "Female"
+		if(s == 2) then
+			return 'Male'
+		elseif(s == 3) then
+			return 'Female'
+		end
 	end,
 
 	["smartclass"] = function(u)
-		return UnitIsPlayer(u) and tags["class"](u) or tags["creature"](u)
+		if(UnitIsPlayer(u)) then
+			return tags['class'](u)
+		end
+
+		return tags['creature'](u)
 	end,
 
 	["status"] = function(u)
-		return UnitIsDead(u) and "Dead" or UnitIsGhost(u) and "Ghost" or not UnitIsConnected(u) and "Offline" or tags["resting"](u)
+		if(UnitIsDead(u)) then
+			return 'Dead'
+		elseif(UnitIsGhost(u)) then
+			return 'Ghost'
+		elseif(not UnitIsConnected(u)) then
+			return 'Offline'
+		else
+			return tags['resting'](u)
+		end
 	end,
 
 	["threat"] = function(u)
 		local s = UnitThreatSituation(u)
-		return s == 1 and "++" or s == 2 and "--" or s == 3 and "Aggro"
+		if(s == 1) then
+			return '++'
+		elseif(s == 2) then
+			return '--'
+		elseif(s == 3) then
+			return 'Aggro'
+		end
 	end,
 
 	["threatcolor"] = function(u)
@@ -146,7 +200,9 @@ tags = {
 
 	["cpoints"] = function(u)
 		local cp = GetComboPoints(u, 'target')
-		return (cp > 0) and cp
+		if(cp > 0) then
+			return cp
+		end
 	end,
 
 	['smartlevel'] = function(u)
@@ -166,12 +222,28 @@ tags = {
 
 	["classification"] = function(u)
 		local c = UnitClassification(u)
-		return c == "rare" and "Rare" or c == "eliterare" and "Rare Elite" or c == "elite" and "Elite" or c == "worldboss" and "Boss"
+		if(c == 'rare') then
+			return 'Rare'
+		elseif(c == 'eliterare') then
+			return 'Rare Elite'
+		elseif(c == 'elite') then
+			return 'Elite'
+		elseif(c == 'worldboss') then
+			return 'Boss'
+		end
 	end,
 
 	["shortclassification"] = function(u)
 		local c = UnitClassification(u)
-		return c == "rare" and "R" or c == "eliterare" and "R+" or c == "elite" and "+" or c == "worldboss" and "B"
+		if(c == 'rare') then
+			return 'R'
+		elseif(c == 'eliterare') then
+			return 'R+'
+		elseif(c == 'elite') then
+			return '+'
+		elseif(c == 'worldboss') then
+			return 'B'
+		end
 	end,
 
 	["group"] = function(unit)
@@ -237,8 +309,6 @@ frame:SetScript('OnEvent', function(self, event, unit)
 	if(strings) then
 		for k, fontstring in next, strings do
 			if(not unitlessEvents[event] and fontstring.parent.unit == unit and fontstring:IsVisible()) then
-				-- XXX: Fix this for 1.4
-				classColors = fontstring.parent.colors.class
 				fontstring:UpdateTag()
 			end
 		end
@@ -260,8 +330,6 @@ local createOnUpdate = function(timer)
 			if(total >= timer) then
 				for k, fs in next, strings do
 					if(fs.parent:IsShown() and UnitExists(fs.parent.unit)) then
-						-- XXX: Fix this for 1.4.
-						classColors = fs.parent.colors.class
 						fs:UpdateTag()
 					end
 				end
@@ -277,8 +345,6 @@ local createOnUpdate = function(timer)
 end
 
 local OnShow = function(self)
-	-- XXX: Fix this for 1.4.
-	classColors = self.colors.class
 	for _, fs in next, self.__tags do
 		fs:UpdateTag()
 	end
@@ -412,6 +478,7 @@ local Tag = function(self, fs, tagstr)
 			local unit = self.parent.unit
 			local __unit = self.parent.realUnit
 
+			classColors = self.parent.colors.class
 			for i, func in next, args do
 				tmp[i] = func(unit, __unit) or ''
 			end
