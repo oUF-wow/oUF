@@ -27,10 +27,9 @@ tags = {
 	["curpp"] = UnitPower,
 	["maxhp"] = UnitHealthMax,
 	["maxpp"] = UnitPowerMax,
-
-	["class"] = function(u)
-		return UnitClass(u)
-	end,
+	["class"] = UnitClass,
+	["faction"] = UnitFactionGroup,
+	["race"] = UnitRace,
 
 	["creature"] = function(u)
 		return UnitCreatureFamily(u) or UnitCreatureType(u)
@@ -49,10 +48,6 @@ tags = {
 			local l = UnitLevel(u)
 			return Hex(GetQuestDifficultyColor((l > 0) and l or 99))
 		end
-	end,
-
-	["faction"] = function(u)
-		return UnitFactionGroup(u)
 	end,
 
 	["leader"] = function(u)
@@ -129,10 +124,6 @@ tags = {
 		if(UnitIsPVP(u)) then
 			return 'PvP'
 		end
-	end,
-
-	["race"] = function(u)
-		return UnitRace(u)
 	end,
 
 	["raidcolor"]   = function(u)
