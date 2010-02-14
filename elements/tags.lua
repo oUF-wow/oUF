@@ -11,6 +11,7 @@
 local parent, ns = ...
 local oUF = ns.oUF
 
+local _PATTERN = '%[..-%]+'
 local classColors
 
 local function Hex(r, g, b)
@@ -366,7 +367,7 @@ local RegisterEvent = function(fontstr, event)
 end
 
 local RegisterEvents = function(fontstr, tagstr)
-	for tag in tagstr:gmatch'%[.[>]?.-[<]?%]+' do
+	for tag in tagstr:gmatch(_PATTERN) do
 		tag = getTagName(tag)
 		local tagevents = tagEvents[tag]
 		if(tagevents) then
@@ -420,10 +421,10 @@ local Tag = function(self, fs, tagstr)
 		-- Using .- in the match prevents use from supporting [] as prepend/append
 		-- characters. Supporting these and having a single pattern here is a real
 		-- headache however.
-		local format = tagstr:gsub('%%', '%%%%'):gsub('%[.[>]?.-[<]?%]+', '%%s')
+		local format = tagstr:gsub('%%', '%%%%'):gsub(_PATTERN, '%%s')
 		local args = {}
 
-		for bracket in tagstr:gmatch'%[.[>]?.-[<]?%]+' do
+		for bracket in tagstr:gmatch(_PATTERN) do
 			local tagFunc = funcPool[bracket] or tags[bracket:sub(2, -2)]
 			if(not tagFunc) then
 				local tagName, s, e = getTagName(bracket)
