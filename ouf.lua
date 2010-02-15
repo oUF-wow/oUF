@@ -424,10 +424,11 @@ do
 	end
 end
 
+local ColorGradient
 do
 	local inf = math.huge
 	-- http://www.wowwiki.com/ColorGradient
-	function frame_metatable.__index.ColorGradient(perc, ...)
+	function ColorGradient(perc, ...)
 		-- Translate divison by zeros into 0, so we don't blow select.
 		-- We check perc against itself because we rely on the fact that NaN can't equal NaN.
 		if(perc ~= perc or perc == inf) then perc = 0 end
@@ -447,6 +448,8 @@ do
 		return r1 + (r2-r1)*relperc, g1 + (g2-g1)*relperc, b1 + (b2-b1)*relperc
 	end
 end
+frame_metatable.__index.ColorGradient = ColorGradient
+oUF.ColorGradient = ColorGradient
 
 local initObject = function(unit, style, styleFunc, ...)
 	local num = select('#', ...)
