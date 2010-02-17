@@ -123,7 +123,7 @@ local tagStrings = {
 	["raidcolor"] = [[function(u)
 		local _, x = UnitClass(u)
 		if(x) then
-			return Hex(_CLASS_COLORS[x])
+			return Hex(_COLORS.class[x])
 		end
 	end]],
 
@@ -512,7 +512,7 @@ local Tag = function(self, fs, tagstr)
 			local unit = self.parent.unit
 			local __unit = self.parent.realUnit
 
-			_ENV._CLASS_COLORS = self.parent.colors.class
+			_ENV._COLORS = self.parent.colors
 			for i, func in next, args do
 				tmp[i] = func(unit, __unit) or ''
 			end
