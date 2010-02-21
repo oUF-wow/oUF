@@ -269,7 +269,6 @@ local tags = setmetatable(
 
 {
 	__index = function(self, key)
-		print('__index', self, key)
 		local tagFunc = tagStrings[key]
 		if(tagFunc) then
 			local func, err = loadstring('return ' .. tagFunc)
@@ -287,7 +286,6 @@ local tags = setmetatable(
 		end
 	end,
 	__newindex = function(self, key, val)
-		print('__newindex', self, key, type(val))
 		if(type(val) == 'string') then
 			tagStrings[key] = val
 		elseif(type(val) == 'function') then
