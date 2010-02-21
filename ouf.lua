@@ -581,8 +581,13 @@ function oUF:SpawnHeader(overrideName, template, visibility)
 	header:SetAttribute("template", "SecureUnitButtonTemplate")
 
 	if(visibility) then
-		local condition = getCondition(string.split(',', visibility))
-		RegisterStateDriver(header, 'visibility', condition)
+		local type, list = string.split(' ', visibility, 2)
+		if(list and type == 'custom') then
+			RegisterStateDriver(header, 'visibility', list)
+		else
+			local condition = getCondition(string.split(',', visibility))
+			RegisterStateDriver(header, 'visibility', condition)
+		end
 	end
 
 	return header
