@@ -83,31 +83,7 @@ for eclass, color in next, FACTION_BAR_COLORS do
 	colors.reaction[eclass] = {color.r, color.g, color.b}
 end
 
-local _STATEFORMAT = [[
-local header = self:GetFrameRef('%s')
-if(newstate == 'party') then
-	if(header:GetAttribute'visibleParty') then
-		header:Show()
-	else
-		header:Hide()
-	end
-elseif(newstate == 'raid') then
-	if(header:GetAttribute'visibleRaid') then
-		header:Show()
-	else
-		header:Hide()
-	end
-elseif(newstate == 'solo') then
-	if(header:GetAttribute'visibleSolo') then
-		header:Show()
-	else
-		header:Hide()
-	end
-end
-]]
-
 -- add-on object
-local _STATE = CreateFrame("Frame", nil, nil, "SecureHandlerStateTemplate")
 local oUF = {}
 local event_metatable = {
 	__call = function(funcs, self, ...)
@@ -565,7 +541,33 @@ function oUF:SetActiveStyle(name)
 	style = name
 end
 
-function oUF:SpawnHeader(overrideName, template, showSolo, showParty, showRaid)
+local getCondition
+do
+	local conditions = {
+		raid40 = '[@raid26,exists] show;',
+		raid25 = '[@raid11,exists] show;',
+		raid10 = '[@raid6,exists] show;',
+		raid = '[group:raid] show;',
+		party = '[group:party] show;',
+		solo = '[@player,exists,nogroup:party] show;',
+	}
+
+	function getCondition(...)
+		local cond = ''
+
+		for i=1, select('#', ...) do
+			local short = select(i, ...)
+			local condition = conditions[short]
+			if(condition) then
+				cond = cond .. condition
+			end
+		end
+
+		return cond .. 'hide'
+	end
+end
+
+function oUF:SpawnHeader(overrideName, template, visibility)
 	if(not style) then return error("Unable to create frame. No styles have been registered.") end
 
 	template = (template or 'SecureGroupHeaderTemplate')
@@ -578,23 +580,10 @@ function oUF:SpawnHeader(overrideName, template, showSolo, showParty, showRaid)
 
 	header:SetAttribute("template", "SecureUnitButtonTemplate")
 
-	if(showSolo) then
-		header:SetAttribute('visibleSolo', true)
+	if(visibility) then
+		local condition = getCondition(string.split(',', visibility))
+		RegisterStateDriver(header, 'visibility', condition)
 	end
-
-	if(showParty) then
-		header:SetAttribute('visibleParty', true)
-		self:DisableBlizzard'party'
-	end
-
-	if(showRaid) then
-		header:SetAttribute('visibleRaid', true)
-	end
-
-	local state = 'oUF:' .. style .. '-' .. name
-	_STATE:SetFrameRef(state, header)
-	_STATE:SetAttribute('_onstate-' .. state, _STATEFORMAT:format(state))
-	RegisterStateDriver(_STATE, state, '[group:raid] raid; [group:party] party; solo')
 
 	return header
 end
