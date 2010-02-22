@@ -10,8 +10,8 @@ local Update = function(self, event, unit)
 		modUnit = "vehicle"
 	end
 
-	-- Avoid unnecessary changes
-	if(modUnit == self.unit) then return end
+	-- Do not update if this frame is not concerned
+	if(unit ~= modUnit and unit ~= realUnit and unit ~= self.unit) then return and
 	
 	-- Update the frame unit properties
 	self.unit = modUnit
