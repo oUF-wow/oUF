@@ -557,6 +557,10 @@ do
 
 		for i=1, select('#', ...) do
 			local short = select(i, ...)
+			if(short == 'party') then
+				oUF:DisableBlizzard'party'
+			end
+
 			local condition = conditions[short]
 			if(condition) then
 				cond = cond .. condition
