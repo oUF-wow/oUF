@@ -165,19 +165,17 @@ end
 
 do
 	local HandleFrame = function(baseName)
-		local frame = _G[baseName]
+		local frame
+		if(type(baseName) == 'string') then
+			frame = _G[baseName]
+		else
+			frame = baseName
+		end
+
 		if(frame) then
 			frame:UnregisterAllEvents()
 			frame.Show = dummy
 			frame:Hide()
-
-			-- For the damn vehicle support:
-			if(baseName == 'PlayerFrame') then
-				frame:RegisterEvent('UNIT_ENTERING_VEHICLE')
-				frame:RegisterEvent('UNIT_ENTERED_VEHICLE')
-				frame:RegisterEvent('UNIT_EXITING_VEHICLE')
-				frame:RegisterEvent('UNIT_EXITED_VEHICLE')
-			end
 
 			local health = frame.healthbar
 			if(health) then
@@ -201,16 +199,22 @@ do
 
 		local baseName
 		if(unit == 'player') then
-			baseName = 'PlayerFrame'
+			baseName = PlayerFrame
+
+			-- For the damn vehicle support:
+			baseName:RegisterEvent('UNIT_ENTERING_VEHICLE')
+			baseName:RegisterEvent('UNIT_ENTERED_VEHICLE')
+			baseName:RegisterEvent('UNIT_EXITING_VEHICLE')
+			baseName:RegisterEvent('UNIT_EXITED_VEHICLE')
 		elseif(unit == 'pet') then
-			baseName = 'PetFrame'
+			baseName = PetFrame
 		elseif(unit == 'target') then
 			if(object) then
 				object:RegisterEvent('PLAYER_TARGET_CHANGED', object.UpdateAllElements)
 			end
 
-			HandleFrame'TargetFrame'
-			return HandleFrame'ComboFrame'
+			HandleFrame(TargetFrame)
+			return HandleFrame(ComboFrame)
 		elseif(unit == 'mouseover') then
 			if(object) then
 				return object:RegisterEvent('UPDATE_MOUSEOVER_UNIT', object.UpdateAllElements)
@@ -220,10 +224,10 @@ do
 				object:RegisterEvent('PLAYER_FOCUS_CHANGED', object.UpdateAllElements)
 			end
 
-			baseName = 'FocusFrame'
+			baseName = FocusFrame
 		elseif(unit:match'%w+target') then
 			if(unit == 'targettarget') then
-				baseName = 'TargetFrameToT'
+				baseName = TargetFrameToT
 			end
 
 			enableTargetUpdate(object)
@@ -234,19 +238,18 @@ do
 			if(id) then
 				baseName = 'Boss' .. id .. 'TargetFrame'
 			else
-				HandleFrame'Boss1TargetFrame'
-				HandleFrame'Boss2TargetFrame'
-				return HandleFrame'Boss3TargetFrame'
+				for i=1, 3 do
+					HandleFrame(('Boss%dTargetFrame'):format(i))
+				end
 			end
 		elseif(unit:match'(party)%d?$' == 'party') then
 			local id = unit:match'party(%d)'
 			if(id) then
 				baseName = 'PartyMemberFrame' .. id
 			else
-				HandleFrame'PartyMemberFrame1'
-				HandleFrame'PartyMemberFrame2'
-				HandleFrame'PartyMemberFrame3'
-				return HandleFrame'PartyMemberFrame4'
+				for i=1, 4 do
+					HandleFrame(('PartyMemberFrame%d'):format(i))
+				end
 			end
 		end
 
