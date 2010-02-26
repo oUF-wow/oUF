@@ -613,8 +613,6 @@ local generateName = function(unit, ...)
 		i = i + 1
 	end
 
-	print(name)
-
 	return name
 end
 
