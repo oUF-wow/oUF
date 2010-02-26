@@ -18,25 +18,6 @@ local print = function(...) print("|cff33ff99oUF:|r", ...) end
 local error = function(...) print("|cffff0000Error:|r "..string.format(...)) end
 local dummy = function() end
 
-local function SafeSetManyAttributes(self, ...)
-	local post = {}
-
-	for i=1,select("#", ...),2 do
-		local att,val = select(i, ...)
-		if(not att) then
-			break
-		elseif(att:match'^show') then
-			post[att] = val
-		else
-			self:SetAttribute(att,val)
-		end
-	end
-
-	for att, val in next, post do
-		self:SetAttribute(att, val)
-	end
-end
-
 -- Colors
 local colors = {
 	happiness = {
@@ -574,7 +555,7 @@ do
 	end
 end
 
-function oUF:SpawnHeader(overrideName, template, visibility)
+function oUF:SpawnHeader(overrideName, template, visibility, ...)
 	if(not style) then return error("Unable to create frame. No styles have been registered.") end
 
 	template = (template or 'SecureGroupHeaderTemplate')
@@ -583,9 +564,13 @@ function oUF:SpawnHeader(overrideName, template, visibility)
 	local header = CreateFrame('Frame', name, UIParent, template)
 	header.initialConfigFunction = walkObject
 	header.style = style
-	header.SetManyAttributes = SafeSetManyAttributes
 
 	header:SetAttribute("template", "SecureUnitButtonTemplate")
+	for i=1, select("#", ...), 2 do
+		local att, val = select(i, ...)
+		if(not att) then break end
+		header:SetAttribute(att, val)
+	end
 
 	if(visibility) then
 		local type, list = string.split(' ', visibility, 2)
