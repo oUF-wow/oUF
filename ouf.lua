@@ -558,10 +558,8 @@ end
 function oUF:SpawnHeader(overrideName, template, visibility, ...)
 	if(not style) then return error("Unable to create frame. No styles have been registered.") end
 
-	template = (template or 'SecureGroupHeaderTemplate')
-
 	local name = overrideName
-	local header = CreateFrame('Frame', name, UIParent, template)
+	local header = CreateFrame('Frame', name, UIParent, template or 'SecureGroupHeaderTemplate')
 	header.initialConfigFunction = walkObject
 	header.style = style
 
