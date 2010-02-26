@@ -417,8 +417,17 @@ local initObject = function(unit, style, styleFunc, ...)
 		local object = select(i, ...)
 
 		object.__elements = {}
-
 		object = setmetatable(object, frame_metatable)
+
+		-- Attempt to guess what the header is set to spawn.
+		local parent = object:GetParent()
+		if(not unit) then
+			if(parent:GetAttribute'showRaid') then
+				unit = 'raid'
+			elseif(parent:GetAttribute'showParty') then
+				unit = 'party'
+			end
+		end
 		styleFunc(object, unit)
 
 		local mt = type(styleFunc) == 'table'
@@ -442,9 +451,8 @@ local initObject = function(unit, style, styleFunc, ...)
 			if(unit) then object:SetScale(scale) end
 		end
 
-		local parent = (i == 1) and object:GetParent()
 		local showPlayer
-		if(parent) then
+		if(i == 1) then
 			showPlayer = parent:GetAttribute'showPlayer' or parent:GetAttribute'showSolo'
 		end
 
