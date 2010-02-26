@@ -563,10 +563,65 @@ do
 	end
 end
 
+local generateName = function(unit, ...)
+	local name = 'oUF_' .. style:gsub('[^%a%d_]+', '')
+
+	local raid, party, groupFilter
+	for i=1, select('#', ...), 2 do
+		local att, val = select(i, ...)
+		if(att == 'showRaid') then
+			raid = true
+		elseif(att == 'showParty') then
+			party = true
+		elseif(att == 'groupFilter') then
+			groupFilter = val
+		end
+	end
+
+	local append
+	if(raid) then
+		if(groupFilter) then
+			if(groupFilter:match'TANK') then
+				append = 'MainTank'
+			elseif(groupFilter:match'ASSIST') then
+				append =  'MainAssist'
+			else
+				local _, count = groupFilter:gsub(',', '')
+				if(count == 0) then
+					append = groupFilter
+				else
+					append = 'Raid'
+				end
+			end
+		else
+			append = 'Raid'
+		end
+	elseif(party) then
+		append = 'Party'
+	elseif(unit) then
+		append = unit:gsub("^%l", string.upper)
+	end
+
+	if(append) then
+		name = name .. append
+	end
+
+	local base = name
+	local i = 2
+	while(_G[name]) do
+		name = base .. i
+		i = i + 1
+	end
+
+	print(name)
+
+	return name
+end
+
 function oUF:SpawnHeader(overrideName, template, visibility, ...)
 	if(not style) then return error("Unable to create frame. No styles have been registered.") end
 
-	local name = overrideName
+	local name = overrideName or generateName(nil, ...)
 	local header = CreateFrame('Frame', name, UIParent, template or 'SecureGroupHeaderTemplate')
 	header.initialConfigFunction = walkObject
 	header.style = style
@@ -597,7 +652,7 @@ function oUF:Spawn(unit, overrideName)
 
 	unit = unit:lower()
 
-	local name = overrideName
+	local name = overrideName or generateName(unit)
 	local object = CreateFrame("Button", name, UIParent, "SecureUnitButtonTemplate")
 	object.unit = unit
 	object.id = unit:match"^.-(%d+)"
