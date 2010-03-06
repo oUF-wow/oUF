@@ -428,6 +428,23 @@ local initObject = function(unit, style, styleFunc, ...)
 				unit = 'party'
 			end
 		end
+
+		-- Run it before the style function so they can override it.
+		object:SetAttribute("*type1", "target")
+		object.style = style
+
+		if(num > 1) then
+			if(i == 1) then
+				object.hasChildren = true
+			else
+				object.isChild = true
+			end
+		end
+
+		-- Register it early so it won't be executed after the layouts PEW, if they
+		-- have one.
+		object:RegisterEvent("PLAYER_ENTERING_WORLD", object.UpdateAllElements)
+
 		styleFunc(object, unit)
 
 		local mt = type(styleFunc) == 'table'
@@ -456,27 +473,14 @@ local initObject = function(unit, style, styleFunc, ...)
 			showPlayer = parent:GetAttribute'showPlayer' or parent:GetAttribute'showSolo'
 		end
 
-		if(num > 1) then
-			if(i == 1) then
-				object.hasChildren = true
-			else
-				object.isChild = true
-			end
-		end
-
-		object.style = style
-
 		if(suffix and suffix:match'target' and (i ~= 1 and not showPlayer)) then
 			enableTargetUpdate(object)
 		else
 			object:SetScript("OnEvent", OnEvent)
 		end
 
-		object:SetAttribute("*type1", "target")
 		object:SetScript("OnAttributeChanged", OnAttributeChanged)
-		object:SetScript("OnShow",  object.UpdateAllElements)
-
-		object:RegisterEvent("PLAYER_ENTERING_WORLD", object.UpdateAllElements)
+		object:SetScript("OnShow", object.UpdateAllElements)
 
 		for element in next, elements do
 			object:EnableElement(element, unit)
