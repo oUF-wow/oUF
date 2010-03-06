@@ -8,18 +8,18 @@ local Update = function(self, event, unit)
 	if(portrait.PreUpdate) then portrait:PreUpdate(unit) end
 
 	if(portrait:IsObjectType'Model') then
-		local name = UnitName(unit)
+		local guid = UnitGUID(unit)
 		if(not UnitExists(unit) or not UnitIsConnected(unit) or not UnitIsVisible(unit)) then
 			portrait:SetModelScale(4.25)
 			portrait:SetPosition(0, 0, -1.5)
 			portrait:SetModel"Interface\\Buttons\\talktomequestionmark.mdx"
-		elseif(portrait.name ~= name or event == 'UNIT_MODEL_CHANGED') then
+		elseif(portrait.guid ~= guid or event == 'UNIT_MODEL_CHANGED') then
 			local alpha = portrait:GetAlpha()
 			portrait:SetUnit(unit)
 			portrait:SetCamera(0)
 			portrait:SetAlpha(alpha)
 
-			portrait.name = name
+			portrait.guid = guid
 		else
 			portrait:SetCamera(0)
 		end
