@@ -30,12 +30,22 @@ local Update = function(self, event, unit)
 	end
 end
 
-local Enable = function(self)
+local Enable = function(self, unit)
 	local portrait = self.Portrait
 	if(portrait) then
 		local Update = portrait.Update or Update
 		self:RegisterEvent("UNIT_PORTRAIT_UPDATE", Update)
 		self:RegisterEvent("UNIT_MODEL_CHANGED", Update)
+
+		-- The quest log uses PARTY_MEMBER_{ENABLE,DISABLE} to handle updating of
+		-- party members overlapping quests. This will probably be enough to handle
+		-- model updating.
+		--
+		-- DISABLE isn't used as it fires when we most likely don't have the
+		-- information we want.
+		if(unit == 'party') then
+			self:RegisterEvent('PARTY_MEMBER_ENABLE', Update)
+		end
 
 		return true
 	end
@@ -47,6 +57,7 @@ local Disable = function(self)
 		local Update = portrait.Update or Update
 		self:UnregisterEvent("UNIT_PORTRAIT_UPDATE", Update)
 		self:UnregisterEvent("UNIT_MODEL_CHANGED", Update)
+		self:UnregisterEvent('PARTY_MEMBER_ENABLE', Update)
 	end
 end
 
