@@ -447,25 +447,25 @@ local initObject = function(unit, style, styleFunc, ...)
 
 		styleFunc(object, unit)
 
-		local mt = type(styleFunc) == 'table'
-		local height = object:GetAttribute'initial-height' or (mt and styleFunc['initial-height'])
-		local width = object:GetAttribute'initial-width' or (mt and styleFunc['initial-width'])
-		local scale = object:GetAttribute'initial-scale' or (mt and styleFunc['initial-scale'])
+		local height = object:GetAttribute'initial-height'
+		local width = object:GetAttribute'initial-width'
+		local scale = object:GetAttribute'initial-scale'
 		local suffix = object:GetAttribute'unitsuffix'
+		local combat = InCombatLockdown()
 
 		if(height) then
 			object:SetAttribute('initial-height', height)
-			if(unit) then object:SetHeight(height) end
+			if(unit and not combat) then object:SetHeight(height) end
 		end
 
 		if(width) then
 			object:SetAttribute("initial-width", width)
-			if(unit) then object:SetWidth(width) end
+			if(unit and not combat) then object:SetWidth(width) end
 		end
 
 		if(scale) then
 			object:SetAttribute("initial-scale", scale)
-			if(unit) then object:SetScale(scale) end
+			if(unit and not combat) then object:SetScale(scale) end
 		end
 
 		local showPlayer
