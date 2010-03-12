@@ -80,11 +80,11 @@ local Enable = function(self, unit)
 	local health = self.Health
 	if(health) then
 		local Update = health.Update or Update
-		if(health.frequentUpdates and (unit and not unit:match'%w+target$') or not unit) then
+		if(health.frequentUpdates and (unit and not unit:match'%w+target$')) then
 			health:SetScript('OnUpdate', OnHealthUpdate)
 
 			-- The party frames need this to handle disconnect states correctly.
-			if(not unit) then
+			if(unit == 'party') then
 				self:RegisterEvent("UNIT_HEALTH", Update)
 			end
 		else
