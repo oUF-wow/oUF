@@ -553,9 +553,6 @@ do
 
 		for i=1, select('#', ...) do
 			local short = select(i, ...)
-			if(short == 'party') then
-				oUF:DisableBlizzard'party'
-			end
 
 			local condition = conditions[short]
 			if(condition) then
@@ -633,6 +630,10 @@ function oUF:SpawnHeader(overrideName, template, visibility, ...)
 		local att, val = select(i, ...)
 		if(not att) then break end
 		header:SetAttribute(att, val)
+	end
+
+	if(header:GetAttribute'showParty') then
+		self:DisableBlizzard'party'
 	end
 
 	if(visibility) then
