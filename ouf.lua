@@ -500,7 +500,7 @@ end
 
 local walkObject = function(object, unit)
 	local style = object:GetParent().style or style
-	local styleFunc = styles[style] or styles[style]
+	local styleFunc = styles[style]
 
 	return initObject(unit, style, styleFunc, object, object:GetChildren())
 end
