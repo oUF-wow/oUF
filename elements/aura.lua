@@ -1,11 +1,15 @@
 local parent, ns = ...
 local oUF = ns.oUF
 
+local UpdateTooltip = function(self)
+	GameTooltip:SetUnitAura(self.parent:GetParent().unit, self:GetID(), self.filter)
+end
+
 local OnEnter = function(self)
 	if(not self:IsVisible()) then return end
 
 	GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
-	GameTooltip:SetUnitAura(self.parent:GetParent().unit, self:GetID(), self.filter)
+	self:UpdateTooltip()
 end
 
 local OnLeave = function()
@@ -42,6 +46,7 @@ local createAuraIcon = function(icons, index)
 	overlay:SetTexCoord(.296875, .5703125, 0, .515625)
 	button.overlay = overlay
 
+	button.UpdateTooltip= UpdateTooltip
 	button:SetScript("OnEnter", OnEnter)
 	button:SetScript("OnLeave", OnLeave)
 
