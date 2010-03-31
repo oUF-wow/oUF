@@ -180,13 +180,13 @@ do
 
 		local baseName
 		if(unit == 'player') then
-			baseName = PlayerFrame
+			HandleFrame(PlayerFrame)
 
 			-- For the damn vehicle support:
-			baseName:RegisterEvent('UNIT_ENTERING_VEHICLE')
-			baseName:RegisterEvent('UNIT_ENTERED_VEHICLE')
-			baseName:RegisterEvent('UNIT_EXITING_VEHICLE')
-			baseName:RegisterEvent('UNIT_EXITED_VEHICLE')
+			PlayerFrame:RegisterEvent('UNIT_ENTERING_VEHICLE')
+			PlayerFrame:RegisterEvent('UNIT_ENTERED_VEHICLE')
+			PlayerFrame:RegisterEvent('UNIT_EXITING_VEHICLE')
+			PlayerFrame:RegisterEvent('UNIT_EXITED_VEHICLE')
 		elseif(unit == 'pet') then
 			baseName = PetFrame
 		elseif(unit == 'target') then
