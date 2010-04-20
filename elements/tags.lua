@@ -342,7 +342,7 @@ frame:SetScript('OnEvent', function(self, event, unit)
 	local strings = events[event]
 	if(strings) then
 		for k, fontstring in next, strings do
-			if(not unitlessEvents[event] and fontstring.parent.unit == unit and fontstring:IsVisible()) then
+			if(fontstring:IsVisible() and (unitlessEvents[event] or fontstring.parent.unit == unit)) then
 				fontstring:UpdateTag()
 			end
 		end
