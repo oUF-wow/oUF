@@ -331,6 +331,8 @@ local tagEvents = {
 
 local unitlessEvents = {
 	PLAYER_LEVEL_UP = true,
+	PLAYER_UPDATE_RESTING = true,
+	PARTY_LEADER_CHANGED = true,
 	RAID_ROSTER_UPDATE = true,
 }
 
