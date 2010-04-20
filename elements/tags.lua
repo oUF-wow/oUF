@@ -451,9 +451,6 @@ local Tag = function(self, fs, tagstr)
 
 	local func = tagPool[tagstr]
 	if(not func) then
-		-- Using .- in the match prevents use from supporting [] as prepend/append
-		-- characters. Supporting these and having a single pattern here is a real
-		-- headache however.
 		local format = tagstr:gsub('%%', '%%%%'):gsub(_PATTERN, '%%s')
 		local args = {}
 
