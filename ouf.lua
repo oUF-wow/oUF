@@ -455,17 +455,17 @@ local initObject = function(unit, style, styleFunc, ...)
 
 		if(height) then
 			object:SetAttribute('initial-height', height)
-			if(unit and not combat) then object:SetHeight(height) end
+			if(not combat) then object:SetHeight(height) end
 		end
 
 		if(width) then
 			object:SetAttribute("initial-width", width)
-			if(unit and not combat) then object:SetWidth(width) end
+			if(not combat) then object:SetWidth(width) end
 		end
 
 		if(scale) then
 			object:SetAttribute("initial-scale", scale)
-			if(unit and not combat) then object:SetScale(scale) end
+			if(not combat) then object:SetScale(scale) end
 		end
 
 		local showPlayer
