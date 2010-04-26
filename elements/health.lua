@@ -27,7 +27,7 @@ local Update = function(self, event, unit)
 		t = self.colors.tapped
 	elseif(health.colorDisconnected and not UnitIsConnected(unit)) then
 		t = self.colors.disconnected
-	elseif(health.colorHappiness and unit == "pet" and GetPetHappiness()) then
+	elseif(health.colorHappiness and UnitIsUnit(unit, "pet") and GetPetHappiness()) then
 		t = self.colors.happiness[GetPetHappiness()]
 	elseif(health.colorClass and UnitIsPlayer(unit)) or
 		(health.colorClassNPC and not UnitIsPlayer(unit)) or
