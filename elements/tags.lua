@@ -254,6 +254,19 @@ local tagStrings = {
 			return _TAGS['name'](u)
 		end
 	end]],
+
+	['happiness'] = [[function(u)
+		if(UnitIsUnit(u, 'pet')) then
+			local happiness = GetPetHappiness()
+			if(happiness == 1) then
+				return ":<"
+			elseif(happiness == 2) then
+				return ":|"
+			elseif(happiness == 3) then
+				return ":D"
+			end
+		end
+	end]],
 }
 
 local tags = setmetatable(
@@ -327,6 +340,7 @@ local tagEvents = {
 	['classification']      = 'UNIT_CLASSIFICATION_CHANGED',
 	['shortclassification'] = 'UNIT_CLASSIFICATION_CHANGED',
 	["group"]               = "RAID_ROSTER_UPDATE",
+	['happiness']           = 'UNIT_HAPPINESS',
 }
 
 local unitlessEvents = {
