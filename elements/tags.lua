@@ -94,7 +94,7 @@ local tagStrings = {
 		if(m == 0) then
 			return 0
 		else
-			return math.floor(UnitHealthMax(u)/m*100+.5)
+			return math.floor(UnitHealth(u)/m*100+.5)
 		end
 	end]],
 
@@ -103,7 +103,7 @@ local tagStrings = {
 		if(m == 0) then
 			return 0
 		else
-			return math.floor(UnitPowerMax(u)/m*100+.5)
+			return math.floor(UnitPower(u)/m*100+.5)
 		end
 	end]],
 
