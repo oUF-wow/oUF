@@ -145,14 +145,14 @@ local SetPosition = function(icons, x)
 	if(icons and x > 0) then
 		local col = 0
 		local row = 0
-		local spacing = icons.spacing or 0
 		local gap = icons.gap
-		local size = (icons.size or 16) + spacing
+		local sizex = (icons.size or 16) + (icons['spacing-x'] or icons.spacing or 0)
+		local sizey = (icons.size or 16) + (icons['spacing-y'] or icons.spacing or 0)
 		local anchor = icons.initialAnchor or "BOTTOMLEFT"
 		local growthx = (icons["growth-x"] == "LEFT" and -1) or 1
 		local growthy = (icons["growth-y"] == "DOWN" and -1) or 1
-		local cols = math.floor(icons:GetWidth() / size + .5)
-		local rows = math.floor(icons:GetHeight() / size + .5)
+		local cols = math.floor(icons:GetWidth() / sizex + .5)
+		local rows = math.floor(icons:GetHeight() / sizey + .5)
 
 		for i = 1, #icons do
 			local button = icons[i]
@@ -170,7 +170,7 @@ local SetPosition = function(icons, x)
 					row = row + 1
 				end
 				button:ClearAllPoints()
-				button:SetPoint(anchor, icons, anchor, col * size * growthx, row * size * growthy)
+				button:SetPoint(anchor, icons, anchor, col * sizex * growthx, row * sizey * growthy)
 
 				col = col + 1
 			elseif(not button) then
