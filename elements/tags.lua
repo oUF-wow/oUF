@@ -185,7 +185,13 @@ local tagStrings = {
 	end]],
 
 	["cpoints"] = [[function(u)
-		local cp = GetComboPoints(u, 'target')
+		local cp
+		if(UnitExists'vehicle') then
+			cp = GetComboPoints('vehicle', 'target')
+		else
+			cp = GetComboPoints('player', 'target')
+		end
+
 		if(cp > 0) then
 			return cp
 		end
@@ -348,6 +354,8 @@ local unitlessEvents = {
 	PLAYER_UPDATE_RESTING = true,
 	PARTY_LEADER_CHANGED = true,
 	RAID_ROSTER_UPDATE = true,
+
+	UNIT_COMBO_POINTS = true
 }
 
 local events = {}
