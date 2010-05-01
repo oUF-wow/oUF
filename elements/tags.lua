@@ -341,7 +341,7 @@ local tagEvents = {
 	["smartlevel"]          = "UNIT_LEVEL PLAYER_LEVEL_UP UNIT_CLASSIFICATION_CHANGED",
 	["threat"]              = "UNIT_THREAT_SITUATION_UPDATE",
 	["threatcolor"]         = "UNIT_THREAT_SITUATION_UPDATE",
-	['cpoints']             = 'UNIT_COMBO_POINTS UNIT_TARGET',
+	['cpoints']             = 'UNIT_COMBO_POINTS PLAYER_TARGET_CHANGED',
 	['rare']                = 'UNIT_CLASSIFICATION_CHANGED',
 	['classification']      = 'UNIT_CLASSIFICATION_CHANGED',
 	['shortclassification'] = 'UNIT_CLASSIFICATION_CHANGED',
@@ -352,7 +352,10 @@ local tagEvents = {
 local unitlessEvents = {
 	PLAYER_LEVEL_UP = true,
 	PLAYER_UPDATE_RESTING = true,
+	PLAYER_TARGET_CHANGED = true,
+
 	PARTY_LEADER_CHANGED = true,
+
 	RAID_ROSTER_UPDATE = true,
 
 	UNIT_COMBO_POINTS = true
