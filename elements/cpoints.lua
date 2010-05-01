@@ -31,7 +31,9 @@ end
 local Enable = function(self)
 	local cpoints = self.CPoints
 	if(cpoints) then
-		self:RegisterEvent('UNIT_COMBO_POINTS', cpoints.Update or Update)
+		local Update = cpoints.Update or Update
+		self:RegisterEvent('UNIT_COMBO_POINTS', Update)
+		self:RegisterEvent('PLAYER_TARGET_CHANGED', Update)
 
 		return true
 	end
@@ -40,7 +42,9 @@ end
 local Disable = function(self)
 	local cpoints = self.CPoints
 	if(cpoints) then
-		self:UnregisterEvent('UNIT_COMBO_POINTS', cpoints.Update or Update)
+		local Update = cpoints.Update or Update
+		self:UnregisterEvent('UNIT_COMBO_POINTS', Update)
+		self:UnregisterEvent('PLAYER_TARGET_CHANGED', Update)
 	end
 end
 
