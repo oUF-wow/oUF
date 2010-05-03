@@ -103,10 +103,11 @@ local UNIT_SPELLCAST_INTERRUPTIBLE = function(self, event, unit)
 	local shield = self.Castbar.Shield
 	if(shield) then
 		shield:Hide()
+	end
 
-		if(castbar.PostCastInterruptible) then
-			return castbar:PostCastInterruptible(unit)
-		end
+	local castbar = self.Castbar
+	if(castbar.PostCastInterruptible) then
+		return castbar:PostCastInterruptible(unit)
 	end
 end
 
@@ -116,10 +117,11 @@ local UNIT_SPELLCAST_NOT_INTERRUPTIBLE = function(self, event, unit)
 	local shield = self.Castbar.Shield
 	if(shield) then
 		shield:Hide()
+	end
 
-		if(castbar.PostCastNotInterruptible) then
-			return castbar:PostCastNotInterruptible(unit)
-		end
+	local castbar = self.Castbar
+	if(castbar.PostCastNotInterruptible) then
+		return castbar:PostCastNotInterruptible(unit)
 	end
 end
 
