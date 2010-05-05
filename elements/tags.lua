@@ -1,11 +1,5 @@
 --[[
--- Experimental oUF tags
--- Status: Incomplete
---
 -- Credits: Vika, Cladhaire, Tekkub
---
--- TODO:
---	- Tag and Untag should be able to handle more than one fontstring at a time.
 ]]
 
 local parent, ns = ...
