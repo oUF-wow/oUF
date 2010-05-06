@@ -180,12 +180,12 @@ local SetPosition = function(icons, x)
 	end
 end
 
-local filterIcons = function(unit, icons, filter, limit, offset, dontHide)
+local filterIcons = function(unit, icons, filter, limit, isDebuff, offset, dontHide)
 	if(not offset) then offset = 0 end
 	local index = 1
 	local visible = 0
 	while(visible < limit) do
-		local result = updateIcon(unit, icons, index, offset, filter)
+		local result = updateIcon(unit, icons, index, offset, filter, isDebuff)
 		if(not result) then
 			break
 		elseif(result == VISIBLE) then
@@ -211,8 +211,8 @@ local Update = function(self, event, unit)
 		local numBuffs = auras.numBuffs or 32
 		local numDebuffs = auras.numDebuffs or 40
 		local max = numBuffs + numDebuffs
-		auras.visibleBuffs = filterIcons(unit, auras, auras.buffFilter or auras.filter or 'HELPFUL', numBuffs, 0, true)
-		auras.visibleDebuffs = filterIcons(unit, auras, auras.debuffFilter or auras.filter or 'HARMFUL', numDebuffs, auras.visibleBuffs)
+		auras.visibleBuffs = filterIcons(unit, auras, auras.buffFilter or auras.filter or 'HELPFUL', numBuffs, nil,  0, true)
+		auras.visibleDebuffs = filterIcons(unit, auras, auras.debuffFilter or auras.filter or 'HARMFUL', numDebuffs,true,  auras.visibleBuffs)
 		auras.visibleAuras = auras.visibleBuffs + auras.visibleDebuffs
 
 		if(auras.PreSetPosition) then auras:PreSetPosition(max) end
@@ -239,7 +239,7 @@ local Update = function(self, event, unit)
 		if(debuffs.PreUpdate) then debuffs:PreUpdate(unit) end
 
 		local numDebuffs = debuffs.num or 40
-		debuffs.visibleDebuffs = filterIcons(unit, debuffs, debuffs.filter or 'HARMFUL', numDebuffs)
+		debuffs.visibleDebuffs = filterIcons(unit, debuffs, debuffs.filter or 'HARMFUL', numDebuffs, true)
 
 		if(debuffs.PreSetPosition) then debuffs:PreSetPosition(numDebuffs) end
 		(debuffs.SetPosition or SetPosition) (debuffs, numDebuffs)
