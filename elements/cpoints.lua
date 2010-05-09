@@ -31,6 +31,14 @@ local Enable = function(self)
 		self:RegisterEvent('UNIT_COMBO_POINTS', Update)
 		self:RegisterEvent('PLAYER_TARGET_CHANGED', Update)
 
+		for index = 1, MAX_COMBO_POINTS do
+			local cpoint = cpoints[index]
+			if(cpoint:IsObjectType'Texture' and not cpoint:GetTexture()) then
+				cpoint:SetTexture[[Interface\ComboFrame\ComboPoint]]
+				cpoint:SetTexCoord(0, 0.375, 0, 1)
+			end
+		end
+
 		return true
 	end
 end
