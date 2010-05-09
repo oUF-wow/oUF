@@ -15,7 +15,7 @@ local Enable = function(self, unit)
 
 		if(self.Combat:IsObjectType"Texture" and not self.Combat:GetTexture()) then
 			self.Combat:SetTexture[[Interface\CharacterFrame\UI-StateIcon]]
-			self.Combat:SetTexCoord(.5, 1, 0, .5)
+			self.Combat:SetTexCoord(.5, 1, 0, .49)
 		end
 
 		return true
