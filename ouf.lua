@@ -713,7 +713,7 @@ do
 	end
 
 	function oUF:DisableFactory()
-		self.ative = nil
+		self.active = nil
 	end
 end
 
