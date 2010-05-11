@@ -537,6 +537,18 @@ function oUF:SetActiveStyle(name)
 	style = name
 end
 
+
+do
+	local function iter(_, n)
+		-- don't expose the style functions.
+		return (next(styles, n))
+	end
+
+	function oUF.IterateStyles()
+		return iter, nil, nil
+	end
+end
+
 local getCondition
 do
 	local conditions = {
