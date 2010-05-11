@@ -59,4 +59,4 @@ local Disable = function(self)
 	end
 end
 
-oUF:AddElement('Resting', nil, Enable, Disable)
+oUF:AddElement('Range', nil, Enable, Disable)
