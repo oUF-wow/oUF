@@ -671,6 +671,40 @@ function oUF:Spawn(unit, overrideName)
 	return object
 end
 
+do
+	local _QUEUE = {}
+	local _FACTORY = CreateFrame'Frame'
+	_FACTORY:SetScript('OnEvent', OnEvent)
+	_FACTORY:RegisterEvent'PLAYER_LOGIN'
+	_FACTORY.active = true
+
+	function _FACTORY:PLAYER_LOGIN()
+		if(not self.active) then return end
+
+		for _, func in next, _QUEUE do
+			func()
+		end
+	end
+
+	function oUF:Factory(func)
+		argcheck(func, 2, 'function')
+
+		if(IsLoggedIn()) then
+			func()
+		else
+			table.insert(_QUEUE, func)
+		end
+	end
+
+	function oUF:EnableFactory()
+		self.active = true
+	end
+
+	function oUF:DisableFactory()
+		self.ative = nil
+	end
+end
+
 function oUF:AddElement(name, update, enable, disable)
 	argcheck(name, 2, 'string')
 	argcheck(update, 3, 'function', 'nil')
