@@ -1,43 +1,32 @@
---[[
-	Elements handled: .Threat
-
-	Functions that can be overridden from within a layout:
-	 - :PreUpdateThreat(event, unit)
-	 - :OverrideUpdateThreat(event, unit, status)
-	 - :PostUpdateThreat(event, unit, status)
---]]
 local parent, ns = ...
 local oUF = ns.oUF
 
 local Update = function(self, event, unit)
 	if(unit ~= self.unit) then return end
-	if(self.PreUpdateThreat) then self:PreUpdateThreat(event, unit) end
+
+	local threat = self.Threat
+	if(threat.PreUpdate) then threat:PreUpdate(unit) end
 
 	unit = unit or self.unit
-	local threat = self.Threat
 	local status = UnitThreatSituation(unit)
 
-	if(not self.OverrideUpdateThreat) then
-		if(status and status > 0) then
-			local r, g, b = GetThreatStatusColor(status)
-			threat:SetVertexColor(r, g, b)
-			threat:Show()
-		else
-			threat:Hide()
-		end
+	if(status and status > 0) then
+		local r, g, b = GetThreatStatusColor(status)
+		threat:SetVertexColor(r, g, b)
+		threat:Show()
 	else
-		self:OverrideUpdateThreat(event, unit, status)
+		threat:Hide()
 	end
 
-	if(self.PostUpdateThreat) then
-		return self:PostUpdateThreat(event, unit, status)
+	if(threat.PostUpdate) then
+		return threat:PostUpdate(unit, status)
 	end
 end
 
 local Enable = function(self)
 	local threat = self.Threat
 	if(threat) then
-		self:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE", Update)
+		self:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE", threat.Update or Update)
 		threat:Hide()
 
 		if(threat:IsObjectType"Texture" and not threat:GetTexture()) then
@@ -52,7 +41,7 @@ end
 local Disable = function(self)
 	local threat = self.Threat
 	if(threat) then
-		self:UnregisterEvent("UNIT_THREAT_SITUATION_UPDATE", Update)
+		self:UnregisterEvent("UNIT_THREAT_SITUATION_UPDATE", threat.Update or Update)
 	end
 end
 

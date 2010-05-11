@@ -1,181 +1,238 @@
 --[[
--- Experimental oUF tags
--- Status: Incomplete
---
 -- Credits: Vika, Cladhaire, Tekkub
---
--- TODO:
---	- Tag and Untag should be able to handle more than one fontstring at a time.
 ]]
 
 local parent, ns = ...
 local oUF = ns.oUF
 
-local classColors
+local _PATTERN = '%[..-%]+'
 
-local function Hex(r, g, b)
-	if type(r) == "table" then
-		if r.r then r, g, b = r.r, r.g, r.b else r, g, b = unpack(r) end
-	end
-	return string.format("|cff%02x%02x%02x", r*255, g*255, b*255)
-end
-
-local tags
-tags = {
-
-	["[curhp]"] = UnitHealth,
-	["[curpp]"] = UnitPower,
-	["[maxhp]"] = UnitHealthMax,
-	["[maxpp]"] = UnitPowerMax,
-
-	["[class]"] = function(u)
-		return UnitClass(u)
+local _ENV = {
+	Hex = function(r, g, b)
+		if type(r) == "table" then
+			if r.r then r, g, b = r.r, r.g, r.b else r, g, b = unpack(r) end
+		end
+		return string.format("|cff%02x%02x%02x", r*255, g*255, b*255)
 	end,
+	ColorGradient = oUF.ColorGradient,
+}
+local _PROXY = setmetatable(_ENV, {__index = _G})
 
-	["[creature]"] = function(u)
+local tagStrings = {
+	["creature"] = [[function(u)
 		return UnitCreatureFamily(u) or UnitCreatureType(u)
-	end,
+	end]],
 
-	["[dead]"] = function(u)
-		return UnitIsDead(u) and "Dead" or UnitIsGhost(u) and "Ghost"
-	end,
+	["dead"] = [[function(u)
+		if(UnitIsDead(u)) then
+			return 'Dead'
+		elseif(UnitIsGhost(u)) then
+			return 'Ghost'
+		end
+	end]],
 
-	["[difficulty]"]  = function(u)
+	["difficulty"] = [[function(u)
 		if UnitCanAttack("player", u) then
 			local l = UnitLevel(u)
 			return Hex(GetQuestDifficultyColor((l > 0) and l or 99))
 		end
-	end,
+	end]],
 
-	["[faction]"] = function(u)
-		return UnitFactionGroup(u)
-	end,
+	["leader"] = [[function(u)
+		if(UnitIsPartyLeader(u)) then
+			return 'L'
+		end
+	end]],
 
-	["[leader]"] = function(u)
-		return UnitIsPartyLeader(u) and "(L)"
-	end,
+	["leaderlong"]  = [[function(u)
+		if(UnitIsPartyLeader(u)) then
+			return 'Leader'
+		end
+	end]],
 
-	["[leaderlong]"]  = function(u)
-		return UnitIsPartyLeader(u) and "(Leader)"
-	end,
-
-	["[level]"] = function(u)
+	["level"] = [[function(u)
 		local l = UnitLevel(u)
-		return (l > 0) and l or "??"
-	end,
+		if(l > 0) then
+			return l
+		else
+			return '??'
+		end
+	end]],
 
-	["[missinghp]"] = function(u)
+	["missinghp"] = [[function(u)
 		local current = UnitHealthMax(u) - UnitHealth(u)
 		if(current > 0) then
 			return current
 		end
-	end,
+	end]],
 
-	["[missingpp]"] = function(u)
+	["missingpp"] = [[function(u)
 		local current = UnitPowerMax(u) - UnitPower(u)
 		if(current > 0) then
 			return current
 		end
-	end,
+	end]],
 
-	["[name]"] = function(u, r)
+	["name"] = [[function(u, r)
 		return UnitName(r or u)
-	end,
+	end]],
 
-	["[offline]"] = function(u)
-		return  (not UnitIsConnected(u) and "Offline")
-	end,
+	["offline"] = [[function(u)
+		if(not UnitIsConnected(u)) then
+			return 'Offline'
+		end
+	end]],
 
-	["[perhp]"] = function(u)
+	["perhp"] = [[function(u)
 		local m = UnitHealthMax(u)
-		return m == 0 and 0 or math.floor(UnitHealth(u)/m*100+0.5)
-	end,
+		if(m == 0) then
+			return 0
+		else
+			return math.floor(UnitHealth(u)/m*100+.5)
+		end
+	end]],
 
-	["[perpp]"] = function(u)
+	["perpp"] = [[function(u)
 		local m = UnitPowerMax(u)
-		return m == 0 and 0 or math.floor(UnitPower(u)/m*100+0.5)
-	end,
+		if(m == 0) then
+			return 0
+		else
+			return math.floor(UnitPower(u)/m*100+.5)
+		end
+	end]],
 
-	["[plus]"] = function(u)
+	["plus"] = [[function(u)
 		local c = UnitClassification(u)
-		return (c == "elite" or c == "rareelite") and "+"
-	end,
+		if(c == 'elite' or c == 'rareelite') then
+			return '+'
+		end
+	end]],
 
-	["[pvp]"] = function(u)
-		return UnitIsPVP(u) and "PvP"
-	end,
+	["pvp"] = [[function(u)
+		if(UnitIsPVP(u)) then
+			return 'PvP'
+		end
+	end]],
 
-	["[race]"] = function(u)
-		return UnitRace(u)
-	end,
-
-	["[raidcolor]"]   = function(u)
+	["raidcolor"] = [[function(u)
 		local _, x = UnitClass(u)
-		return x and Hex(classColors[x])
-	end,
+		if(x) then
+			return Hex(_COLORS.class[x])
+		end
+	end]],
 
-	["[rare]"] = function(u)
+	["rare"] = [[function(u)
 		local c = UnitClassification(u)
-		return (c == "rare" or c == "rareelite") and "Rare"
-	end,
+		if(c == 'rare' or c == 'rareelite') then
+			return 'Rare'
+		end
+	end]],
 
-	["[resting]"] = function(u)
-		return u == "player" and IsResting() and "zzz"
-	end,
+	["resting"] = [[function(u)
+		if(u == 'player' and IsResting()) then
+			return 'zzz'
+		end
+	end]],
 
-	["[sex]"] = function(u)
+	["sex"] = [[function(u)
 		local s = UnitSex(u)
-		return s == 2 and "Male" or s == 3 and "Female"
-	end,
+		if(s == 2) then
+			return 'Male'
+		elseif(s == 3) then
+			return 'Female'
+		end
+	end]],
 
-	["[smartclass]"] = function(u)
-		return UnitIsPlayer(u) and tags["[class]"](u) or tags["[creature]"](u)
-	end,
+	["smartclass"] = [[function(u)
+		if(UnitIsPlayer(u)) then
+			return _TAGS['class'](u)
+		end
 
-	["[status]"] = function(u)
-		return UnitIsDead(u) and "Dead" or UnitIsGhost(u) and "Ghost" or not UnitIsConnected(u) and "Offline" or tags["[resting]"](u)
-	end,
+		return _TAGS['creature'](u)
+	end]],
 
-	["[threat]"] = function(u)
+	["status"] = [[function(u)
+		if(UnitIsDead(u)) then
+			return 'Dead'
+		elseif(UnitIsGhost(u)) then
+			return 'Ghost'
+		elseif(not UnitIsConnected(u)) then
+			return 'Offline'
+		else
+			return _TAGS['resting'](u)
+		end
+	end]],
+
+	["threat"] = [[function(u)
 		local s = UnitThreatSituation(u)
-		return s == 1 and "++" or s == 2 and "--" or s == 3 and "Aggro"
-	end,
+		if(s == 1) then
+			return '++'
+		elseif(s == 2) then
+			return '--'
+		elseif(s == 3) then
+			return 'Aggro'
+		end
+	end]],
 
-	["[threatcolor]"] = function(u)
+	["threatcolor"] = [[function(u)
 		return Hex(GetThreatStatusColor(UnitThreatSituation(u)))
-	end,
+	end]],
 
-	["[cpoints]"] = function(u)
-		local cp = GetComboPoints(u, 'target')
-		return (cp > 0) and cp
-	end,
+	["cpoints"] = [[function(u)
+		local cp
+		if(UnitExists'vehicle') then
+			cp = GetComboPoints('vehicle', 'target')
+		else
+			cp = GetComboPoints('player', 'target')
+		end
 
-	['[smartlevel]'] = function(u)
+		if(cp > 0) then
+			return cp
+		end
+	end]],
+
+	['smartlevel'] = [[function(u)
 		local c = UnitClassification(u)
 		if(c == 'worldboss') then
 			return 'Boss'
 		else
-			local plus = tags['[plus]'](u)
-			local level = tags['[level]'](u)
+			local plus = _TAGS['plus'](u)
+			local level = _TAGS['level'](u)
 			if(plus) then
 				return level .. plus
 			else
 				return level
 			end
 		end
-	end,
+	end]],
 
-	["[classification]"] = function(u)
+	["classification"] = [[function(u)
 		local c = UnitClassification(u)
-		return c == "rare" and "Rare" or c == "eliterare" and "Rare Elite" or c == "elite" and "Elite" or c == "worldboss" and "Boss"
-	end,
+		if(c == 'rare') then
+			return 'Rare'
+		elseif(c == 'eliterare') then
+			return 'Rare Elite'
+		elseif(c == 'elite') then
+			return 'Elite'
+		elseif(c == 'worldboss') then
+			return 'Boss'
+		end
+	end]],
 
-	["[shortclassification]"] = function(u)
+	["shortclassification"] = [[function(u)
 		local c = UnitClassification(u)
-		return c == "rare" and "R" or c == "eliterare" and "R+" or c == "elite" and "+" or c == "worldboss" and "B"
-	end,
+		if(c == 'rare') then
+			return 'R'
+		elseif(c == 'eliterare') then
+			return 'R+'
+		elseif(c == 'elite') then
+			return '+'
+		elseif(c == 'worldboss') then
+			return 'B'
+		end
+	end]],
 
-	["[group]"] = function(unit)
+	["group"] = [[function(unit)
 		local name, server = UnitName(unit)
 		if(server and server ~= "") then
 			name = string.format("%s-%s", name, server)
@@ -187,43 +244,115 @@ tags = {
 				return group
 			end
 		end
-	end,
+	end]],
 
-	["[defict:name]"] = function(u)
-		return tags['[missinghp]'](u) or tags['[name]'](u)
-	end,
+	["defict:name"] = [[function(u)
+		local missinghp = _TAGS['missinghp'](u)
+		if(missinghp) then
+			return '-' .. missinghp
+		else
+			return _TAGS['name'](u)
+		end
+	end]],
+
+	['happiness'] = [[function(u)
+		if(UnitIsUnit(u, 'pet')) then
+			local happiness = GetPetHappiness()
+			if(happiness == 1) then
+				return ":<"
+			elseif(happiness == 2) then
+				return ":|"
+			elseif(happiness == 3) then
+				return ":D"
+			end
+		end
+	end]],
 }
+
+local tags = setmetatable(
+{
+	curhp = UnitHealth,
+	curpp = UnitPower,
+	maxhp = UnitHealthMax,
+	maxpp = UnitPowerMax,
+	class = UnitClass,
+	faction = UnitFactionGroup,
+	race = UnitRace,
+},
+
+{
+	__index = function(self, key)
+		local tagFunc = tagStrings[key]
+		if(tagFunc) then
+			local func, err = loadstring('return ' .. tagFunc)
+			if(func) then
+				func = func()
+
+				-- Want to trigger __newindex, so no rawset.
+				self[key] = func
+				tagStrings[key] = nil
+
+				return func
+			else
+				error(err, 3)
+			end
+		end
+	end,
+	__newindex = function(self, key, val)
+		if(type(val) == 'string') then
+			tagStrings[key] = val
+		elseif(type(val) == 'function') then
+			-- So we don't clash with any custom envs.
+			if(getfenv(val) == _G) then
+				setfenv(val, _PROXY)
+			end
+
+			rawset(self, key, val)
+		end
+	end,
+})
+
+_ENV._TAGS = tags
+
 local tagEvents = {
-	["[curhp]"]               = "UNIT_HEALTH",
-	["[curpp]"]               = "UNIT_ENERGY UNIT_FOCUS UNIT_MANA UNIT_RAGE UNIT_RUNIC_POWER",
-	["[dead]"]                = "UNIT_HEALTH",
-	["[leader]"]              = "PARTY_LEADER_CHANGED",
-	["[leaderlong]"]          = "PARTY_LEADER_CHANGED",
-	["[level]"]               = "UNIT_LEVEL PLAYER_LEVEL_UP",
-	["[maxhp]"]               = "UNIT_MAXHEALTH",
-	["[maxpp]"]               = "UNIT_MAXENERGY UNIT_MAXFOCUS UNIT_MAXMANA UNIT_MAXRAGE UNIT_MAXRUNIC_POWER",
-	["[missinghp]"]           = "UNIT_HEALTH UNIT_MAXHEALTH",
-	["[missingpp]"]           = "UNIT_MAXENERGY UNIT_MAXFOCUS UNIT_MAXMANA UNIT_MAXRAGE UNIT_ENERGY UNIT_FOCUS UNIT_MANA UNIT_RAGE UNIT_MAXRUNIC_POWER UNIT_RUNIC_POWER",
-	["[name]"]                = "UNIT_NAME_UPDATE",
-	["[offline]"]             = "UNIT_HEALTH",
-	["[perhp]"]               = "UNIT_HEALTH UNIT_MAXHEALTH",
-	["[perpp]"]               = "UNIT_MAXENERGY UNIT_MAXFOCUS UNIT_MAXMANA UNIT_MAXRAGE UNIT_ENERGY UNIT_FOCUS UNIT_MANA UNIT_RAGE UNIT_MAXRUNIC_POWER UNIT_RUNIC_POWER",
-	["[pvp]"]                 = "UNIT_FACTION",
-	["[resting]"]             = "PLAYER_UPDATE_RESTING",
-	["[status]"]              = "UNIT_HEALTH PLAYER_UPDATE_RESTING",
-	["[smartlevel]"]          = "UNIT_LEVEL PLAYER_LEVEL_UP UNIT_CLASSIFICATION_CHANGED",
-	["[threat]"]              = "UNIT_THREAT_SITUATION_UPDATE",
-	["[threatcolor]"]         = "UNIT_THREAT_SITUATION_UPDATE",
-	['[cpoints]']             = 'UNIT_COMBO_POINTS UNIT_TARGET',
-	['[rare]']                = 'UNIT_CLASSIFICATION_CHANGED',
-	['[classification]']      = 'UNIT_CLASSIFICATION_CHANGED',
-	['[shortclassification]'] = 'UNIT_CLASSIFICATION_CHANGED',
-	["[group]"]               = "RAID_ROSTER_UPDATE",
+	["curhp"]               = "UNIT_HEALTH",
+	["curpp"]               = "UNIT_ENERGY UNIT_FOCUS UNIT_MANA UNIT_RAGE UNIT_RUNIC_POWER",
+	["dead"]                = "UNIT_HEALTH",
+	["leader"]              = "PARTY_LEADER_CHANGED",
+	["leaderlong"]          = "PARTY_LEADER_CHANGED",
+	["level"]               = "UNIT_LEVEL PLAYER_LEVEL_UP",
+	["maxhp"]               = "UNIT_MAXHEALTH",
+	["maxpp"]               = "UNIT_MAXENERGY UNIT_MAXFOCUS UNIT_MAXMANA UNIT_MAXRAGE UNIT_MAXRUNIC_POWER",
+	["missinghp"]           = "UNIT_HEALTH UNIT_MAXHEALTH",
+	["missingpp"]           = "UNIT_MAXENERGY UNIT_MAXFOCUS UNIT_MAXMANA UNIT_MAXRAGE UNIT_ENERGY UNIT_FOCUS UNIT_MANA UNIT_RAGE UNIT_MAXRUNIC_POWER UNIT_RUNIC_POWER",
+	["name"]                = "UNIT_NAME_UPDATE",
+	["offline"]             = "UNIT_HEALTH",
+	["perhp"]               = "UNIT_HEALTH UNIT_MAXHEALTH",
+	["perpp"]               = "UNIT_MAXENERGY UNIT_MAXFOCUS UNIT_MAXMANA UNIT_MAXRAGE UNIT_ENERGY UNIT_FOCUS UNIT_MANA UNIT_RAGE UNIT_MAXRUNIC_POWER UNIT_RUNIC_POWER",
+	["pvp"]                 = "UNIT_FACTION",
+	["resting"]             = "PLAYER_UPDATE_RESTING",
+	["status"]              = "UNIT_HEALTH PLAYER_UPDATE_RESTING",
+	["smartlevel"]          = "UNIT_LEVEL PLAYER_LEVEL_UP UNIT_CLASSIFICATION_CHANGED",
+	["threat"]              = "UNIT_THREAT_SITUATION_UPDATE",
+	["threatcolor"]         = "UNIT_THREAT_SITUATION_UPDATE",
+	['cpoints']             = 'UNIT_COMBO_POINTS PLAYER_TARGET_CHANGED',
+	['rare']                = 'UNIT_CLASSIFICATION_CHANGED',
+	['classification']      = 'UNIT_CLASSIFICATION_CHANGED',
+	['shortclassification'] = 'UNIT_CLASSIFICATION_CHANGED',
+	["group"]               = "RAID_ROSTER_UPDATE",
+	['happiness']           = 'UNIT_HAPPINESS',
 }
 
 local unitlessEvents = {
 	PLAYER_LEVEL_UP = true,
+	PLAYER_UPDATE_RESTING = true,
+	PLAYER_TARGET_CHANGED = true,
+
+	PARTY_LEADER_CHANGED = true,
+
 	RAID_ROSTER_UPDATE = true,
+
+	UNIT_COMBO_POINTS = true
 }
 
 local events = {}
@@ -232,9 +361,7 @@ frame:SetScript('OnEvent', function(self, event, unit)
 	local strings = events[event]
 	if(strings) then
 		for k, fontstring in next, strings do
-			if(not unitlessEvents[event] and fontstring.parent.unit == unit and fontstring:IsVisible()) then
-				-- XXX: Fix this for 1.4
-				classColors = fontstring.parent.colors.class
+			if(fontstring:IsVisible() and (unitlessEvents[event] or fontstring.parent.unit == unit)) then
 				fontstring:UpdateTag()
 			end
 		end
@@ -256,8 +383,6 @@ local createOnUpdate = function(timer)
 			if(total >= timer) then
 				for k, fs in next, strings do
 					if(fs.parent:IsShown() and UnitExists(fs.parent.unit)) then
-						-- XXX: Fix this for 1.4.
-						classColors = fs.parent.colors.class
 						fs:UpdateTag()
 					end
 				end
@@ -273,11 +398,17 @@ local createOnUpdate = function(timer)
 end
 
 local OnShow = function(self)
-	-- XXX: Fix this for 1.4.
-	classColors = self.colors.class
 	for _, fs in next, self.__tags do
 		fs:UpdateTag()
 	end
+end
+
+local getTagName = function(tag)
+	local s = (tag:match('>+()') or 2)
+	local e = tag:match('()<+')
+	e = (e and e - 1) or -2
+
+	return tag:sub(s, e), s, e
 end
 
 local RegisterEvent = function(fontstr, event)
@@ -288,9 +419,8 @@ local RegisterEvent = function(fontstr, event)
 end
 
 local RegisterEvents = function(fontstr, tagstr)
-	-- Forcefully strip away any parentheses and the characters in them.
-	tagstr = tagstr:gsub('%b()', '')
-	for tag in tagstr:gmatch'[%[].-[%]]' do
+	for tag in tagstr:gmatch(_PATTERN) do
+		tag = getTagName(tag)
 		local tagevents = tagEvents[tag]
 		if(tagevents) then
 			for event in tagevents:gmatch'%S+' do
@@ -340,59 +470,55 @@ local Tag = function(self, fs, tagstr)
 
 	local func = tagPool[tagstr]
 	if(not func) then
-		-- Using .- in the match prevents use from supporting [] as prepend/append
-		-- characters. Supporting these and having a single pattern here is a real
-		-- headache however.
-		local format = tagstr:gsub('%%', '%%%%'):gsub('[[].-[]]', '%%s')
+		local format = tagstr:gsub('%%', '%%%%'):gsub(_PATTERN, '%%s')
 		local args = {}
 
-		for bracket in tagstr:gmatch'([[](.-)[]])' do
-			local tfunc = funcPool[bracket] or tags[bracket]
-			if(not tfunc) then
-				-- ...
-				local pre, tag, ap = bracket:match'[%[](%b())([%w]+)(%b())[%]]'
-				if(not pre) then pre, tag = bracket:match'[%[](%b())([%w]+)[%]]' end
-				if(not pre) then tag, ap = bracket:match'[%[]([%w]+)(%b())[%]]' end
-				tag = (tag and '['.. tag ..']')
-				tag = tags[tag]
+		for bracket in tagstr:gmatch(_PATTERN) do
+			local tagFunc = funcPool[bracket] or tags[bracket:sub(2, -2)]
+			if(not tagFunc) then
+				local tagName, s, e = getTagName(bracket)
 
+				local tag = tags[tagName]
 				if(tag) then
-					if(pre and ap) then
-						pre = pre:sub(2,-2)
-						ap = ap:sub(2,-2)
+					s = s - 2
+					e = e + 2
 
-						tfunc = function(u)
-							local str = tag(u)
+					if(s ~= 0 and e ~= 0) then
+						local pre = bracket:sub(2, s)
+						local ap = bracket:sub(e, -2)
+
+						tagFunc = function(u,r)
+							local str = tag(u,r)
 							if(str) then
 								return pre..str..ap
 							end
 						end
-					elseif(pre) then
-						pre = pre:sub(2,-2)
+					elseif(s ~= 0) then
+						local pre = bracket:sub(2, s)
 
-						tfunc = function(u)
-							local str = tag(u)
+						tagFunc = function(u,r)
+							local str = tag(u,r)
 							if(str) then
 								return pre..str
 							end
 						end
-					elseif(ap) then
-						ap = ap:sub(2,-2)
+					elseif(e ~= 0) then
+						local ap = bracket:sub(e, -2)
 
-						tfunc = function(u)
-							local str = tag(u)
+						tagFunc = function(u,r)
+							local str = tag(u,r)
 							if(str) then
 								return str..ap
 							end
 						end
 					end
 
-					funcPool[bracket] = tfunc
+					funcPool[bracket] = tagFunc
 				end
 			end
 
-			if(tfunc) then
-				table.insert(args,tfunc)
+			if(tagFunc) then
+				table.insert(args, tagFunc)
 			else
 				return error(('Attempted to use invalid tag %s.'):format(bracket), 3)
 			end
@@ -402,6 +528,7 @@ local Tag = function(self, fs, tagstr)
 			local unit = self.parent.unit
 			local __unit = self.parent.realUnit
 
+			_ENV._COLORS = self.parent.colors
 			for i, func in next, args do
 				tmp[i] = func(unit, __unit) or ''
 			end
@@ -458,5 +585,5 @@ oUF.Tags = tags
 oUF.TagEvents = tagEvents
 oUF.UnitlessTagEvents = unitlessEvents
 
-oUF.frame_metatable.__index.Tag = Tag
-oUF.frame_metatable.__index.Untag = Untag
+oUF:RegisterMetaFunction('Tag', Tag)
+oUF:RegisterMetaFunction('Untag', Untag)

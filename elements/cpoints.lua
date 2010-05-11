@@ -5,34 +5,50 @@ local GetComboPoints = GetComboPoints
 local MAX_COMBO_POINTS = MAX_COMBO_POINTS
 
 local Update = function(self, event, unit)
-	local cpoints = self.CPoints
-	if(self.unit ~= unit and (cpoints.unit and cpoints.unit ~= unit)) then return end
-	local cp = GetComboPoints(cpoints.unit or unit, 'target')
+	if(unit == 'pet') then return end
 
-	if(#cpoints == 0) then
-		cpoints:SetText((cp > 0) and cp)
+	local cp
+	if(UnitExists'vehicle') then
+		cp = GetComboPoints('vehicle', 'target')
 	else
-		for i=1, MAX_COMBO_POINTS do
-			if(i <= cp) then
-				cpoints[i]:Show()
-			else
-				cpoints[i]:Hide()
-			end
+		cp = GetComboPoints('player', 'target')
+	end
+
+	local cpoints = self.CPoints
+	for i=1, MAX_COMBO_POINTS do
+		if(i <= cp) then
+			cpoints[i]:Show()
+		else
+			cpoints[i]:Hide()
 		end
 	end
 end
 
 local Enable = function(self)
-	if(self.CPoints) then
+	local cpoints = self.CPoints
+	if(cpoints) then
+		local Update = cpoints.Update or Update
 		self:RegisterEvent('UNIT_COMBO_POINTS', Update)
+		self:RegisterEvent('PLAYER_TARGET_CHANGED', Update)
+
+		for index = 1, MAX_COMBO_POINTS do
+			local cpoint = cpoints[index]
+			if(cpoint:IsObjectType'Texture' and not cpoint:GetTexture()) then
+				cpoint:SetTexture[[Interface\ComboFrame\ComboPoint]]
+				cpoint:SetTexCoord(0, 0.375, 0, 1)
+			end
+		end
 
 		return true
 	end
 end
 
 local Disable = function(self)
-	if(self.CPoints) then
+	local cpoints = self.CPoints
+	if(cpoints) then
+		local Update = cpoints.Update or Update
 		self:UnregisterEvent('UNIT_COMBO_POINTS', Update)
+		self:UnregisterEvent('PLAYER_TARGET_CHANGED', Update)
 	end
 end
 

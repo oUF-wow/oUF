@@ -1,57 +1,18 @@
---[[
-	Elements handled: .Auras, .Buffs, .Debuffs
-
-	Shared:
-	 - spacing: Padding between aura icons. (Default: 0)
-	 - size: Size of the aura icons. (Default: 16)
-	 - initialAnchor: Initial anchor in the aura frame. (Default: "BOTTOMLEFT")
-	 - onlyShowPlayer: Only display icons casted by the player. (Default: nil)
-	 - growth-x: Growth direction, affected by initialAnchor. (Default: "UP")
-	 - growth-y: Growth direction, affected by initialAnchor. (Default: "RIGHT")
-	 - disableCooldown: Disable the Cooldown Spiral on the Aura Icons. (Default: nil)
-	 - filter: Expects a string with filter. See the UnitAura[1] documentation for
-		more information.
-
-	.Auras only:
-	 - gap: Adds a empty icon to separate buffs and debuffs. (Default: nil)
-	 - numBuffs: The maximum number of buffs that should be shown. (Default: 32)
-	 - numDebuffs: The maximum number of debuffs that should be shown. (Default: 40)
-	 - buffFilter: See filter on Shared. (Default: "HELPFUL")
-	 - debuffFilter: See filter on Shared. (Default: "HARMFUL")
-	 - Variables set by .Auras:
-		 - visibleBuffs: Number of currently visible buff icons.
-		 - visibleDebuffs: Number of currently visible debuff icons.
-		 - visibleAuras: Total number of currently visible buffs + debuffs.
-
-	.Buffs only:
-	 - num: The maximum number of buffs that should be shown. (Default: 32)
-	 - Variables set by .Buffs:
-		 - visibleBuffs: Number of currently visible buff icons.
-
-	.Debuffs only:
-	 - num: The maximum number of debuffs that should be shown. (Default: 40)
-	 - Variables set by .Debuffs:
-		 - visibleDebuffs: Number of currently visible debuff icons.
-
-	Functions that can be overridden from within a layout:
-	 - :PostCreateAuraIcon(icon, icons, index, isDebuff)
-	 - :CreateAuraIcon(icons, index, isDebuff)
-	 - :PostUpdateAuraIcon(icons, unit, icon, index, offset, filter, isDebuff)
-	 - :PreUpdateAura(event, unit)
-	 - :PreAuraSetPosition(auras, max)
-	 - :SetAuraPosition(auras, max)
-	 - :PostUpdateAura(event, unit)
-
-	[1] http://www.wowwiki.com/API_UnitAura
---]]
 local parent, ns = ...
 local oUF = ns.oUF
+
+local VISIBLE = 1
+local HIDDEN = 0
+
+local UpdateTooltip = function(self)
+	GameTooltip:SetUnitAura(self.parent:GetParent().unit, self:GetID(), self.filter)
+end
 
 local OnEnter = function(self)
 	if(not self:IsVisible()) then return end
 
 	GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
-	GameTooltip:SetUnitAura(self.frame.unit, self:GetID(), self.filter)
+	self:UpdateTooltip()
 end
 
 local OnLeave = function()
@@ -61,10 +22,10 @@ end
 -- We don't really need to validate much here as the filter should prevent us
 -- from doing something we shouldn't.
 local OnClick = function(self)
-	CancelUnitBuff(self.frame.unit, self:GetID(), self.filter)
+	CancelUnitBuff(self.parent:GetParent().unit, self:GetID(), self.filter)
 end
 
-local createAuraIcon = function(self, icons, index, debuff)
+local createAuraIcon = function(icons, index)
 	local button = CreateFrame("Button", nil, icons)
 	button:EnableMouse(true)
 	button:RegisterForClicks'RightButtonUp'
@@ -88,24 +49,23 @@ local createAuraIcon = function(self, icons, index, debuff)
 	overlay:SetTexCoord(.296875, .5703125, 0, .515625)
 	button.overlay = overlay
 
+	button.UpdateTooltip= UpdateTooltip
 	button:SetScript("OnEnter", OnEnter)
 	button:SetScript("OnLeave", OnLeave)
 
-	if(self.unit == 'player') then
+	local unit = icons:GetParent().unit
+	if(unit == 'player') then
 		button:SetScript('OnClick', OnClick)
 	end
 
 	table.insert(icons, button)
 
 	button.parent = icons
-	button.frame = self
-	button.debuff = debuff
-
 	button.icon = icon
 	button.count = count
 	button.cd = cd
 
-	if(self.PostCreateAuraIcon) then self:PostCreateAuraIcon(button, icons, index, debuff) end
+	if(icons.PostCreateIcon) then icons:PostCreateIcon(button) end
 
 	return button
 end
@@ -124,17 +84,17 @@ local customFilter = function(icons, unit, icon, name, rank, texture, count, dty
 	end
 end
 
-local updateIcon = function(self, unit, icons, index, offset, filter, isDebuff, max)
+local updateIcon = function(unit, icons, index, offset, filter, isDebuff, max)
 	if(index == 0) then index = max end
 
 	local name, rank, texture, count, dtype, duration, timeLeft, caster, isStealable, shouldConsolidate, spellID = UnitAura(unit, index, filter)
 	if(name) then
 		local icon = icons[index + offset]
 		if(not icon) then
-			icon = (self.CreateAuraIcon or createAuraIcon) (self, icons, index, isDebuff)
+			icon = (icons.CreateIcon or createAuraIcon) (icons, index)
 		end
 
-		local show = (self.CustomAuraFilter or customFilter) (icons, unit, icon, name, rank, texture, count, dtype, duration, timeLeft, caster, isStealable, shouldConsolidate, spellID)
+		local show = (icons.CustomFilter or customFilter) (icons, unit, icon, name, rank, texture, count, dtype, duration, timeLeft, caster, isStealable, shouldConsolidate, spellID)
 		if(show) then
 			-- We might want to consider delaying the creation of an actual cooldown
 			-- object to this point, but I think that will just make things needlessly
@@ -167,30 +127,32 @@ local updateIcon = function(self, unit, icons, index, offset, filter, isDebuff, 
 			icon:SetID(index)
 			icon:Show()
 
-			if(self.PostUpdateAuraIcon) then
-				self:PostUpdateAuraIcon(icons, unit, icon, index, offset, filter, isDebuff)
+			if(icons.PostUpdateIcon) then
+				icons:PostUpdateIcon(unit, icon, index, offset)
 			end
+
+			return VISIBLE
 		else
 			-- Hide the icon in-case we are in the middle of the stack.
 			icon:Hide()
-		end
 
-		return true
+			return HIDDEN
+		end
 	end
 end
 
-local SetAuraPosition = function(self, icons, x)
+local SetPosition = function(icons, x)
 	if(icons and x > 0) then
 		local col = 0
 		local row = 0
-		local spacing = icons.spacing or 0
 		local gap = icons.gap
-		local size = (icons.size or 16) + spacing
+		local sizex = (icons.size or 16) + (icons['spacing-x'] or icons.spacing or 0)
+		local sizey = (icons.size or 16) + (icons['spacing-y'] or icons.spacing or 0)
 		local anchor = icons.initialAnchor or "BOTTOMLEFT"
 		local growthx = (icons["growth-x"] == "LEFT" and -1) or 1
 		local growthy = (icons["growth-y"] == "DOWN" and -1) or 1
-		local cols = math.floor(icons:GetWidth() / size + .5)
-		local rows = math.floor(icons:GetHeight() / size + .5)
+		local cols = math.floor(icons:GetWidth() / sizex + .5)
+		local rows = math.floor(icons:GetHeight() / sizey + .5)
 
 		for i = 1, #icons do
 			local button = icons[i]
@@ -208,7 +170,7 @@ local SetAuraPosition = function(self, icons, x)
 					row = row + 1
 				end
 				button:ClearAllPoints()
-				button:SetPoint(anchor, icons, anchor, col * size * growthx, row * size * growthy)
+				button:SetPoint(anchor, icons, anchor, col * sizex * growthx, row * sizey * growthy)
 
 				col = col + 1
 			elseif(not button) then
@@ -218,101 +180,76 @@ local SetAuraPosition = function(self, icons, x)
 	end
 end
 
+local filterIcons = function(unit, icons, filter, limit, isDebuff, offset, dontHide)
+	if(not offset) then offset = 0 end
+	local index = 1
+	local visible = 0
+	while(visible < limit) do
+		local result = updateIcon(unit, icons, index, offset, filter, isDebuff)
+		if(not result) then
+			break
+		elseif(result == VISIBLE) then
+			visible = visible + 1
+		end
+		index = index + 1
+	end
+	if(not dontHide) then
+		for i = offset + visible + 1, #icons do
+			icons[i]:Hide()
+		end
+	end
+	return visible
+end
+
 local Update = function(self, event, unit)
 	if(self.unit ~= unit) then return end
-	if(self.PreUpdateAura) then self:PreUpdateAura(event, unit) end
 
-	local auras, buffs, debuffs = self.Auras, self.Buffs, self.Debuffs
-
+	local auras = self.Auras
 	if(auras) then
-		local buffs = auras.numBuffs or 32
-		local debuffs = auras.numDebuffs or 40
-		local max = debuffs + buffs
+		if(auras.PreUpdate) then auras:PreUpdate(unit) end
 
-		local visibleBuffs, visibleDebuffs = 0, 0
-		for index = 1, max do
-			if(index > buffs) then
-				if(updateIcon(self, unit, auras, index % debuffs, visibleBuffs, auras.debuffFilter or auras.filter or 'HARMFUL', true, debuffs)) then
-					visibleDebuffs = visibleDebuffs + 1
-				end
-			else
-				if(updateIcon(self, unit, auras, index, 0, auras.buffFilter or  auras.filter or 'HELPFUL')) then
-					visibleBuffs = visibleBuffs + 1
-				end
-			end
-		end
+		local numBuffs = auras.numBuffs or 32
+		local numDebuffs = auras.numDebuffs or 40
+		local max = numBuffs + numDebuffs
+		auras.visibleBuffs = filterIcons(unit, auras, auras.buffFilter or auras.filter or 'HELPFUL', numBuffs, nil,  0, true)
+		auras.visibleDebuffs = filterIcons(unit, auras, auras.debuffFilter or auras.filter or 'HARMFUL', numDebuffs,true,  auras.visibleBuffs)
+		auras.visibleAuras = auras.visibleBuffs + auras.visibleDebuffs
 
-		local index = visibleBuffs + visibleDebuffs + 1
-		while(auras[index]) do
-			auras[index]:Hide()
-			index = index + 1
-		end
+		if(auras.PreSetPosition) then auras:PreSetPosition(max) end
+		(auras.SetPosition or SetPosition) (auras, max)
 
-		auras.visibleBuffs = visibleBuffs
-		auras.visibleDebuffs = visibleDebuffs
-		auras.visibleAuras = visibleBuffs + visibleDebuffs
-
-		if(self.PreAuraSetPosition) then self:PreAuraSetPosition(auras, max) end
-		self:SetAuraPosition(auras, max)
+		if(auras.PostUpdate) then auras:PostUpdate(unit) end
 	end
 
+	local buffs = self.Buffs
 	if(buffs) then
-		local filter = buffs.filter or 'HELPFUL'
-		local max = buffs.num or 32
-		local visibleBuffs = 0
-		for index = 1, max do
-			if(not updateIcon(self, unit, buffs, index, 0, filter)) then
-				max = index - 1
+		if(buffs.PreUpdate) then buffs:PreUpdate(unit) end
 
-				while(buffs[index]) do
-					buffs[index]:Hide()
-					index = index + 1
-				end
-				break
-			end
+		local numBuffs = buffs.num or 32
+		buffs.visibleBuffs = filterIcons(unit, buffs, buffs.filter or 'HELPFUL', numBuffs)
 
-			visibleBuffs = visibleBuffs + 1
-		end
+		if(buffs.PreSetPosition) then buffs:PreSetPosition(numBuffs) end
+		(buffs.SetPosition or SetPosition) (buffs, numBuffs)
 
-		buffs.visibleBuffs = visibleBuffs
-
-		if(self.PreAuraSetPosition) then self:PreAuraSetPosition(buffs, max) end
-		self:SetAuraPosition(buffs, max)
+		if(buffs.PostUpdate) then buffs:PostUpdate(unit) end
 	end
 
+	local debuffs = self.Debuffs
 	if(debuffs) then
-		local filter = debuffs.filter or 'HARMFUL'
-		local max = debuffs.num or 40
-		local visibleDebuffs = 0
-		for index = 1, max do
-			if(not updateIcon(self, unit, debuffs, index, 0, filter, true)) then
-				max = index - 1
+		if(debuffs.PreUpdate) then debuffs:PreUpdate(unit) end
 
-				while(debuffs[index]) do
-					debuffs[index]:Hide()
-					index = index + 1
-				end
-				break
-			end
+		local numDebuffs = debuffs.num or 40
+		debuffs.visibleDebuffs = filterIcons(unit, debuffs, debuffs.filter or 'HARMFUL', numDebuffs, true)
 
-			visibleDebuffs = visibleDebuffs + 1
-		end
-		debuffs.visibleDebuffs = visibleDebuffs
+		if(debuffs.PreSetPosition) then debuffs:PreSetPosition(numDebuffs) end
+		(debuffs.SetPosition or SetPosition) (debuffs, numDebuffs)
 
-		if(self.PreAuraSetPosition) then self:PreAuraSetPosition(debuffs, max) end
-		self:SetAuraPosition(debuffs, max)
-	end
-
-	if(self.PostUpdateAura) then
-		return self:PostUpdateAura(event, unit)
+		if(debuffs.PostUpdate) then debuffs:PostUpdate(unit) end
 	end
 end
 
 local Enable = function(self)
 	if(self.Buffs or self.Debuffs or self.Auras) then
-		if(not self.SetAuraPosition) then 
-			self.SetAuraPosition = SetAuraPosition
-		end
 		self:RegisterEvent("UNIT_AURA", Update)
 
 		return true

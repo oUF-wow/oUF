@@ -7,7 +7,8 @@
 	<Script file='elements\cpoints.lua' />
 	<Script file='elements\ricons.lua' />
 	<Script file='elements\leader.lua' />
-	<Script file='elements\status.lua' />
+	<Script file='elements\combat.lua' />
+	<Script file='elements\resting.lua' />
 	<Script file='elements\pvp.lua' />
 	<Script file='elements\portraits.lua' />
 	<Script file='elements\range.lua' />
@@ -26,7 +27,6 @@
 		sub-frame(s). These are feed to the layouts style functions as any other unit
 		spawned by a header. The main difference is that they have the unitsuffix
 		attribute set (and they are parented to their respective owener).
-	-->
 	<Button name="oUF_HeaderTargetTemplate" inherits="SecureUnitButtonTemplate" hidden="true" virtual="true">
 		<Frames>
 			<Button name="$parentTarget" inherits="SecureUnitButtonTemplate">
@@ -39,4 +39,5 @@
 			</Button>
 		</Frames>
 	</Button>
+	-->
 </Ui>

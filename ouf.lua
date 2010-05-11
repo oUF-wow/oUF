@@ -18,14 +18,6 @@ local print = function(...) print("|cff33ff99oUF:|r", ...) end
 local error = function(...) print("|cffff0000Error:|r "..string.format(...)) end
 local dummy = function() end
 
-local function SetManyAttributes(self, ...)
-	for i=1,select("#", ...),2 do
-		local att,val = select(i, ...)
-		if not att then return end
-		self:SetAttribute(att,val)
-	end
-end
-
 -- Colors
 local colors = {
 	happiness = {
@@ -55,7 +47,7 @@ if(IsAddOnLoaded'!ClassColors' and CUSTOM_CLASS_COLORS) then
 		local oUF = ns.oUF or _G[parent]
 		if(oUF) then
 			for _, obj in next, oUF.objects do
-				obj:PLAYER_ENTERING_WORLD"PLAYER_ENTERING_WORLD"
+				obj:UpdateAllElements("CUSTOM_CLASS_COLORS")
 			end
 		end
 	end
@@ -103,7 +95,7 @@ local enableTargetUpdate = function(object)
 			if(not self.unit) then
 				return
 			elseif(timer >= .5) then
-				self:PLAYER_ENTERING_WORLD'OnTargetUpdate'
+				self:UpdateAllElements'OnTargetUpdate'
 				timer = 0
 			end
 
@@ -129,7 +121,7 @@ local iterateChildren = function(...)
 			local subUnit = conv[unit] or unit
 			units[subUnit] = obj
 			obj.unit = subUnit
-			obj:PLAYER_ENTERING_WORLD"PLAYER_ENTERING_WORLD"
+			obj:UpdateAllElements"PLAYER_ENTERING_WORLD"
 		end
 	end
 end
@@ -147,110 +139,103 @@ local OnAttributeChanged = function(self, name, value)
 
 			self.unit = SecureButton_GetModifiedUnit(self)
 			self.id = value:match"^.-(%d+)"
-			self:PLAYER_ENTERING_WORLD"PLAYER_ENTERING_WORLD"
+			self:UpdateAllElements"PLAYER_ENTERING_WORLD"
 		end
 	end
 end
 
--- Gigantic function of doom
--- XXX: Clean it up for 1.4.
-local HandleUnit = function(unit, object)
-	if(unit == "player") then
-		-- Hide the blizzard stuff
-		PlayerFrame:UnregisterAllEvents()
-		PlayerFrame.Show = dummy
-		PlayerFrame:Hide()
+do
+	local HandleFrame = function(baseName)
+		local frame
+		if(type(baseName) == 'string') then
+			frame = _G[baseName]
+		else
+			frame = baseName
+		end
 
-		-- For the damn vehicle support:
-		PlayerFrame:RegisterEvent('UNIT_ENTERING_VEHICLE')
-		PlayerFrame:RegisterEvent('UNIT_ENTERED_VEHICLE')
-		PlayerFrame:RegisterEvent('UNIT_EXITING_VEHICLE')
-		PlayerFrame:RegisterEvent('UNIT_EXITED_VEHICLE')
-
-		PlayerFrameHealthBar:UnregisterAllEvents()
-		PlayerFrameManaBar:UnregisterAllEvents()
-	elseif(unit == "pet")then
-		-- Hide the blizzard stuff
-		PetFrame:UnregisterAllEvents()
-		PetFrame.Show = dummy
-		PetFrame:Hide()
-
-		PetFrameHealthBar:UnregisterAllEvents()
-		PetFrameManaBar:UnregisterAllEvents()
-	elseif(unit == "target") then
-		-- Hide the blizzard stuff
-		TargetFrame:UnregisterAllEvents()
-		TargetFrame.Show = dummy
-		TargetFrame:Hide()
-
-		TargetFrameHealthBar:UnregisterAllEvents()
-		TargetFrameManaBar:UnregisterAllEvents()
-		TargetFrameSpellBar:UnregisterAllEvents()
-
-		ComboFrame:UnregisterAllEvents()
-		ComboFrame.Show = dummy
-		ComboFrame:Hide()
-
-		-- Enable our shit
-		object:RegisterEvent("PLAYER_TARGET_CHANGED", 'PLAYER_ENTERING_WORLD')
-	elseif(unit == "focus") then
-		FocusFrame:UnregisterAllEvents()
-		FocusFrame.Show = dummy
-		FocusFrame:Hide()
-
-		FocusFrameHealthBar:UnregisterAllEvents()
-		FocusFrameManaBar:UnregisterAllEvents()
-		FocusFrameSpellBar:UnregisterAllEvents()
-
-		object:RegisterEvent("PLAYER_FOCUS_CHANGED", 'PLAYER_ENTERING_WORLD')
-	elseif(unit == "mouseover") then
-		object:RegisterEvent("UPDATE_MOUSEOVER_UNIT", 'PLAYER_ENTERING_WORLD')
-	elseif(unit:match'boss%d') then
-		for i=1,MAX_BOSS_FRAMES do
-			local name = "Boss" .. i .."TargetFrame"
-			local frame = _G[name]
-
+		if(frame) then
 			frame:UnregisterAllEvents()
 			frame.Show = dummy
 			frame:Hide()
 
-			_G[name..'HealthBar']:UnregisterAllEvents()
-			_G[name..'ManaBar']:UnregisterAllEvents()
+			local health = frame.healthbar
+			if(health) then
+				health:UnregisterAllEvents()
+			end
+
+			local power = frame.manabar
+			if(power) then
+				power:UnregisterAllEvents()
+			end
+
+			local spell = frame.spellbar
+			if(spell) then
+				spell:UnregisterAllEvents()
+			end
 		end
+	end
 
-		enableTargetUpdate(object)
-	elseif(unit:match"target") then
-		-- Hide the blizzard stuff
-		if(unit == "targettarget") then
-			if TargetFrameToT then -- 3.3
-				TargetFrameToT:UnregisterAllEvents()
-				TargetFrameToT.Show = dummy
-				TargetFrameToT:Hide()
+	function oUF:DisableBlizzard(unit, object)
+		if(not unit) then return end
 
-				TargetFrameToTHealthBar:UnregisterAllEvents()
-				TargetFrameToTManaBar:UnregisterAllEvents()
-			else -- 3.2
-				TargetofTargetFrame:UnregisterAllEvents()
-				TargetofTargetFrame.Show = dummy
-				TargetofTargetFrame:Hide()
+		local baseName
+		if(unit == 'player') then
+			HandleFrame(PlayerFrame)
 
-				TargetofTargetHealthBar:UnregisterAllEvents()
-				TargetofTargetManaBar:UnregisterAllEvents()
+			-- For the damn vehicle support:
+			PlayerFrame:RegisterEvent('UNIT_ENTERING_VEHICLE')
+			PlayerFrame:RegisterEvent('UNIT_ENTERED_VEHICLE')
+			PlayerFrame:RegisterEvent('UNIT_EXITING_VEHICLE')
+			PlayerFrame:RegisterEvent('UNIT_EXITED_VEHICLE')
+		elseif(unit == 'pet') then
+			baseName = PetFrame
+		elseif(unit == 'target') then
+			if(object) then
+				object:RegisterEvent('PLAYER_TARGET_CHANGED', object.UpdateAllElements)
+			end
+
+			HandleFrame(TargetFrame)
+			return HandleFrame(ComboFrame)
+		elseif(unit == 'mouseover') then
+			if(object) then
+				return object:RegisterEvent('UPDATE_MOUSEOVER_UNIT', object.UpdateAllElements)
+			end
+		elseif(unit == 'focus') then
+			if(object) then
+				object:RegisterEvent('PLAYER_FOCUS_CHANGED', object.UpdateAllElements)
+			end
+
+			baseName = FocusFrame
+		elseif(unit:match'%w+target') then
+			if(unit == 'targettarget') then
+				baseName = TargetFrameToT
+			end
+
+			enableTargetUpdate(object)
+		elseif(unit:match'(boss)%d?$' == 'boss') then
+			enableTargetUpdate(object)
+
+			local id = unit:match'boss(%d)'
+			if(id) then
+				baseName = 'Boss' .. id .. 'TargetFrame'
+			else
+				for i=1, 3 do
+					HandleFrame(('Boss%dTargetFrame'):format(i))
+				end
+			end
+		elseif(unit:match'(party)%d?$' == 'party') then
+			local id = unit:match'party(%d)'
+			if(id) then
+				baseName = 'PartyMemberFrame' .. id
+			else
+				for i=1, 4 do
+					HandleFrame(('PartyMemberFrame%d'):format(i))
+				end
 			end
 		end
 
-		enableTargetUpdate(object)
-	elseif(unit == "party") then
-		for i=1,4 do
-			local party = "PartyMemberFrame"..i
-			local frame = _G[party]
-
-			frame:UnregisterAllEvents()
-			frame.Show = dummy
-			frame:Hide()
-
-			_G[party..'HealthBar']:UnregisterAllEvents()
-			_G[party..'ManaBar']:UnregisterAllEvents()
+		if(baseName) then
+			return HandleFrame(baseName)
 		end
 	end
 end
@@ -269,8 +254,14 @@ for k, v in pairs{
 		local element = elements[name]
 		if(not element) then return end
 
+		local updateFunc = element.update
+		local elementTable = self[name]
+		if(type(elementTable) == 'table' and elementTable.Update) then
+			updateFunc = elementTable.Update
+		end
+
 		if(element.enable(self, unit or self.unit)) then
-			table.insert(self.__elements, element.update)
+			table.insert(self.__elements, updateFunc)
 		end
 	end,
 
@@ -279,15 +270,21 @@ for k, v in pairs{
 		local element = elements[name]
 		if(not element) then return end
 
+		local updateFunc = element.update
+		local elementTable = self[name]
+		if(type(elementTable == 'table') and elementTable.Update) then
+			updateFunc = elementTable.Update
+		end
+
 		for k, update in next, self.__elements do
-			if(update == element.update) then
+			if(update == updateFunc) then
 				table.remove(self.__elements, k)
 
 				-- We need to run a new update cycle incase we knocked ourself out of sync.
 				-- The main reason we do this is to make sure the full update is completed
 				-- if an element for some reason removes itself _during_ the update
 				-- progress.
-				self:PLAYER_ENTERING_WORLD('DisableElement', name)
+				self:UpdateAllElements('DisableElement', name)
 				break
 			end
 		end
@@ -300,7 +297,13 @@ for k, v in pairs{
 		local element = elements[name]
 		if(not element) then return end
 
-		element.update(self, 'UpdateElement', self.unit)
+		local updateFunc = element.update
+		local elementTable = self[name]
+		if(type(elementTable == 'table') and elementTable.Update) then
+			updateFunc = elementTable.Update
+		end
+
+		updateFunc(self, 'UpdateElement', self.unit)
 	end,
 
 	Enable = RegisterUnitWatch,
@@ -309,12 +312,7 @@ for k, v in pairs{
 		self:Hide()
 	end,
 
-	--[[
-	--:PLAYER_ENTERING_WORLD()
-	--	Notes:
-	--		- Does a full update of all elements on the object.
-	--]]
-	PLAYER_ENTERING_WORLD = function(self, event)
+	UpdateAllElements = function(self, event)
 		local unit = self.unit
 		if(not UnitExists(unit)) then return end
 
@@ -386,10 +384,15 @@ do
 	end
 end
 
+local ColorGradient
 do
 	local inf = math.huge
 	-- http://www.wowwiki.com/ColorGradient
-	function frame_metatable.__index.ColorGradient(perc, ...)
+	function ColorGradient(perc, ...)
+		-- Translate divison by zeros into 0, so we don't blow select.
+		-- We check perc against itself because we rely on the fact that NaN can't equal NaN.
+		if(perc ~= perc or perc == inf) then perc = 0 end
+
 		if perc >= 1 then
 			local r, g, b = select(select('#', ...) - 2, ...)
 			return r, g, b
@@ -399,16 +402,14 @@ do
 		end
 
 		local num = select('#', ...) / 3
-
-		-- Translate divison by zeros into 0, so we don't blow select.
-		-- We check perc against itself because we rely on the fact that NaN can't equal NaN.
-		if(perc ~= perc or perc == inf) then perc = 0 end
 		local segment, relperc = math.modf(perc*(num-1))
 		local r1, g1, b1, r2, g2, b2 = select((segment*3)+1, ...)
 
 		return r1 + (r2-r1)*relperc, g1 + (g2-g1)*relperc, b1 + (b2-b1)*relperc
 	end
 end
+frame_metatable.__index.ColorGradient = ColorGradient
+oUF.ColorGradient = ColorGradient
 
 local initObject = function(unit, style, styleFunc, ...)
 	local num = select('#', ...)
@@ -416,36 +417,21 @@ local initObject = function(unit, style, styleFunc, ...)
 		local object = select(i, ...)
 
 		object.__elements = {}
-
 		object = setmetatable(object, frame_metatable)
-		styleFunc(object, unit)
 
-		local mt = type(styleFunc) == 'table'
-		local height = object:GetAttribute'initial-height' or (mt and styleFunc['initial-height'])
-		local width = object:GetAttribute'initial-width' or (mt and styleFunc['initial-width'])
-		local scale = object:GetAttribute'initial-scale' or (mt and styleFunc['initial-scale'])
-		local suffix = object:GetAttribute'unitsuffix'
-
-		if(height) then
-			object:SetAttribute('initial-height', height)
-			if(unit) then object:SetHeight(height) end
+		-- Attempt to guess what the header is set to spawn.
+		local parent = object:GetParent()
+		if(not unit) then
+			if(parent:GetAttribute'showRaid') then
+				unit = 'raid'
+			elseif(parent:GetAttribute'showParty') then
+				unit = 'party'
+			end
 		end
 
-		if(width) then
-			object:SetAttribute("initial-width", width)
-			if(unit) then object:SetWidth(width) end
-		end
-
-		if(scale) then
-			object:SetAttribute("initial-scale", scale)
-			if(unit) then object:SetScale(scale) end
-		end
-
-		local parent = (i == 1) and object:GetParent()
-		local showPlayer
-		if(parent) then
-			showPlayer = parent:GetAttribute'showPlayer' or parent:GetAttribute'showSolo'
-		end
+		-- Run it before the style function so they can override it.
+		object:SetAttribute("*type1", "target")
+		object.style = style
 
 		if(num > 1) then
 			if(i == 1) then
@@ -455,7 +441,37 @@ local initObject = function(unit, style, styleFunc, ...)
 			end
 		end
 
-		object.style = style
+		-- Register it early so it won't be executed after the layouts PEW, if they
+		-- have one.
+		object:RegisterEvent("PLAYER_ENTERING_WORLD", object.UpdateAllElements)
+
+		styleFunc(object, unit)
+
+		local height = object:GetAttribute'initial-height'
+		local width = object:GetAttribute'initial-width'
+		local scale = object:GetAttribute'initial-scale'
+		local suffix = object:GetAttribute'unitsuffix'
+		local combat = InCombatLockdown()
+
+		if(height) then
+			object:SetAttribute('initial-height', height)
+			if(not combat) then object:SetHeight(height) end
+		end
+
+		if(width) then
+			object:SetAttribute("initial-width", width)
+			if(not combat) then object:SetWidth(width) end
+		end
+
+		if(scale) then
+			object:SetAttribute("initial-scale", scale)
+			if(not combat) then object:SetScale(scale) end
+		end
+
+		local showPlayer
+		if(i == 1) then
+			showPlayer = parent:GetAttribute'showPlayer' or parent:GetAttribute'showSolo'
+		end
 
 		if(suffix and suffix:match'target' and (i ~= 1 and not showPlayer)) then
 			enableTargetUpdate(object)
@@ -463,11 +479,8 @@ local initObject = function(unit, style, styleFunc, ...)
 			object:SetScript("OnEvent", OnEvent)
 		end
 
-		object:SetAttribute("*type1", "target")
 		object:SetScript("OnAttributeChanged", OnAttributeChanged)
-		object:SetScript("OnShow",  object.PLAYER_ENTERING_WORLD)
-
-		object:RegisterEvent"PLAYER_ENTERING_WORLD"
+		object:SetScript("OnShow", object.UpdateAllElements)
 
 		for element in next, elements do
 			object:EnableElement(element, unit)
@@ -487,13 +500,24 @@ end
 
 local walkObject = function(object, unit)
 	local style = object:GetParent().style or style
-	local styleFunc = styles[style] or styles[style]
+	local styleFunc = styles[style]
 
-	initObject(unit, style, styleFunc, object, object:GetChildren())
+	return initObject(unit, style, styleFunc, object, object:GetChildren())
 end
 
 function oUF:RegisterInitCallback(func)
 	table.insert(callback, func)
+end
+
+function oUF:RegisterMetaFunction(name, func)
+	argcheck(name, 2, 'string')
+	argcheck(func, 3, 'function', 'table')
+
+	if(frame_metatable.__index[name]) then
+		return
+	end
+
+	frame_metatable.__index[name] = func
 end
 
 function oUF:RegisterStyle(name, func)
@@ -513,37 +537,136 @@ function oUF:SetActiveStyle(name)
 	style = name
 end
 
-function oUF:Spawn(unit, name, template, disableBlizz)
+local getCondition
+do
+	local conditions = {
+		raid40 = '[@raid26,exists] show;',
+		raid25 = '[@raid11,exists] show;',
+		raid10 = '[@raid6,exists] show;',
+		raid = '[group:raid] show;',
+		party = '[group:party] show;',
+		solo = '[@player,exists,nogroup:party] show;',
+	}
+
+	function getCondition(...)
+		local cond = ''
+
+		for i=1, select('#', ...) do
+			local short = select(i, ...)
+
+			local condition = conditions[short]
+			if(condition) then
+				cond = cond .. condition
+			end
+		end
+
+		return cond .. 'hide'
+	end
+end
+
+local generateName = function(unit, ...)
+	local name = 'oUF_' .. style:gsub('[^%a%d_]+', '')
+
+	local raid, party, groupFilter
+	for i=1, select('#', ...), 2 do
+		local att, val = select(i, ...)
+		if(att == 'showRaid') then
+			raid = true
+		elseif(att == 'showParty') then
+			party = true
+		elseif(att == 'groupFilter') then
+			groupFilter = val
+		end
+	end
+
+	local append
+	if(raid) then
+		if(groupFilter) then
+			if(groupFilter:match'TANK') then
+				append = 'MainTank'
+			elseif(groupFilter:match'ASSIST') then
+				append =  'MainAssist'
+			else
+				local _, count = groupFilter:gsub(',', '')
+				if(count == 0) then
+					append = groupFilter
+				else
+					append = 'Raid'
+				end
+			end
+		else
+			append = 'Raid'
+		end
+	elseif(party) then
+		append = 'Party'
+	elseif(unit) then
+		append = unit:gsub("^%l", string.upper)
+	end
+
+	if(append) then
+		name = name .. append
+	end
+
+	local base = name
+	local i = 2
+	while(_G[name]) do
+		name = base .. i
+		i = i + 1
+	end
+
+	return name
+end
+
+function oUF:SpawnHeader(overrideName, template, visibility, ...)
+	if(not style) then return error("Unable to create frame. No styles have been registered.") end
+
+	local name = overrideName or generateName(nil, ...)
+	local header = CreateFrame('Frame', name, UIParent, template or 'SecureGroupHeaderTemplate')
+	header.initialConfigFunction = walkObject
+	header.style = style
+
+	header:SetAttribute("template", "SecureUnitButtonTemplate")
+	for i=1, select("#", ...), 2 do
+		local att, val = select(i, ...)
+		if(not att) then break end
+		header:SetAttribute(att, val)
+	end
+
+	if(header:GetAttribute'showParty') then
+		self:DisableBlizzard'party'
+	end
+
+	if(visibility) then
+		local type, list = string.split(' ', visibility, 2)
+		if(list and type == 'custom') then
+			RegisterStateDriver(header, 'visibility', list)
+		else
+			local condition = getCondition(string.split(',', visibility))
+			RegisterStateDriver(header, 'visibility', condition)
+		end
+	end
+
+	return header
+end
+
+function oUF:Spawn(unit, overrideName)
 	argcheck(unit, 2, 'string')
 	if(not style) then return error("Unable to create frame. No styles have been registered.") end
 
-	local object
 	unit = unit:lower()
-	if(unit == "header") then
-		if(not template) then
-			template = "SecureGroupHeaderTemplate"
-		end
 
-		HandleUnit(disableBlizz or 'party')
+	local name = overrideName or generateName(unit)
+	local object = CreateFrame("Button", name, UIParent, "SecureUnitButtonTemplate")
+	object.unit = unit
+	object.id = unit:match"^.-(%d+)"
 
-		local header = CreateFrame("Frame", name, UIParent, template)
-		header:SetAttribute("template", "SecureUnitButtonTemplate")
-		header.initialConfigFunction = walkObject
-		header.style = style
-		header.SetManyAttributes = SetManyAttributes
+	units[unit] = object
+	walkObject(object, unit)
 
-		return header
-	else
-		object = CreateFrame("Button", name, UIParent, "SecureUnitButtonTemplate")
-		object:SetAttribute("unit", unit)
-		object.unit = unit
-		object.id = unit:match"^.-(%d+)"
+	object:SetAttribute("unit", unit)
+	RegisterUnitWatch(object)
 
-		units[unit] = object
-		walkObject(object, unit)
-		HandleUnit(unit, object)
-		RegisterUnitWatch(object)
-	end
+	self:DisableBlizzard(unit, object)
 
 	return object
 end
@@ -567,13 +690,9 @@ oUF.units = units
 oUF.objects = objects
 oUF.colors = colors
 
--- Temporary stuff, hopefully
-oUF.frame_metatable = frame_metatable
-oUF.ColorGradient = frame_metatable.__index.ColorGradient
-
 if(global) then
-	if(parent ~= 'oUF' and global == 'oUF' and IsAddOnLoaded'oUF') then
-		error("%s attempted to override oUF's default global with its internal oUF.", parent)
+	if(parent ~= 'oUF' and global == 'oUF') then
+		error("%s is doing it wrong and setting its global to oUF.", parent)
 	else
 		_G[global] = oUF
 	end

@@ -30,6 +30,7 @@ end
 local function Enable(self, unit)
 	local masterlooter = self.MasterLooter
 	if(masterlooter) then
+		local Update = masterlooter.Update or Update
 		self:RegisterEvent('PARTY_LOOT_METHOD_CHANGED', Update)
 		self:RegisterEvent('PARTY_MEMBERS_CHANGED', Update)
 
@@ -43,6 +44,7 @@ end
 
 local function Disable(self)
 	if(self.MasterLooter) then
+		local Update = masterlooter.Update or Update
 		self:UnregisterEvent('PARTY_LOOT_METHOD_CHANGED', Update)
 		self:UnregisterEvent('PARTY_MEMBERS_CHANGED', Update)
 	end
