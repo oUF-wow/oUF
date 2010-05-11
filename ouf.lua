@@ -676,6 +676,7 @@ do
 	local _FACTORY = CreateFrame'Frame'
 	_FACTORY:SetScript('OnEvent', OnEvent)
 	_FACTORY:RegisterEvent'PLAYER_LOGIN'
+	_FACTORY.active = true
 
 	function _FACTORY:PLAYER_LOGIN()
 		if(not self.active) then return end
@@ -693,6 +694,14 @@ do
 		else
 			table.insert(_QUEUE, func)
 		end
+	end
+
+	function oUF:EnableFactory()
+		self.active = true
+	end
+
+	function oUF:DisableFactory()
+		self.ative = nil
 	end
 end
 
