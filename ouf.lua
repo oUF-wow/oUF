@@ -537,7 +537,6 @@ function oUF:SetActiveStyle(name)
 	style = name
 end
 
-
 do
 	local function iter(_, n)
 		-- don't expose the style functions.
