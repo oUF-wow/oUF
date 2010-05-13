@@ -556,7 +556,7 @@ do
 		raid25 = '[@raid11,exists] show;',
 		raid10 = '[@raid6,exists] show;',
 		raid = '[group:raid] show;',
-		party = '[group:party] show;',
+		party = '[group:party,nogroup:raid] show;',
 		solo = '[@player,exists,nogroup:party] show;',
 	}
 
