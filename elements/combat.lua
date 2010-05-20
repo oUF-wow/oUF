@@ -1,3 +1,6 @@
+local parent, ns = ...
+local oUF = ns.oUF
+
 local Update = function(self, event)
 	if(UnitAffectingCombat"player") then
 		self.Combat:Show()
