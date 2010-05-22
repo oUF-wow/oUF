@@ -2,7 +2,7 @@ local parent, ns = ...
 local oUF = ns.oUF
 
 local Update = function(self, event, unit)
-	if(not UnitIsUnit(self.unit, unit)) then return end
+	if(not unit or not UnitIsUnit(self.unit, unit)) then return end
 
 	local portrait = self.Portrait
 	if(portrait.PreUpdate) then portrait:PreUpdate(unit) end
