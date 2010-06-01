@@ -393,7 +393,7 @@ local createOnUpdate = function(timer)
 			total = total + elapsed
 		end)
 
-		OnUpdates[timer] = OnUpdate
+		OnUpdates[timer] = frame
 	end
 end
 
