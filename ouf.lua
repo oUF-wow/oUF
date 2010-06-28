@@ -731,6 +731,8 @@ oUF.units = units
 oUF.objects = objects
 oUF.colors = colors
 
+oUF.error = error
+
 if(global) then
 	if(parent ~= 'oUF' and global == 'oUF') then
 		error("%s is doing it wrong and setting its global to oUF.", parent)
