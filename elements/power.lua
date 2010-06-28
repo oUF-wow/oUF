@@ -91,6 +91,11 @@ local Enable = function(self, unit)
 	if(power) then
 		local Update = power.Update or Update
 		if(power.frequentUpdates and (unit == 'player' or unit == 'pet')) then
+			-- TODO 1.5: We should do this regardless of frequentUpdates.
+			if(power:GetParent() ~= self) then
+				return oUF.error('Element [%s] is incorrectly parented on [%s]. Expected self, got something else.', 'Power', unit)
+			end
+
 			power:SetScript("OnUpdate", OnPowerUpdate)
 		else
 			self:RegisterEvent("UNIT_MANA", Update)
