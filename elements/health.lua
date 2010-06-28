@@ -81,6 +81,11 @@ local Enable = function(self, unit)
 	if(health) then
 		local Update = health.Update or Update
 		if(health.frequentUpdates and (unit and not unit:match'%w+target$')) then
+			-- TODO 1.5: We should do this regardless of frequentUpdates.
+			if(power:GetParent() ~= self) then
+				return oUF.error('Element [%s] is incorrectly parented on [%s]. Expected self, got something else.', 'Power', unit)
+			end
+
 			health:SetScript('OnUpdate', OnHealthUpdate)
 
 			-- The party frames need this to handle disconnect states correctly.
