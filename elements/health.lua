@@ -82,7 +82,7 @@ local Enable = function(self, unit)
 		local Update = health.Update or Update
 		if(health.frequentUpdates and (unit and not unit:match'%w+target$')) then
 			-- TODO 1.5: We should do this regardless of frequentUpdates.
-			if(power:GetParent() ~= self) then
+			if(health:GetParent() ~= self) then
 				return oUF.error('Element [%s] is incorrectly parented on [%s]. Expected self, got something else.', 'Health', unit)
 			end
 
