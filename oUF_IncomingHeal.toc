@@ -1,0 +1,10 @@
+## Interface: 40000
+## Title: oUF IncomingHeal
+## Notes: Adds incoming healing bars to oUF frames.
+## Author: EvilPaul
+## Version: 0.1
+## X-Category: UnitFrame
+## Dependencies: oUF
+## DefaultState: enabled
+
+oUF_IncomingHeal.lua
