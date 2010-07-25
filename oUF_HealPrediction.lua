@@ -25,7 +25,7 @@ local function Update(self)
 		myIncomingHeal = allIncomingHeal
 		allIncomingHeal = 0
 	else
-		allIncomingHeal = allIncomingHeal = myIncomingHeal
+		allIncomingHeal = allIncomingHeal - myIncomingHeal
 	end
 
 	if mhpb then
