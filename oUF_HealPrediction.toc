@@ -1,5 +1,5 @@
 ## Interface: 40000
-## Title: oUF oUF_HealPrediction
+## Title: oUF HealPrediction
 ## Notes: Adds incoming healing bars to oUF frames.
 ## Author: EvilPaul
 ## Version: 0.1
