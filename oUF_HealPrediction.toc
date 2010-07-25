@@ -1,5 +1,5 @@
 ## Interface: 40000
-## Title: oUF IncomingHeal
+## Title: oUF oUF_HealPrediction
 ## Notes: Adds incoming healing bars to oUF frames.
 ## Author: EvilPaul
 ## Version: 0.1
@@ -7,4 +7,4 @@
 ## Dependencies: oUF
 ## DefaultState: enabled
 
-oUF_IncomingHeal.lua
+oUF_HealPrediction.lua
