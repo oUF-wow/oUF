@@ -272,7 +272,7 @@ for k, v in pairs{
 
 		local updateFunc = element.update
 		local elementTable = self[name]
-		if(type(elementTable == 'table') and elementTable.Update) then
+		if(type(elementTable) == 'table' and elementTable.Update) then
 			updateFunc = elementTable.Update
 		end
 
@@ -299,7 +299,7 @@ for k, v in pairs{
 
 		local updateFunc = element.update
 		local elementTable = self[name]
-		if(type(elementTable == 'table') and elementTable.Update) then
+		if(type(elementTable) == 'table' and elementTable.Update) then
 			updateFunc = elementTable.Update
 		end
 
