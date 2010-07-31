@@ -116,7 +116,7 @@ local UNIT_SPELLCAST_NOT_INTERRUPTIBLE = function(self, event, unit)
 
 	local shield = self.Castbar.Shield
 	if(shield) then
-		shield:Hide()
+		shield:Show()
 	end
 
 	local castbar = self.Castbar
