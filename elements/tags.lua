@@ -567,7 +567,7 @@ local Untag = function(self, fs)
 	for _, timers in next, eventlessUnits do
 		for k, fontstr in next, timers do
 			if(fs == fontstr) then
-				table.remove(eventlessUnits, k)
+				table.remove(timers, k)
 			end
 		end
 	end
