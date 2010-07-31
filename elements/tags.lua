@@ -405,7 +405,7 @@ end
 
 local getTagName = function(tag)
 	local s = (tag:match('>+()') or 2)
-	local e = tag:match('()<+')
+	local e = tag:match('.*()<+')
 	e = (e and e - 1) or -2
 
 	return tag:sub(s, e), s, e
