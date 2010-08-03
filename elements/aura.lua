@@ -85,8 +85,6 @@ local customFilter = function(icons, unit, icon, name, rank, texture, count, dty
 end
 
 local updateIcon = function(unit, icons, index, offset, filter, isDebuff, max)
-	if(index == 0) then index = max end
-
 	local name, rank, texture, count, dtype, duration, timeLeft, caster, isStealable, shouldConsolidate, spellID = UnitAura(unit, index, filter)
 	if(name) then
 		local icon = icons[index + offset]
