@@ -193,12 +193,14 @@ local filterIcons = function(unit, icons, filter, limit, isDebuff, offset, dontH
 		end
 		index = index + 1
 	end
+
 	if(not dontHide) then
 		for i = offset + visible + 1, #icons do
 			icons[i]:Hide()
 		end
 	end
-	return visible
+
+	return visible, index - 1
 end
 
 local Update = function(self, event, unit)
@@ -211,8 +213,11 @@ local Update = function(self, event, unit)
 		local numBuffs = auras.numBuffs or 32
 		local numDebuffs = auras.numDebuffs or 40
 		local max = numBuffs + numDebuffs
-		auras.visibleBuffs = filterIcons(unit, auras, auras.buffFilter or auras.filter or 'HELPFUL', numBuffs, nil,  0, true)
-		auras.visibleDebuffs = filterIcons(unit, auras, auras.debuffFilter or auras.filter or 'HARMFUL', numDebuffs,true,  auras.visibleBuffs)
+
+		local visibleBuffs, offset = filterIcons(unit, auras, auras.buffFilter or auras.filter or 'HELPFUL', numBuffs, nil,  0, true)
+		auras.visibleBuffs = visibleBuffs
+
+		auras.visibleDebuffs = filterIcons(unit, auras, auras.debuffFilter or auras.filter or 'HARMFUL', numDebuffs,true,  offset)
 		auras.visibleAuras = auras.visibleBuffs + auras.visibleDebuffs
 
 		if(auras.PreSetPosition) then auras:PreSetPosition(max) end
