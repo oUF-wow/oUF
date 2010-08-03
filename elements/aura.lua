@@ -195,7 +195,7 @@ local filterIcons = function(unit, icons, filter, limit, isDebuff, offset, dontH
 	end
 
 	if(not dontHide) then
-		for i = offset + visible + 1, #icons do
+		for i = offset + index, #icons do
 			icons[i]:Hide()
 		end
 	end
