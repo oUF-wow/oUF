@@ -49,6 +49,13 @@ local createAuraIcon = function(icons, index)
 	overlay:SetTexCoord(.296875, .5703125, 0, .515625)
 	button.overlay = overlay
 
+	local stealable = button:CreateTexture(nil, 'OVERLAY')
+	stealable:SetTexture[[Interface\TargetingFrame\UI-TargetingFrame-Stealable]]
+	stealable:SetPoint('TOPLEFT', -3, 3)
+	stealable:SetPoint('BOTTOMRIGHT', 3, -3)
+	stealable:SetBlendMode'ADD'
+	button.stealable = stealable
+
 	button.UpdateTooltip= UpdateTooltip
 	button:SetScript("OnEnter", OnEnter)
 	button:SetScript("OnLeave", OnLeave)
@@ -114,6 +121,16 @@ local updateIcon = function(unit, icons, index, offset, filter, isDebuff, max)
 				icon.overlay:Show()
 			else
 				icon.overlay:Hide()
+			end
+
+			-- XXX: Avoid popping errors on layouts without icon.stealable.
+			if(icon.stealable) then
+				local stealable = not isDebuff and isStealable
+				if(stealable and icons.showStealableBuffs and not UnitIsUnit('player', unit)) then
+					icon.stealable:Show()
+				else
+					icon.stealable:Hide()
+				end
 			end
 
 			icon.icon:SetTexture(texture)
