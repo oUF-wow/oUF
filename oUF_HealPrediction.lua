@@ -5,12 +5,6 @@ assert(oUF, 'oUF_HealPrediction was unable to locate oUF install')
 local function Update(self)
 	local mhpb, ohpb = self.myHealPredictionBar, self.otherHealPredictionBar
 
-	if(not self.displayHealPrediction) then
-		if mhpb then mhpb:Hide() end
-		if ohpb then ohpb:Hide() end
-		return
-	end
-
 	local myIncomingHeal = UnitGetIncomingHeals(self.unit, 'player') or 0
 	local allIncomingHeal = UnitGetIncomingHeals(self.unit) or 0
 
