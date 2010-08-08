@@ -5,6 +5,9 @@ assert(oUF, 'oUF_HealPrediction was unable to locate oUF install')
 local function Update(self)
 	local mhpb, ohpb = self.myHealPredictionBar, self.otherHealPredictionBar
 
+	if mhpb and mhpb.PreUpdate then mhpb:PreUpdate(unit) end
+	if ohpb and ohpb.PreUpdate then ohpb:PreUpdate(unit) end
+
 	local myIncomingHeal = UnitGetIncomingHeals(self.unit, 'player') or 0
 	local allIncomingHeal = UnitGetIncomingHeals(self.unit) or 0
 
@@ -29,6 +32,8 @@ local function Update(self)
 
 		mhpb:SetValue(myIncomingHeal)
 		mhpb:Show()
+
+		if mhpb.PostUpdate then mhpb:PostUpdate(unit) end
 	end
 
 	if ohpb then
@@ -38,6 +43,8 @@ local function Update(self)
 
 		ohpb:SetValue(allIncomingHeal)
 		ohpb:Show()
+
+		if ohpb.PostUpdate then ohpb:PostUpdate(unit) end
 	end
 end
 
