@@ -29,24 +29,22 @@ local function Update(self)
 	end
 
 	if mhpb then
+		if event == 'UNIT_MAXHEALTH' then
+			mhpb:SetMinMaxValues(0, maxHealth)
+		end
+
 		mhpb:SetValue(myIncomingHeal)
 		mhpb:Show()
 	end
 
 	if ohpb then
+		if event == 'UNIT_MAXHEALTH' then
+			ohpb:SetMinMaxValues(0, maxHealth)
+		end
+
 		ohpb:SetValue(allIncomingHeal)
 		ohpb:Show()
 	end
-end
-
-
-local function adjustMinMax(self)
-	local maxHealth = UnitHealthMax(self.unit)
-	self.myHealPredictionBar:SetMinMaxValues(0, maxHealth)
-	self.otherHealPredictionBar:SetMinMaxValues(0, maxHealth)
-
-	-- update the incoming heal values as well
-	update(self)
 end
 
 
@@ -55,7 +53,7 @@ local function Enable(self)
 	if not (mhpb or ohpb) then return end
 
 	self:RegisterEvent('UNIT_HEAL_PREDICTION', Update)
-	self:RegisterEvent('UNIT_MAXHEALTH', adjustMinMax)
+	self:RegisterEvent('UNIT_MAXHEALTH', Update)
 	self:RegisterEvent('UNIT_HEALTH', Update)
 
 	if not self.maxHealPredictionOverflow then
@@ -77,7 +75,7 @@ local function Disable(self)
 	local mhpb, ohpb = self.myHealPredictionBar, self.otherHealPredictionBar
 	if(mhpb or ohpb) then
 		self:UnregisterEvent('UNIT_HEAL_PREDICTION', Update)
-		self:UnregisterEvent('UNIT_MAXHEALTH', adjustMinMax)
+		self:UnregisterEvent('UNIT_MAXHEALTH', Update)
 		self:UnregisterEvent('UNIT_HEALTH', Update)
 	end
 end
