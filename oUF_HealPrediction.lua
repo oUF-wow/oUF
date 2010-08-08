@@ -63,10 +63,10 @@ local function Enable(self)
 		self.maxHealPredictionOverflow = 1.05
 	end
 
-	if not mhpb:GetStatusBarTexture() then
+	if mhpb and not mhpb:GetStatusBarTexture() then
 		mhpb:SetStatusBarTexture([=[Interface\TargetingFrame\UI-StatusBar]=])
 	end
-	if not ohpb:GetStatusBarTexture() then
+	if ohpb and not ohpb:GetStatusBarTexture() then
 		ohpb:SetStatusBarTexture([=[Interface\TargetingFrame\UI-StatusBar]=])
 	end
 
