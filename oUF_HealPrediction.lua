@@ -2,14 +2,16 @@ local _, ns = ...
 local oUF = ns.oUF or oUF
 assert(oUF, 'oUF_HealPrediction was unable to locate oUF install')
 
-local function Update(self)
+local function Update(self, event, unit)
+	if self.unit ~= unit then return end
+
 	local mhpb, ohpb = self.myHealPredictionBar, self.otherHealPredictionBar
 
 	if mhpb and mhpb.PreUpdate then mhpb:PreUpdate(unit) end
 	if ohpb and ohpb.PreUpdate then ohpb:PreUpdate(unit) end
 
-	local myIncomingHeal = UnitGetIncomingHeals(self.unit, 'player') or 0
-	local allIncomingHeal = UnitGetIncomingHeals(self.unit) or 0
+	local myIncomingHeal = UnitGetIncomingHeals(unit, 'player') or 0
+	local allIncomingHeal = UnitGetIncomingHeals(unit) or 0
 
 	local health = self.Health:GetValue()
 	local _, maxHealth = frame.Health:GetMinMaxValues()
@@ -18,7 +20,7 @@ local function Update(self)
 		allIncomingHeal = maxHealth * self.maxHealPredictionOverflow - health
 	end
 
-	if(allIncomingHeal < myIncomingHeal) then
+	if allIncomingHeal < myIncomingHeal then
 		myIncomingHeal = allIncomingHeal
 		allIncomingHeal = 0
 	else
