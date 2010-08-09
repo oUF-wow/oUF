@@ -6,6 +6,12 @@ local Update = function(self, event, unit)
 
 	-- Calculate units to work with
 	local realUnit, modUnit = SecureButton_GetUnit(self), SecureButton_GetModifiedUnit(self)
+
+	-- _GetUnit() doesn't rewrite playerpet -> pet like _GetModifiedUnit does.
+	if(realUnit == 'playerpet') then
+		realUnit = 'pet'
+	end
+
 	if(modUnit == "pet" and realUnit ~= "pet") then
 		modUnit = "vehicle"
 	end
