@@ -254,14 +254,8 @@ for k, v in pairs{
 		local element = elements[name]
 		if(not element) then return end
 
-		local updateFunc = element.update
-		local elementTable = self[name]
-		if(type(elementTable) == 'table' and elementTable.Update) then
-			updateFunc = elementTable.Update
-		end
-
 		if(element.enable(self, unit or self.unit)) then
-			table.insert(self.__elements, updateFunc)
+			table.insert(self.__elements, element.update)
 		end
 	end,
 
@@ -270,14 +264,8 @@ for k, v in pairs{
 		local element = elements[name]
 		if(not element) then return end
 
-		local updateFunc = element.update
-		local elementTable = self[name]
-		if(type(elementTable) == 'table' and elementTable.Update) then
-			updateFunc = elementTable.Update
-		end
-
 		for k, update in next, self.__elements do
-			if(update == updateFunc) then
+			if(update == element.update) then
 				table.remove(self.__elements, k)
 
 				-- We need to run a new update cycle incase we knocked ourself out of sync.
