@@ -292,20 +292,6 @@ for k, v in pairs{
 		return element.disable(self)
 	end,
 
-	UpdateElement = function(self, name)
-		argcheck(name, 2, 'string')
-		local element = elements[name]
-		if(not element) then return end
-
-		local updateFunc = element.update
-		local elementTable = self[name]
-		if(type(elementTable) == 'table' and elementTable.Update) then
-			updateFunc = elementTable.Update
-		end
-
-		updateFunc(self, 'UpdateElement', self.unit)
-	end,
-
 	Enable = RegisterUnitWatch,
 	Disable = function(self)
 		UnregisterUnitWatch(self)
