@@ -48,6 +48,10 @@ local function Update(self, event, unit)
 
 	if hp.PostUpdate then hp:PostUpdate(unit) end
 end
+
+
+local function Path(self, ...)
+	return (self.HealPrediction.Override or Update) (self, ...)
 end
 
 
@@ -55,9 +59,9 @@ local function Enable(self)
 	local hp = self.HealPrediction
 	if not hp then return end
 
-	self:RegisterEvent('UNIT_HEAL_PREDICTION', Update)
-	self:RegisterEvent('UNIT_MAXHEALTH', Update)
-	self:RegisterEvent('UNIT_HEALTH', Update)
+	self:RegisterEvent('UNIT_HEAL_PREDICTION', Path)
+	self:RegisterEvent('UNIT_MAXHEALTH', Path)
+	self:RegisterEvent('UNIT_HEALTH', Path)
 
 	if not self.HealPrediction.maxOverflow then
 		self.HealPrediction.maxOverflow = 1.05
@@ -77,9 +81,9 @@ end
 local function Disable(self)
 	local hp = self.HealPrediction
 	if hp then
-		self:UnregisterEvent('UNIT_HEAL_PREDICTION', Update)
-		self:UnregisterEvent('UNIT_MAXHEALTH', Update)
-		self:UnregisterEvent('UNIT_HEALTH', Update)
+		self:UnregisterEvent('UNIT_HEAL_PREDICTION', Path)
+		self:UnregisterEvent('UNIT_MAXHEALTH', Path)
+		self:UnregisterEvent('UNIT_HEALTH', Path)
 	end
 end
 
