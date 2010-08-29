@@ -5,10 +5,11 @@ assert(oUF, 'oUF_HealPrediction was unable to locate oUF install')
 local function Update(self, event, unit)
 	if self.unit ~= unit then return end
 
-	local mhpb, ohpb = self.myHealPredictionBar, self.otherHealPredictionBar
+	local hp = self.HealPrediction
 
-	if mhpb and mhpb.PreUpdate then mhpb:PreUpdate(unit) end
-	if ohpb and ohpb.PreUpdate then ohpb:PreUpdate(unit) end
+	if not hp then return end
+
+	if hp.PreUpdate then hp:PreUpdate(unit) end
 
 	local myIncomingHeal = UnitGetIncomingHeals(unit, 'player') or 0
 	local allIncomingHeal = UnitGetIncomingHeals(unit) or 0
@@ -27,47 +28,46 @@ local function Update(self, event, unit)
 		allIncomingHeal = allIncomingHeal - myIncomingHeal
 	end
 
-	if mhpb then
+	if hp.myBar then
 		if event == 'UNIT_MAXHEALTH' then
-			mhpb:SetMinMaxValues(0, maxHealth)
+			hp.myBar:SetMinMaxValues(0, maxHealth)
 		end
 
-		mhpb:SetValue(myIncomingHeal)
-		mhpb:Show()
-
-		if mhpb.PostUpdate then mhpb:PostUpdate(unit) end
+		hp.myBar:SetValue(myIncomingHeal)
+		hp.myBar:Show()
 	end
 
-	if ohpb then
+	if hp.otherBar then
 		if event == 'UNIT_MAXHEALTH' then
-			ohpb:SetMinMaxValues(0, maxHealth)
+			hp.otherBar:SetMinMaxValues(0, maxHealth)
 		end
 
-		ohpb:SetValue(allIncomingHeal)
-		ohpb:Show()
-
-		if ohpb.PostUpdate then ohpb:PostUpdate(unit) end
+		hp.otherBar:SetValue(allIncomingHeal)
+		hp.otherBar:Show()
 	end
+
+	if hp.PostUpdate then hp:PostUpdate(unit) end
+end
 end
 
 
 local function Enable(self)
-	local mhpb, ohpb = self.myHealPredictionBar, self.otherHealPredictionBar
-	if not (mhpb or ohpb) then return end
+	local hp = self.HealPrediction
+	if not hp then return end
 
 	self:RegisterEvent('UNIT_HEAL_PREDICTION', Update)
 	self:RegisterEvent('UNIT_MAXHEALTH', Update)
 	self:RegisterEvent('UNIT_HEALTH', Update)
 
-	if not self.maxHealPredictionOverflow then
-		self.maxHealPredictionOverflow = 1.05
+	if not self.HealPrediction.maxOverflow then
+		self.HealPrediction.maxOverflow = 1.05
 	end
 
-	if mhpb and not mhpb:GetStatusBarTexture() then
-		mhpb:SetStatusBarTexture([=[Interface\TargetingFrame\UI-StatusBar]=])
+	if hp.myBar and not hp.myBar:GetStatusBarTexture() then
+		hp.myBar:SetStatusBarTexture([=[Interface\TargetingFrame\UI-StatusBar]=])
 	end
-	if ohpb and not ohpb:GetStatusBarTexture() then
-		ohpb:SetStatusBarTexture([=[Interface\TargetingFrame\UI-StatusBar]=])
+	if hp.otherBar and not hp.otherBar:GetStatusBarTexture() then
+		hp.otherBar:SetStatusBarTexture([=[Interface\TargetingFrame\UI-StatusBar]=])
 	end
 
 	return true
@@ -75,8 +75,8 @@ end
 
 
 local function Disable(self)
-	local mhpb, ohpb = self.myHealPredictionBar, self.otherHealPredictionBar
-	if(mhpb or ohpb) then
+	local hp = self.HealPrediction
+	if hp then
 		self:UnregisterEvent('UNIT_HEAL_PREDICTION', Update)
 		self:UnregisterEvent('UNIT_MAXHEALTH', Update)
 		self:UnregisterEvent('UNIT_HEALTH', Update)
