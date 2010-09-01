@@ -63,8 +63,8 @@ local function Enable(self)
 	self:RegisterEvent('UNIT_MAXHEALTH', Path)
 	self:RegisterEvent('UNIT_HEALTH', Path)
 
-	if not self.HealPrediction.maxOverflow then
-		self.HealPrediction.maxOverflow = 1.05
+	if not hp.maxOverflow then
+		hp.maxOverflow = 1.05
 	end
 
 	if hp.myBar and not hp.myBar:GetStatusBarTexture() then
