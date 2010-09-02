@@ -2,6 +2,18 @@ local _, ns = ...
 local oUF = ns.oUF or oUF
 assert(oUF, 'oUF_HealPrediction was unable to locate oUF install')
 
+local function AdjustMaxValue(self)
+	local maxHealth = UnitHealthMax(self.unit)
+	local hp = self.HealPrediction
+
+	if hp.myBar then
+		hp.myBar:SetMinMaxValues(0, maxHealth)
+	end
+	if hp.otherBar then
+		hp.otherBar:SetMinMaxValues(0, maxHealth)
+	end
+end
+
 local function Update(self, event, unit)
 	if self.unit ~= unit then return end
 
@@ -10,6 +22,10 @@ local function Update(self, event, unit)
 	if not hp then return end
 
 	if hp.PreUpdate then hp:PreUpdate(unit) end
+
+	if event == 'UNIT_MAXHEALTH' then
+		AdjustMaxValue(self)
+	end
 
 	local myIncomingHeal = UnitGetIncomingHeals(unit, 'player') or 0
 	local allIncomingHeal = UnitGetIncomingHeals(unit) or 0
@@ -29,19 +45,11 @@ local function Update(self, event, unit)
 	end
 
 	if hp.myBar then
-		if event == 'UNIT_MAXHEALTH' then
-			hp.myBar:SetMinMaxValues(0, maxHealth)
-		end
-
 		hp.myBar:SetValue(myIncomingHeal)
 		hp.myBar:Show()
 	end
 
 	if hp.otherBar then
-		if event == 'UNIT_MAXHEALTH' then
-			hp.otherBar:SetMinMaxValues(0, maxHealth)
-		end
-
 		hp.otherBar:SetValue(allIncomingHeal)
 		hp.otherBar:Show()
 	end
@@ -62,6 +70,8 @@ local function Enable(self)
 	self:RegisterEvent('UNIT_HEAL_PREDICTION', Path)
 	self:RegisterEvent('UNIT_MAXHEALTH', Path)
 	self:RegisterEvent('UNIT_HEALTH', Path)
+
+	AdjustMaxValue(self)
 
 	if not hp.maxOverflow then
 		hp.maxOverflow = 1.05
