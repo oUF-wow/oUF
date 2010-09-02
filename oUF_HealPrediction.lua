@@ -15,7 +15,7 @@ local function Update(self, event, unit)
 	local allIncomingHeal = UnitGetIncomingHeals(unit) or 0
 
 	local health = self.Health:GetValue()
-	local _, maxHealth = frame.Health:GetMinMaxValues()
+	local _, maxHealth = self.Health:GetMinMaxValues()
 
 	if(health + allIncomingHeal > maxHealth * hp.maxOverflow) then
 		allIncomingHeal = maxHealth * hp.maxOverflow - health
