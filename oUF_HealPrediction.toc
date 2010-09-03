@@ -2,7 +2,7 @@
 ## Title: oUF HealPrediction
 ## Notes: Adds incoming healing bars to oUF frames.
 ## Author: EvilPaul
-## Version: 0.1
+## Version: b3
 ## X-Category: UnitFrame
 ## Dependencies: oUF
 ## DefaultState: enabled
