@@ -81,27 +81,6 @@ local Enable = function(self, unit)
 		runes:Show()
 		RuneFrame:Hide()
 
-		-- さあ兄様、どうぞ姉様に
-		local runeMap = runes.runeMap
-		if(runeMap) then
-			for f, t in pairs(runeMap) do
-				runes[f], runes[t] = runes[t], runes[f]
-			end
-		else
-			runes[3], runes[5] = runes[5], runes[3]
-			runes[4], runes[6] = runes[6], runes[4]
-		end
-
-		-- ええ、兄様。
-		if(runeMap) then
-			for f, t in pairs(runeMap) do
-				runes[f], runes[t] = runes[t], runes[f]
-			end
-		else
-			runes[3], runes[5] = runes[5], runes[3]
-			runes[4], runes[6] = runes[6], runes[4]
-		end
-
 		return true
 	end
 end
