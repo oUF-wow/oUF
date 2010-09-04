@@ -602,36 +602,49 @@ local generateName = function(unit, ...)
 	return name
 end
 
-function oUF:SpawnHeader(overrideName, template, visibility, ...)
-	if(not style) then return error("Unable to create frame. No styles have been registered.") end
-
-	local name = overrideName or generateName(nil, ...)
-	local header = CreateFrame('Frame', name, UIParent, template or 'SecureGroupHeaderTemplate')
-	header.initialConfigFunction = walkObject
-	header.style = style
-
-	header:SetAttribute("template", "SecureUnitButtonTemplate")
-	for i=1, select("#", ...), 2 do
-		local att, val = select(i, ...)
-		if(not att) then break end
-		header:SetAttribute(att, val)
+do
+	local styleFunction = function(...)
+		return walkObject(...)
 	end
 
-	if(header:GetAttribute'showParty') then
-		self:DisableBlizzard'party'
-	end
+	local initialConfigFunction = [[
+		control:CallMethod('styleFunction')
+	]]
 
-	if(visibility) then
-		local type, list = string.split(' ', visibility, 2)
-		if(list and type == 'custom') then
-			RegisterStateDriver(header, 'visibility', list)
-		else
-			local condition = getCondition(string.split(',', visibility))
-			RegisterStateDriver(header, 'visibility', condition)
+	function oUF:SpawnHeader(overrideName, template, visibility, ...)
+		if(not style) then return error("Unable to create frame. No styles have been registered.") end
+
+		local name = overrideName or generateName(nil, ...)
+		local header = CreateFrame('Frame', name, UIParent, template or 'SecureGroupHeaderTemplate')
+		header.styleFunction = styleFunction
+		header.style = style
+
+		header:SetAttribute("template", "SecureUnitButtonTemplate")
+		for i=1, select("#", ...), 2 do
+			local att, val = select(i, ...)
+			if(not att) then break end
+			header:SetAttribute(att, val)
 		end
-	end
 
-	return header
+		-- We set it here so layouts can't directly override it.
+		header:SetAttribute('initialConfigFunction', initialConfigFunction)
+
+		if(header:GetAttribute'showParty') then
+			self:DisableBlizzard'party'
+		end
+
+		if(visibility) then
+			local type, list = string.split(' ', visibility, 2)
+			if(list and type == 'custom') then
+				RegisterStateDriver(header, 'visibility', list)
+			else
+				local condition = getCondition(string.split(',', visibility))
+				RegisterStateDriver(header, 'visibility', condition)
+			end
+		end
+
+		return header
+	end
 end
 
 function oUF:Spawn(unit, overrideName)
