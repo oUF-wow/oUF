@@ -337,7 +337,7 @@ local tagEvents = {
 	['classification']      = 'UNIT_CLASSIFICATION_CHANGED',
 	['shortclassification'] = 'UNIT_CLASSIFICATION_CHANGED',
 	["group"]               = "RAID_ROSTER_UPDATE",
-	['happiness']           = 'UNIT_HAPPINESS',
+	['happiness']           = 'UNIT_POWER',
 }
 
 if(CC) then
