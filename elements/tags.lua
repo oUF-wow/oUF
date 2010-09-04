@@ -4,6 +4,7 @@
 
 local parent, ns = ...
 local oUF = ns.oUF
+local CC = select(4, GetBuildInfo()) == 4e4
 
 local _PATTERN = '%[..-%]+'
 
@@ -316,19 +317,15 @@ _ENV._TAGS = tags
 
 local tagEvents = {
 	["curhp"]               = "UNIT_HEALTH",
-	["curpp"]               = "UNIT_ENERGY UNIT_FOCUS UNIT_MANA UNIT_RAGE UNIT_RUNIC_POWER",
 	["dead"]                = "UNIT_HEALTH",
 	["leader"]              = "PARTY_LEADER_CHANGED",
 	["leaderlong"]          = "PARTY_LEADER_CHANGED",
 	["level"]               = "UNIT_LEVEL PLAYER_LEVEL_UP",
 	["maxhp"]               = "UNIT_MAXHEALTH",
-	["maxpp"]               = "UNIT_MAXENERGY UNIT_MAXFOCUS UNIT_MAXMANA UNIT_MAXRAGE UNIT_MAXRUNIC_POWER",
 	["missinghp"]           = "UNIT_HEALTH UNIT_MAXHEALTH",
-	["missingpp"]           = "UNIT_MAXENERGY UNIT_MAXFOCUS UNIT_MAXMANA UNIT_MAXRAGE UNIT_ENERGY UNIT_FOCUS UNIT_MANA UNIT_RAGE UNIT_MAXRUNIC_POWER UNIT_RUNIC_POWER",
 	["name"]                = "UNIT_NAME_UPDATE",
 	["offline"]             = "UNIT_HEALTH",
 	["perhp"]               = "UNIT_HEALTH UNIT_MAXHEALTH",
-	["perpp"]               = "UNIT_MAXENERGY UNIT_MAXFOCUS UNIT_MAXMANA UNIT_MAXRAGE UNIT_ENERGY UNIT_FOCUS UNIT_MANA UNIT_RAGE UNIT_MAXRUNIC_POWER UNIT_RUNIC_POWER",
 	["pvp"]                 = "UNIT_FACTION",
 	["resting"]             = "PLAYER_UPDATE_RESTING",
 	["status"]              = "UNIT_HEALTH PLAYER_UPDATE_RESTING",
@@ -342,6 +339,19 @@ local tagEvents = {
 	["group"]               = "RAID_ROSTER_UPDATE",
 	['happiness']           = 'UNIT_HAPPINESS',
 }
+
+if(CC) then
+	tagEvents["curpp"] = 'UNIT_POWER'
+	tagEvents["maxpp"] = 'UNIT_MAXPOWER'
+	tagEvents["missingpp"] = 'UNIT_MAXPOWER UNIT_POWER'
+	tagEvents["perpp"] = 'UNIT_MAXPOWER UNIT_POWER'
+else
+	tagEvents['curpp'] = "UNIT_ENERGY UNIT_FOCUS UNIT_MANA UNIT_RAGE UNIT_RUNIC_POWER"
+	tagEvents['maxpp'] = "UNIT_MAXENERGY UNIT_MAXFOCUS UNIT_MAXMANA UNIT_MAXRAGE UNIT_MAXRUNIC_POWER"
+	tagEvents['missingpp'] = "UNIT_MAXENERGY UNIT_MAXFOCUS UNIT_MAXMANA UNIT_MAXRAGE UNIT_ENERGY UNIT_FOCUS UNIT_MANA UNIT_RAGE UNIT_MAXRUNIC_POWER UNIT_RUNIC_POWER"
+	tagEvents['perpp'] = "UNIT_MAXENERGY UNIT_MAXFOCUS UNIT_MAXMANA UNIT_MAXRAGE UNIT_ENERGY UNIT_FOCUS UNIT_MANA UNIT_RAGE UNIT_MAXRUNIC_POWER UNIT_RUNIC_POWER"
+end
+
 
 local unitlessEvents = {
 	PLAYER_LEVEL_UP = true,
