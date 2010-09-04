@@ -1,10 +1,11 @@
 local parent, ns = ...
 local oUF = ns.oUF
+local CC = select(4, GetBuildInfo()) == 4e4
 
 oUF.colors.health = {49/255, 207/255, 37/255}
 
-local Update = function(self, event, unit)
-	if(self.unit ~= unit) then return end
+local Update = function(self, event, unit, powerType)
+	if(self.unit ~= unit or (event == 'UNIT_POWER' and powerType ~= 'HAPPINESS')) then return end
 	local health = self.Health
 
 	if(health.PreUpdate) then health:PreUpdate(unit) end
@@ -100,7 +101,13 @@ local Enable = function(self, unit)
 		end
 
 		self:RegisterEvent("UNIT_MAXHEALTH", Path)
-		self:RegisterEvent('UNIT_HAPPINESS', Path)
+
+		if(CC) then
+			self:RegisterEvent('UNIT_POWER', Path)
+		else
+			self:RegisterEvent('UNIT_HAPPINESS', Path)
+		end
+
 		-- For tapping.
 		self:RegisterEvent('UNIT_FACTION', Path)
 
@@ -121,7 +128,13 @@ local Disable = function(self)
 
 		self:UnregisterEvent('UNIT_HEALTH', Path)
 		self:UnregisterEvent('UNIT_MAXHEALTH', Path)
-		self:UnregisterEvent('UNIT_HAPPINESS', Path)
+
+		if(CC) then
+			self:UnregisterEvent('UNIT_POWER', Path)
+		else
+			self:UnregisterEvent('UNIT_HAPPINESS', Path)
+		end
+
 		self:UnregisterEvent('UNIT_FACTION', Path)
 	end
 end
