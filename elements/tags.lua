@@ -337,7 +337,6 @@ local tagEvents = {
 	['classification']      = 'UNIT_CLASSIFICATION_CHANGED',
 	['shortclassification'] = 'UNIT_CLASSIFICATION_CHANGED',
 	["group"]               = "RAID_ROSTER_UPDATE",
-	['happiness']           = 'UNIT_POWER',
 }
 
 if(CC) then
@@ -345,11 +344,13 @@ if(CC) then
 	tagEvents["maxpp"] = 'UNIT_MAXPOWER'
 	tagEvents["missingpp"] = 'UNIT_MAXPOWER UNIT_POWER'
 	tagEvents["perpp"] = 'UNIT_MAXPOWER UNIT_POWER'
+	tagEvents['happiness'] = 'UNIT_POWER',
 else
 	tagEvents['curpp'] = "UNIT_ENERGY UNIT_FOCUS UNIT_MANA UNIT_RAGE UNIT_RUNIC_POWER"
 	tagEvents['maxpp'] = "UNIT_MAXENERGY UNIT_MAXFOCUS UNIT_MAXMANA UNIT_MAXRAGE UNIT_MAXRUNIC_POWER"
 	tagEvents['missingpp'] = "UNIT_MAXENERGY UNIT_MAXFOCUS UNIT_MAXMANA UNIT_MAXRAGE UNIT_ENERGY UNIT_FOCUS UNIT_MANA UNIT_RAGE UNIT_MAXRUNIC_POWER UNIT_RUNIC_POWER"
 	tagEvents['perpp'] = "UNIT_MAXENERGY UNIT_MAXFOCUS UNIT_MAXMANA UNIT_MAXRAGE UNIT_ENERGY UNIT_FOCUS UNIT_MANA UNIT_RAGE UNIT_MAXRUNIC_POWER UNIT_RUNIC_POWER"
+	tagEvents['happiness'] = 'UNIT_HAPPINESS',
 end
 
 
