@@ -27,9 +27,16 @@ local Path = function(self, ...)
 	return (self.Threat.Override or Update) (self, ...)
 end
 
+local ForceUpdate = function(element)
+	return Path(element.__parent, 'ForceUpdate', element.__parent.unit)
+end
+
 local Enable = function(self)
 	local threat = self.Threat
 	if(threat) then
+		threat.__parent = self
+		threat.ForceUpdate = ForceUpdate
+
 		self:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE", Path)
 		threat:Hide()
 
