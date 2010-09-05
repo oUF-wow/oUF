@@ -81,4 +81,4 @@ local function Disable(self)
 	end
 end
 
-oUF:AddElement('HealPrediction', Update, Enable, Disable)
+oUF:AddElement('HealPrediction', Path, Enable, Disable)
