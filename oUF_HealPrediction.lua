@@ -49,26 +49,34 @@ local function Path(self, ...)
 end
 
 
+local ForceUpdate = function(element)
+	return Path(element.__owner, 'ForceUpdate')
+end
+
+
 local function Enable(self)
 	local hp = self.HealPrediction
-	if not hp then return end
+	if hp then
+		hp.__owner = self
+		hp.ForceUpdate = ForceUpdate
 
-	self:RegisterEvent('UNIT_HEAL_PREDICTION', Path)
-	self:RegisterEvent('UNIT_MAXHEALTH', Path)
-	self:RegisterEvent('UNIT_HEALTH', Path)
+		self:RegisterEvent('UNIT_HEAL_PREDICTION', Path)
+		self:RegisterEvent('UNIT_MAXHEALTH', Path)
+		self:RegisterEvent('UNIT_HEALTH', Path)
 
-	if not hp.maxOverflow then
-		hp.maxOverflow = 1.05
+		if not hp.maxOverflow then
+			hp.maxOverflow = 1.05
+		end
+
+		if hp.myBar and not hp.myBar:GetStatusBarTexture() then
+			hp.myBar:SetStatusBarTexture([=[Interface\TargetingFrame\UI-StatusBar]=])
+		end
+		if hp.otherBar and not hp.otherBar:GetStatusBarTexture() then
+			hp.otherBar:SetStatusBarTexture([=[Interface\TargetingFrame\UI-StatusBar]=])
+		end
+
+		return true
 	end
-
-	if hp.myBar and not hp.myBar:GetStatusBarTexture() then
-		hp.myBar:SetStatusBarTexture([=[Interface\TargetingFrame\UI-StatusBar]=])
-	end
-	if hp.otherBar and not hp.otherBar:GetStatusBarTexture() then
-		hp.otherBar:SetStatusBarTexture([=[Interface\TargetingFrame\UI-StatusBar]=])
-	end
-
-	return true
 end
 
 
