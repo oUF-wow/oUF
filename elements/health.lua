@@ -84,12 +84,12 @@ end
 local Enable = function(self, unit)
 	local health = self.Health
 	if(health) then
-		if(health.frequentUpdates and (unit and not unit:match'%w+target$')) then
-			-- TODO 1.5: We should do this regardless of frequentUpdates.
-			if(health:GetParent() ~= self) then
-				return oUF.error('Element [%s] is incorrectly parented on [%s]. Expected self, got something else.', 'Health', unit)
-			end
+		if(health:GetParent() ~= self) then
+			return oUF.error('Element [%s] on [%s] is incorrectly parented. Expected [%s], got [%s]',
+			'Health', unit, self:GetName(), health:GetParent():GetName() or '(Anon)')
+		end
 
+		if(health.frequentUpdates and (unit and not unit:match'%w+target$')) then
 			health:SetScript('OnUpdate', OnHealthUpdate)
 
 			-- The party frames need this to handle disconnect states correctly.
