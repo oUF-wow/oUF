@@ -66,6 +66,10 @@ local Path = function(self, ...)
 	return (self.Health.Override or Update) (self, ...)
 end
 
+local ForceUpdate = function(element)
+	return Path(element.__parent, 'ForceUpdate', element.__parent.unit)
+end
+
 local OnHealthUpdate
 do
 	local UnitHealth = UnitHealth
@@ -85,6 +89,7 @@ local Enable = function(self, unit)
 	local health = self.Health
 	if(health) then
 		health.__parent = self
+		health.ForceUpdate = ForceUpdate
 
 		if(health.frequentUpdates and (unit and not unit:match'%w+target$')) then
 			health:SetScript('OnUpdate', OnHealthUpdate)
