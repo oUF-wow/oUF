@@ -34,9 +34,16 @@ local Path = function(self, ...)
 	return (self.Portrait.Override or Update) (self, ...)
 end
 
+local ForceUpdate = function(element)
+	return Path(element.__parent, 'ForceUpdate', element.__parent.unit)
+end
+
 local Enable = function(self, unit)
 	local portrait = self.Portrait
 	if(portrait) then
+		portrait.__parent = self
+		portrait.ForceUpdate = ForceUpdate
+
 		self:RegisterEvent("UNIT_PORTRAIT_UPDATE", Path)
 		self:RegisterEvent("UNIT_MODEL_CHANGED", Path)
 
