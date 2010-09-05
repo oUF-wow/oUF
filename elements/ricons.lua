@@ -21,7 +21,7 @@ local Path = function(self, ...)
 end
 
 local ForceUpdate = function(element)
-	return Path(element.__parent, 'ForceUpdate')
+	return Path(element.__owner, 'ForceUpdate')
 end
 
 local Enable = function(self)
@@ -40,7 +40,7 @@ end
 local Disable = function(self)
 	local ricon = self.RaidIcon
 	if(ricon) then
-		ricon.__parent = self
+		ricon.__owner = self
 		ricon.ForceUpdate = ForceUpdate
 
 		self:UnregisterEvent("RAID_TARGET_UPDATE", Path)

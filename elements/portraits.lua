@@ -35,13 +35,13 @@ local Path = function(self, ...)
 end
 
 local ForceUpdate = function(element)
-	return Path(element.__parent, 'ForceUpdate', element.__parent.unit)
+	return Path(element.__owner, 'ForceUpdate', element.__owner.unit)
 end
 
 local Enable = function(self, unit)
 	local portrait = self.Portrait
 	if(portrait) then
-		portrait.__parent = self
+		portrait.__owner = self
 		portrait.ForceUpdate = ForceUpdate
 
 		self:RegisterEvent("UNIT_PORTRAIT_UPDATE", Path)

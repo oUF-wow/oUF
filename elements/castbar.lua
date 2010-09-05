@@ -256,7 +256,7 @@ local onUpdate = function(self, elapsed)
 			self.casting = nil
 			self:Hide()
 
-			if(self.PostCastStop) then self:PostCastStop(self.__parent.unit) end
+			if(self.PostCastStop) then self:PostCastStop(self.__owner.unit) end
 			return
 		end
 
@@ -298,7 +298,7 @@ local onUpdate = function(self, elapsed)
 			self.channeling = nil
 			self:Hide()
 
-			if(self.PostChannelStop) then self:PostChannelStop(self.__parent.unit) end
+			if(self.PostChannelStop) then self:PostChannelStop(self.__owner.unit) end
 			return
 		end
 
@@ -346,14 +346,14 @@ local Update = function(self, ...)
 end
 
 local ForceUpdate = function(element)
-	return Update(element.__parent, 'ForceUpdate', element.__parent.unit)
+	return Update(element.__owner, 'ForceUpdate', element.__owner.unit)
 end
 
 local Enable = function(object, unit)
 	local castbar = object.Castbar
 
 	if(castbar) then
-		castbar.__parent = object
+		castbar.__owner = object
 		castbar.ForceUpdate = ForceUpdate
 
 		if(not (unit and unit:match'%wtarget$')) then

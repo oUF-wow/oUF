@@ -15,7 +15,7 @@ local Path = function(self, ...)
 end
 
 local ForceUpdate = function(element)
-	return Path(element.__parent, 'ForceUpdate')
+	return Path(element.__owner, 'ForceUpdate')
 end
 
 local Enable = function(self)
@@ -27,7 +27,7 @@ local Enable = function(self)
 			assistant:SetTexture[[Interface\GroupFrame\UI-Group-AssistantIcon]]
 		end
 
-		assistant.__parent = self
+		assistant.__owner = self
 		assistant.ForceUpdate = ForceUpdate
 
 		return true

@@ -14,13 +14,13 @@ local Path = function(self, ...)
 end
 
 local ForceUpdate = function(element)
-	return Path(element.__parent, 'ForceUpdate')
+	return Path(element.__owner, 'ForceUpdate')
 end
 
 local Enable = function(self, unit)
 	local combat = self.Combat
 	if(combat and unit == 'player') then
-		combat.__parent = self
+		combat.__owner = self
 		combat.ForceUpdate = ForceUpdate
 
 		self:RegisterEvent("PLAYER_REGEN_DISABLED", Path)

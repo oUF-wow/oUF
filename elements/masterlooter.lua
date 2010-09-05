@@ -32,13 +32,13 @@ local Path = function(self, ...)
 end
 
 local ForceUpdate = function(element)
-	return Path(element.__parent, 'ForceUpdate')
+	return Path(element.__owner, 'ForceUpdate')
 end
 
 local function Enable(self, unit)
 	local masterlooter = self.MasterLooter
 	if(masterlooter) then
-		masterlooter.__parent = self
+		masterlooter.__owner = self
 		masterlooter.ForceUpdate = ForceUpdate
 
 		self:RegisterEvent('PARTY_LOOT_METHOD_CHANGED', Path)

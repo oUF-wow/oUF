@@ -23,13 +23,13 @@ local Path = function(self, ...)
 end
 
 local ForceUpdate = function(element)
-	return Path(element.__parent, 'ForceUpdate', element.__parent.unit)
+	return Path(element.__owner, 'ForceUpdate', element.__owner.unit)
 end
 
 local Enable = function(self)
 	local pvp = self.PvP
 	if(pvp) then
-		pvp.__parent = self
+		pvp.__owner = self
 		pvp.ForceUpdate = ForceUpdate
 
 		self:RegisterEvent("UNIT_FACTION", Path)

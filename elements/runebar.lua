@@ -61,13 +61,13 @@ local Update = function(self, event)
 end
 
 local ForceUpdate = function(element)
-	return Update(element.__parent, 'ForceUpdate')
+	return Update(element.__owner, 'ForceUpdate')
 end
 
 local Enable = function(self, unit)
 	local runes = self.Runes
 	if(runes and unit == 'player') then
-		runes.__parent = self
+		runes.__owner = self
 		runes.ForceUpdate = ForceUpdate
 
 		for i=1, 6 do

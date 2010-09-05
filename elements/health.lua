@@ -67,7 +67,7 @@ local Path = function(self, ...)
 end
 
 local ForceUpdate = function(element)
-	return Path(element.__parent, 'ForceUpdate', element.__parent.unit)
+	return Path(element.__owner, 'ForceUpdate', element.__owner.unit)
 end
 
 local OnHealthUpdate
@@ -80,7 +80,7 @@ do
 		if(health ~= self.min) then
 			self.min = health
 
-			return Path(self.__parent, "OnHealthUpdate", self.unit)
+			return Path(self.__owner, "OnHealthUpdate", self.unit)
 		end
 	end
 end
@@ -88,7 +88,7 @@ end
 local Enable = function(self, unit)
 	local health = self.Health
 	if(health) then
-		health.__parent = self
+		health.__owner = self
 		health.ForceUpdate = ForceUpdate
 
 		if(health.frequentUpdates and (unit and not unit:match'%w+target$')) then

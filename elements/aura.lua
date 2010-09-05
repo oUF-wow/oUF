@@ -60,7 +60,7 @@ local createAuraIcon = function(icons, index)
 	button:SetScript("OnEnter", OnEnter)
 	button:SetScript("OnLeave", OnLeave)
 
-	local unit = icons.__parent.unit
+	local unit = icons.__owner.unit
 	if(unit == 'player') then
 		button:SetScript('OnClick', OnClick)
 	end
@@ -269,7 +269,7 @@ local Update = function(self, event, unit)
 end
 
 local ForceUpdate = function(element)
-	return Update(element.__parent, 'ForceUpdate', element.__parent.unit)
+	return Update(element.__owner, 'ForceUpdate', element.__owner.unit)
 end
 
 local Enable = function(self)
@@ -278,19 +278,19 @@ local Enable = function(self)
 
 		local buffs = self.Buffs
 		if(buffs) then
-			buffs.__parent = self
+			buffs.__owner = self
 			buffs.ForceUpdate = ForceUpdate
 		end
 
 		local debuffs = self.Debuffs
 		if(debuffs) then
-			debuffs.__parent = self
+			debuffs.__owner = self
 			debuffs.ForceUpdate = ForceUpdate
 		end
 
 		local auras = self.Auras
 		if(auras) then
-			auras.__parent = self
+			auras.__owner = self
 			auras.ForceUpdate = ForceUpdate
 		end
 

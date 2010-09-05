@@ -15,13 +15,13 @@ local Path = function(self, ...)
 end
 
 local ForceUpdate = function(element)
-	return Path(element.__parent, 'ForceUpdate')
+	return Path(element.__owner, 'ForceUpdate')
 end
 
 local Enable = function(self)
 	local leader = self.Leader
 	if(leader) then
-		leader.__parent = self
+		leader.__owner = self
 		leader.ForceUpdate = ForceUpdate
 
 		self:RegisterEvent("PARTY_LEADER_CHANGED", Path)

@@ -28,13 +28,13 @@ local Path = function(self, ...)
 end
 
 local ForceUpdate = function(element)
-	return Path(element.__parent, 'ForceUpdate', element.__parent.unit)
+	return Path(element.__owner, 'ForceUpdate', element.__owner.unit)
 end
 
 local Enable = function(self)
 	local threat = self.Threat
 	if(threat) then
-		threat.__parent = self
+		threat.__owner = self
 		threat.ForceUpdate = ForceUpdate
 
 		self:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE", Path)

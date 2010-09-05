@@ -29,13 +29,13 @@ local Path = function(self, ...)
 end
 
 local ForceUpdate = function(element)
-	return Path(element.__parent, 'ForceUpdate', element.__parent.unit)
+	return Path(element.__owner, 'ForceUpdate', element.__owner.unit)
 end
 
 local Enable = function(self)
 	local cpoints = self.CPoints
 	if(cpoints) then
-		cpoints.__parent = self
+		cpoints.__owner = self
 		cpoints.ForceUpdate = ForceUpdate
 
 		self:RegisterEvent('UNIT_COMBO_POINTS', Path)

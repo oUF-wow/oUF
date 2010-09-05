@@ -14,13 +14,13 @@ local Path = function(self, ...)
 end
 
 local ForceUpdate = function(element)
-	return Path(element.__parent, 'ForceUpdate')
+	return Path(element.__owner, 'ForceUpdate')
 end
 
 local Enable = function(self, unit)
 	local resting = self.Resting
 	if(resting and unit == 'player') then
-		resting.__parent = self
+		resting.__owner = self
 		resting.ForceUpdate = ForceUpdate
 
 		self:RegisterEvent("PLAYER_UPDATE_RESTING", Path)

@@ -77,7 +77,7 @@ local Path = function(self, ...)
 end
 
 local ForceUpdate = function(element)
-	return Path(element.__parent, 'ForceUpdate', element.__parent.unit)
+	return Path(element.__owner, 'ForceUpdate', element.__owner.unit)
 end
 
 local OnPowerUpdate
@@ -90,7 +90,7 @@ do
 		if(power ~= self.min) then
 			self.min = power
 
-			return Path(self.__parent, 'OnPowerUpdate', self.unit)
+			return Path(self.__owner, 'OnPowerUpdate', self.unit)
 		end
 	end
 end
@@ -98,7 +98,7 @@ end
 local Enable = function(self, unit)
 	local power = self.Power
 	if(power) then
-		power.__parent = self
+		power.__owner = self
 		power.ForceUpdate = ForceUpdate
 
 		if(power.frequentUpdates and (unit == 'player' or unit == 'pet')) then

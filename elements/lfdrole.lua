@@ -37,13 +37,13 @@ local Path = function(self, ...)
 end
 
 local ForceUpdate = function(element)
-	return Path(element.__parent, 'ForceUpdate')
+	return Path(element.__owner, 'ForceUpdate')
 end
 
 local Enable = function(self)
 	local lfdrole = self.LFDRole
 	if(lfdrole) then
-		lfdrole.__parent = self
+		lfdrole.__owner = self
 		lfdrole.ForceUpdate = ForceUpdate
 
 		if(self.unit == "player") then

@@ -36,7 +36,7 @@ end
 local Enable = function(self)
 	local happiness = self.Happiness
 	if(happiness) then
-		happiness.__parent = self
+		happiness.__owner = self
 		happiness.ForceUpdate = ForceUpdate
 
 		if(CC) then
