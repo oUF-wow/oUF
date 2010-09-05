@@ -353,7 +353,7 @@ local Enable = function(object, unit)
 	local castbar = object.Castbar
 
 	if(castbar) then
-		castbar.__parent = self
+		castbar.__parent = object
 		castbar.ForceUpdate = ForceUpdate
 
 		if(not (unit and unit:match'%wtarget$')) then
