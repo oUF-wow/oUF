@@ -1,5 +1,6 @@
 local parent, ns = ...
 local oUF = ns.oUF
+local CC = select(4, GetBuildInfo()) == 4e4
 
 local Update = function(self, event, unit)
 	if(not unit or not UnitIsUnit(self.unit, unit)) then return end
@@ -47,6 +48,10 @@ local Enable = function(self, unit)
 		self:RegisterEvent("UNIT_PORTRAIT_UPDATE", Path)
 		self:RegisterEvent("UNIT_MODEL_CHANGED", Path)
 
+		if(CC) then
+			self:RegisterEvent('UNIT_CONNECTION', Path)
+		end
+
 		-- The quest log uses PARTY_MEMBER_{ENABLE,DISABLE} to handle updating of
 		-- party members overlapping quests. This will probably be enough to handle
 		-- model updating.
@@ -67,6 +72,10 @@ local Disable = function(self)
 		self:UnregisterEvent("UNIT_PORTRAIT_UPDATE", Path)
 		self:UnregisterEvent("UNIT_MODEL_CHANGED", Path)
 		self:UnregisterEvent('PARTY_MEMBER_ENABLE', Path)
+
+		if(CC) then
+			self:UnregisterEvent('UNIT_CONNECTION', Path)
+		end
 	end
 end
 
