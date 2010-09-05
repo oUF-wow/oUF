@@ -340,9 +340,13 @@ local onUpdate = function(self, elapsed)
 	end
 end
 
-local Update = function(self, ..)
+local Update = function(self, ...)
 	UNIT_SPELLCAST_START(self, ...)
 	return UNIT_SPELLCAST_CHANNEL_START(self, ...)
+end
+
+local ForceUpdate = function(element)
+	return Update(element.__parent, 'ForceUpdate', element.__parent.unit)
 end
 
 local Enable = function(object, unit)
