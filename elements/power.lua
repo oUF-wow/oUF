@@ -76,6 +76,10 @@ local Path = function(self, ...)
 	return (self.Power.Override or Update) (self, ...)
 end
 
+local ForceUpdate = function(element)
+	return Path(element.__parent, 'ForceUpdate', element.__parent.unit)
+end
+
 local OnPowerUpdate
 do
 	local UnitPower = UnitPower
@@ -95,6 +99,7 @@ local Enable = function(self, unit)
 	local power = self.Power
 	if(power) then
 		power.__parent = self
+		power.ForceUpdate = ForceUpdate
 
 		if(power.frequentUpdates and (unit == 'player' or unit == 'pet')) then
 			power:SetScript("OnUpdate", OnPowerUpdate)
