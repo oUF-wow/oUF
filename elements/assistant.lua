@@ -14,6 +14,10 @@ local Path = function(self, ...)
 	return (self.Assistant.Override or Update) (self, ...)
 end
 
+local ForceUpdate = function(element)
+	return Path(element.__parent, 'ForceUpdate')
+end
+
 local Enable = function(self)
 	local assistant = self.Assistant
 	if(assistant) then
@@ -22,6 +26,9 @@ local Enable = function(self)
 		if(assistant:IsObjectType"Texture" and not assistant:GetTexture()) then
 			assistant:SetTexture[[Interface\GroupFrame\UI-Group-AssistantIcon]]
 		end
+
+		assistant.__parent = self
+		assistant.ForceUpdate = ForceUpdate
 
 		return true
 	end
