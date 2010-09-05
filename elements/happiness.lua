@@ -36,6 +36,9 @@ end
 local Enable = function(self)
 	local happiness = self.Happiness
 	if(happiness) then
+		happiness.__parent = self
+		happiness.ForceUpdate = ForceUpdate
+
 		if(CC) then
 			self:RegisterEvent('UNIT_POWER', Path)
 		else
