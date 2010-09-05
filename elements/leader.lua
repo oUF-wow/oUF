@@ -14,9 +14,16 @@ local Path = function(self, ...)
 	return (self.Leader.Override or Update) (self, ...)
 end
 
+local ForceUpdate = function(element)
+	return Path(element.__parent, 'ForceUpdate', element.__parent.unit)
+end
+
 local Enable = function(self)
 	local leader = self.Leader
 	if(leader) then
+		leader.__parent = self
+		leader.ForceUpdate = ForceUpdate
+
 		self:RegisterEvent("PARTY_LEADER_CHANGED", Path)
 		self:RegisterEvent("PARTY_MEMBERS_CHANGED", Path)
 
