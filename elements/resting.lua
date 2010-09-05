@@ -13,9 +13,16 @@ local Path = function(self, ...)
 	return (self.Resting.Override or Update) (self, ...)
 end
 
+local ForceUpdate = function(element)
+	return Path(element.__parent, 'ForceUpdate')
+end
+
 local Enable = function(self, unit)
 	local resting = self.Resting
 	if(resting and unit == 'player') then
+		resting.__parent = self
+		resting.ForceUpdate = ForceUpdate
+
 		self:RegisterEvent("PLAYER_UPDATE_RESTING", Path)
 
 		if(resting:IsObjectType"Texture" and not resting:GetTexture()) then
