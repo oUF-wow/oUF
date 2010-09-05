@@ -1,10 +1,11 @@
 local parent, ns = ...
 local oUF = ns.oUF
+local CC = select(4, GetBuildInfo()) == 4e4
 
 oUF.colors.health = {49/255, 207/255, 37/255}
 
-local Update = function(self, event, unit)
-	if(self.unit ~= unit) then return end
+local Update = function(self, event, unit, powerType)
+	if(self.unit ~= unit or (event == 'UNIT_POWER' and powerType ~= 'HAPPINESS')) then return end
 	local health = self.Health
 
 	if(health.PreUpdate) then health:PreUpdate(unit) end
@@ -61,6 +62,10 @@ local Update = function(self, event, unit)
 	end
 end
 
+local Path = function(self, ...)
+	return (self.Health.Override or Update) (self, ...)
+end
+
 local OnHealthUpdate
 do
 	local UnitHealth = UnitHealth
@@ -71,7 +76,7 @@ do
 		if(health ~= self.min) then
 			self.min = health
 
-			return (self.Update or Update) (self:GetParent(), "OnHealthUpdate", self.unit)
+			return Path(self:GetParent(), "OnHealthUpdate", self.unit)
 		end
 	end
 end
@@ -79,7 +84,6 @@ end
 local Enable = function(self, unit)
 	local health = self.Health
 	if(health) then
-		local Update = health.Update or Update
 		if(health.frequentUpdates and (unit and not unit:match'%w+target$')) then
 			-- TODO 1.5: We should do this regardless of frequentUpdates.
 			if(health:GetParent() ~= self) then
@@ -90,16 +94,22 @@ local Enable = function(self, unit)
 
 			-- The party frames need this to handle disconnect states correctly.
 			if(unit == 'party') then
-				self:RegisterEvent("UNIT_HEALTH", Update)
+				self:RegisterEvent("UNIT_HEALTH", Path)
 			end
 		else
-			self:RegisterEvent("UNIT_HEALTH", Update)
+			self:RegisterEvent("UNIT_HEALTH", Path)
 		end
 
-		self:RegisterEvent("UNIT_MAXHEALTH", Update)
-		self:RegisterEvent('UNIT_HAPPINESS', Update)
+		self:RegisterEvent("UNIT_MAXHEALTH", Path)
+
+		if(CC) then
+			self:RegisterEvent('UNIT_POWER', Path)
+		else
+			self:RegisterEvent('UNIT_HAPPINESS', Path)
+		end
+
 		-- For tapping.
-		self:RegisterEvent('UNIT_FACTION', Update)
+		self:RegisterEvent('UNIT_FACTION', Path)
 
 		if(not health:GetStatusBarTexture()) then
 			health:SetStatusBarTexture[[Interface\TargetingFrame\UI-StatusBar]]
@@ -112,16 +122,21 @@ end
 local Disable = function(self)
 	local health = self.Health
 	if(health) then
-		local Update = health.Update or Update
 		if(health:GetScript'OnUpdate') then
 			health:SetScript('OnUpdate', nil)
 		end
 
-		self:UnregisterEvent('UNIT_HEALTH', Update)
-		self:UnregisterEvent('UNIT_MAXHEALTH', Update)
-		self:UnregisterEvent('UNIT_HAPPINESS', Update)
-		self:UnregisterEvent('UNIT_FACTION', Update)
+		self:UnregisterEvent('UNIT_HEALTH', Path)
+		self:UnregisterEvent('UNIT_MAXHEALTH', Path)
+
+		if(CC) then
+			self:UnregisterEvent('UNIT_POWER', Path)
+		else
+			self:UnregisterEvent('UNIT_HAPPINESS', Path)
+		end
+
+		self:UnregisterEvent('UNIT_FACTION', Path)
 	end
 end
 
-oUF:AddElement('Health', Update, Enable, Disable)
+oUF:AddElement('Health', Path, Enable, Disable)
