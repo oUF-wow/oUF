@@ -20,6 +20,10 @@ local Path = function(self, ...)
 	return (self.RaidIcon.Override or Update) (self, ...)
 end
 
+local ForceUpdate = function(element)
+	return Path(element.__parent, 'ForceUpdate')
+end
+
 local Enable = function(self)
 	local ricon = self.RaidIcon
 	if(ricon) then
@@ -36,6 +40,9 @@ end
 local Disable = function(self)
 	local ricon = self.RaidIcon
 	if(ricon) then
+		ricon.__parent = self
+		ricon.ForceUpdate = ForceUpdate
+
 		self:UnregisterEvent("RAID_TARGET_UPDATE", Path)
 	end
 end
