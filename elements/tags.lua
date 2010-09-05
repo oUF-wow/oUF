@@ -324,11 +324,9 @@ local tagEvents = {
 	["maxhp"]               = "UNIT_MAXHEALTH",
 	["missinghp"]           = "UNIT_HEALTH UNIT_MAXHEALTH",
 	["name"]                = "UNIT_NAME_UPDATE",
-	["offline"]             = "UNIT_HEALTH",
 	["perhp"]               = "UNIT_HEALTH UNIT_MAXHEALTH",
 	["pvp"]                 = "UNIT_FACTION",
 	["resting"]             = "PLAYER_UPDATE_RESTING",
-	["status"]              = "UNIT_HEALTH PLAYER_UPDATE_RESTING",
 	["smartlevel"]          = "UNIT_LEVEL PLAYER_LEVEL_UP UNIT_CLASSIFICATION_CHANGED",
 	["threat"]              = "UNIT_THREAT_SITUATION_UPDATE",
 	["threatcolor"]         = "UNIT_THREAT_SITUATION_UPDATE",
@@ -345,12 +343,16 @@ if(CC) then
 	tagEvents["missingpp"] = 'UNIT_MAXPOWER UNIT_POWER'
 	tagEvents["perpp"] = 'UNIT_MAXPOWER UNIT_POWER'
 	tagEvents['happiness'] = 'UNIT_POWER'
+	tagEvents["offline"] = "UNIT_HEALTH UNIT_CONNECTION"
+	tagEvents["status"] = "UNIT_HEALTH PLAYER_UPDATE_RESTING UNIT_CONNECTION"
 else
 	tagEvents['curpp'] = "UNIT_ENERGY UNIT_FOCUS UNIT_MANA UNIT_RAGE UNIT_RUNIC_POWER"
 	tagEvents['maxpp'] = "UNIT_MAXENERGY UNIT_MAXFOCUS UNIT_MAXMANA UNIT_MAXRAGE UNIT_MAXRUNIC_POWER"
 	tagEvents['missingpp'] = "UNIT_MAXENERGY UNIT_MAXFOCUS UNIT_MAXMANA UNIT_MAXRAGE UNIT_ENERGY UNIT_FOCUS UNIT_MANA UNIT_RAGE UNIT_MAXRUNIC_POWER UNIT_RUNIC_POWER"
 	tagEvents['perpp'] = "UNIT_MAXENERGY UNIT_MAXFOCUS UNIT_MAXMANA UNIT_MAXRAGE UNIT_ENERGY UNIT_FOCUS UNIT_MANA UNIT_RAGE UNIT_MAXRUNIC_POWER UNIT_RUNIC_POWER"
 	tagEvents['happiness'] = 'UNIT_HAPPINESS'
+	tagEvents["offline"] = "UNIT_HEALTH"
+	tagEvents["status"] = "UNIT_HEALTH PLAYER_UPDATE_RESTING"
 end
 
 
