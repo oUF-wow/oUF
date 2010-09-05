@@ -268,9 +268,31 @@ local Update = function(self, event, unit)
 	end
 end
 
+local ForceUpdate = function(element)
+	return Update(element.__parent, 'ForceUpdate', element.__parent.unit)
+end
+
 local Enable = function(self)
 	if(self.Buffs or self.Debuffs or self.Auras) then
 		self:RegisterEvent("UNIT_AURA", Update)
+
+		local buffs = self.Buffs
+		if(buffs) then
+			buffs.__parent = self
+			buffs.ForceUpdate = ForceUpdate
+		end
+
+		local debuffs = self.Debuffs
+		if(debuffs) then
+			debuffs.__parent = self
+			debuffs.ForceUpdate = ForceUpdate
+		end
+
+		local auras = self.Auras
+		if(auras) then
+			auras.__parent = self
+			auras.ForceUpdate = ForceUpdate
+		end
 
 		return true
 	end
