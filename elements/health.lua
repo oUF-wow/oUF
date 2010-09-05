@@ -76,7 +76,7 @@ do
 		if(health ~= self.min) then
 			self.min = health
 
-			return Path(self:GetParent(), "OnHealthUpdate", self.unit)
+			return Path(self.__parent, "OnHealthUpdate", self.unit)
 		end
 	end
 end
@@ -84,10 +84,7 @@ end
 local Enable = function(self, unit)
 	local health = self.Health
 	if(health) then
-		if(health:GetParent() ~= self) then
-			return oUF.error('Element [%s] on [%s] is incorrectly parented. Expected [%s], got [%s]',
-			'Health', unit, self:GetName(), health:GetParent():GetName() or '(Anon)')
-		end
+		health.__parent = self
 
 		if(health.frequentUpdates and (unit and not unit:match'%w+target$')) then
 			health:SetScript('OnUpdate', OnHealthUpdate)

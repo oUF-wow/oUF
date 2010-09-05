@@ -86,7 +86,7 @@ do
 		if(power ~= self.min) then
 			self.min = power
 
-			return Path(self:GetParent(), 'OnPowerUpdate', self.unit)
+			return Path(self.__parent, 'OnPowerUpdate', self.unit)
 		end
 	end
 end
@@ -94,10 +94,7 @@ end
 local Enable = function(self, unit)
 	local power = self.Power
 	if(power) then
-		if(power:GetParent() ~= self) then
-			return oUF.error('Element [%s] on [%s] is incorrectly parented. Expected [%s], got [%s]',
-			'Power', unit, self:GetName(), power:GetParent():GetName() or '(Anon)')
-		end
+		power.__parent = self
 
 		if(power.frequentUpdates and (unit == 'player' or unit == 'pet')) then
 			power:SetScript("OnUpdate", OnPowerUpdate)
