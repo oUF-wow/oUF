@@ -1,6 +1,7 @@
 local parent, ns = ...
 local global = GetAddOnMetadata(parent, 'X-oUF')
 local _VERSION = GetAddOnMetadata(parent, 'version')
+local CC = select(4, GetBuildInfo()) == 4e4
 
 local function argcheck(value, num, ...)
 	assert(type(num) == 'number', "Bad argument #2 to 'argcheck' (number expected, got "..type(num)..")")
@@ -603,10 +604,6 @@ local generateName = function(unit, ...)
 end
 
 do
-	local styleFunction = function(...)
-		return walkObject(...)
-	end
-
 	local initialConfigFunction = [[
 		control:CallMethod('styleFunction')
 	]]
@@ -616,8 +613,6 @@ do
 
 		local name = overrideName or generateName(nil, ...)
 		local header = CreateFrame('Frame', name, UIParent, template or 'SecureGroupHeaderTemplate')
-		header.styleFunction = styleFunction
-		header.style = style
 
 		header:SetAttribute("template", "SecureUnitButtonTemplate")
 		for i=1, select("#", ...), 2 do
@@ -626,8 +621,15 @@ do
 			header:SetAttribute(att, val)
 		end
 
-		-- We set it here so layouts can't directly override it.
-		header:SetAttribute('initialConfigFunction', initialConfigFunction)
+		header.style = style
+		if(CC) then
+			header.styleFunction = walkObject
+
+			-- We set it here so layouts can't directly override it.
+			header:SetAttribute('initialConfigFunction', initialConfigFunction)
+		else
+			header.initialConfigFunction = walkObject
+		end
 
 		if(header:GetAttribute'showParty') then
 			self:DisableBlizzard'party'
