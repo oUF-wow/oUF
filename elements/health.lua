@@ -105,6 +105,7 @@ local Enable = function(self, unit)
 		self:RegisterEvent("UNIT_MAXHEALTH", Path)
 
 		if(CC) then
+			self:RegisterEvent('UNIT_CONNECTION', Path)
 			self:RegisterEvent('UNIT_POWER', Path)
 		else
 			self:RegisterEvent('UNIT_HAPPINESS', Path)
@@ -132,6 +133,7 @@ local Disable = function(self)
 		self:UnregisterEvent('UNIT_MAXHEALTH', Path)
 
 		if(CC) then
+			self:UnregisterEvent('UNIT_CONNECTION', Path)
 			self:UnregisterEvent('UNIT_POWER', Path)
 		else
 			self:UnregisterEvent('UNIT_HAPPINESS', Path)
