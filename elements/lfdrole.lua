@@ -36,9 +36,16 @@ local Path = function(self, ...)
 	return (self.LFDRole.Override or Update) (self, ...)
 end
 
+local ForceUpdate = function(element)
+	return Path(element.__parent, 'ForceUpdate', element.__parent.unit)
+end
+
 local Enable = function(self)
 	local lfdrole = self.LFDRole
 	if(lfdrole) then
+		lfdrole.__parent = self
+		lfdrole.ForceUpdate = ForceUpdate
+
 		if(self.unit == "player") then
 			self:RegisterEvent("PLAYER_ROLES_ASSIGNED", Path)
 		else
