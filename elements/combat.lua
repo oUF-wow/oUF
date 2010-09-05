@@ -13,15 +13,22 @@ local Path = function(self, ...)
 	return (self.Combat.Override or Update) (self, ...)
 end
 
+local ForceUpdate = function(element)
+	return Path(element.__parent, 'ForceUpdate', element.__parent.unit)
+end
+
 local Enable = function(self, unit)
 	local combat = self.Combat
 	if(combat and unit == 'player') then
+		combat.__parent = self
+		combat.ForceUpdate = ForceUpdate
+
 		self:RegisterEvent("PLAYER_REGEN_DISABLED", Path)
 		self:RegisterEvent("PLAYER_REGEN_ENABLED", Path)
 
-		if(self.Combat:IsObjectType"Texture" and not self.Combat:GetTexture()) then
-			self.Combat:SetTexture[[Interface\CharacterFrame\UI-StateIcon]]
-			self.Combat:SetTexCoord(.5, 1, 0, .49)
+		if(combat:IsObjectType"Texture" and not combat:GetTexture()) then
+			combat:SetTexture[[Interface\CharacterFrame\UI-StateIcon]]
+			combat:SetTexCoord(.5, 1, 0, .49)
 		end
 
 		return true
@@ -29,8 +36,7 @@ local Enable = function(self, unit)
 end
 
 local Disable = function(self)
-	local combat = self.Combat
-	if(combat) then
+	if(self.Combat) then
 		self:UnregisterEvent("PLAYER_REGEN_DISABLED", Path)
 		self:UnregisterEvent("PLAYER_REGEN_ENABLED", Path)
 	end
