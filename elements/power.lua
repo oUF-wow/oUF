@@ -94,12 +94,12 @@ end
 local Enable = function(self, unit)
 	local power = self.Power
 	if(power) then
-		if(power.frequentUpdates and (unit == 'player' or unit == 'pet')) then
-			-- TODO 1.5: We should do this regardless of frequentUpdates.
-			if(power:GetParent() ~= self) then
-				return oUF.error('Element [%s] is incorrectly parented on [%s]. Expected self, got something else.', 'Power', unit)
-			end
+		if(power:GetParent() ~= self) then
+			return oUF.error('Element [%s] on [%s] is incorrectly parented. Expected [%s], got [%s]',
+			'Power', unit, self:GetName(), power:GetParent():GetName() or '(Anon)')
+		end
 
+		if(power.frequentUpdates and (unit == 'player' or unit == 'pet')) then
 			power:SetScript("OnUpdate", OnPowerUpdate)
 		elseif(CC) then
 			self:RegisterEvent('UNIT_POWER', Path)
