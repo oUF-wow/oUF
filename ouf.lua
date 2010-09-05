@@ -593,7 +593,8 @@ local generateName = function(unit, ...)
 		name = name .. append
 	end
 
-	local base = name
+	-- Change oUF_LilyRaidRaid into oUF_LilyRaid
+	local base = name:gsub('(%u%l+)([%u%l]*)%1', '%1')
 	local i = 2
 	while(_G[name]) do
 		name = base .. i
