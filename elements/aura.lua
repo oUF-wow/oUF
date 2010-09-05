@@ -60,7 +60,7 @@ local createAuraIcon = function(icons, index)
 	button:SetScript("OnEnter", OnEnter)
 	button:SetScript("OnLeave", OnLeave)
 
-	local unit = icons:GetParent().unit
+	local unit = icons.__parent.unit
 	if(unit == 'player') then
 		button:SetScript('OnClick', OnClick)
 	end
