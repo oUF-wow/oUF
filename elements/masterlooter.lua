@@ -31,9 +31,16 @@ local Path = function(self, ...)
 	return (self.MasterLooter.Override or Update) (self, ...)
 end
 
+local ForceUpdate = function(element)
+	return Path(element.__parent, 'ForceUpdate', element.__parent.unit)
+end
+
 local function Enable(self, unit)
 	local masterlooter = self.MasterLooter
 	if(masterlooter) then
+		masterlooter.__parent = self
+		masterlooter.ForceUpdate = ForceUpdate
+
 		self:RegisterEvent('PARTY_LOOT_METHOD_CHANGED', Path)
 		self:RegisterEvent('PARTY_MEMBERS_CHANGED', Path)
 
