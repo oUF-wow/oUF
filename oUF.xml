@@ -22,6 +22,7 @@
 	<Script file='elements\runebar.lua' />
 	<Script file='elements\lfdrole.lua' />
 	<Script file='elements\healprediction.lua' />
+	<Script file='elements\holypower.lua' />
 
 	<!--
 		This template requires the layout to set the anchoring positions from the
