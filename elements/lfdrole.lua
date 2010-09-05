@@ -37,7 +37,7 @@ local Path = function(self, ...)
 end
 
 local ForceUpdate = function(element)
-	return Path(element.__parent, 'ForceUpdate', element.__parent.unit)
+	return Path(element.__parent, 'ForceUpdate')
 end
 
 local Enable = function(self)
