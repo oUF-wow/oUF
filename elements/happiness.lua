@@ -33,6 +33,10 @@ local Path = function(self, ...)
 	return (self.Happiness.Override or Update) (self, ...)
 end
 
+local ForceUpdate = function(element)
+	return Path(element.__owner, 'ForceUpdate', self.__owner.unit, 'HAPPINESS')
+end
+
 local Enable = function(self)
 	local happiness = self.Happiness
 	if(happiness) then
