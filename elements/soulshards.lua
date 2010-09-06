@@ -10,7 +10,7 @@ local SHARD_BAR_POWER_INDEX = SHARD_BAR_POWER_INDEX
 local SHARD_BAR_NUM_SHARDS = SHARD_BAR_NUM_SHARDS
 
 local Update = function(self, event, unit)
-	if(self.unit ~= unit) then return end
+	if(self.unit ~= unit or powerType ~= 'SOUL_SHARDS') then return end
 
 	local ss = self.SoulShards
 	if(ss.PreUpdate) then ss:PreUpdate(unit) end
@@ -34,7 +34,7 @@ local Path = function(self, ...)
 end
 
 local ForceUpdate = function(element)
-	return Path(element.__owner, 'ForceUpdate', element.__owner.unit)
+	return Path(element.__owner, 'ForceUpdate', element.__owner.unit, 'SOUL_SHARDS')
 end
 
 local function Enable(self)
