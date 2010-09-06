@@ -56,4 +56,4 @@ local function Disable(self)
 	end
 end
 
-oUF:AddElement('SoulShards', Path, Enable, Disable)
+oUF:AddElement('HolyPower', Path, Enable, Disable)
