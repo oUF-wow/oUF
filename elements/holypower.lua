@@ -9,8 +9,8 @@ local oUF = ns.oUF
 local HOLY_POWER_INDEX = HOLY_POWER_INDEX
 local MAX_HOLY_POWER = MAX_HOLY_POWER
 
-local Update = function(self, event, unit)
-	if(self.unit ~= unit) then return end
+local Update = function(self, event, unit, powerType)
+	if(self.unit ~= unit or powerType ~= 'HOLY_POWER') then return end
 
 	local hp = self.HolyPower
 	if(hp.PreUpdate) then hp:PreUpdate(unit) end
