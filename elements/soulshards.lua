@@ -13,7 +13,6 @@ local Update = function(self, event, unit)
 	if(self.unit ~= unit) then return end
 
 	local ss = self.SoulShards
-
 	if(ss.PreUpdate) then ss:PreUpdate(unit) end
 
 	local num = UnitPower(unit, SHARD_BAR_POWER_INDEX)
@@ -33,7 +32,7 @@ local Path = function(self, ...)
 end
 
 local ForceUpdate = function(element)
-	return Path(element.__owner, 'ForceUpdate')
+	return Path(element.__owner, 'ForceUpdate', element.__owner.unit)
 end
 
 local function Enable(self)
