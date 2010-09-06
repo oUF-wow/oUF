@@ -9,7 +9,7 @@ local oUF = ns.oUF
 local SHARD_BAR_POWER_INDEX = SHARD_BAR_POWER_INDEX
 local SHARD_BAR_NUM_SHARDS = SHARD_BAR_NUM_SHARDS
 
-local Update = function(self, event, unit)
+local Update = function(self, event, unit, powerType)
 	if(self.unit ~= unit or powerType ~= 'SOUL_SHARDS') then return end
 
 	local ss = self.SoulShards
