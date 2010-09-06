@@ -1,7 +1,7 @@
 local CC = select(4, GetBuildInfo()) == 4e4
-if not CC then return end
+if(not CC) then return end
 
-if select(2, UnitClass('player')) ~= 'PALADIN' then return end
+if(select(2, UnitClass('player')) ~= 'PALADIN') then return end
 
 local parent, ns = ...
 local oUF = ns.oUF
@@ -10,24 +10,23 @@ local HOLY_POWER_INDEX = HOLY_POWER_INDEX
 local MAX_HOLY_POWER = MAX_HOLY_POWER
 
 local Update = function(self, event, unit)
-	if self.unit ~= unit then return end
+	if(self.unit ~= unit) then return end
 
 	local hp = self.HolyPower
 
-	if hp.PreUpdate then hp:PreUpdate(unit) end
+	if(hp.PreUpdate) then hp:PreUpdate(unit) end
 
 	local num = UnitPower(unit, HOLY_POWER_INDEX)
 	for i = 1, MAX_HOLY_POWER do
-		if i <= num then
+		if(i <= num) then
 			hp[i]:SetAlpha(1)
 		else
 			hp[i]:SetAlpha(0)
 		end
 	end
 
-	if hp.PostUpdate then hp:PostUpdate(unit) end
+	if(hp.PostUpdate) then hp:PostUpdate(unit) end
 end
-
 
 local Path = function(self, ...)
 	return (self.HolyPower.Override or Update) (self, ...)
@@ -37,7 +36,6 @@ end
 local ForceUpdate = function(element)
 	return Path(element.__owner, 'ForceUpdate')
 end
-
 
 local function Enable(self)
 	local hp = self.HolyPower
@@ -50,7 +48,6 @@ local function Enable(self)
 		return true
 	end
 end
-
 
 local function Disable(self)
 	local hp = self.HolyPower
