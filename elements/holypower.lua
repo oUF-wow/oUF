@@ -13,7 +13,6 @@ local Update = function(self, event, unit)
 	if(self.unit ~= unit) then return end
 
 	local hp = self.HolyPower
-
 	if(hp.PreUpdate) then hp:PreUpdate(unit) end
 
 	local num = UnitPower(unit, HOLY_POWER_INDEX)
@@ -25,13 +24,14 @@ local Update = function(self, event, unit)
 		end
 	end
 
-	if(hp.PostUpdate) then hp:PostUpdate(unit) end
+	if(hp.PostUpdate) then
+		return hp:PostUpdate(unit)
+	end
 end
 
 local Path = function(self, ...)
 	return (self.HolyPower.Override or Update) (self, ...)
 end
-
 
 local ForceUpdate = function(element)
 	return Path(element.__owner, 'ForceUpdate')

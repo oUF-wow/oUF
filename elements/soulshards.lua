@@ -24,7 +24,9 @@ local Update = function(self, event, unit)
 		end
 	end
 
-	if(ss.PostUpdate) then ss:PostUpdate(unit) end
+	if(ss.PostUpdate) then
+		return ss:PostUpdate(unit)
+	end
 end
 
 local Path = function(self, ...)
