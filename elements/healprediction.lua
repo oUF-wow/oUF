@@ -39,7 +39,9 @@ local function Update(self, event, unit)
 		hp.otherBar:Show()
 	end
 
-	if(hp.PostUpdate) then hp:PostUpdate(unit) end
+	if(hp.PostUpdate) then
+		return hp:PostUpdate(unit)
+	end
 end
 
 local function Path(self, ...)
