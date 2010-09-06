@@ -1,6 +1,5 @@
 local _, ns = ...
-local oUF = ns.oUF or oUF
-assert(oUF, 'oUF_HealPrediction was unable to locate oUF install')
+local oUF = ns.oUF
 
 local function Update(self, event, unit)
 	if self.unit ~= unit then return end
