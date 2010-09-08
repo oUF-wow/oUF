@@ -10,7 +10,7 @@ local SHARD_BAR_POWER_INDEX = SHARD_BAR_POWER_INDEX
 local SHARD_BAR_NUM_SHARDS = SHARD_BAR_NUM_SHARDS
 
 local Update = function(self, event, unit, powerType)
-	if(self.unit ~= unit or powerType ~= 'SOUL_SHARDS') then return end
+	if(self.unit ~= unit or (powerType and powerType ~= 'SOUL_SHARDS')) then return end
 
 	local ss = self.SoulShards
 	if(ss.PreUpdate) then ss:PreUpdate(unit) end
