@@ -27,6 +27,9 @@ end
 local Enable = function(self)
 	local ricon = self.RaidIcon
 	if(ricon) then
+		ricon.__owner = self
+		ricon.ForceUpdate = ForceUpdate
+
 		self:RegisterEvent("RAID_TARGET_UPDATE", Path)
 
 		if(ricon:IsObjectType"Texture" and not ricon:GetTexture()) then
@@ -40,9 +43,6 @@ end
 local Disable = function(self)
 	local ricon = self.RaidIcon
 	if(ricon) then
-		ricon.__owner = self
-		ricon.ForceUpdate = ForceUpdate
-
 		self:UnregisterEvent("RAID_TARGET_UPDATE", Path)
 	end
 end
