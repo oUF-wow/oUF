@@ -6,7 +6,7 @@ local Update = function(self, event, unit, powerType)
 	if(self.unit ~= unit) then return end
 
 	local happ = self.Happiness
-	if(happ and ((CC and powerType == 'HAPPINESS') or not CC)) then
+	if(happ and (CC and (powerType == 'HAPPINESS' or not powerType)) or not CC) then
 		local happiness = GetPetHappiness()
 		local _, hunterPet = HasPetUI()
 
