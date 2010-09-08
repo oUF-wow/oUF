@@ -4,8 +4,6 @@ if(not CC) then return end
 local parent, ns = ...
 local oUF = ns.oUF
 
-local UnitInPhase = UnitInPhase
-
 local Update = function(self, event)
 	local inPhase = UnitInPhase(self.unit)
 	local picon = self.PhaseIcon
