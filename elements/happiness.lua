@@ -2,7 +2,7 @@ local parent, ns = ...
 local oUF = ns.oUF
 local CC = select(4, GetBuildInfo()) == 4e4
 
-local Update = function(self, event, unit)
+local Update = function(self, event, unit, powerType)
 	if(self.unit ~= unit) then return end
 
 	local happ = self.Happiness
