@@ -6,7 +6,7 @@ if(select(2, UnitClass('player')) ~= 'WARLOCK') then return end
 local parent, ns = ...
 local oUF = ns.oUF
 
-local SHARD_BAR_POWER_INDEX = SHARD_BAR_POWER_INDEX
+local SPELL_POWER_SOUL_SHARDS = SPELL_POWER_SOUL_SHARDS
 local SHARD_BAR_NUM_SHARDS = SHARD_BAR_NUM_SHARDS
 
 local Update = function(self, event, unit, powerType)
@@ -15,7 +15,7 @@ local Update = function(self, event, unit, powerType)
 	local ss = self.SoulShards
 	if(ss.PreUpdate) then ss:PreUpdate(unit) end
 
-	local num = UnitPower(unit, SHARD_BAR_POWER_INDEX)
+	local num = UnitPower(unit, SPELL_POWER_SOUL_SHARDS)
 	for i = 1, SHARD_BAR_NUM_SHARDS do
 		if(i <= num) then
 			ss[i]:SetAlpha(1)
