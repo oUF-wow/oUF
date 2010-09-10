@@ -6,7 +6,7 @@ if(select(2, UnitClass('player')) ~= 'PALADIN') then return end
 local parent, ns = ...
 local oUF = ns.oUF
 
-local HOLY_POWER_INDEX = HOLY_POWER_INDEX
+local SPELL_POWER_HOLY_POWER = SPELL_POWER_HOLY_POWER
 local MAX_HOLY_POWER = MAX_HOLY_POWER
 
 local Update = function(self, event, unit, powerType)
@@ -15,7 +15,7 @@ local Update = function(self, event, unit, powerType)
 	local hp = self.HolyPower
 	if(hp.PreUpdate) then hp:PreUpdate(unit) end
 
-	local num = UnitPower(unit, HOLY_POWER_INDEX)
+	local num = UnitPower(unit, SPELL_POWER_HOLY_POWER)
 	for i = 1, MAX_HOLY_POWER do
 		if(i <= num) then
 			hp[i]:SetAlpha(1)
