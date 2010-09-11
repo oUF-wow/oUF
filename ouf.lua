@@ -607,8 +607,13 @@ local generateName = function(unit, ...)
 end
 
 do
+	local styleProxy = function(self, frame, ...)
+		return walkObject(_G[frame])
+	end
+
+	-- There has to be an easier way to do this.
 	local initialConfigFunction = [[
-		control:CallMethod('styleFunction')
+		control:GetParent():CallMethod('styleFunction', self:GetName())
 	]]
 
 	function oUF:SpawnHeader(overrideName, template, visibility, ...)
@@ -626,7 +631,7 @@ do
 
 		header.style = style
 		if(CC) then
-			header.styleFunction = walkObject
+			header.styleFunction = styleProxy
 
 			-- We set it here so layouts can't directly override it.
 			header:SetAttribute('initialConfigFunction', initialConfigFunction)
