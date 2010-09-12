@@ -396,11 +396,16 @@ local initObject = function(unit, style, styleFunc, ...)
 
 		-- Attempt to guess what the header is set to spawn.
 		local parent = object:GetParent()
+		local suffix = object:GetAttribute'unitsuffix'
 		if(not unit) then
 			if(parent:GetAttribute'showRaid') then
 				unit = 'raid'
 			elseif(parent:GetAttribute'showParty') then
 				unit = 'party'
+			end
+
+			if(unit and suffix) then
+				unit = unit .. suffix
 			end
 		end
 
@@ -425,7 +430,6 @@ local initObject = function(unit, style, styleFunc, ...)
 		local height = object:GetAttribute'initial-height'
 		local width = object:GetAttribute'initial-width'
 		local scale = object:GetAttribute'initial-scale'
-		local suffix = object:GetAttribute'unitsuffix'
 		local combat = InCombatLockdown()
 
 		if(height) then
