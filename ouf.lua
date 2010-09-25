@@ -478,8 +478,14 @@ local initObject = function(unit, style, styleFunc, ...)
 end
 
 local walkObject = function(object, unit)
-	local style = object:GetParent().style or style
+	local parent = object:GetParent()
+	local style = parent.style or style
 	local styleFunc = styles[style]
+
+	-- Check if we should leave the main frame blank.
+	if(parent.style and parent:GetAttribute'oUF-onlyProcessChildren') then
+		return initObject(unit, style, styleFunc, object:GetChildren())
+	end
 
 	return initObject(unit, style, styleFunc, object, object:GetChildren())
 end
