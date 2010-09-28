@@ -247,7 +247,7 @@ local tagStrings = {
 		end
 	end]],
 
-	["defict:name"] = [[function(u)
+	["deficit:name"] = [[function(u)
 		local missinghp = _TAGS['missinghp'](u)
 		if(missinghp) then
 			return '-' .. missinghp
