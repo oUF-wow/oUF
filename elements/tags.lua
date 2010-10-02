@@ -343,7 +343,6 @@ local tagEvents = {
 	["status"]              = "UNIT_HEALTH PLAYER_UPDATE_RESTING UNIT_CONNECTION"
 }
 
-
 local unitlessEvents = {
 	PLAYER_LEVEL_UP = true,
 	PLAYER_UPDATE_RESTING = true,
