@@ -1,6 +1,3 @@
-local CC = select(4, GetBuildInfo()) == 4e4
-if(not CC) then return end
-
 if(select(2, UnitClass('player')) ~= 'WARLOCK') then return end
 
 local parent, ns = ...

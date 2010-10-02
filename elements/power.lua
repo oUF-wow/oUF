@@ -1,6 +1,5 @@
 local parent, ns = ...
 local oUF = ns.oUF
-local CC = select(4, GetBuildInfo()) == 4e4
 
 oUF.colors.power = {}
 for power, color in next, PowerBarColor do
@@ -103,29 +102,12 @@ local Enable = function(self, unit)
 
 		if(power.frequentUpdates and (unit == 'player' or unit == 'pet')) then
 			power:SetScript("OnUpdate", OnPowerUpdate)
-		elseif(CC) then
+		else
 			self:RegisterEvent('UNIT_POWER', Path)
-		else
-			self:RegisterEvent("UNIT_MANA", Path)
-			self:RegisterEvent("UNIT_RAGE", Path)
-			self:RegisterEvent("UNIT_FOCUS", Path)
-			self:RegisterEvent("UNIT_ENERGY", Path)
-			self:RegisterEvent("UNIT_RUNIC_POWER", Path)
 		end
 
-		if(CC) then
-			self:RegisterEvent('UNIT_CONNECTION', Path)
-			self:RegisterEvent('UNIT_MAXPOWER', Path)
-		else
-			self:RegisterEvent("UNIT_MAXMANA", Path)
-			self:RegisterEvent("UNIT_MAXRAGE", Path)
-			self:RegisterEvent("UNIT_MAXFOCUS", Path)
-			self:RegisterEvent("UNIT_MAXENERGY", Path)
-			self:RegisterEvent("UNIT_DISPLAYPOWER", Path)
-			self:RegisterEvent("UNIT_MAXRUNIC_POWER", Path)
-
-			self:RegisterEvent('UNIT_HAPPINESS', Path)
-		end
+		self:RegisterEvent('UNIT_CONNECTION', Path)
+		self:RegisterEvent('UNIT_MAXPOWER', Path)
 
 		-- For tapping.
 		self:RegisterEvent('UNIT_FACTION', Path)
@@ -143,30 +125,12 @@ local Disable = function(self)
 	if(power) then
 		if(power:GetScript'OnUpdate') then
 			power:SetScript("OnUpdate", nil)
-		elseif(CC) then
+		else
 			self:UnregisterEvent('UNIT_POWER', Path)
-		else
-			self:UnregisterEvent("UNIT_MANA", Path)
-			self:UnregisterEvent("UNIT_RAGE", Path)
-			self:UnregisterEvent("UNIT_FOCUS", Path)
-			self:UnregisterEvent("UNIT_ENERGY", Path)
-			self:UnregisterEvent("UNIT_RUNIC_POWER", Path)
 		end
 
-		if(CC) then
-			self:UnregisterEvent('UNIT_CONNECTION', Path)
-			self:UnregisterEvent('UNIT_MAXPOWER', Path)
-		else
-			self:UnregisterEvent("UNIT_MAXMANA", Path)
-			self:UnregisterEvent("UNIT_MAXRAGE", Path)
-			self:UnregisterEvent("UNIT_MAXFOCUS", Path)
-			self:UnregisterEvent("UNIT_MAXENERGY", Path)
-			self:UnregisterEvent("UNIT_DISPLAYPOWER", Path)
-			self:UnregisterEvent("UNIT_MAXRUNIC_POWER", Path)
-
-			self:UnregisterEvent('UNIT_HAPPINESS', Path)
-		end
-
+		self:UnregisterEvent('UNIT_CONNECTION', Path)
+		self:UnregisterEvent('UNIT_MAXPOWER', Path)
 		self:UnregisterEvent('UNIT_FACTION', Path)
 	end
 end

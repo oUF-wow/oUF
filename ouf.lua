@@ -1,7 +1,6 @@
 local parent, ns = ...
 local global = GetAddOnMetadata(parent, 'X-oUF')
 local _VERSION = GetAddOnMetadata(parent, 'version')
-local CC = select(4, GetBuildInfo()) == 4e4
 
 local function argcheck(value, num, ...)
 	assert(type(num) == 'number', "Bad argument #2 to 'argcheck' (number expected, got "..type(num)..")")
@@ -397,7 +396,7 @@ local initObject = function(unit, style, styleFunc, header, ...)
 		object = setmetatable(object, frame_metatable)
 
 		-- Run it before the style function so they can override it.
-		if((CC and not header) or not CC) then
+		if(not header) then
 			object:SetAttribute("*type1", "target")
 		end
 		object.style = style
@@ -417,7 +416,7 @@ local initObject = function(unit, style, styleFunc, header, ...)
 
 		styleFunc(object, object:GetAttribute'oUF-guessUnit' or unit)
 
-		if((CC and not header) or not CC) then
+		if(not header) then
 			local height = object:GetAttribute'initial-height'
 			local width = object:GetAttribute'initial-width'
 			local scale = object:GetAttribute'initial-scale'
@@ -700,14 +699,10 @@ do
 		end
 
 		header.style = style
-		if(CC) then
-			header.styleFunction = styleProxy
+		header.styleFunction = styleProxy
 
-			-- We set it here so layouts can't directly override it.
-			header:SetAttribute('initialConfigFunction', initialConfigFunction)
-		else
-			header.initialConfigFunction = walkObject
-		end
+		-- We set it here so layouts can't directly override it.
+		header:SetAttribute('initialConfigFunction', initialConfigFunction)
 
 		if(header:GetAttribute'showParty') then
 			self:DisableBlizzard'party'

@@ -1,6 +1,5 @@
 local parent, ns = ...
 local oUF = ns.oUF
-local CC = select(4, GetBuildInfo()) == 4e4
 
 oUF.colors.health = {49/255, 207/255, 37/255}
 
@@ -50,8 +49,7 @@ local Update = function(self, event, unit, powerType)
 		health:SetStatusBarColor(r, g, b)
 
 		local bg = health.bg
-		if(bg) then
-			local mu = bg.multiplier or 1
+		if(bg) then local mu = bg.multiplier or 1
 			bg:SetVertexColor(r * mu, g * mu, b * mu)
 		end
 	end
@@ -103,13 +101,8 @@ local Enable = function(self, unit)
 		end
 
 		self:RegisterEvent("UNIT_MAXHEALTH", Path)
-
-		if(CC) then
-			self:RegisterEvent('UNIT_CONNECTION', Path)
-			self:RegisterEvent('UNIT_POWER', Path)
-		else
-			self:RegisterEvent('UNIT_HAPPINESS', Path)
-		end
+		self:RegisterEvent('UNIT_CONNECTION', Path)
+		self:RegisterEvent('UNIT_POWER', Path)
 
 		-- For tapping.
 		self:RegisterEvent('UNIT_FACTION', Path)
@@ -131,13 +124,8 @@ local Disable = function(self)
 
 		self:UnregisterEvent('UNIT_HEALTH', Path)
 		self:UnregisterEvent('UNIT_MAXHEALTH', Path)
-
-		if(CC) then
-			self:UnregisterEvent('UNIT_CONNECTION', Path)
-			self:UnregisterEvent('UNIT_POWER', Path)
-		else
-			self:UnregisterEvent('UNIT_HAPPINESS', Path)
-		end
+		self:UnregisterEvent('UNIT_CONNECTION', Path)
+		self:UnregisterEvent('UNIT_POWER', Path)
 
 		self:UnregisterEvent('UNIT_FACTION', Path)
 	end

@@ -1,34 +1,16 @@
 local parent, ns = ...
 local oUF = ns.oUF
-local CC = select(4, GetBuildInfo()) == 4e4
 
 local Update = function(self, event)
 	local lfdrole = self.LFDRole
 
-	if(CC) then
-		local role = UnitGroupRolesAssigned(self.unit)
+	local role = UnitGroupRolesAssigned(self.unit)
 
-		if(role == 'TANK' or role == 'HEALER' or role == 'DAMAGER') then
-			lfdrole:SetTexCoord(GetTexCoordsForRoleSmallCircle(role))
-			lfdrole:Show()
-		else
-			lfdrole:Hide()
-		end
+	if(role == 'TANK' or role == 'HEALER' or role == 'DAMAGER') then
+		lfdrole:SetTexCoord(GetTexCoordsForRoleSmallCircle(role))
+		lfdrole:Show()
 	else
-		local isTank, isHealer, isDamage = UnitGroupRolesAssigned(self.unit)
-
-		if(isTank) then
-			lfdrole:SetTexCoord(0, 19/64, 22/64, 41/64)
-			lfdrole:Show()
-		elseif(isHealer) then
-			lfdrole:SetTexCoord(20/64, 39/64, 1/64, 20/64)
-			lfdrole:Show()
-		elseif(isDamage) then
-			lfdrole:SetTexCoord(20/64, 39/64, 22/64, 41/64)
-			lfdrole:Show()
-		else
-			lfdrole:Hide()
-		end
+		lfdrole:Hide()
 	end
 end
 

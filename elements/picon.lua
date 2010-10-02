@@ -1,6 +1,3 @@
-local CC = select(4, GetBuildInfo()) == 4e4
-if(not CC) then return end
-
 local parent, ns = ...
 local oUF = ns.oUF
 
