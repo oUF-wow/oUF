@@ -138,9 +138,11 @@ local OnAttributeChanged = function(self, name, value)
 				iterateChildren(self:GetChildren())
 			end
 
-			self.unit = SecureButton_GetModifiedUnit(self)
-			self.id = value:match"^.-(%d+)"
-			self:UpdateAllElements"PLAYER_ENTERING_WORLD"
+			if(not self:GetAttribute'oUF-onlyProcessChildren') then
+				self.unit = SecureButton_GetModifiedUnit(self)
+				self.id = value:match"^.-(%d+)"
+				self:UpdateAllElements"PLAYER_ENTERING_WORLD"
+			end
 		end
 	end
 end
@@ -386,7 +388,7 @@ end
 frame_metatable.__index.ColorGradient = ColorGradient
 oUF.ColorGradient = ColorGradient
 
-local initObject = function(unit, style, styleFunc, ...)
+local initObject = function(unit, style, styleFunc, header, ...)
 	local num = select('#', ...)
 	for i=1, num do
 		local object = select(i, ...)
@@ -394,27 +396,15 @@ local initObject = function(unit, style, styleFunc, ...)
 		object.__elements = {}
 		object = setmetatable(object, frame_metatable)
 
-		-- Attempt to guess what the header is set to spawn.
-		local parent = object:GetParent()
-		local suffix = object:GetAttribute'unitsuffix'
-		if(not unit) then
-			if(parent:GetAttribute'showRaid') then
-				unit = 'raid'
-			elseif(parent:GetAttribute'showParty') then
-				unit = 'party'
-			end
-
-			if(unit and suffix) then
-				unit = unit .. suffix
-			end
-		end
-
 		-- Run it before the style function so they can override it.
-		object:SetAttribute("*type1", "target")
+		if((CC and not header) or not CC) then
+			object:SetAttribute("*type1", "target")
+		end
 		object.style = style
 
+		local parent = object:GetParent()
 		if(num > 1) then
-			if(i == 1) then
+			if(i == 1 and not parent:GetAttribute'oUF-onlyProcessChildren') then
 				object.hasChildren = true
 			else
 				object.isChild = true
@@ -425,33 +415,36 @@ local initObject = function(unit, style, styleFunc, ...)
 		-- have one.
 		object:RegisterEvent("PLAYER_ENTERING_WORLD", object.UpdateAllElements)
 
-		styleFunc(object, unit)
+		styleFunc(object, object:GetAttribute'oUF-guessUnit' or unit)
 
-		local height = object:GetAttribute'initial-height'
-		local width = object:GetAttribute'initial-width'
-		local scale = object:GetAttribute'initial-scale'
-		local combat = InCombatLockdown()
+		if((CC and not header) or not CC) then
+			local height = object:GetAttribute'initial-height'
+			local width = object:GetAttribute'initial-width'
+			local scale = object:GetAttribute'initial-scale'
+			local combat = InCombatLockdown()
 
-		if(height) then
-			object:SetAttribute('initial-height', height)
-			if(not combat) then object:SetHeight(height) end
-		end
+			if(height) then
+				object:SetAttribute('initial-height', height)
+				if(not combat) then object:SetHeight(height) end
+			end
 
-		if(width) then
-			object:SetAttribute("initial-width", width)
-			if(not combat) then object:SetWidth(width) end
-		end
+			if(width) then
+				object:SetAttribute("initial-width", width)
+				if(not combat) then object:SetWidth(width) end
+			end
 
-		if(scale) then
-			object:SetAttribute("initial-scale", scale)
-			if(not combat) then object:SetScale(scale) end
+			if(scale) then
+				object:SetAttribute("initial-scale", scale)
+				if(not combat) then object:SetScale(scale) end
+			end
 		end
 
 		local showPlayer
-		if(i == 1) then
-			showPlayer = parent:GetAttribute'showPlayer' or parent:GetAttribute'showSolo'
+		if(header and i == 1) then
+			showPlayer = header:GetAttribute'showPlayer' or header:GetAttribute'showSolo'
 		end
 
+		local suffix = object:GetAttribute'unitsuffix'
 		if(suffix and suffix:match'target' and (i ~= 1 and not showPlayer)) then
 			enableTargetUpdate(object)
 		else
@@ -480,14 +473,17 @@ end
 local walkObject = function(object, unit)
 	local parent = object:GetParent()
 	local style = parent.style or style
+	local header = parent.style and parent
 	local styleFunc = styles[style]
 
 	-- Check if we should leave the main frame blank.
-	if(parent.style and parent:GetAttribute'oUF-onlyProcessChildren') then
-		return initObject(unit, style, styleFunc, object:GetChildren())
+	if(object:GetAttribute'oUF-onlyProcessChildren') then
+		object.hasChildren = true
+		object:SetScript('OnAttributeChanged', OnAttributeChanged)
+		return initObject(unit, style, styleFunc, header, object:GetChildren())
 	end
 
-	return initObject(unit, style, styleFunc, object, object:GetChildren())
+	return initObject(unit, style, styleFunc, header, object, object:GetChildren())
 end
 
 function oUF:RegisterInitCallback(func)
@@ -623,7 +619,71 @@ do
 
 	-- There has to be an easier way to do this.
 	local initialConfigFunction = [[
-		control:GetParent():CallMethod('styleFunction', self:GetName())
+
+		local header = self:GetParent()
+		local frames = table.new()
+		table.insert(frames, self)
+		self:GetChildList(frames)
+		for i=1, #frames do
+			local frame = frames[i]
+
+			local anchor = frame:GetAttribute'initial-anchor'
+			if(anchor) then
+				local point, relPoint, xOffset, yOffset = strsplit(',', anchor)
+				relPoint = relPoint or point
+				xOffset = tonumber(xOffset) or 0
+				yOffset = tonumber(yOffset) or 0
+				frame:SetPoint(point, frame:GetParent(), relPoint, xOffset, yOffset)
+			end
+
+			local width = tonumber(frame:GetAttribute'initial-width' or nil)
+			if(width) then
+				frame:SetWidth(width)
+			end
+
+			local height = tonumber(frame:GetAttribute'initial-height' or nil)
+			if(height) then
+				frame:SetHeight(height)
+			end
+
+			local scale = tonumber(frame:GetAttribute'initial-scale' or nil)
+			if(scale) then
+				frame:SetScale(scale)
+			end
+
+			local unitWatch = frame:GetAttribute'initial-unitWatch'
+			if(unitWatch) then
+				if(unitWatch == 'state') then
+					RegisterUnitWatch(frame, true)
+				else
+					RegisterUnitWatch(frame)
+				end
+			end
+
+			-- Attempt to guess what the header is set to spawn.
+			local suffix = frame:GetAttribute'unitsuffix'
+
+			local unit
+			if(header:GetAttribute'showRaid') then
+				unit = 'raid'
+			elseif(header:GetAttribute'showParty') then
+				unit = 'party'
+			end
+
+			if(unit and suffix) then
+				unit = unit .. suffix
+			end
+
+			local body = self:GetParent():GetAttribute'oUF-initialConfigFunction'
+			if(body) then
+				frame:Run(body, unit)
+			end
+
+			self:SetAttribute('*type2', 'menu')
+			self:SetAttribute('oUF-guessUnit', unit)
+		end
+
+		self:GetParent():CallMethod('styleFunction', self:GetName())
 	]]
 
 	function oUF:SpawnHeader(overrideName, template, visibility, ...)
