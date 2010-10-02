@@ -26,7 +26,6 @@ local Update = function(self, event, unit)
 	end
 
 	power.disconnected = disconnected
-	power.unit = unit
 
 	local r, g, b, t
 	if(power.colorTapping and UnitIsTapped(unit) and not UnitIsTappedByPlayer(unit)) then
@@ -85,12 +84,13 @@ do
 	local UnitPower = UnitPower
 	OnPowerUpdate = function(self)
 		if(self.disconnected) then return end
-		local power = UnitPower(self.unit)
+		local unit = self.__owner.unit
+		local power = UnitPower(unit)
 
 		if(power ~= self.min) then
 			self.min = power
 
-			return Path(self.__owner, 'OnPowerUpdate', self.unit)
+			return Path(self.__owner, 'OnPowerUpdate', unit)
 		end
 	end
 end

@@ -21,7 +21,6 @@ local Update = function(self, event, unit, powerType)
 	end
 
 	health.disconnected = disconnected
-	health.unit = unit
 
 	local r, g, b, t
 	if(health.colorTapping and UnitIsTapped(unit) and not UnitIsTappedByPlayer(unit)) then
@@ -75,12 +74,13 @@ do
 	local UnitHealth = UnitHealth
 	OnHealthUpdate = function(self)
 		if(self.disconnected) then return end
-		local health = UnitHealth(self.unit)
+		local unit = self.__owner.unit
+		local health = UnitHealth(unit)
 
 		if(health ~= self.min) then
 			self.min = health
 
-			return Path(self.__owner, "OnHealthUpdate", self.unit)
+			return Path(self.__owner, "OnHealthUpdate", unit)
 		end
 	end
 end
