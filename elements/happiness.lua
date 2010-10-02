@@ -55,7 +55,7 @@ end
 local Disable = function(self)
 	local happiness = self.Happiness
 	if(happiness) then
-		self:UnregisterEvent('UNIT_POWER', PetHappiness)
+		self:UnregisterEvent('UNIT_POWER', Path)
 	end
 end
 
