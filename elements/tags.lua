@@ -334,13 +334,13 @@ local tagEvents = {
 	['classification']      = 'UNIT_CLASSIFICATION_CHANGED',
 	['shortclassification'] = 'UNIT_CLASSIFICATION_CHANGED',
 	["group"]               = "RAID_ROSTER_UPDATE",
-	["curpp"]               = 'UNIT_POWER'
-	["maxpp"]               = 'UNIT_MAXPOWER'
-	["missingpp"]           = 'UNIT_MAXPOWER UNIT_POWER'
-	["perpp"]               = 'UNIT_MAXPOWER UNIT_POWER'
-	['happiness']           = 'UNIT_POWER'
-	["offline"]             = "UNIT_HEALTH UNIT_CONNECTION"
-	["status"]              = "UNIT_HEALTH PLAYER_UPDATE_RESTING UNIT_CONNECTION"
+	["curpp"]               = 'UNIT_POWER',
+	["maxpp"]               = 'UNIT_MAXPOWER',
+	["missingpp"]           = 'UNIT_MAXPOWER UNIT_POWER',
+	["perpp"]               = 'UNIT_MAXPOWER UNIT_POWER',
+	['happiness']           = 'UNIT_POWER',
+	["offline"]             = "UNIT_HEALTH UNIT_CONNECTION",
+	["status"]              = "UNIT_HEALTH PLAYER_UPDATE_RESTING UNIT_CONNECTION",
 }
 
 local unitlessEvents = {
