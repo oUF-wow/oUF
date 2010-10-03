@@ -25,6 +25,7 @@
 	<Script file='elements\holypower.lua' />
 	<Script file='elements\soulshards.lua' />
 	<Script file='elements\picon.lua' />
+	<Script file='elements\readycheck.lua' />
 
 	<!--
 		This template requires the layout to set the anchoring positions from the
