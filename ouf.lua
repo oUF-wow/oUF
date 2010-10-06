@@ -695,7 +695,6 @@ do
 
 		template = (template or 'SecureGroupHeaderTemplate') .. ',ClickCastUnitTemplate'
 
-
 		local name = overrideName or generateName(nil, ...)
 		local header = CreateFrame('Frame', name, UIParent, template)
 
