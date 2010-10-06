@@ -618,7 +618,6 @@ do
 
 	-- There has to be an easier way to do this.
 	local initialConfigFunction = [[
-
 		local header = self:GetParent()
 		local frames = table.new()
 		table.insert(frames, self)
@@ -673,7 +672,7 @@ do
 				unit = unit .. suffix
 			end
 
-			local body = self:GetParent():GetAttribute'oUF-initialConfigFunction'
+			local body = header:GetAttribute'oUF-initialConfigFunction'
 			if(body) then
 				frame:Run(body, unit)
 			end
@@ -682,14 +681,23 @@ do
 			self:SetAttribute('oUF-guessUnit', unit)
 		end
 
-		self:GetParent():CallMethod('styleFunction', self:GetName())
+		header:CallMethod('styleFunction', self:GetName())
+
+		local clique = header:GetFrameRef("clickcast_header")
+		if(clique) then
+			clique:SetAttribute("clickcast_button", self)
+			clique:RunAttribute("clickcast_register")
+		end
 	]]
 
 	function oUF:SpawnHeader(overrideName, template, visibility, ...)
 		if(not style) then return error("Unable to create frame. No styles have been registered.") end
 
+		template = (template or 'SecureGroupHeaderTemplate') .. ',ClickCastUnitTemplate'
+
+
 		local name = overrideName or generateName(nil, ...)
-		local header = CreateFrame('Frame', name, UIParent, template or 'SecureGroupHeaderTemplate')
+		local header = CreateFrame('Frame', name, UIParent, template)
 
 		header:SetAttribute("template", "SecureUnitButtonTemplate")
 		for i=1, select("#", ...), 2 do
@@ -703,6 +711,10 @@ do
 
 		-- We set it here so layouts can't directly override it.
 		header:SetAttribute('initialConfigFunction', initialConfigFunction)
+
+		if(Clique) then
+			header:SetFrameRef("clickcast_header", Clique.header)
+		end
 
 		if(header:GetAttribute'showParty') then
 			self:DisableBlizzard'party'
