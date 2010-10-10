@@ -414,7 +414,7 @@ local initObject = function(unit, style, styleFunc, header, ...)
 		-- have one.
 		object:RegisterEvent("PLAYER_ENTERING_WORLD", object.UpdateAllElements)
 
-		styleFunc(object, object:GetAttribute'oUF-guessUnit' or unit)
+		styleFunc(object, object:GetAttribute'oUF-guessUnit' or unit, not header)
 
 		if(not header) then
 			local height = object:GetAttribute'initial-height'
