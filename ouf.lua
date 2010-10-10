@@ -416,28 +416,6 @@ local initObject = function(unit, style, styleFunc, header, ...)
 
 		styleFunc(object, object:GetAttribute'oUF-guessUnit' or unit, not header)
 
-		if(not header) then
-			local height = object:GetAttribute'initial-height'
-			local width = object:GetAttribute'initial-width'
-			local scale = object:GetAttribute'initial-scale'
-			local combat = InCombatLockdown()
-
-			if(height) then
-				object:SetAttribute('initial-height', height)
-				if(not combat) then object:SetHeight(height) end
-			end
-
-			if(width) then
-				object:SetAttribute("initial-width", width)
-				if(not combat) then object:SetWidth(width) end
-			end
-
-			if(scale) then
-				object:SetAttribute("initial-scale", scale)
-				if(not combat) then object:SetScale(scale) end
-			end
-		end
-
 		local showPlayer
 		if(header and i == 1) then
 			showPlayer = header:GetAttribute'showPlayer' or header:GetAttribute'showSolo'
@@ -624,39 +602,7 @@ do
 		self:GetChildList(frames)
 		for i=1, #frames do
 			local frame = frames[i]
-
-			local anchor = frame:GetAttribute'initial-anchor'
-			if(anchor) then
-				local point, relPoint, xOffset, yOffset = strsplit(',', anchor)
-				relPoint = relPoint or point
-				xOffset = tonumber(xOffset) or 0
-				yOffset = tonumber(yOffset) or 0
-				frame:SetPoint(point, frame:GetParent(), relPoint, xOffset, yOffset)
-			end
-
-			local width = tonumber(frame:GetAttribute'initial-width' or nil)
-			if(width) then
-				frame:SetWidth(width)
-			end
-
-			local height = tonumber(frame:GetAttribute'initial-height' or nil)
-			if(height) then
-				frame:SetHeight(height)
-			end
-
-			local scale = tonumber(frame:GetAttribute'initial-scale' or nil)
-			if(scale) then
-				frame:SetScale(scale)
-			end
-
-			local unitWatch = frame:GetAttribute'initial-unitWatch'
-			if(unitWatch) then
-				if(unitWatch == 'state') then
-					RegisterUnitWatch(frame, true)
-				else
-					RegisterUnitWatch(frame)
-				end
-			end
+			RegisterUnitWatch(frame)
 
 			-- Attempt to guess what the header is set to spawn.
 			local suffix = frame:GetAttribute'unitsuffix'
