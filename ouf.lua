@@ -398,6 +398,7 @@ local initObject = function(unit, style, styleFunc, header, ...)
 		-- Run it before the style function so they can override it.
 		if(not header) then
 			object:SetAttribute("*type1", "target")
+			object:SetAttribute('*type2', 'menu')
 		end
 		object.style = style
 
