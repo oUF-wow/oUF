@@ -620,13 +620,13 @@ do
 					unit = unit .. suffix
 				end
 
-				local body = header:GetAttribute'oUF-initialConfigFunction'
-				if(body) then
-					frame:Run(body, unit)
-				end
-
 				self:SetAttribute('*type2', 'menu')
 				self:SetAttribute('oUF-guessUnit', unit)
+			end
+
+			local body = header:GetAttribute'oUF-initialConfigFunction'
+			if(body) then
+				frame:Run(body, unit)
 			end
 		end
 
