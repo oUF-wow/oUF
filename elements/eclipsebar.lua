@@ -67,7 +67,7 @@ local UNIT_AURA = function(self, event, unit)
 
 		if(spellID == ECLIPSE_BAR_SOLAR_BUFF_ID) then
 			hasSolarEclipse = true
-		elseif(spellID == ECLIPSE_BAR_SOLAR_BUFF_ID) then
+		elseif(spellID == ECLIPSE_BAR_LUNAR_BUFF_ID) then
 			hasLunarEclipse = true
 		end
 
