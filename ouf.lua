@@ -399,6 +399,8 @@ local initObject = function(unit, style, styleFunc, header, ...)
 		if(not header) then
 			object:SetAttribute("*type1", "target")
 			object:SetAttribute('*type2', 'menu')
+
+			object:SetAttribute('toggleForVehicle', true)
 		end
 		object.style = style
 
@@ -621,7 +623,9 @@ do
 					unit = unit .. suffix
 				end
 
+				self:SetAttribute('*type1', 'target')
 				self:SetAttribute('*type2', 'menu')
+				self:SetAttribute('toggleForVehicle', true)
 				self:SetAttribute('oUF-guessUnit', unit)
 			end
 
