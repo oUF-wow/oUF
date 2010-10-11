@@ -13,8 +13,8 @@ local UNIT_POWER = function(self, event, unit, powerType)
 
 	local eb = self.EclipseBar
 
-	local power = UnitPower(self.unit, SPELL_POWER_ECLIPSE)
-	local maxPower = UnitPowerMax(self.unit, SPELL_POWER_ECLIPSE)
+	local power = UnitPower(unit, SPELL_POWER_ECLIPSE)
+	local maxPower = UnitPowerMax(unit, SPELL_POWER_ECLIPSE)
 
 	if(eb.LunarBar) then
 		eb.LunarBar:SetMinMaxValues(-maxPower, maxPower)
@@ -27,7 +27,7 @@ local UNIT_POWER = function(self, event, unit, powerType)
 	end
 
 	if(eb.PostUpdatePower) then
-		return eb:PostUpdatePower(self.unit)
+		return eb:PostUpdatePower(unit)
 	end
 end
 
@@ -64,7 +64,7 @@ local UNIT_AURA = function(self, event, unit)
 	local hasSolarEclipse, hasLunarEclipse = false, false
 	local spellID
 	while true do
-		_, _, _, _, _, _, _, _, _, _, spellID = UnitAura(self.unit, i, 'HELPFUL')
+		_, _, _, _, _, _, _, _, _, _, spellID = UnitAura(unit, i, 'HELPFUL')
 
 		if(not spellID) then
 			break
@@ -82,7 +82,7 @@ local UNIT_AURA = function(self, event, unit)
 	eb.hasLunarEclipse = hasLunarEclipse
 
 	if(eb.PostUnitAura) then
-		return eb:PostUnitAura(self.unit)
+		return eb:PostUnitAura(unit)
 	end
 end
 
