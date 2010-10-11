@@ -606,20 +606,19 @@ do
 		self:GetChildList(frames)
 		for i=1, #frames do
 			local frame = frames[i]
+			local unit
 			-- There's no need to do anything on frames with onlyProcessChildren
 			if(not frame:GetAttribute'oUF-onlyProcessChildren') then
 				RegisterUnitWatch(frame)
 
 				-- Attempt to guess what the header is set to spawn.
-				local suffix = frame:GetAttribute'unitsuffix'
-
-				local unit
 				if(header:GetAttribute'showRaid') then
 					unit = 'raid'
 				elseif(header:GetAttribute'showParty') then
 					unit = 'party'
 				end
 
+				local suffix = frame:GetAttribute'unitsuffix'
 				if(unit and suffix) then
 					unit = unit .. suffix
 				end
