@@ -121,6 +121,7 @@ local iterateChildren = function(...)
 			local subUnit = conv[unit] or unit
 			units[subUnit] = obj
 			obj.unit = subUnit
+			obj.id = subUnit:match'^.-(%d+)'
 			obj:UpdateAllElements"PLAYER_ENTERING_WORLD"
 		end
 	end
