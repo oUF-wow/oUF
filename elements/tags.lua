@@ -527,10 +527,11 @@ local Tag = function(self, fs, tagstr)
 		func = function(self)
 			local unit = self.parent.unit
 			local __unit = self.parent.realUnit
+			local overrideUnit = self.overrideUnit
 
 			_ENV._COLORS = self.parent.colors
 			for i, func in next, args do
-				tmp[i] = func(unit, __unit) or ''
+				tmp[i] = func(unit, overrideUnit and __unit) or ''
 			end
 
 			self:SetFormattedText(format, unpack(tmp))
