@@ -62,20 +62,17 @@ local UNIT_AURA = function(self, event, unit)
 
 	local i = 1
 	local hasSolarEclipse, hasLunarEclipse
-	local _, spellID
-	while true do
-		_, _, _, _, _, _, _, _, _, _, spellID = UnitAura(unit, i, 'HELPFUL')
+	repeat
+		local _, _, _, _, _, _, _, _, _, _, spellID = UnitAura(unit, i, 'HELPFUL')
 
-		if(not spellID) then
-			break
-		elseif(spellID == ECLIPSE_BAR_SOLAR_BUFF_ID) then
+		if(spellID == ECLIPSE_BAR_SOLAR_BUFF_ID) then
 			hasSolarEclipse = true
 		elseif(spellID == ECLIPSE_BAR_SOLAR_BUFF_ID) then
 			hasLunarEclipse = true
 		end
 
 		i = i + 1
-	end
+	until not spellID
 
 	local eb = self.EclipseBar
 	eb.hasSolarEclipse = hasSolarEclipse
