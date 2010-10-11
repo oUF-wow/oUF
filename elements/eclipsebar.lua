@@ -62,7 +62,7 @@ local UNIT_AURA = function(self, event, unit)
 
 	local i = 1
 	local hasSolarEclipse, hasLunarEclipse
-	local spellID
+	local _, spellID
 	while true do
 		_, _, _, _, _, _, _, _, _, _, spellID = UnitAura(unit, i, 'HELPFUL')
 
