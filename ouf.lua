@@ -624,10 +624,10 @@ do
 					unit = unit .. suffix
 				end
 
-				self:SetAttribute('*type1', 'target')
-				self:SetAttribute('*type2', 'menu')
-				self:SetAttribute('toggleForVehicle', true)
-				self:SetAttribute('oUF-guessUnit', unit)
+				frame:SetAttribute('*type1', 'target')
+				frame:SetAttribute('*type2', 'menu')
+				frame:SetAttribute('toggleForVehicle', true)
+				frame:SetAttribute('oUF-guessUnit', unit)
 			end
 
 			local body = header:GetAttribute'oUF-initialConfigFunction'
