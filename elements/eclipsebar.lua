@@ -9,7 +9,7 @@ local SPELL_POWER_ECLIPSE = SPELL_POWER_ECLIPSE
 local MOONKIN_FORM = MOONKIN_FORM
 
 local UNIT_POWER = function(self, event, unit, powerType)
-	if(event == 'UNIT_POWER' and (self.unit ~= unit or powerType ~= 'ECLIPSE')) then return end
+	if(self.unit ~= unit or powerType ~= 'ECLIPSE') then return end
 
 	local eb = self.EclipseBar
 
@@ -103,7 +103,7 @@ local Update = function(self, ...)
 end
 
 local ForceUpdate = function(element)
-	return Update(element.__owner, 'ForceUpdate', element.__owner.unit)
+	return Update(element.__owner, 'ForceUpdate', element.__owner.unit, 'ECLIPSE')
 end
 
 local function Enable(self)
