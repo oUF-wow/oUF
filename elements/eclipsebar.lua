@@ -35,7 +35,7 @@ local UPDATE_VISIBILITY = function(self, event)
 	local eb = self.EclipseBar
 
 	-- check form/mastery
-	local showBar = false
+	local showBar
 	local form = GetShapeshiftFormID()
 	if(not form) then
 		local ptt = GetPrimaryTalentTree()
@@ -61,7 +61,7 @@ local UNIT_AURA = function(self, event, unit)
 	if(self.unit ~= unit) then return end
 
 	local i = 1
-	local hasSolarEclipse, hasLunarEclipse = false, false
+	local hasSolarEclipse, hasLunarEclipse
 	local spellID
 	while true do
 		_, _, _, _, _, _, _, _, _, _, spellID = UnitAura(unit, i, 'HELPFUL')
