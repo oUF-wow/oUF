@@ -6,7 +6,7 @@ local Update = function(self, event)
 	local readyCheck = self.ReadyCheck
 
 	if(event == 'READY_CHECK_FINISHED') then
-		if(GetPartyMember(self:GetID())) then
+		if(GetPartyMember(self.id)) then
 			ReadyCheck_Finish(readyCheck)
 		end
 	else
