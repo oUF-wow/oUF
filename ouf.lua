@@ -436,7 +436,7 @@ local initObject = function(unit, style, styleFunc, header, ...)
 		object:SetScript("OnShow", object.UpdateAllElements)
 
 		for element in next, elements do
-			object:EnableElement(element, unit)
+			object:EnableElement(element, object:GetAttribute'oUF-guessUnit' or unit)
 		end
 
 		for _, func in next, callback do
