@@ -676,10 +676,10 @@ do
 		if(visibility) then
 			local type, list = string.split(' ', visibility, 2)
 			if(list and type == 'custom') then
-				RegisterStateDriver(header, 'visibility', list)
+				RegisterAttributeDriver(header, 'state-visibility', list)
 			else
 				local condition = getCondition(string.split(',', visibility))
-				RegisterStateDriver(header, 'visibility', condition)
+				RegisterAttributeDriver(header, 'state-visibility', condition)
 			end
 		end
 
