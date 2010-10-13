@@ -48,8 +48,6 @@
 				<Attributes>
 					<Attribute name="unitsuffix" type="string" value="target"/>
 					<Attribute name="useparent-unit" type="boolean" value="true"/>
-					<Attribute name="type1" type="string" value="target"/>
-					<Attribute name="initial-unitWatch" type="boolean" value="true"/>
 				</Attributes>
 			</Button>
 		</Frames>
