@@ -324,10 +324,10 @@ do
 		elseif(self:IsEventRegistered(event)) then
 			return
 		else
-			if(func) then
+			if(type(func) == 'function') then
 				self[event] = func
 			elseif(not self[event]) then
-				return error("Handler for event [%s] on unit [%s] does not exist.", event, self.unit or 'unknown')
+				return error("Style [%s] attempted to register event [%s] on unit [%s] with a handler that doesn't exist.", self.style, event, self.unit or 'unknown')
 			end
 
 			RegisterEvent(self, event)
