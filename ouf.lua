@@ -647,12 +647,12 @@ do
 	function oUF:SpawnHeader(overrideName, template, visibility, ...)
 		if(not style) then return error("Unable to create frame. No styles have been registered.") end
 
-		template = (template or 'SecureGroupHeaderTemplate') .. ',oUF_ClickCastUnitTemplate'
+		template = (template or 'SecureGroupHeaderTemplate')
 
 		local name = overrideName or generateName(nil, ...)
 		local header = CreateFrame('Frame', name, UIParent, template)
 
-		header:SetAttribute("template", "SecureUnitButtonTemplate")
+		header:SetAttribute("template", "SecureUnitButtonTemplate,oUF_ClickCastUnitTemplate")
 		for i=1, select("#", ...), 2 do
 			local att, val = select(i, ...)
 			if(not att) then break end
