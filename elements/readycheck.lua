@@ -99,7 +99,7 @@ end
 
 local Enable = function(self, unit)
 	local readyCheck = self.ReadyCheck
-	if(readyCheck and (unit and unit:sub(1, 5) == 'party')) then
+	if(readyCheck and (unit and (unit:sub(1, 5) == 'party' or unit:sub(1,4) == 'raid'))) then
 		readyCheck.__owner = self
 		readyCheck.ForceUpdate = ForceUpdate
 
