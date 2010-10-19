@@ -618,9 +618,16 @@ do
 					unit = 'party'
 				end
 
+				local headerType = header:GetAttribute'oUF-headerType'
 				local suffix = frame:GetAttribute'unitsuffix'
 				if(unit and suffix) then
-					unit = unit .. suffix
+					if(headerType == 'pet' and suffix == 'target') then
+						unit = unit .. headerType .. suffix
+					else
+						unit = unit .. suffix
+					end
+				elseif(unit and headerType == 'pet') then
+					unit = unit .. headerType
 				end
 
 				frame:SetAttribute('*type1', 'target')
