@@ -675,7 +675,7 @@ do
 		header:SetAttribute('oUF-headerType', isPetHeader and 'pet' or 'group')
 
 		if(Clique) then
-			header:SetFrameRef("clickcast_header", Clique.header)
+			SecureHandlerSetFrameRef(header, 'clickcast_header', Clique.header)
 		end
 
 		if(header:GetAttribute'showParty') then
