@@ -41,8 +41,8 @@ local Finish = function(self)
 		self.state = 'afk'
 	end
 
-	self.finishedTimer = 10
-	self.fadeTimer = 1.5
+	self.finishedTimer = self.finishedTime or 10
+	self.fadeTimer = self.fadeTime or 1.5
 
 	_TIMERS[self] = true
 	ReadyCheckFrame:Show()
@@ -57,7 +57,7 @@ local OnUpdate = function(self, elapsed)
 			end
 		elseif(icon.fadeTimer) then
 			icon.fadeTimer = icon.fadeTimer - elapsed
-			icon:SetAlpha(icon.fadeTimer / 1.5)
+			icon:SetAlpha(icon.fadeTimer / (icon.fadeTime or 1.5))
 
 			if(icon.fadeTimer <= 0) then
 				icon:Hide()
