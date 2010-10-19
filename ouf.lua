@@ -649,6 +649,7 @@ do
 
 		template = (template or 'SecureGroupHeaderTemplate')
 
+		local isPetHeader = template:match'PetHeader'
 		local name = overrideName or generateName(nil, ...)
 		local header = CreateFrame('Frame', name, UIParent, template)
 
@@ -664,6 +665,7 @@ do
 
 		-- We set it here so layouts can't directly override it.
 		header:SetAttribute('initialConfigFunction', initialConfigFunction)
+		header:SetAttribute('oUF-headerType', isPetHeader and 'pet' or 'group')
 
 		if(Clique) then
 			header:SetFrameRef("clickcast_header", Clique.header)
