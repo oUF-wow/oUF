@@ -399,6 +399,8 @@ local initObject = function(unit, style, styleFunc, header, ...)
 			object:SetAttribute('*type2', 'menu')
 
 			object:SetAttribute('toggleForVehicle', true)
+		else
+			object:RegisterEvent('PARTY_MEMBERS_CHANGED', object.UpdateAllElements)
 		end
 		object.style = style
 
