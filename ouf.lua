@@ -554,7 +554,9 @@ local generateName = function(unit, ...)
 	local append
 	if(raid) then
 		if(groupFilter) then
-			if(groupFilter:match'TANK') then
+                        if(type(groupFilter == number) and groupFilter > 0) then
+                                append = groupFilter
+                        elseif(groupFilter:match'TANK') then
 				append = 'MainTank'
 			elseif(groupFilter:match'ASSIST') then
 				append =  'MainAssist'
