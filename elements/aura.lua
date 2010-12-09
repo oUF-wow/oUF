@@ -127,6 +127,7 @@ local updateIcon = function(unit, icons, index, offset, filter, isDebuff, max)
 
 			icon.filter = filter
 			icon.debuff = isDebuff
+			icon.caster = caster
 
 			icon:SetID(index)
 			icon:Show()
