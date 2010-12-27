@@ -63,6 +63,8 @@ local Enable = function(self, unit)
 		PlayerPowerBarAlt:UnregisterEvent'UNIT_POWER_BAR_SHOW'
 		PlayerPowerBarAlt:UnregisterEvent'UNIT_POWER_BAR_HIDE'
 		PlayerPowerBarAlt:UnregisterEvent'PLAYER_ENTERING_WORLD'
+
+		return true
 	end
 end
 
