@@ -290,8 +290,16 @@ for k, v in pairs{
 		local unit = self.unit
 		if(not UnitExists(unit)) then return end
 
+		if(self.PreUpdate) then
+			self:PreUpdate(event)
+		end
+
 		for _, func in next, self.__elements do
 			func(self, event, unit)
+		end
+
+		if(self.PostUpdate) then
+			self:PostUpdate(event)
 		end
 	end,
 } do
