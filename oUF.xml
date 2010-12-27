@@ -28,6 +28,7 @@
 	<Script file='elements\readycheck.lua' />
 	<Script file='elements\qicon.lua' />
 	<Script file='elements\eclipsebar.lua' />
+	<Script file='elements\altpowerbar.lua' />
 
 	<!-- Clique support -->
 	<Button name="oUF_ClickCastUnitTemplate" virtual="true" inherits="SecureActionButtonTemplate,SecureHandlerEnterLeaveTemplate">
