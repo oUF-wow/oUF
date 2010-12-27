@@ -60,6 +60,8 @@ local Enable = function(self, unit)
 		self:RegisterEvent('UNIT_POWER_BAR_SHOW', Toggler)
 		self:RegisterEvent('UNIT_POWER_BAR_HIDE', Toggler)
 
+		altpowerbar:Hide()
+
 		PlayerPowerBarAlt:UnregisterEvent'UNIT_POWER_BAR_SHOW'
 		PlayerPowerBarAlt:UnregisterEvent'UNIT_POWER_BAR_HIDE'
 		PlayerPowerBarAlt:UnregisterEvent'PLAYER_ENTERING_WORLD'
