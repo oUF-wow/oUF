@@ -180,7 +180,7 @@ local tagStrings = {
 
 	["cpoints"] = [[function(u)
 		local cp
-		if(UnitExists'vehicle') then
+		if(UnitHasVehicleUI'player') then
 			cp = GetComboPoints('vehicle', 'target')
 		else
 			cp = GetComboPoints('player', 'target')

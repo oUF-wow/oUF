@@ -8,7 +8,7 @@ local Update = function(self, event, unit)
 	if(unit == 'pet') then return end
 
 	local cp
-	if(UnitExists'vehicle') then
+	if(UnitHasVehicleUI'player') then
 		cp = GetComboPoints('vehicle', 'target')
 	else
 		cp = GetComboPoints('player', 'target')
