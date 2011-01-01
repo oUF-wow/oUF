@@ -9,52 +9,7 @@ local argcheck = Private.argcheck
 
 local print = Private.print
 local error = Private.error
-
--- Colors
-local colors = {
-	happiness = {
-		[1] = {1, 0, 0}, -- need.... | unhappy
-		[2] = {1, 1, 0}, -- new..... | content
-		[3] = {0, 1, 0}, -- colors.. | happy
-	},
-	smooth = {
-		1, 0, 0,
-		1, 1, 0,
-		0, 1, 0
-	},
-	disconnected = {.6, .6, .6},
-	tapped = {.6,.6,.6},
-	class = {},
-	reaction = {},
-}
-
--- We do this because people edit the vars directly, and changing the default
--- globals makes SPICE FLOW!
-if(IsAddOnLoaded'!ClassColors' and CUSTOM_CLASS_COLORS) then
-	local updateColors = function()
-		for eclass, color in next, CUSTOM_CLASS_COLORS do
-			colors.class[eclass] = {color.r, color.g, color.b}
-		end
-
-		local oUF = ns.oUF or _G[parent]
-		if(oUF) then
-			for _, obj in next, oUF.objects do
-				obj:UpdateAllElements("CUSTOM_CLASS_COLORS")
-			end
-		end
-	end
-
-	updateColors()
-	CUSTOM_CLASS_COLORS:RegisterCallback(updateColors)
-else
-	for eclass, color in next, RAID_CLASS_COLORS do
-		colors.class[eclass] = {color.r, color.g, color.b}
-	end
-end
-
-for eclass, color in next, FACTION_BAR_COLORS do
-	colors.reaction[eclass] = {color.r, color.g, color.b}
-end
+local OnEvent = Private.OnEvent
 
 local styles, style = {}
 local callback, units, objects = {}, {}, {}
@@ -69,7 +24,7 @@ local conv = {
 local elements = {}
 
 -- updating of "invalid" units.
-Private.enableTargetUpdate = function(object)
+local enableTargetUpdate = function(object)
 	local total = 0
 	object.onUpdateFrequency = object.onUpdateFrequency or .5
 
@@ -84,6 +39,7 @@ Private.enableTargetUpdate = function(object)
 		total = total + elapsed
 	end)
 end
+Private.enableTargetUpdate = enableTargetUpdate
 
 local iterateChildren = function(...)
 	for l = 1, select("#", ...) do
@@ -120,13 +76,12 @@ local OnAttributeChanged = function(self, name, value)
 	end
 end
 
-Private.frame_metatable = {
+local frame_metatable = {
 	__index = CreateFrame"Button"
 }
+Private.frame_metatable = frame_metatable
 
 for k, v in pairs{
-	colors = colors;
-
 	EnableElement = function(self, name, unit)
 		argcheck(name, 2, 'string')
 		argcheck(unit, 3, 'string', 'nil')
@@ -183,35 +138,8 @@ for k, v in pairs{
 		end
 	end,
 } do
-	Private.frame_metatable.__index[k] = v
+	frame_metatable.__index[k] = v
 end
-
-local ColorGradient
-do
-	local inf = math.huge
-	-- http://www.wowwiki.com/ColorGradient
-	function ColorGradient(perc, ...)
-		-- Translate divison by zeros into 0, so we don't blow select.
-		-- We check perc against itself because we rely on the fact that NaN can't equal NaN.
-		if(perc ~= perc or perc == inf) then perc = 0 end
-
-		if perc >= 1 then
-			local r, g, b = select(select('#', ...) - 2, ...)
-			return r, g, b
-		elseif perc <= 0 then
-			local r, g, b = ...
-			return r, g, b
-		end
-
-		local num = select('#', ...) / 3
-		local segment, relperc = math.modf(perc*(num-1))
-		local r1, g1, b1, r2, g2, b2 = select((segment*3)+1, ...)
-
-		return r1 + (r2-r1)*relperc, g1 + (g2-g1)*relperc, b1 + (b2-b1)*relperc
-	end
-end
-Private.frame_metatable.__index.ColorGradient = ColorGradient
-oUF.ColorGradient = ColorGradient
 
 local initObject = function(unit, style, styleFunc, header, ...)
 	local num = select('#', ...)
@@ -219,7 +147,7 @@ local initObject = function(unit, style, styleFunc, header, ...)
 		local object = select(i, ...)
 
 		object.__elements = {}
-		object = setmetatable(object, Private.frame_metatable)
+		object = setmetatable(object, frame_metatable)
 
 		-- Run it before the style function so they can override it.
 		if(not header) then
@@ -254,7 +182,7 @@ local initObject = function(unit, style, styleFunc, header, ...)
 
 		local suffix = object:GetAttribute'unitsuffix'
 		if(suffix and suffix:match'target' and (i ~= 1 and not showPlayer)) then
-			Private.enableTargetUpdate(object)
+			enableTargetUpdate(object)
 		else
 			object:SetScript("OnEvent", Private.OnEvent)
 		end
@@ -302,11 +230,11 @@ function oUF:RegisterMetaFunction(name, func)
 	argcheck(name, 2, 'string')
 	argcheck(func, 3, 'function', 'table')
 
-	if(Private.frame_metatable.__index[name]) then
+	if(frame_metatable.__index[name]) then
 		return
 	end
 
-	Private.frame_metatable.__index[name] = func
+	frame_metatable.__index[name] = func
 end
 
 function oUF:RegisterStyle(name, func)
@@ -564,7 +492,6 @@ end
 oUF.version = _VERSION
 oUF.units = units
 oUF.objects = objects
-oUF.colors = colors
 
 if(global) then
 	if(parent ~= 'oUF' and global == 'oUF') then
