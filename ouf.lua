@@ -56,15 +56,6 @@ for eclass, color in next, FACTION_BAR_COLORS do
 	colors.reaction[eclass] = {color.r, color.g, color.b}
 end
 
--- add-on object
-local event_metatable = {
-	__call = function(funcs, self, ...)
-		for _, func in next, funcs do
-			func(self, ...)
-		end
-	end,
-}
-
 local styles, style = {}
 local callback, units, objects = {}, {}, {}
 
@@ -92,12 +83,6 @@ Private.enableTargetUpdate = function(object)
 
 		total = total + elapsed
 	end)
-end
-
--- Events
-Private.OnEvent = function(self, event, ...)
-	if(not self:IsShown()) then return end
-	return self[event](self, event, ...)
 end
 
 local iterateChildren = function(...)
@@ -135,7 +120,7 @@ local OnAttributeChanged = function(self, name, value)
 	end
 end
 
-local frame_metatable = {
+Private.frame_metatable = {
 	__index = CreateFrame"Button"
 }
 
@@ -198,67 +183,7 @@ for k, v in pairs{
 		end
 	end,
 } do
-	frame_metatable.__index[k] = v
-end
-
-do
-	local RegisterEvent = frame_metatable.__index.RegisterEvent
-	function frame_metatable.__index:RegisterEvent(event, func)
-		argcheck(event, 2, 'string')
-
-		if(type(func) == 'string' and type(self[func]) == 'function') then
-			func = self[func]
-		end
-
-		local curev = self[event]
-		if(curev and func) then
-			if(type(curev) == 'function') then
-				self[event] = setmetatable({curev, func}, event_metatable)
-			else
-				for _, infunc in next, curev do
-					if(infunc == func) then return end
-				end
-
-				table.insert(curev, func)
-			end
-		elseif(self:IsEventRegistered(event)) then
-			return
-		else
-			if(type(func) == 'function') then
-				self[event] = func
-			elseif(not self[event]) then
-				return error("Style [%s] attempted to register event [%s] on unit [%s] with a handler that doesn't exist.", self.style, event, self.unit or 'unknown')
-			end
-
-			RegisterEvent(self, event)
-		end
-	end
-end
-
-do
-	local UnregisterEvent = frame_metatable.__index.UnregisterEvent
-	function frame_metatable.__index:UnregisterEvent(event, func)
-		argcheck(event, 2, 'string')
-
-		local curev = self[event]
-		if(type(curev) == 'table' and func) then
-			for k, infunc in next, curev do
-				if(infunc == func) then
-					curev[k] = nil
-
-					if(#curev == 0) then
-						table.remove(curev, k)
-						UnregisterEvent(self, event)
-					end
-
-					break
-				end
-			end
-		else
-			self[event] = nil
-			UnregisterEvent(self, event)
-		end
-	end
+	Private.frame_metatable.__index[k] = v
 end
 
 local ColorGradient
@@ -285,7 +210,7 @@ do
 		return r1 + (r2-r1)*relperc, g1 + (g2-g1)*relperc, b1 + (b2-b1)*relperc
 	end
 end
-frame_metatable.__index.ColorGradient = ColorGradient
+Private.frame_metatable.__index.ColorGradient = ColorGradient
 oUF.ColorGradient = ColorGradient
 
 local initObject = function(unit, style, styleFunc, header, ...)
@@ -294,7 +219,7 @@ local initObject = function(unit, style, styleFunc, header, ...)
 		local object = select(i, ...)
 
 		object.__elements = {}
-		object = setmetatable(object, frame_metatable)
+		object = setmetatable(object, Private.frame_metatable)
 
 		-- Run it before the style function so they can override it.
 		if(not header) then
@@ -377,11 +302,11 @@ function oUF:RegisterMetaFunction(name, func)
 	argcheck(name, 2, 'string')
 	argcheck(func, 3, 'function', 'table')
 
-	if(frame_metatable.__index[name]) then
+	if(Private.frame_metatable.__index[name]) then
 		return
 	end
 
-	frame_metatable.__index[name] = func
+	Private.frame_metatable.__index[name] = func
 end
 
 function oUF:RegisterStyle(name, func)
