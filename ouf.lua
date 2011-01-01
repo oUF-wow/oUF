@@ -2,17 +2,10 @@ local parent, ns = ...
 local global = GetAddOnMetadata(parent, 'X-oUF')
 local _VERSION = GetAddOnMetadata(parent, 'version')
 
-local function argcheck(value, num, ...)
-	assert(type(num) == 'number', "Bad argument #2 to 'argcheck' (number expected, got "..type(num)..")")
+local oUF = ns.oUF
+local Private = oUF.Private
 
-	for i=1,select("#", ...) do
-		if type(value) == select(i, ...) then return end
-	end
-
-	local types = strjoin(", ", ...)
-	local name = string.match(debugstack(2,2,0), ": in function [`<](.-)['>]")
-	error(("Bad argument #%d to '%s' (%s expected, got %s"):format(num, name, types, type(value)), 3)
-end
+local argcheck = Private.argcheck
 
 local print = function(...) print("|cff33ff99oUF:|r", ...) end
 local error = function(...) print("|cffff0000Error:|r "..string.format(...)) end
@@ -65,7 +58,6 @@ for eclass, color in next, FACTION_BAR_COLORS do
 end
 
 -- add-on object
-local oUF = ns.oUF
 local event_metatable = {
 	__call = function(funcs, self, ...)
 		for _, func in next, funcs do
@@ -104,7 +96,7 @@ local enableTargetUpdate = function(object)
 end
 
 -- Events
-local OnEvent = function(self, event, ...)
+Private.OnEvent = function(self, event, ...)
 	if(not self:IsShown()) then return end
 	return self[event](self, event, ...)
 end
@@ -436,7 +428,7 @@ local initObject = function(unit, style, styleFunc, header, ...)
 		if(suffix and suffix:match'target' and (i ~= 1 and not showPlayer)) then
 			enableTargetUpdate(object)
 		else
-			object:SetScript("OnEvent", OnEvent)
+			object:SetScript("OnEvent", Private.OnEvent)
 		end
 
 		object:SetScript("OnAttributeChanged", OnAttributeChanged)
@@ -725,36 +717,6 @@ function oUF:Spawn(unit, overrideName)
 	self:DisableBlizzard(unit, object)
 
 	return object
-end
-
-do
-	local _QUEUE = {}
-	local _FACTORY = CreateFrame'Frame'
-	_FACTORY:SetScript('OnEvent', OnEvent)
-	_FACTORY:RegisterEvent'PLAYER_LOGIN'
-	_FACTORY.active = true
-
-	function _FACTORY:PLAYER_LOGIN()
-		if(not self.active) then return end
-
-		for _, func in next, _QUEUE do
-			func(oUF)
-		end
-	end
-
-	function oUF:Factory(func)
-		argcheck(func, 2, 'function')
-
-		table.insert(_QUEUE, func)
-	end
-
-	function oUF:EnableFactory()
-		_FACTORY.active = true
-	end
-
-	function oUF:DisableFactory()
-		_FACTORY.active = nil
-	end
 end
 
 function oUF:AddElement(name, update, enable, disable)
