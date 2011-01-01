@@ -14,7 +14,7 @@ local OnEvent = Private.OnEvent
 local styles, style = {}
 local callback, units, objects = {}, {}, {}
 
-local select  = select
+local select = select
 local UnitExists = UnitExists
 
 local conv = {
@@ -315,7 +315,7 @@ local generateName = function(unit, ...)
 			elseif(groupFilter:match'TANK') then
 				append = 'MainTank'
 			elseif(groupFilter:match'ASSIST') then
-				append =  'MainAssist'
+				append = 'MainAssist'
 			else
 				local _, count = groupFilter:gsub(',', '')
 				if(count == 0) then
