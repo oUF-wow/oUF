@@ -3,6 +3,7 @@
 	<Script file='private.lua' />
 	<Script file='ouf.lua' />
 	<Script file='factory.lua' />
+	<Script file='blizzard.lua' />
 
 	<Script file='elements\power.lua' />
 	<Script file='elements\aura.lua' />

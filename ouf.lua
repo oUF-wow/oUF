@@ -7,9 +7,8 @@ local Private = oUF.Private
 
 local argcheck = Private.argcheck
 
-local print = function(...) print("|cff33ff99oUF:|r", ...) end
-local error = function(...) print("|cffff0000Error:|r "..string.format(...)) end
-local dummy = function() end
+local print = Private.print
+local error = Private.error
 
 -- Colors
 local colors = {
@@ -79,7 +78,7 @@ local conv = {
 local elements = {}
 
 -- updating of "invalid" units.
-local enableTargetUpdate = function(object)
+Private.enableTargetUpdate = function(object)
 	local total = 0
 	object.onUpdateFrequency = object.onUpdateFrequency or .5
 
@@ -132,102 +131,6 @@ local OnAttributeChanged = function(self, name, value)
 				self.id = value:match"^.-(%d+)"
 				self:UpdateAllElements"PLAYER_ENTERING_WORLD"
 			end
-		end
-	end
-end
-
-do
-	local HandleFrame = function(baseName)
-		local frame
-		if(type(baseName) == 'string') then
-			frame = _G[baseName]
-		else
-			frame = baseName
-		end
-
-		if(frame) then
-			frame:UnregisterAllEvents()
-			frame.Show = dummy
-			frame:Hide()
-
-			local health = frame.healthbar
-			if(health) then
-				health:UnregisterAllEvents()
-			end
-
-			local power = frame.manabar
-			if(power) then
-				power:UnregisterAllEvents()
-			end
-
-			local spell = frame.spellbar
-			if(spell) then
-				spell:UnregisterAllEvents()
-			end
-		end
-	end
-
-	function oUF:DisableBlizzard(unit, object)
-		if(not unit) then return end
-
-		local baseName
-		if(unit == 'player') then
-			HandleFrame(PlayerFrame)
-
-			-- For the damn vehicle support:
-			PlayerFrame:RegisterEvent('UNIT_ENTERING_VEHICLE')
-			PlayerFrame:RegisterEvent('UNIT_ENTERED_VEHICLE')
-			PlayerFrame:RegisterEvent('UNIT_EXITING_VEHICLE')
-			PlayerFrame:RegisterEvent('UNIT_EXITED_VEHICLE')
-		elseif(unit == 'pet') then
-			baseName = PetFrame
-		elseif(unit == 'target') then
-			if(object) then
-				object:RegisterEvent('PLAYER_TARGET_CHANGED', object.UpdateAllElements)
-			end
-
-			HandleFrame(TargetFrame)
-			return HandleFrame(ComboFrame)
-		elseif(unit == 'mouseover') then
-			if(object) then
-				return object:RegisterEvent('UPDATE_MOUSEOVER_UNIT', object.UpdateAllElements)
-			end
-		elseif(unit == 'focus') then
-			if(object) then
-				object:RegisterEvent('PLAYER_FOCUS_CHANGED', object.UpdateAllElements)
-			end
-
-			baseName = FocusFrame
-		elseif(unit:match'%w+target') then
-			if(unit == 'targettarget') then
-				baseName = TargetFrameToT
-			end
-
-			enableTargetUpdate(object)
-		elseif(unit:match'(boss)%d?$' == 'boss') then
-			enableTargetUpdate(object)
-
-			local id = unit:match'boss(%d)'
-			if(id) then
-				baseName = 'Boss' .. id .. 'TargetFrame'
-			else
-				for i=1, 3 do
-					HandleFrame(('Boss%dTargetFrame'):format(i))
-				end
-			end
-		elseif(unit:match'(party)%d?$' == 'party') then
-			local id = unit:match'party(%d)'
-			if(id) then
-				baseName = 'PartyMemberFrame' .. id
-			else
-				for i=1, 4 do
-					HandleFrame(('PartyMemberFrame%d'):format(i))
-				end
-			end
-		end
-
-		if(baseName) then
-			return HandleFrame(baseName)
 		end
 	end
 end
@@ -426,7 +329,7 @@ local initObject = function(unit, style, styleFunc, header, ...)
 
 		local suffix = object:GetAttribute'unitsuffix'
 		if(suffix and suffix:match'target' and (i ~= 1 and not showPlayer)) then
-			enableTargetUpdate(object)
+			Private.enableTargetUpdate(object)
 		else
 			object:SetScript("OnEvent", Private.OnEvent)
 		end
@@ -737,8 +640,6 @@ oUF.version = _VERSION
 oUF.units = units
 oUF.objects = objects
 oUF.colors = colors
-
-oUF.error = error
 
 if(global) then
 	if(parent ~= 'oUF' and global == 'oUF') then
