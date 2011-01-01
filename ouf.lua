@@ -65,7 +65,7 @@ for eclass, color in next, FACTION_BAR_COLORS do
 end
 
 -- add-on object
-local oUF = {}
+local oUF = ns.oUF
 local event_metatable = {
 	__call = function(funcs, self, ...)
 		for _, func in next, funcs do
@@ -785,4 +785,3 @@ if(global) then
 		_G[global] = oUF
 	end
 end
-ns.oUF = oUF
