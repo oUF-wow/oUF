@@ -1,3 +1,6 @@
+local parent, ns = ...
+local oUF = ns.oUF
+
 local ALTERNATE_POWER_INDEX = ALTERNATE_POWER_INDEX
 
 local UpdatePower = function(self, event, unit, powerType)
