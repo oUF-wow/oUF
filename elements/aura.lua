@@ -30,7 +30,7 @@ local createAuraIcon = function(icons, index)
 	local cd = CreateFrame("Cooldown", nil, button)
 	cd:SetAllPoints(button)
 
-	local icon = button:CreateTexture(nil, "BACKGROUND")
+	local icon = button:CreateTexture(nil, "BORDER")
 	icon:SetAllPoints(button)
 
 	local count = button:CreateFontString(nil, "OVERLAY")
