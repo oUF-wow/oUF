@@ -26,7 +26,7 @@ local UpdatePower = function(self, event, unit, powerType)
 end
 
 local ForceUpdate = function(element)
-	return Path(element.__owner, 'ForceUpdate', element.__owner.unit, 'ALTERNATE')
+	return UpdatePower(element.__owner, 'ForceUpdate', element.__owner.unit, 'ALTERNATE')
 end
 
 local Toggler = function(self, event, unit)
