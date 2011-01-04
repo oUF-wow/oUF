@@ -34,7 +34,7 @@ local Toggler = function(self, event, unit)
 	local altpowerbar = self.AltPowerBar
 
 	local barType, minPower, _, _, _, hideFromOthers = UnitAlternatePowerInfo(unit)
-	if(barType and not hideFromOthers) then
+	if(barType and (not hideFromOthers or unit == 'player' or self.realUnit == 'player')) then
 		self:RegisterEvent('UNIT_POWER', UpdatePower)
 		self:RegisterEvent('UNIT_MAXPOWER', UpdatePower)
 
@@ -85,4 +85,4 @@ local Disable = function(self, unit)
 	end
 end
 
-oUF:AddElement('AltPowerBar', Update, Enable, Disable)
+oUF:AddElement('AltPowerBar', Toggler, Enable, Disable)
