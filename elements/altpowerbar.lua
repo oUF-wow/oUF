@@ -45,12 +45,12 @@ local Toggler = function(self, event, unit)
 		altpowerbar:SetMinMaxValues(minPower, max)
 		altpowerbar:SetValue(cur)
 
-		self:Show()
+		altpowerbar:Show()
 	else
 		self:UnregisterEvent('UNIT_POWER', UpdatePower)
 		self:UnregisterEvent('UNIT_MAXPOWER', UpdatePower)
 
-		self:Hide()
+		altpowerbar:Hide()
 	end
 end
 
