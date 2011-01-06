@@ -70,7 +70,8 @@ function oUF:DisableBlizzard(unit, object)
 			object:RegisterEvent('PLAYER_FOCUS_CHANGED', object.UpdateAllElements)
 		end
 
-		baseName = FocusFrame
+		HandleFrame(FocusFrame)
+		HandleFrame(TargetofFocusFrame)
 	elseif(unit:match'%w+target') then
 		if(unit == 'targettarget') then
 			baseName = TargetFrameToT
