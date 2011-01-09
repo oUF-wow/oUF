@@ -1,7 +1,7 @@
 local parent, ns = ...
 local Private = ns.oUF.Private
 
-function Private.dumy()
+function Private.dummy()
 end
 
 function Private.argcheck(value, num, ...)
