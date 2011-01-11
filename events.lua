@@ -29,10 +29,11 @@ function frame_metatable.__index:RegisterEvent(event, func)
 	end
 
 	local curev = self[event]
+	local kind = type(curev)
 	if(curev and func) then
-		if(type(curev) == 'function') then
+		if(kind == 'function' and curev ~= func) then
 			self[event] = setmetatable({curev, func}, event_metatable)
-		else
+		elseif(kind == 'table') then
 			for _, infunc in next, curev do
 				if(infunc == func) then return end
 			end
