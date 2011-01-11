@@ -61,10 +61,13 @@ function frame_metatable.__index:UnregisterEvent(event, func)
 	if(type(curev) == 'table' and func) then
 		for k, infunc in next, curev do
 			if(infunc == func) then
-				curev[k] = nil
+				table.remove(curev, k)
 
-				if(#curev == 0) then
-					table.remove(curev, k)
+				local n = #curev
+				if(n == 1) then
+					local _, handler = next(curev)
+					self[event] = handler
+				elseif(n == 0) then
 					UnregisterEvent(self, event)
 				end
 
