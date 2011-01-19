@@ -1,8 +1,8 @@
-## Interface: 40000
+## Interface: 40300
 ## Title: oUF_DruidMana
 ## Version: 1.1
 ## Author: Ennie
 ## Notes: Druid mana bar element for cat and bear forms
 ## Dependencies: oUF
 
-druidmanabar.lua
+oUF_DruidMana.lua
