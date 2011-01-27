@@ -82,7 +82,7 @@ function oUF:DisableBlizzard(unit, object)
 		if(id) then
 			baseName = 'Boss' .. id .. 'TargetFrame'
 		else
-			for i=1, 3 do
+			for i=1, 4 do
 				HandleFrame(('Boss%dTargetFrame'):format(i))
 			end
 		end
