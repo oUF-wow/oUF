@@ -60,7 +60,7 @@ local OnAttributeChanged = function(self, name, value)
 	if(name == "unit" and value) then
 		units[value] = self
 
-		if(self.unit and self.unit == value) then
+		if(self.unit and (self.unit == value or self.realUnit == value)) then
 			return
 		else
 			if(self.hasChildren) then
@@ -121,6 +121,33 @@ for k, v in pairs{
 		self:Hide()
 	end,
 
+	RefreshUnit = function(self, event, unit)
+		-- Calculate units to work with
+		local realUnit, modUnit = SecureButton_GetUnit(self), SecureButton_GetModifiedUnit(self)
+
+		-- _GetUnit() doesn't rewrite playerpet -> pet like _GetModifiedUnit does.
+		if(realUnit == 'playerpet') then
+			realUnit = 'pet'
+		end
+
+		if(modUnit == "pet" and realUnit ~= "pet") then
+			modUnit = "vehicle"
+		end
+
+		-- Do not update if this frame is not concerned
+		if(unit ~= modUnit and unit ~= realUnit and unit ~= self.unit) then return end
+
+		-- Update the frame unit properties
+		self.unit = modUnit
+		if(modUnit ~= realUnit) then
+			self.realUnit = realUnit
+		else
+			self.realUnit = nil
+		end
+
+		return self:UpdateAllElements('RefreshUnit')
+	end,
+
 	UpdateAllElements = function(self, event)
 		local unit = self.unit
 		if(not UnitExists(unit)) then return end
@@ -145,8 +172,10 @@ local initObject = function(unit, style, styleFunc, header, ...)
 	local num = select('#', ...)
 	for i=1, num do
 		local object = select(i, ...)
+		local objectUnit = object:GetAttribute'oUF-guessUnit' or unit
 
 		object.__elements = {}
+		object.style = style
 		object = setmetatable(object, frame_metatable)
 
 		-- Run it before the style function so they can override it.
@@ -158,7 +187,16 @@ local initObject = function(unit, style, styleFunc, header, ...)
 		else
 			object:RegisterEvent('PARTY_MEMBERS_CHANGED', object.UpdateAllElements)
 		end
-		object.style = style
+
+		-- Register it early so it won't be executed after the layouts PEW, if they
+		-- have one.
+		object:RegisterEvent("PLAYER_ENTERING_WORLD", object.UpdateAllElements)
+
+		local suffix = object:GetAttribute'unitsuffix'
+		if(not ((objectUnit and objectUnit:match'target') or suffix == 'target')) then
+			object:RegisterEvent('UNIT_ENTERED_VEHICLE', object.RefreshUnit)
+			object:RegisterEvent('UNIT_EXITED_VEHICLE', object.RefreshUnit)
+		end
 
 		local parent = object:GetParent()
 		if(num > 1) then
@@ -169,18 +207,13 @@ local initObject = function(unit, style, styleFunc, header, ...)
 			end
 		end
 
-		-- Register it early so it won't be executed after the layouts PEW, if they
-		-- have one.
-		object:RegisterEvent("PLAYER_ENTERING_WORLD", object.UpdateAllElements)
-
-		styleFunc(object, object:GetAttribute'oUF-guessUnit' or unit, not header)
+		styleFunc(object, objectUnit, not header)
 
 		local showPlayer
 		if(header and i == 1) then
 			showPlayer = header:GetAttribute'showPlayer' or header:GetAttribute'showSolo'
 		end
 
-		local suffix = object:GetAttribute'unitsuffix'
 		if(suffix and suffix:match'target' and (i ~= 1 and not showPlayer)) then
 			enableTargetUpdate(object)
 		else
@@ -191,7 +224,7 @@ local initObject = function(unit, style, styleFunc, header, ...)
 		object:SetScript("OnShow", object.UpdateAllElements)
 
 		for element in next, elements do
-			object:EnableElement(element, object:GetAttribute'oUF-guessUnit' or unit)
+			object:EnableElement(element, objectUnit)
 		end
 
 		for _, func in next, callback do
