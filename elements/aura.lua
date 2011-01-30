@@ -113,14 +113,11 @@ local updateIcon = function(unit, icons, index, offset, filter, isDebuff, visibl
 				icon.overlay:Hide()
 			end
 
-			-- XXX: Avoid popping errors on layouts without icon.stealable.
-			if(icon.stealable) then
-				local stealable = not isDebuff and isStealable
-				if(stealable and icons.showStealableBuffs and not UnitIsUnit('player', unit)) then
-					icon.stealable:Show()
-				else
-					icon.stealable:Hide()
-				end
+			local stealable = not isDebuff and isStealable
+			if(stealable and icons.showStealableBuffs and not UnitIsUnit('player', unit)) then
+				icon.stealable:Show()
+			else
+				icon.stealable:Hide()
 			end
 
 			icon.icon:SetTexture(texture)
