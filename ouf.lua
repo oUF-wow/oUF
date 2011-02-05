@@ -121,33 +121,6 @@ for k, v in pairs{
 		self:Hide()
 	end,
 
-	RefreshUnit = function(self, event, unit)
-		-- Calculate units to work with
-		local realUnit, modUnit = SecureButton_GetUnit(self), SecureButton_GetModifiedUnit(self)
-
-		-- _GetUnit() doesn't rewrite playerpet -> pet like _GetModifiedUnit does.
-		if(realUnit == 'playerpet') then
-			realUnit = 'pet'
-		end
-
-		if(modUnit == "pet" and realUnit ~= "pet") then
-			modUnit = "vehicle"
-		end
-
-		-- Do not update if this frame is not concerned
-		if(unit ~= modUnit and unit ~= realUnit and unit ~= self.unit) then return end
-
-		-- Update the frame unit properties
-		self.unit = modUnit
-		if(modUnit ~= realUnit) then
-			self.realUnit = realUnit
-		else
-			self.realUnit = nil
-		end
-
-		return self:UpdateAllElements('RefreshUnit')
-	end,
-
 	UpdateAllElements = function(self, event)
 		local unit = self.unit
 		if(not UnitExists(unit)) then return end
@@ -166,6 +139,35 @@ for k, v in pairs{
 	end,
 } do
 	frame_metatable.__index[k] = v
+end
+
+local updateActiveUnit = function(self, event, unit)
+	-- Calculate units to work with
+	local realUnit, modUnit = SecureButton_GetUnit(self), SecureButton_GetModifiedUnit(self)
+
+	-- _GetUnit() doesn't rewrite playerpet -> pet like _GetModifiedUnit does.
+	if(realUnit == 'playerpet') then
+		realUnit = 'pet'
+	end
+
+	if(modUnit == "pet" and realUnit ~= "pet") then
+		modUnit = "vehicle"
+	end
+
+	-- Drop out if the event unit doesn't match any of the frame units.
+	if(not UnitExists(modUnit) or unit ~= realUnit and unit ~= modUnit) then return end
+
+	if(modUnit ~= realUnit) then
+		self.realUnit = realUnit
+	else
+		self.realUnit = nil
+	end
+
+	-- Change the active unit and run a full update.
+	if(self.unit ~= modUnit) then
+		self.unit = modUnit
+		return self:UpdateAllElements('RefreshUnit')
+	end
 end
 
 local initObject = function(unit, style, styleFunc, header, ...)
@@ -194,8 +196,9 @@ local initObject = function(unit, style, styleFunc, header, ...)
 
 		local suffix = object:GetAttribute'unitsuffix'
 		if(not ((objectUnit and objectUnit:match'target') or suffix == 'target')) then
-			object:RegisterEvent('UNIT_ENTERED_VEHICLE', object.RefreshUnit)
-			object:RegisterEvent('UNIT_EXITED_VEHICLE', object.RefreshUnit)
+			object:RegisterEvent('UNIT_ENTERED_VEHICLE', updateActiveUnit)
+			object:RegisterEvent('UNIT_EXITED_VEHICLE', updateActiveUnit)
+			object:RegisterEvent('UNIT_PET', updateActiveUnit)
 		end
 
 		local parent = object:GetParent()
