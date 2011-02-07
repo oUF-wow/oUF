@@ -155,7 +155,7 @@ local updateActiveUnit = function(self, event, unit)
 	end
 
 	-- Drop out if the event unit doesn't match any of the frame units.
-	if(not UnitExists(modUnit) or unit ~= realUnit and unit ~= modUnit) then return end
+	if(not UnitExists(modUnit) or unit and unit ~= realUnit and unit ~= modUnit) then return end
 
 	if(modUnit ~= realUnit) then
 		self.realUnit = realUnit
@@ -166,7 +166,15 @@ local updateActiveUnit = function(self, event, unit)
 	-- Change the active unit and run a full update.
 	if(self.unit ~= modUnit) then
 		self.unit = modUnit
-		return self:UpdateAllElements('RefreshUnit')
+		self:UpdateAllElements('RefreshUnit')
+
+		return true
+	end
+end
+
+local OnShow = function(self)
+	if(not updateActiveUnit(self, 'OnShow')) then
+		return self:UpdateAllElements'OnShow'
 	end
 end
 
@@ -224,7 +232,7 @@ local initObject = function(unit, style, styleFunc, header, ...)
 		end
 
 		object:SetScript("OnAttributeChanged", OnAttributeChanged)
-		object:SetScript("OnShow", object.UpdateAllElements)
+		object:SetScript("OnShow", OnShow)
 
 		for element in next, elements do
 			object:EnableElement(element, objectUnit)
