@@ -73,7 +73,7 @@ local Enable = function(self, unit)
 		health.__owner = self
 		health.ForceUpdate = ForceUpdate
 
-		if(health.frequentUpdates and (unit and not unit:match'%w+target$')) then
+		if(health.frequentUpdates and not self:GetScript'OnUpdate') then
 			self:RegisterEvent('UNIT_HEALTH_FREQUENT', Path)
 		end
 
