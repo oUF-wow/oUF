@@ -89,7 +89,7 @@ local Enable = function(self, unit)
 		health.__owner = self
 		health.ForceUpdate = ForceUpdate
 
-		if(health.frequentUpdates and (unit and not unit:match'%w+target$')) then
+		if(health.frequentUpdates and not self:GetScript'OnUpdate') then
 			health:SetScript('OnUpdate', OnHealthUpdate)
 
 			-- The party frames need this to handle disconnect states correctly.
