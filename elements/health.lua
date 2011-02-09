@@ -75,9 +75,10 @@ local Enable = function(self, unit)
 
 		if(health.frequentUpdates and not self:GetScript'OnUpdate') then
 			self:RegisterEvent('UNIT_HEALTH_FREQUENT', Path)
+		else
+			self:RegisterEvent('UNIT_HEALTH', Path)
 		end
 
-		self:RegisterEvent("UNIT_HEALTH", Path)
 		self:RegisterEvent("UNIT_MAXHEALTH", Path)
 		self:RegisterEvent('UNIT_CONNECTION', Path)
 		self:RegisterEvent('UNIT_POWER', Path)
