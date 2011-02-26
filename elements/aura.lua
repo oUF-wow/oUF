@@ -5,7 +5,7 @@ local VISIBLE = 1
 local HIDDEN = 0
 
 local UpdateTooltip = function(self)
-	GameTooltip:SetUnitAura(self.parent:GetParent().unit, self:GetID(), self.filter)
+	GameTooltip:SetUnitAura(self:GetParent().__owner.unit, self:GetID(), self.filter)
 end
 
 local OnEnter = function(self)
@@ -56,7 +56,6 @@ local createAuraIcon = function(icons, index)
 
 	table.insert(icons, button)
 
-	button.parent = icons
 	button.icon = icon
 	button.count = count
 	button.cd = cd
