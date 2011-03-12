@@ -38,13 +38,7 @@ local Toggler = function(self, event, unit)
 		self:RegisterEvent('UNIT_POWER', UpdatePower)
 		self:RegisterEvent('UNIT_MAXPOWER', UpdatePower)
 
-		local max = UnitPowerMax(unit, ALTERNATE_POWER_INDEX)
-		local cur = UnitPower(unit, ALTERNATE_POWER_INDEX)
-
-		altpowerbar.barType = barType
-		altpowerbar:SetMinMaxValues(minPower, max)
-		altpowerbar:SetValue(cur)
-
+		ForceUpdate(altpowerbar)
 		altpowerbar:Show()
 	else
 		self:UnregisterEvent('UNIT_POWER', UpdatePower)
