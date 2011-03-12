@@ -32,7 +32,6 @@ local Update = function(self, event, unit)
 	elseif(power.colorDisconnected and not UnitIsConnected(unit)) then
 		t = self.colors.disconnected
 	elseif(power.colorHappiness and UnitIsUnit(unit, "pet") and GetPetHappiness()) then
-		print(self:GetName(), event)
 		t = self.colors.happiness[GetPetHappiness()]
 	elseif(power.colorPower) then
 		local ptype, ptoken, altR, altG, altB = UnitPowerType(unit)
