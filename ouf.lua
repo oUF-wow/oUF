@@ -520,7 +520,8 @@ function oUF:Spawn(unit, overrideName)
 	object:SetAttribute("unit", unit)
 	RegisterUnitWatch(object)
 
-	self:DisableBlizzard(unit, object)
+	self:DisableBlizzard(unit)
+	self:HandleUnit(object)
 
 	return object
 end
