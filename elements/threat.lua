@@ -42,7 +42,7 @@ local Enable = function(self)
 
 		if(threat:IsObjectType"Texture" and not threat:GetTexture()) then
 			threat:SetTexture[[Interface\Minimap\ObjectIcons]]
-			threat:SetTexCoord(6/8, 7/8, 1/2, 1)
+			threat:SetTexCoord(1/4, 3/8, 0, 1/4)
 		end
 
 		return true
