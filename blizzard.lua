@@ -39,8 +39,6 @@ end
 function oUF:DisableBlizzard(unit)
 	if(not unit) then return end
 
-	do return end
-
 	if(unit == 'player') then
 		HandleFrame(PlayerFrame)
 
