@@ -32,6 +32,7 @@ local Update = function(self, event, unit)
 	elseif(power.colorDisconnected and not UnitIsConnected(unit)) then
 		t = self.colors.disconnected
 	elseif(power.colorHappiness and UnitIsUnit(unit, "pet") and GetPetHappiness()) then
+		print(self:GetName(), event)
 		t = self.colors.happiness[GetPetHappiness()]
 	elseif(power.colorPower) then
 		local ptype, ptoken, altR, altG, altB = UnitPowerType(unit)
@@ -74,6 +75,12 @@ local Path = function(self, ...)
 	return (self.Power.Override or Update) (self, ...)
 end
 
+local UNIT_HAPPINESS = function(self, event, unit, powerType, ...)
+	if(powerType == 'HAPPINESS') then
+		return Path(self, event, unit, powerType, ...)
+	end
+end
+
 local ForceUpdate = function(element)
 	return Path(element.__owner, 'ForceUpdate', element.__owner.unit)
 end
@@ -102,6 +109,12 @@ local Enable = function(self, unit)
 
 		if(power.frequentUpdates and (unit == 'player' or unit == 'pet')) then
 			power:SetScript("OnUpdate", OnPowerUpdate)
+
+			-- Without this happiness won't really update corretly when using
+			-- frequentUpdates
+			if(unit == 'pet') then
+				power:RegisterEvent('UNIT_POWER', UNIT_HAPPINESS)
+			end
 		else
 			self:RegisterEvent('UNIT_POWER', Path)
 		end
@@ -125,6 +138,7 @@ local Disable = function(self)
 	if(power) then
 		if(power:GetScript'OnUpdate') then
 			power:SetScript("OnUpdate", nil)
+			self:UnregisterEvent('UNIT_POWER', UNIT_HAPPINESS)
 		else
 			self:UnregisterEvent('UNIT_POWER', Path)
 		end
