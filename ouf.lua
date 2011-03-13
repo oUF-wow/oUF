@@ -68,7 +68,7 @@ local OnAttributeChanged = function(self, name, value)
 			if(not self:GetAttribute'oUF-onlyProcessChildren') then
 				local unit = SecureButton_GetModifiedUnit(self)
 				unit = conv[unit] or unit
-				units[unit] = obj
+				units[unit] = self
 				self.unit = unit
 				self.id = value:match"^.-(%d+)"
 				self:UpdateAllElements"PLAYER_ENTERING_WORLD"
