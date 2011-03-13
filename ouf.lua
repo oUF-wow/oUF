@@ -183,6 +183,7 @@ local initObject = function(unit, style, styleFunc, header, ...)
 	for i=1, num do
 		local object = select(i, ...)
 		local objectUnit = object:GetAttribute'oUF-guessUnit' or unit
+		local suffix = object:GetAttribute'unitsuffix'
 
 		object.__elements = {}
 		object.style = style
@@ -194,7 +195,12 @@ local initObject = function(unit, style, styleFunc, header, ...)
 		-- We have to force update the frames when PEW fires.
 		object:RegisterEvent("PLAYER_ENTERING_WORLD", object.UpdateAllElements)
 
-		local suffix = object:GetAttribute'unitsuffix'
+		-- Handle the case where someone has modified the unitsuffix attribute in
+		-- oUF-initialConfigFunction.
+		if(suffix and not objectUnit:match(suffix)) then
+			objectUnit = objectUnit .. suffix
+		end
+
 		if(not (suffix == 'target' or objectUnit and objectUnit:match'target')) then
 			object:RegisterEvent('UNIT_ENTERED_VEHICLE', updateActiveUnit)
 			object:RegisterEvent('UNIT_EXITED_VEHICLE', updateActiveUnit)
