@@ -58,8 +58,6 @@ end
 
 local OnAttributeChanged = function(self, name, value)
 	if(name == "unit" and value) then
-		units[value] = self
-
 		if(self.unit and (self.unit == value or self.realUnit == value)) then
 			return
 		else
@@ -68,7 +66,10 @@ local OnAttributeChanged = function(self, name, value)
 			end
 
 			if(not self:GetAttribute'oUF-onlyProcessChildren') then
-				self.unit = SecureButton_GetModifiedUnit(self)
+				local unit = SecureButton_GetModifiedUnit(self)
+				unit = conv[unit] or unit
+				units[unit] = obj
+				self.unit = unit
 				self.id = value:match"^.-(%d+)"
 				self:UpdateAllElements"PLAYER_ENTERING_WORLD"
 			end
