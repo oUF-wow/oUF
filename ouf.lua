@@ -434,7 +434,7 @@ do
 				-- Attempt to guess what the header is set to spawn.
 				local groupFilter = header:GetAttribute'groupFilter'
 
-				if(groupFilter and groupFilter:match('MAIN[AT]')) then
+				if(type(groupFilter) == 'string' and groupFilter:match('MAIN[AT]')) then
 					local role = groupFilter:match('MAIN([AT])')
 					if(role == 'T') then
 						unit = 'maintank'
