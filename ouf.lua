@@ -70,7 +70,7 @@ local OnAttributeChanged = function(self, name, value)
 				unit = conv[unit] or unit
 				units[unit] = self
 				self.unit = unit
-				self.id = value:match"^.-(%d+)"
+				self.id = unit:match"^.-(%d+)"
 				self:UpdateAllElements"PLAYER_ENTERING_WORLD"
 			end
 		end
