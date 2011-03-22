@@ -1,3 +1,6 @@
+local WoW41 = select(4, GetBuildInfo()) == 40100
+if(WoW41) then return end
+
 local parent, ns = ...
 local oUF = ns.oUF
 

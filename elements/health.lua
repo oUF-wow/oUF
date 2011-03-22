@@ -1,3 +1,5 @@
+local WoW41 = select(4, GetBuildInfo()) == 40100
+
 local parent, ns = ...
 local oUF = ns.oUF
 
@@ -26,7 +28,7 @@ local Update = function(self, event, unit, powerType)
 		t = self.colors.tapped
 	elseif(health.colorDisconnected and not UnitIsConnected(unit)) then
 		t = self.colors.disconnected
-	elseif(health.colorHappiness and UnitIsUnit(unit, "pet") and GetPetHappiness()) then
+	elseif(not WoW41 and health.colorHappiness and UnitIsUnit(unit, "pet") and GetPetHappiness()) then
 		t = self.colors.happiness[GetPetHappiness()]
 	elseif(health.colorClass and UnitIsPlayer(unit)) or
 		(health.colorClassNPC and not UnitIsPlayer(unit)) or
