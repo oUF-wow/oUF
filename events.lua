@@ -1,6 +1,7 @@
 local parent, ns = ...
 local oUF = ns.oUF
 local Private = oUF.Private
+local units = oUF.units
 
 local argcheck = Private.argcheck
 local error = Private.error
@@ -12,6 +13,111 @@ Private.OnEvent = function(self, event, ...)
 	return self[event](self, event, ...)
 end
 
+local RegisterEvent, UnregisterEvent, IsEventRegistered
+
+do
+	local eventFrame = CreateFrame("Frame")
+	local registry = {}
+	local framesForUnit = {}
+
+	local RegisterFrameForUnit = function(frame, unit)
+		if not unit then return end
+		if framesForUnit[unit] then
+			framesForUnit[unit][frame] = true
+		else
+			framesForUnit[unit] = { [frame] = true }
+		end
+		if not units[unit] then
+			units[unit] = frame
+		end
+	end
+
+	local UnregisterFrameForUnit = function(frame, unit)
+		if not unit then return end
+		local frames = framesForUnit[unit]
+		if frames and frames[frame] then
+			frames[frame] = nil
+			if not next(frames) then
+				framesForUnit[unit] = nil
+			end
+		end
+		if units[unit] == frame then
+			units[unit] = nil
+		end
+	end
+
+	Private.UpdateUnits = function(frame, unit, realUnit)
+		if unit == realUnit then
+			realUnit = nil
+		end
+		if frame.unit ~= unit or frame.realUnit ~= realUnit then
+			if not frame:GetScript('OnUpdate') then
+				UnregisterFrameForUnit(frame, frame.unit)
+				UnregisterFrameForUnit(frame, frame.realUnit)
+				RegisterFrameForUnit(frame, unit)
+				RegisterFrameForUnit(frame, realUnit)
+			end
+			frame.unit = unit
+			frame.realUnit = realUnit
+			frame.id = unit:match'^.-(%d+)'
+			return true
+		end
+	end
+
+	-- Holds true for any UNIT_* event but the few ones listed below
+	local unitEvents = setmetatable({
+		UNIT_ENTERED_VEHICLE = false,
+		UNIT_EXITED_VEHICLE = false,
+		UNIT_PET = false,
+		UNIT_TARGET = false,
+		UNIT_COMBO_POINTS = false,
+		UNIT_THREAT_LIST_UPDATE = false,
+	}, {__index = function(t, e) t[e] = (strsub(e, 1, 5) == "UNIT_") return t[e] end})
+
+	eventFrame:SetScript('OnEvent', function(_, event, arg1, ...)
+		local listeners = registry[event]
+		if arg1 and unitEvents[event] then
+			local frames = framesForUnit[arg1]
+			if frames then
+				for frame in next, frames do
+					if listeners[frame] and frame:IsVisible() then
+						frame[event](frame, event, arg1, ...)
+					end
+				end
+			end
+		else
+			for frame in next, listeners do
+				if frame:IsVisible() then
+					frame[event](frame, event, arg1, ...)
+				end
+			end
+		end
+	end)
+
+	function RegisterEvent(self, event)
+		if not registry[event] then
+			registry[event] = { [self] = true }
+			eventFrame:RegisterEvent(event)
+		else
+			registry[event][self] = true
+		end
+	end
+
+	function UnregisterEvent(self, event)
+		if registry[event] then
+			registry[event][self] = nil
+			if not next(registry[event]) then
+				registry[event] = nil
+				eventFrame:UnregisterEvent(event)
+			end
+		end
+	end
+
+	function IsEventRegistered(self, event)
+		return registry[event] and registry[event][self]
+	end
+end
+
 local event_metatable = {
 	__call = function(funcs, self, ...)
 		for _, func in next, funcs do
@@ -20,7 +126,6 @@ local event_metatable = {
 	end,
 }
 
-local RegisterEvent = frame_metatable.__index.RegisterEvent
 function frame_metatable.__index:RegisterEvent(event, func)
 	argcheck(event, 2, 'string')
 
@@ -40,7 +145,7 @@ function frame_metatable.__index:RegisterEvent(event, func)
 
 			table.insert(curev, func)
 		end
-	elseif(self:IsEventRegistered(event)) then
+	elseif(IsEventRegistered(self, event)) then
 		return
 	else
 		if(type(func) == 'function') then
@@ -53,7 +158,6 @@ function frame_metatable.__index:RegisterEvent(event, func)
 	end
 end
 
-local UnregisterEvent = frame_metatable.__index.UnregisterEvent
 function frame_metatable.__index:UnregisterEvent(event, func)
 	argcheck(event, 2, 'string')
 

@@ -17,10 +17,6 @@ local callback, units, objects = {}, {}, {}
 local select = select
 local UnitExists = UnitExists
 
-local conv = {
-	['playerpet'] = 'pet',
-	['playertarget'] = 'target',
-}
 local elements = {}
 
 -- updating of "invalid" units.
@@ -41,38 +37,26 @@ local enableTargetUpdate = function(object)
 end
 Private.enableTargetUpdate = enableTargetUpdate
 
+local updateActiveUnit
+
 local iterateChildren = function(...)
 	for l = 1, select("#", ...) do
 		local obj = select(l, ...)
 
 		if(type(obj) == 'table' and obj.isChild) then
-			local unit = SecureButton_GetModifiedUnit(obj)
-			local subUnit = conv[unit] or unit
-			units[subUnit] = obj
-			obj.unit = subUnit
-			obj.id = subUnit:match'^.-(%d+)'
-			obj:UpdateAllElements"PLAYER_ENTERING_WORLD"
+			updateActiveUnit(obj, "iterateChildren")
 		end
 	end
 end
 
 local OnAttributeChanged = function(self, name, value)
 	if(name == "unit" and value) then
-		if(self.unit and (self.unit == value or self.realUnit == value)) then
-			return
-		else
-			if(self.hasChildren) then
-				iterateChildren(self:GetChildren())
-			end
+		if(self.hasChildren) then
+			iterateChildren(self:GetChildren())
+		end
 
-			if(not self:GetAttribute'oUF-onlyProcessChildren') then
-				local unit = SecureButton_GetModifiedUnit(self)
-				unit = conv[unit] or unit
-				units[unit] = self
-				self.unit = unit
-				self.id = unit:match"^.-(%d+)"
-				self:UpdateAllElements"PLAYER_ENTERING_WORLD"
-			end
+		if(not self:GetAttribute'oUF-onlyProcessChildren') then
+			updateActiveUnit(self, "OnAttributeChanged")
 		end
 	end
 end
@@ -151,13 +135,15 @@ for k, v in pairs{
 	frame_metatable.__index[k] = v
 end
 
-local updateActiveUnit = function(self, event, unit)
+updateActiveUnit = function(self, event, unit)
 	-- Calculate units to work with
 	local realUnit, modUnit = SecureButton_GetUnit(self), SecureButton_GetModifiedUnit(self)
 
 	-- _GetUnit() doesn't rewrite playerpet -> pet like _GetModifiedUnit does.
 	if(realUnit == 'playerpet') then
 		realUnit = 'pet'
+	elseif(realUnit == 'playertarget') then
+		realUnit = 'target'
 	end
 
 	if(modUnit == "pet" and realUnit ~= "pet") then
@@ -167,15 +153,8 @@ local updateActiveUnit = function(self, event, unit)
 	-- Drop out if the event unit doesn't match any of the frame units.
 	if(not UnitExists(modUnit) or unit and unit ~= realUnit and unit ~= modUnit) then return end
 
-	if(modUnit ~= realUnit) then
-		self.realUnit = realUnit
-	else
-		self.realUnit = nil
-	end
-
 	-- Change the active unit and run a full update.
-	if(self.unit ~= modUnit) then
-		self.unit = modUnit
+	if Private.UpdateUnits(self, modUnit, realUnit) then
 		self:UpdateAllElements('RefreshUnit')
 
 		return true
@@ -236,8 +215,6 @@ local initObject = function(unit, style, styleFunc, header, ...)
 			-- Other boss and target units are handled by :HandleUnit().
 			if(suffix == 'target') then
 				enableTargetUpdate(object)
-			elseif(not (unit:match'%w+target' or unit:match'(boss)%d?$' == 'boss')) then
-				object:SetScript('OnEvent', Private.OnEvent)
 			end
 		else
 			-- Used to update frames when they change position in a group.
@@ -253,10 +230,10 @@ local initObject = function(unit, style, styleFunc, header, ...)
 
 			if(suffix == 'target') then
 				enableTargetUpdate(object)
-			else
-				object:SetScript('OnEvent', Private.OnEvent)
 			end
 		end
+
+		Private.UpdateUnits(object, objectUnit)
 
 		styleFunc(object, objectUnit, not header)
 
@@ -542,10 +519,7 @@ function oUF:Spawn(unit, overrideName)
 
 	local name = overrideName or generateName(unit)
 	local object = CreateFrame("Button", name, UIParent, "SecureUnitButtonTemplate")
-	object.unit = unit
-	object.id = unit:match"^.-(%d+)"
-
-	units[unit] = object
+	Private.UpdateUnits(object, unit)
 	walkObject(object, unit)
 
 	object:SetAttribute("unit", unit)
