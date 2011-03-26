@@ -84,7 +84,9 @@ function oUF:DisableBlizzard(unit)
 				HandleFrame(('ArenaEnemyFrame%d'):format(i))
 			end
 		end
+
 		-- Blizzard_ArenaUI should not be loaded
-		_G.Arena_LoadUI = function() end
+		Arena_LoadUI = function() end
+		SetCVar('showArenaEnemyFrames', '0', 'SHOW_ARENA_ENEMY_FRAMES_TEXT')
 	end
 end
