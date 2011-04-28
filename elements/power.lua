@@ -106,12 +106,6 @@ local Enable = function(self, unit)
 
 		if(power.frequentUpdates and (unit == 'player' or unit == 'pet')) then
 			power:SetScript("OnUpdate", OnPowerUpdate)
-
-			-- Without this happiness won't really update corretly when using
-			-- frequentUpdates
-			if(unit == 'pet') then
-				power:RegisterEvent('UNIT_POWER', UNIT_HAPPINESS)
-			end
 		else
 			self:RegisterEvent('UNIT_POWER', Path)
 		end
