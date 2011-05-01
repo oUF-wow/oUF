@@ -114,6 +114,9 @@ local Enable = function(self, unit)
 			self:RegisterEvent('UNIT_POWER', Path)
 		end
 
+		self:RegisterEvent('UNIT_POWER_BAR_SHOW', Path)
+		self:RegisterEvent('UNIT_POWER_BAR_HIDE', Path)
+		self:RegisterEvent('UNIT_DISPLAYPOWER', Path)
 		self:RegisterEvent('UNIT_CONNECTION', Path)
 		self:RegisterEvent('UNIT_MAXPOWER', Path)
 
