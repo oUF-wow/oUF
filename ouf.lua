@@ -97,7 +97,7 @@ for k, v in pairs{
 
 	DisableElement = function(self, name)
 		argcheck(name, 2, 'string')
-		
+
 		local enabled, k = self:IsElementEnabled(name)
 		if(not enabled) then return end
 
@@ -111,10 +111,10 @@ for k, v in pairs{
 
 		return elements[name].disable(self)
 	end,
-	
+
 	IsElementEnabled = function(self, name)
 		argcheck(name, 2, 'string')
-		
+
 		local element = elements[name]
 		if(not element) then return end
 
