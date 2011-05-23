@@ -10,6 +10,8 @@ oUF.colors.totems = {
 	[AIR_TOTEM_SLOT] = { 132/255, 056/255, 231/255 }
 }
 
+local totemap = SHAMAN_TOTEM_PRIORITIES
+
 local OnClick = function(self)
 	DestroyTotem(self:GetID())
 end
@@ -34,7 +36,7 @@ local UpdateTotem = function(self, event, slot)
 
 	if(totems.PreUpdate) then totems:PreUpdate(slot) end
 
-	local totem = totems[slot]
+	local totem = totems[totemap[slot]]
 	local haveTotem, name, start, duration, icon = GetTotemInfo(slot)
 	if(duration > 0) then
 		if(totem.Icon) then
@@ -79,7 +81,7 @@ local Enable = function(self)
 		for i = 1, MAX_TOTEMS do
 			local totem = totems[i]
 
-			totem:SetID(i)
+			totem:SetID(totemap[i])
 
 			if(totem:HasScript'OnClick') then
 				totem:SetScript('OnClick', OnClick)
