@@ -123,7 +123,7 @@ local Enable = function(self, unit)
 		-- For tapping.
 		self:RegisterEvent('UNIT_FACTION', Path)
 
-		if(not power:GetStatusBarTexture()) then
+		if(power:IsObjectType('StatusBar') and not power:GetStatusBarTexture()) then
 			power:SetStatusBarTexture[[Interface\TargetingFrame\UI-StatusBar]]
 		end
 
