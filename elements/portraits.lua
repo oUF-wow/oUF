@@ -15,11 +15,10 @@ local Update = function(self, event, unit)
 			portrait:SetModel"Interface\\Buttons\\talktomequestionmark.mdx"
 		elseif(portrait.guid ~= guid or event == 'UNIT_MODEL_CHANGED') then
 			portrait:SetUnit(unit)
-			portrait:SetCamera(0)
-
+			portrait:SetPortraitZoom(1)
 			portrait.guid = guid
 		else
-			portrait:SetCamera(0)
+			portrait:SetPortraitZoom(1)
 		end
 	else
 		SetPortraitTexture(portrait, unit)
