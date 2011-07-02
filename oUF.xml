@@ -37,6 +37,7 @@
 	<Script file='elements\altpowerbar.lua' />
 	<Script file='elements\totems.lua' />
 	<Script file='elements\resurrect.lua' />
+	<Script file='elements\maintank.lua' />
 
 	<!-- Clique support -->
 	<Button name="oUF_ClickCastUnitTemplate" virtual="true" inherits="SecureUnitButtonTemplate,SecureHandlerEnterLeaveTemplate">
