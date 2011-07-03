@@ -5,16 +5,16 @@ local _, ns = ...
 local oUF = ns.oUF or oUF
 assert(oUF, 'oUF_DruidManaBar was unable to locate oUF install')
 
-if(select(2, UnitClass('player')) ~= 'DRUID') then return end
+if (select(2, UnitClass('player')) ~= 'DRUID') then return end
 
 --tag
 oUF.Tags['druidmana']  = function() 
-	local min, max = UnitPower('player', SPELL_POWER_MANA), UnitPowerMax('player', SPELL_POWER_MANA)
-	if min ~= max then 
-		return min
-	else
-		return max
-	end
+    local min, max = UnitPower('player', SPELL_POWER_MANA), UnitPowerMax('player', SPELL_POWER_MANA)
+        if (min ~= max) then 
+        return min
+    else
+        return max
+    end
 end
 oUF.TagEvents['druidmana'] = 'UNIT_POWER UNIT_MAXPOWER'
 	
@@ -63,28 +63,25 @@ local function Update(self, event, unit)
 end
 
 local function Path(self, ...)
-	return (self.DruidMana.Override or Update) (self, ...)
+    return (self.DruidMana.Override or Update) (self, ...)
 end
 
 local function ForceUpdate(element)
-	return Path(element.__owner, 'ForceUpdate', element.__owner.unit)
+    return Path(element.__owner, 'ForceUpdate', element.__owner.unit)
 end
 
 local OnPowerUpdate
 do
-	local UnitPower, UnitPowerType = UnitPower, UnitPowerType
-	OnPowerUpdate = function(self)
-		local unit = self.__owner.unit
-		local mana = UnitPower(unit, SPELL_POWER_MANA)
-        local powertype = UnitPowerType(unit)
-        
-		if(powertype ~= self.powertype or mana ~= self.min) then
-			self.min = mana
-            self.powertype = powertype
-            
-			return Path(self.__owner, 'OnPowerUpdate', unit)
-		end
-	end
+    local UnitPower = UnitPower
+    OnPowerUpdate = function(self)
+        local unit = self.__owner.unit
+        local mana = UnitPower(unit, SPELL_POWER_MANA)
+
+        if(mana ~= self.min) then
+            self.min = mana
+            return Path(self.__owner, 'OnPowerUpdate', unit)
+        end
+    end
 end
 
 local Enable = function(self, unit)
@@ -98,8 +95,9 @@ local Enable = function(self, unit)
 		else
 			self:RegisterEvent('UNIT_POWER', Path)
 		end
+        
+        self:RegisterEvent('UNIT_DISPLAYPOWER', Path)
         self:RegisterEvent('UNIT_MAXPOWER', Path)
-        --self:RegisterEvent('UPDATE_SHAPESHIFT_FORM', Path)
 
         if (not druidmana:GetStatusBarTexture()) then
 			druidmana:SetStatusBarTexture([=[Interface\TargetingFrame\UI-StatusBar]=])
@@ -117,8 +115,9 @@ local Disable = function(self)
         else
             self:UnregisterEvent('UNIT_POWER', Path)
         end
+        
+        self:UnregisterEvent('UNIT_DISPLAYPOWER', Path)
         self:UnregisterEvent('UNIT_MAXPOWER', Path)
-        --self:UnregisterEvent('UPDATE_SHAPESHIFT_FORM', Path)
     end
 end
 
