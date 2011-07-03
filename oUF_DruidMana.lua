@@ -1,99 +1,125 @@
 -- Druid Mana Bar for Cat and Bear forms
 -- Authors: Califpornia aka Ennie // some code taken from oUF`s EclipseBar element
 
-if not oUF then print"oUF_DruidMana: error: oUF not found" return end
+local _, ns = ...
+local oUF = ns.oUF or oUF
+assert(oUF, 'oUF_DruidManaBar was unable to locate oUF install')
+
 if(select(2, UnitClass('player')) ~= 'DRUID') then return end
 
--- add tag
+--tag
 oUF.Tags['druidmana']  = function() 
 	local min, max = UnitPower('player', SPELL_POWER_MANA), UnitPowerMax('player', SPELL_POWER_MANA)
-	if min~=max then 
+	if min ~= max then 
 		return min
 	else
 		return max
 	end
 end
 oUF.TagEvents['druidmana'] = 'UNIT_POWER UNIT_MAXPOWER'
-
-local UNIT_POWER = function(self, event, unit, powerType)
+	
+local function Update(self, event, unit)
 	if(self.unit ~= unit) then return end
 
 	local druidmana = self.DruidMana
-
-	if(druidmana.PreUpdate) then
-		druidmana:PreUpdate(unit)
-	end
+    if (druidmana.PreUpdate) then druidmana:PreUpdate(unit) end
+    
+    --check form
+	if (UnitPowerType(unit) == SPELL_POWER_MANA) then
+        return druidmana:Hide()
+    else
+        druidmana:Show()
+    end
+    
 	local min, max = UnitPower('player', SPELL_POWER_MANA), UnitPowerMax('player', SPELL_POWER_MANA)
+    druidmana:SetMinMaxValues(0, max)
+    druidmana:SetValue(min)
+    
+    local r, g, b, t
+    if (druidmana.colorClass and UnitIsPlayer(unit)) then
+        t = self.colors.class['DRUID']
+    elseif (druidmana.colorSmooth) then
+        r, g, b = self.ColorGradient(min / max, unpack(health.smoothGradient or self.colors.smooth))
+    else
+        t = self.colors.power['MANA']
+    end
+    
+    if (t) then
+        r, g, b = t[1], t[2], t[3]
+    end        
 
-	druidmana.ManaBar:SetMinMaxValues(0, max)
-	druidmana.ManaBar:SetValue(min)
+    if (b) then
+        druidmana:SetStatusBarColor(r, g, b)
 
-	local r, g, b
-	if(druidmana.colorClass and UnitIsPlayer(unit)) then
-		local t = RAID_CLASS_COLORS['DRUID']
-		r, g, b = t['r'], t['g'], t['b']
-	elseif(druidmana.colorSmooth) then
-		r, g, b = self.ColorGradient(min / max, unpack(oUF.smoothGradient or oUF.colors.smooth))
-	else
-		local t = PowerBarColor['MANA']
-		r, g, b = t['r'], t['g'], t['b']
-	end
-	if(b) then
-		druidmana.ManaBar:SetStatusBarColor(r, g, b)
+        local bg = druidmana.bg
+        if (bg) then local mu = bg.multiplier or 1
+            bg:SetVertexColor(r * mu, g * mu, b * mu)
+        end
+    end 
+    
+    if(druidmana.PostUpdate) then
+        return druidmana:PostUpdate(unit)
+    end
+end
 
-		local bg = druidmana.bg
-		if(bg) then
-			local mu = bg.multiplier or 1
-			bg:SetVertexColor(r * mu, g * mu, b * mu)
+local function Path(self, ...)
+	return (self.DruidMana.Override or Update) (self, ...)
+end
+
+local function ForceUpdate(element)
+	return Path(element.__owner, 'ForceUpdate', element.__owner.unit)
+end
+
+local OnPowerUpdate
+do
+	local UnitPower, UnitPowerType = UnitPower, UnitPowerType
+	OnPowerUpdate = function(self)
+		local unit = self.__owner.unit
+		local mana = UnitPower(unit, SPELL_POWER_MANA)
+        local powertype = UnitPowerType(unit)
+        
+		if(powertype ~= self.powertype or mana ~= self.min) then
+			self.min = mana
+            self.powertype = powertype
+            
+			return Path(self.__owner, 'OnPowerUpdate', unit)
 		end
 	end
-
-	if(druidmana.PostUpdatePower) then
-		return druidmana:PostUpdatePower(unit)
-	end
-end
-
-local UPDATE_VISIBILITY = function(self, event)
-	local druidmana = self.DruidMana
-	-- check form
-	local form = GetShapeshiftFormID()
-	if (form == BEAR_FORM or form == CAT_FORM) then
-		druidmana:Show()
-	else
-		druidmana:Hide()
-	end
-end
-
-local Update = function(self, ...)
-	UNIT_POWER(self, ...)
-	return UPDATE_VISIBILITY(self, ...)
-end
-
-local ForceUpdate = function(element)
-	return Update(element.__owner, 'ForceUpdate')
 end
 
 local Enable = function(self, unit)
-	local druidmana = self.DruidMana
-	if(druidmana and unit == 'player') then
-		druidmana.__owner = self
-		druidmana.ForceUpdate = ForceUpdate
+    local druidmana = self.DruidMana
+    if (druidmana and unit == 'player') then
+        druidmana.__owner = self
+        druidmana.ForceUpdate = ForceUpdate
 
-		self:RegisterEvent('UNIT_POWER', UNIT_POWER)
-		self:RegisterEvent('UNIT_MAXPOWER', UNIT_POWER)
-		self:RegisterEvent('UPDATE_SHAPESHIFT_FORM', UPDATE_VISIBILITY)
+        if(druidmana.frequentUpdates and unit == 'player') then
+			druidmana:SetScript('OnUpdate', OnPowerUpdate)
+		else
+			self:RegisterEvent('UNIT_POWER', Path)
+		end
+        self:RegisterEvent('UNIT_MAXPOWER', Path)
+        --self:RegisterEvent('UPDATE_SHAPESHIFT_FORM', Path)
 
-		return true
-	end
+        if (not druidmana:GetStatusBarTexture()) then
+			druidmana:SetStatusBarTexture([=[Interface\TargetingFrame\UI-StatusBar]=])
+		end
+        
+        return true
+    end
 end
 
 local Disable = function(self)
-	local druidmana = self.DruidMana
-	if(druidmana) then
-		self:UnregisterEvent('UNIT_POWER', UNIT_POWER)
-		self:UnregisterEvent('UNIT_MAXPOWER', UNIT_POWER)
-		self:UnregisterEvent('UPDATE_SHAPESHIFT_FORM', UPDATE_VISIBILITY)
-	end
+    local druidmana = self.DruidMana
+    if (druidmana) then
+        if(druidmana:GetScript'OnUpdate') then
+            druidmana:SetScript("OnUpdate", nil)
+        else
+            self:UnregisterEvent('UNIT_POWER', Path)
+        end
+        self:UnregisterEvent('UNIT_MAXPOWER', Path)
+        --self:UnregisterEvent('UPDATE_SHAPESHIFT_FORM', Path)
+    end
 end
 
-oUF:AddElement("DruidMana", Update, Enable, Disable)
+oUF:AddElement('DruidMana', Path, Enable, Disable)

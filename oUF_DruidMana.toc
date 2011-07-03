@@ -1,4 +1,4 @@
-## Interface: 40300
+## Interface: 40200
 ## Title: oUF_DruidMana
 ## Version: 1.1
 ## Author: Ennie
