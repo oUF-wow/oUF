@@ -1,15 +1,14 @@
 -- Druid Mana Bar for Cat and Bear forms
 -- Authors: Califpornia aka Ennie // some code taken from oUF`s EclipseBar element
+if (select(2, UnitClass('player')) ~= 'DRUID') then return end
 
 local _, ns = ...
 local oUF = ns.oUF or oUF
 assert(oUF, 'oUF_DruidManaBar was unable to locate oUF install')
 
-if (select(2, UnitClass('player')) ~= 'DRUID') then return end
-
 --tag
-oUF.Tags['druidmana']  = function() 
-    local min, max = UnitPower('player', SPELL_POWER_MANA), UnitPowerMax('player', SPELL_POWER_MANA)
+oUF.Tags['druidmana']  = function(unit) 
+    local min, max = UnitPower(unit, SPELL_POWER_MANA), UnitPowerMax(unit, SPELL_POWER_MANA)
         if (min ~= max) then 
         return min
     else
@@ -17,26 +16,28 @@ oUF.Tags['druidmana']  = function()
     end
 end
 oUF.TagEvents['druidmana'] = 'UNIT_POWER UNIT_MAXPOWER'
-	
-local function Update(self, event, unit)
-    if(self.unit ~= unit) then return end
+
+local function Update(self, event, unit, powertype)
+    --only the player frame will have this unit enabled
+    --i mainly place this check for UNIT_DISPLAYPOWER and entering a vehicle
+    if(unit ~= 'player' or (powertype and powertype ~= 'MANA')) then return end
 
     local druidmana = self.DruidMana
     if (druidmana.PreUpdate) then druidmana:PreUpdate(unit) end
     
     --check form
-	if (UnitPowerType(unit) == SPELL_POWER_MANA) then
+    if (UnitPowerType('player') == SPELL_POWER_MANA) then
         return druidmana:Hide()
     else
         druidmana:Show()
     end
     
-	local min, max = UnitPower('player', SPELL_POWER_MANA), UnitPowerMax('player', SPELL_POWER_MANA)
+    local min, max = UnitPower('player', SPELL_POWER_MANA), UnitPowerMax('player', SPELL_POWER_MANA)
     druidmana:SetMinMaxValues(0, max)
     druidmana:SetValue(min)
     
     local r, g, b, t
-    if (druidmana.colorClass and UnitIsPlayer(unit)) then
+    if (druidmana.colorClass) then
         t = self.colors.class['DRUID']
     elseif (druidmana.colorSmooth) then
         r, g, b = self.ColorGradient(min / max, unpack(druidmana.smoothGradient or self.colors.smooth))
@@ -75,7 +76,7 @@ do
     local UnitPower = UnitPower
     OnPowerUpdate = function(self)
         local unit = self.__owner.unit
-        local mana = UnitPower('player', SPELL_POWER_MANA)
+        local mana = UnitPower(unit, SPELL_POWER_MANA)
 
         if(mana ~= self.min) then
             self.min = mana
@@ -90,18 +91,18 @@ local Enable = function(self, unit)
         druidmana.__owner = self
         druidmana.ForceUpdate = ForceUpdate
 
-        if(druidmana.frequentUpdates and unit == 'player') then
-			druidmana:SetScript('OnUpdate', OnPowerUpdate)
-		else
-			self:RegisterEvent('UNIT_POWER', Path)
-		end
+        if(druidmana.frequentUpdates) then
+            druidmana:SetScript('OnUpdate', OnPowerUpdate)
+        else
+            self:RegisterEvent('UNIT_POWER', Path)
+        end
         
         self:RegisterEvent('UNIT_DISPLAYPOWER', Path)
         self:RegisterEvent('UNIT_MAXPOWER', Path)
 
         if (not druidmana:GetStatusBarTexture()) then
-			druidmana:SetStatusBarTexture([=[Interface\TargetingFrame\UI-StatusBar]=])
-		end
+            druidmana:SetStatusBarTexture([=[Interface\TargetingFrame\UI-StatusBar]=])
+        end
         
         return true
     end
