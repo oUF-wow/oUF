@@ -3,9 +3,10 @@ local oUF = ns.oUF or oUF
 
 local Update = function(self, event)
 	local raidID = UnitInRaid(self.unit)
-	local _, _, _, _, _, _, _, _, _, rinfo = GetRaidRosterInfo(raidID)
+	if(not raidID) then return end
 
-	if(raidID and (rinfo == 'MAINTANK') and not UnitHasVehicleUI(self.unit)) then
+	local _, _, _, _, _, _, _, _, _, rinfo = GetRaidRosterInfo(raidID)
+	if(rinfo == 'MAINTANK' and not UnitHasVehicleUI(self.unit)) then
 		self.MainTank:Show()
 	else
 		self.MainTank:Hide()
