@@ -1,5 +1,3 @@
-local WoW41 = select(4, GetBuildInfo()) == 40100
-
 local parent, ns = ...
 local oUF = ns.oUF
 local Private = oUF.Private
