@@ -1,6 +1,3 @@
-local WoW42 = select(4, GetBuildInfo()) == 40200
-if(not WoW42) then return end
-
 local parent, ns = ...
 local oUF = ns.oUF
 
