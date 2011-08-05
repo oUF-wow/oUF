@@ -2,10 +2,9 @@ if (select(2, UnitClass('player')) ~= 'DRUID') then return end
 
 local _, ns = ...
 local oUF = ns.oUF or oUF
-assert(oUF, 'oUF_DruidManaBar was unable to locate oUF install')
 
 --tag
-oUF.Tags['druidmana']  = function(unit) 
+oUF.Tags['mana']  = function(unit) 
     local min, max = UnitPower(unit, SPELL_POWER_MANA), UnitPowerMax(unit, SPELL_POWER_MANA)
         if (min ~= max) then 
         return min
@@ -13,7 +12,7 @@ oUF.Tags['druidmana']  = function(unit)
         return max
     end
 end
-oUF.TagEvents['druidmana'] = 'UNIT_POWER UNIT_MAXPOWER'
+oUF.TagEvents['mana'] = 'UNIT_POWER UNIT_MAXPOWER'
 
 local function Update(self, event, unit, powertype)
     --only the player frame will have this unit enabled
@@ -39,7 +38,7 @@ local function Update(self, event, unit, powertype)
         t = self.colors.class['DRUID']
     elseif (druidmana.colorSmooth) then
         r, g, b = self.ColorGradient(min / max, unpack(druidmana.smoothGradient or self.colors.smooth))
-    else
+    elseif(druidmana.colorPower)
         t = self.colors.power['MANA']
     end
     
