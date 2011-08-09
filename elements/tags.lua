@@ -263,6 +263,15 @@ local tagStrings = {
 			return math.abs(UnitPower('player', SPELL_POWER_ECLIPSE)/m*100)
 		end
 	end]],
+
+	['mana'] = [[function(unit)
+		local min, max = UnitPower(unit, SPELL_POWER_MANA), UnitPowerMax(unit, SPELL_POWER_MANA)
+		if(min ~= max) then
+			return min
+		else
+			return max
+		end
+	end]],
 }
 
 local tags = setmetatable(
@@ -337,6 +346,7 @@ local tagEvents = {
 	["offline"]             = "UNIT_HEALTH UNIT_CONNECTION",
 	["status"]              = "UNIT_HEALTH PLAYER_UPDATE_RESTING UNIT_CONNECTION",
 	["pereclipse"]          = 'UNIT_POWER',
+	['mana']                = 'UNIT_POWER UNIT_MAXPOWER'
 }
 
 local unitlessEvents = {
