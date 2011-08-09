@@ -48,7 +48,7 @@ local function Update(self, event, unit, powertype)
 	end
 
 	if(druidmana.PostUpdate) then
-		return druidmana:PostUpdate(unit)
+		return druidmana:PostUpdate(unit, min, max)
 	end
 end
 
