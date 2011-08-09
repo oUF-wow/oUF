@@ -71,16 +71,16 @@ local function ForceUpdate(element)
 	return Path(element.__owner, 'ForceUpdate', element.__owner.unit)
 end
 
-local OnPowerUpdate
+local OnDruidManaUpdate
 do
 	local UnitPower = UnitPower
-	OnPowerUpdate = function(self)
+	OnDruidManaUpdate = function(self)
 		local unit = self.__owner.unit
 		local mana = UnitPower(unit, SPELL_POWER_MANA)
 
 		if(mana ~= self.min) then
 			self.min = mana
-			return Path(self.__owner, 'OnPowerUpdate', unit)
+			return Path(self.__owner, 'OnDruidManaUpdate', unit)
 		end
 	end
 end
@@ -92,7 +92,7 @@ local Enable = function(self, unit)
 		druidmana.ForceUpdate = ForceUpdate
 
 		if(druidmana.frequentUpdates) then
-			druidmana:SetScript('OnUpdate', OnPowerUpdate)
+			druidmana:SetScript('OnUpdate', OnDruidManaUpdate)
 		else
 			self:RegisterEvent('UNIT_POWER', Path)
 		end
