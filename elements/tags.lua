@@ -345,8 +345,8 @@ local tagEvents = {
 	["offline"]             = "UNIT_HEALTH UNIT_CONNECTION",
 	["status"]              = "UNIT_HEALTH PLAYER_UPDATE_RESTING UNIT_CONNECTION",
 	["pereclipse"]          = 'UNIT_POWER',
-	['curmana']                = 'UNIT_POWER UNIT_MAXPOWER'
-	['maxmana']                = 'UNIT_POWER UNIT_MAXPOWER'
+	['curmana']             = 'UNIT_POWER UNIT_MAXPOWER',
+	['maxmana']             = 'UNIT_POWER UNIT_MAXPOWER',
 }
 
 local unitlessEvents = {
