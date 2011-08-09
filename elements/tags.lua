@@ -264,13 +264,12 @@ local tagStrings = {
 		end
 	end]],
 
-	['mana'] = [[function(unit)
-		local min, max = UnitPower(unit, SPELL_POWER_MANA), UnitPowerMax(unit, SPELL_POWER_MANA)
-		if(min ~= max) then
-			return min
-		else
-			return max
-		end
+	['curmana'] = [[function(unit)
+		return UnitPower(unit, SPELL_POWER_MANA)
+	end]],
+
+	['maxmana'] = [[function(unit)
+		return UnitPowerMax(unit, SPELL_POWER_MANA)
 	end]],
 }
 
