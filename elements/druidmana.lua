@@ -3,7 +3,7 @@
 if(select(2, UnitClass('player')) ~= 'DRUID') then return end
 
 local _, ns = ...
-local oUF = ns.oUF or oUF
+local oUF = ns.oUF
 
 local function Update(self, event, unit, powertype)
 	--only the player frame will have this unit enabled
