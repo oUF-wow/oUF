@@ -255,8 +255,6 @@ local tagStrings = {
 		end
 	end]],
 
-
-
 	['pereclipse'] = [[function(u)
 		local m = UnitPowerMax('player', SPELL_POWER_ECLIPSE)
 		if(m == 0) then
