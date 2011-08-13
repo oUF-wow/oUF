@@ -274,47 +274,48 @@ local tagStrings = {
 }
 
 local tags = setmetatable(
-{
-	curhp = UnitHealth,
-	curpp = UnitPower,
-	maxhp = UnitHealthMax,
-	maxpp = UnitPowerMax,
-	class = UnitClass,
-	faction = UnitFactionGroup,
-	race = UnitRace,
-},
+	{
+		curhp = UnitHealth,
+		curpp = UnitPower,
+		maxhp = UnitHealthMax,
+		maxpp = UnitPowerMax,
+		class = UnitClass,
+		faction = UnitFactionGroup,
+		race = UnitRace,
+	},
 
-{
-	__index = function(self, key)
-		local tagFunc = tagStrings[key]
-		if(tagFunc) then
-			local func, err = loadstring('return ' .. tagFunc)
-			if(func) then
-				func = func()
+	{
+		__index = function(self, key)
+			local tagFunc = tagStrings[key]
+			if(tagFunc) then
+				local func, err = loadstring('return ' .. tagFunc)
+				if(func) then
+					func = func()
 
-				-- Want to trigger __newindex, so no rawset.
-				self[key] = func
-				tagStrings[key] = nil
+					-- Want to trigger __newindex, so no rawset.
+					self[key] = func
+					tagStrings[key] = nil
 
-				return func
-			else
-				error(err, 3)
+					return func
+				else
+					error(err, 3)
+				end
 			end
-		end
-	end,
-	__newindex = function(self, key, val)
-		if(type(val) == 'string') then
-			tagStrings[key] = val
-		elseif(type(val) == 'function') then
-			-- So we don't clash with any custom envs.
-			if(getfenv(val) == _G) then
-				setfenv(val, _PROXY)
-			end
+		end,
+		__newindex = function(self, key, val)
+			if(type(val) == 'string') then
+				tagStrings[key] = val
+			elseif(type(val) == 'function') then
+				-- So we don't clash with any custom envs.
+				if(getfenv(val) == _G) then
+					setfenv(val, _PROXY)
+				end
 
-			rawset(self, key, val)
-		end
-	end,
-})
+				rawset(self, key, val)
+			end
+		end,
+	}
+)
 
 _ENV._TAGS = tags
 
