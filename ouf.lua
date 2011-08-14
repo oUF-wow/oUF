@@ -12,7 +12,7 @@ local error = Private.error
 local OnEvent = Private.OnEvent
 
 local styles, style = {}
-local callback, units, objects = {}, {}, {}
+local callback, objects = {}, {}
 
 local select = select
 local UnitExists = UnitExists
@@ -546,7 +546,6 @@ function oUF:AddElement(name, update, enable, disable)
 end
 
 oUF.version = _VERSION
-oUF.units = units
 oUF.objects = objects
 
 if(global) then

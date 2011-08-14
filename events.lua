@@ -1,7 +1,6 @@
 local parent, ns = ...
 local oUF = ns.oUF
 local Private = oUF.Private
-local units = oUF.units
 
 local argcheck = Private.argcheck
 local error = Private.error
@@ -27,9 +26,6 @@ do
 		else
 			framesForUnit[unit] = { [frame] = true }
 		end
-		if not units[unit] then
-			units[unit] = frame
-		end
 	end
 
 	local UnregisterFrameForUnit = function(frame, unit)
@@ -40,9 +36,6 @@ do
 			if not next(frames) then
 				framesForUnit[unit] = nil
 			end
-		end
-		if units[unit] == frame then
-			units[unit] = nil
 		end
 	end
 
