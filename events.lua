@@ -176,3 +176,7 @@ function frame_metatable.__index:UnregisterEvent(event, func)
 		UnregisterEvent(self, event)
 	end
 end
+
+function frame_metatable.__index:IsEventRegistered(event)
+	return IsEventRegistered(self, event)
+end
