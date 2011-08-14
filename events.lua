@@ -120,6 +120,9 @@ local event_metatable = {
 }
 
 function frame_metatable.__index:RegisterEvent(event, func)
+	-- Block OnUpdate polled frames from registering events.
+	if(self.__eventless) then return end
+
 	argcheck(event, 2, 'string')
 
 	if(type(func) == 'string' and type(self[func]) == 'function') then
