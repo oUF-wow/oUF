@@ -521,13 +521,14 @@ function oUF:Spawn(unit, overrideName)
 	local name = overrideName or generateName(unit)
 	local object = CreateFrame("Button", name, UIParent, "SecureUnitButtonTemplate")
 	Private.UpdateUnits(object, unit)
+
+	self:DisableBlizzard(unit)
+	self:HandleUnit(object)
+
 	walkObject(object, unit)
 
 	object:SetAttribute("unit", unit)
 	RegisterUnitWatch(object)
-
-	self:DisableBlizzard(unit)
-	self:HandleUnit(object)
 
 	return object
 end
