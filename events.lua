@@ -57,19 +57,19 @@ do
 		end
 	end
 
-	-- Holds true for any UNIT_* event but the few ones listed below
-	local unitEvents = setmetatable({
-		UNIT_ENTERED_VEHICLE = false,
-		UNIT_EXITED_VEHICLE = false,
-		UNIT_PET = false,
-		UNIT_TARGET = false,
-		UNIT_COMBO_POINTS = false,
-		UNIT_THREAT_LIST_UPDATE = false,
-	}, {__index = function(t, e) t[e] = (strsub(e, 1, 5) == "UNIT_") return t[e] end})
+	-- Holds true for every event, where the first (unit) argument should be ignored.
+	local sharedUnitEvents = {
+		UNIT_ENTERED_VEHICLE = true,
+		UNIT_EXITED_VEHICLE = true,
+		UNIT_PET = true,
+		UNIT_TARGET = true,
+		UNIT_COMBO_POINTS = true,
+		UNIT_THREAT_LIST_UPDATE = true,
+	}
 
 	eventFrame:SetScript('OnEvent', function(_, event, arg1, ...)
 		local listeners = registry[event]
-		if arg1 and unitEvents[event] then
+		if arg1 and not sharedUnitEvents[event] then
 			local frames = framesForUnit[arg1]
 			if frames then
 				for frame in next, frames do
