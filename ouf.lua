@@ -21,9 +21,10 @@ local elements = {}
 
 -- updating of "invalid" units.
 local enableTargetUpdate = function(object)
-	local total = 0
 	object.onUpdateFrequency = object.onUpdateFrequency or .5
+	object.__eventless = true
 
+	local total = 0
 	object:SetScript('OnUpdate', function(self, elapsed)
 		if(not self.unit) then
 			return
