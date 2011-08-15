@@ -14,7 +14,7 @@ local Update = function(self, event, unit)
 			portrait:SetModel('interface\\buttons\\talktomequestionmark.m2')
 			portrait:SetCamDistanceScale(0.25)
 			portrait:SetPortraitZoom(0)
-			portrait:SetPosition(0,0,0.5)			
+			portrait:SetPosition(0,0,0.5)
 			portrait.guid = nil
 		elseif(portrait.guid ~= guid or event == 'UNIT_MODEL_CHANGED') then
 			portrait:ClearModel()
