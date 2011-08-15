@@ -216,6 +216,8 @@ local initObject = function(unit, style, styleFunc, header, ...)
 			-- Other boss and target units are handled by :HandleUnit().
 			if(suffix == 'target') then
 				enableTargetUpdate(object)
+			else
+				oUF:HandleUnit(object)
 			end
 		else
 			-- Used to update frames when they change position in a group.
@@ -523,8 +525,6 @@ function oUF:Spawn(unit, overrideName)
 	Private.UpdateUnits(object, unit)
 
 	self:DisableBlizzard(unit)
-	self:HandleUnit(object)
-
 	walkObject(object, unit)
 
 	object:SetAttribute("unit", unit)
