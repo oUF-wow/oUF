@@ -89,7 +89,7 @@ local Enable = function(self, unit)
 		self:RegisterEvent('UNIT_DISPLAYPOWER', Path)
 		self:RegisterEvent('UNIT_MAXPOWER', Path)
 
-		if(not druidmana:GetStatusBarTexture()) then
+		if(druidmana:IsObjectType'StatusBar' and not druidmana:GetStatusBarTexture()) then
 			druidmana:SetStatusBarTexture[[Interface\TargetingFrame\UI-StatusBar]]
 		end
 
