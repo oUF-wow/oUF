@@ -109,10 +109,10 @@ local function Enable(self)
 		eb.__owner = self
 		eb.ForceUpdate = ForceUpdate
 
-		if(eb.LunarBar and not eb.LunarBar:GetStatusBarTexture()) then
+		if(eb.LunarBar and eb.LunarBar:IsObjectType'StatusBar' and not eb.LunarBar:GetStatusBarTexture()) then
 			eb.LunarBar:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 		end
-		if(eb.SolarBar and not eb.SolarBar:GetStatusBarTexture()) then
+		if(eb.SolarBar and eb.SolarBar:IsObjectType'StatusBar' and not eb.SolarBar:GetStatusBarTexture()) then
 			eb.SolarBar:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 		end
 
