@@ -397,7 +397,7 @@ local Enable = function(object, unit)
 			PetCastingBarFrame:Hide()
 		end
 
-		if(not castbar:GetStatusBarTexture()) then
+		if(castbar:IsObjectType'StatusBar' and not castbar:GetStatusBarTexture()) then
 			castbar:SetStatusBarTexture[[Interface\TargetingFrame\UI-StatusBar]]
 		end
 
