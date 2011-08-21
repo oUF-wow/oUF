@@ -83,7 +83,7 @@ local Enable = function(self, unit)
 		-- For tapping.
 		self:RegisterEvent('UNIT_FACTION', Path)
 
-		if(not health:GetStatusBarTexture()) then
+		if(health:IsObjectType'StatusBar' and not health:GetStatusBarTexture()) then
 			health:SetStatusBarTexture[[Interface\TargetingFrame\UI-StatusBar]]
 		end
 
