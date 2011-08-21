@@ -77,7 +77,7 @@ local Enable = function(self, unit)
 			-- the death runes, or at least the clients knowledge about them.
 			UpdateType(self, nil, i, math.floor((i+1)/2))
 
-			if(not rune:GetStatusBarTexture()) then
+			if(rune:IsObjectType'StatusBar' and not rune:GetStatusBarTexture()) then
 				rune:SetStatusBarTexture[[Interface\TargetingFrame\UI-StatusBar]]
 			end
 		end
