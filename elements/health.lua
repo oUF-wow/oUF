@@ -98,7 +98,6 @@ local Disable = function(self)
 		self:UnregisterEvent('UNIT_HEALTH', Path)
 		self:UnregisterEvent('UNIT_MAXHEALTH', Path)
 		self:UnregisterEvent('UNIT_CONNECTION', Path)
-		self:UnregisterEvent('UNIT_POWER', Path)
 
 		self:UnregisterEvent('UNIT_FACTION', Path)
 	end
