@@ -85,6 +85,7 @@ local updateIcon = function(unit, icons, index, offset, filter, isDebuff, visibl
 		local n = visible + offset + 1
 		local icon = icons[n]
 		if(not icon) then
+			icons.createdIcons = icons.createdIcons + 1
 			icon = (icons.CreateIcon or createAuraIcon) (icons, n)
 		end
 
@@ -182,12 +183,15 @@ local filterIcons = function(unit, icons, filter, limit, isDebuff, offset, dontH
 	if(not offset) then offset = 0 end
 	local index = 1
 	local visible = 0
+	local hidden = 0
 	while(visible < limit) do
 		local result = updateIcon(unit, icons, index, offset, filter, isDebuff, visible)
 		if(not result) then
 			break
 		elseif(result == VISIBLE) then
 			visible = visible + 1
+		elseif(result == HIDDEN) then
+			hidden = hidden + 1
 		end
 
 		index = index + 1
@@ -199,7 +203,7 @@ local filterIcons = function(unit, icons, filter, limit, isDebuff, offset, dontH
 		end
 	end
 
-	return visible
+	return visible, hidden
 end
 
 local Update = function(self, event, unit)
@@ -213,14 +217,23 @@ local Update = function(self, event, unit)
 		local numDebuffs = auras.numDebuffs or 40
 		local max = numBuffs + numDebuffs
 
-		local visibleBuffs = filterIcons(unit, auras, auras.buffFilter or auras.filter or 'HELPFUL', numBuffs, nil, 0, true)
+		local visibleBuffs, hiddenBuffs = filterIcons(unit, auras, auras.buffFilter or auras.filter or 'HELPFUL', numBuffs, nil, 0, true)
 		auras.visibleBuffs = visibleBuffs
 
-		auras.visibleDebuffs = filterIcons(unit, auras, auras.debuffFilter or auras.filter or 'HARMFUL', numDebuffs, true, visibleBuffs)
+		local visibleDebuffs, hiddenDebuffs = filterIcons(unit, auras, auras.debuffFilter or auras.filter or 'HARMFUL', numDebuffs, true, visibleBuffs)
+		auras.visibleDebuffs = visibleDebuffs
+
 		auras.visibleAuras = auras.visibleBuffs + auras.visibleDebuffs
 
-		if(auras.PreSetPosition) then auras:PreSetPosition(max) end
-		(auras.SetPosition or SetPosition) (auras, max)
+		if(auras.PreSetPosition) then
+			auras:PreSetPosition(max)
+		end
+
+		local hiddenAuras = hiddenBuffs + hiddenDebuffs
+		if(auras.PreSetPosition or hiddenAuras > 0 or auras.createdIcons > auras.anchoredIcons) then
+			(auras.SetPosition or SetPosition) (auras, max)
+			auras.anchoredIcons = auras.createdIcons
+		end
 
 		if(auras.PostUpdate) then auras:PostUpdate(unit) end
 	end
@@ -230,10 +243,17 @@ local Update = function(self, event, unit)
 		if(buffs.PreUpdate) then buffs:PreUpdate(unit) end
 
 		local numBuffs = buffs.num or 32
-		buffs.visibleBuffs = filterIcons(unit, buffs, buffs.filter or 'HELPFUL', numBuffs)
+		local visibleBuffs, hiddenBuffs = filterIcons(unit, buffs, buffs.filter or 'HELPFUL', numBuffs)
+		buffs.visibleBuffs = visibleBuffs
 
-		if(buffs.PreSetPosition) then buffs:PreSetPosition(numBuffs) end
-		(buffs.SetPosition or SetPosition) (buffs, numBuffs)
+		if(buffs.PreSetPosition) then
+			buffs:PreSetPosition(numBuffs)
+		end
+
+		if(buffs.PreSetPosition or hiddenBuffs > 0 or buffs.createdIcons > buffs.anchoredIcons) then
+			(buffs.SetPosition or SetPosition) (buffs, numBuffs)
+			buffs.anchoredIcons = buffs.createdIcons
+		end
 
 		if(buffs.PostUpdate) then buffs:PostUpdate(unit) end
 	end
@@ -243,10 +263,17 @@ local Update = function(self, event, unit)
 		if(debuffs.PreUpdate) then debuffs:PreUpdate(unit) end
 
 		local numDebuffs = debuffs.num or 40
-		debuffs.visibleDebuffs = filterIcons(unit, debuffs, debuffs.filter or 'HARMFUL', numDebuffs, true)
+		local visibleDebuffs, hiddenDebuffs = filterIcons(unit, debuffs, debuffs.filter or 'HARMFUL', numDebuffs, true)
+		debuffs.visibleDebuffs = visibleDebuffs
 
-		if(debuffs.PreSetPosition) then debuffs:PreSetPosition(numDebuffs) end
-		(debuffs.SetPosition or SetPosition) (debuffs, numDebuffs)
+		if(debuffs.PreSetPosition) then
+			debuffs:PreSetPosition(numDebuffs)
+		end
+
+		if(debuffs.PreSetPosition or hiddenDebuffs > 0 or debuffs.createdIcons > debuffs.anchoredIcons) then
+			(debuffs.SetPosition or SetPosition) (debuffs, numDebuffs)
+			debuffs.anchoredIcons = debuffs.createdIcons
+		end
 
 		if(debuffs.PostUpdate) then debuffs:PostUpdate(unit) end
 	end
@@ -264,18 +291,27 @@ local Enable = function(self)
 		if(buffs) then
 			buffs.__owner = self
 			buffs.ForceUpdate = ForceUpdate
+
+			buffs.createdIcons = 0
+			buffs.anchoredIcons = 0
 		end
 
 		local debuffs = self.Debuffs
 		if(debuffs) then
 			debuffs.__owner = self
 			debuffs.ForceUpdate = ForceUpdate
+
+			debuffs.createdIcons = 0
+			debuffs.anchoredIcons = 0
 		end
 
 		local auras = self.Auras
 		if(auras) then
 			auras.__owner = self
 			auras.ForceUpdate = ForceUpdate
+
+			auras.createdIcons = 0
+			auras.anchoredIcons = 0
 		end
 
 		return true
