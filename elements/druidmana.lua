@@ -34,7 +34,7 @@ local function Update(self, event, unit, powertype)
 		else
 			perc = min / max
 		end
-	
+
 		r, g, b = self.ColorGradient(perc, unpack(druidmana.smoothGradient or self.colors.smooth))
 	elseif(druidmana.colorPower) then
 		t = self.colors.power['MANA']
