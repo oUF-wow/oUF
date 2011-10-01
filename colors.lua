@@ -42,7 +42,14 @@ for eclass, color in next, FACTION_BAR_COLORS do
 end
 
 -- http://www.wowwiki.com/ColorGradient
-local ColorGradient = function(perc, ...)
+local ColorGradient = function(a, b, ...)
+	local perc
+	if(b == 0) then
+		perc = 0
+	else
+		perc = a / b
+	end
+
 	if perc >= 1 then
 		local r, g, b = select(select('#', ...) - 2, ...)
 		return r, g, b
