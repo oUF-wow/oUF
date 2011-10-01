@@ -217,6 +217,7 @@ local Update = function(self, event, unit)
 		local numDebuffs = auras.numDebuffs or 40
 		local max = numBuffs + numDebuffs
 
+		local pvb = auras.visibleBuffs
 		local visibleBuffs, hiddenBuffs = filterIcons(unit, auras, auras.buffFilter or auras.filter or 'HELPFUL', numBuffs, nil, 0, true)
 		auras.visibleBuffs = visibleBuffs
 
@@ -233,7 +234,7 @@ local Update = function(self, event, unit)
 		if(
 			auras.PreSetPosition or
 			hiddenAuras > 0 or
-			(auras.gap and visibleBuffs == 0 and visibleDebuffs > 0) or
+			(auras.gap and visibleBuffs ~= pvb) or
 			auras.createdIcons > auras.anchoredIcons
 		)
 		then
