@@ -127,10 +127,10 @@ end
 local UNIT_SPELLCAST_DELAYED = function(self, event, unit, spellname, _, castid)
 	if(self.unit ~= unit) then return end
 
-	local name, _, text, texture, startTime, endTime = UnitCastingInfo(unit)
-	if(not startTime) then return end
-
 	local castbar = self.Castbar
+	local name, _, text, texture, startTime, endTime = UnitCastingInfo(unit)
+	if(not startTime or not castbar:IsShown()) then return end
+
 	local duration = GetTime() - (startTime / 1000)
 	if(duration < 0) then duration = 0 end
 
@@ -217,12 +217,12 @@ end
 local UNIT_SPELLCAST_CHANNEL_UPDATE = function(self, event, unit, spellname)
 	if(self.unit ~= unit) then return end
 
+	local castbar = self.Castbar
 	local name, _, text, texture, startTime, endTime, oldStart = UnitChannelInfo(unit)
-	if(not name) then
+	if(not name or not castbar:IsShown()) then
 		return
 	end
 
-	local castbar = self.Castbar
 	local duration = (endTime / 1000) - GetTime()
 
 	castbar.delay = castbar.delay + castbar.duration - duration
