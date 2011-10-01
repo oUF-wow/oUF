@@ -56,7 +56,14 @@ local Update = function(self, event, unit)
 	elseif(power.colorReaction and UnitReaction(unit, 'player')) then
 		t = self.colors.reaction[UnitReaction(unit, "player")]
 	elseif(power.colorSmooth) then
-		r, g, b = self.ColorGradient(min / max, unpack(power.smoothGradient or self.colors.smooth))
+		local perc
+		if(max == 0) then
+			perc = 0
+		else
+			perc = min / max
+		end
+
+		r, g, b = self.ColorGradient(perc, unpack(power.smoothGradient or self.colors.smooth))
 	end
 
 	if(t) then
