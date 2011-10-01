@@ -230,7 +230,13 @@ local Update = function(self, event, unit)
 		end
 
 		local hiddenAuras = hiddenBuffs + hiddenDebuffs
-		if(auras.PreSetPosition or hiddenAuras > 0 or auras.createdIcons > auras.anchoredIcons) then
+		if(
+			auras.PreSetPosition or
+			hiddenAuras > 0 or
+			(auras.gap and visibleBuffs == 0 and visibleDebuffs > 0) or
+			auras.createdIcons > auras.anchoredIcons
+		)
+		then
 			(auras.SetPosition or SetPosition) (auras, max)
 			auras.anchoredIcons = auras.createdIcons
 		end
