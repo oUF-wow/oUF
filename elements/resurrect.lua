@@ -26,7 +26,7 @@ local Enable = function(self)
 		resurrect.__owner = self
 		resurrect.ForceUpdate = ForceUpdate
 
-		self:RegisterEvent('INCOMING_RESURRECT_CHANGED', Path)
+		self:RegisterEvent('INCOMING_RESURRECT_CHANGED', Path, true)
 
 		if(resurrect:IsObjectType('Texture') and not resurrect:GetTexture()) then
 			resurrect:SetTexture[[Interface\RaidFrame\Raid-Icon-Rez]]
