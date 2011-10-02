@@ -116,11 +116,11 @@ local function Enable(self)
 			eb.SolarBar:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 		end
 
-		self:RegisterEvent('ECLIPSE_DIRECTION_CHANGE', ECLIPSE_DIRECTION_CHANGE)
-		self:RegisterEvent('PLAYER_TALENT_UPDATE', UPDATE_VISIBILITY)
+		self:RegisterEvent('ECLIPSE_DIRECTION_CHANGE', ECLIPSE_DIRECTION_CHANGE, true)
+		self:RegisterEvent('PLAYER_TALENT_UPDATE', UPDATE_VISIBILITY, true)
 		self:RegisterEvent('UNIT_AURA', UNIT_AURA)
 		self:RegisterEvent('UNIT_POWER', UNIT_POWER)
-		self:RegisterEvent('UPDATE_SHAPESHIFT_FORM', UPDATE_VISIBILITY)
+		self:RegisterEvent('UPDATE_SHAPESHIFT_FORM', UPDATE_VISIBILITY, true)
 
 		return true
 	end
