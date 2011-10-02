@@ -87,7 +87,11 @@ do
 		end
 	end)
 
-	function RegisterEvent(self, event)
+	function RegisterEvent(self, event, unitless)
+		if(unitless) then
+			sharedUnitEvents[event] = true
+		end
+
 		if not registry[event] then
 			registry[event] = { [self] = true }
 			eventFrame:RegisterEvent(event)
@@ -119,7 +123,7 @@ local event_metatable = {
 	end,
 }
 
-function frame_metatable.__index:RegisterEvent(event, func)
+function frame_metatable.__index:RegisterEvent(event, func, unitless)
 	-- Block OnUpdate polled frames from registering events.
 	if(self.__eventless) then return end
 
@@ -150,7 +154,7 @@ function frame_metatable.__index:RegisterEvent(event, func)
 			return error("Style [%s] attempted to register event [%s] on unit [%s] with a handler that doesn't exist.", self.style, event, self.unit or 'unknown')
 		end
 
-		RegisterEvent(self, event)
+		RegisterEvent(self, event, unitless)
 	end
 end
 
