@@ -642,9 +642,11 @@ local Untag = function(self, fs)
 	fs.UpdateTag = nil
 end
 
-oUF.Tags = tags
-oUF.TagEvents = tagEvents
-oUF.UnitlessTagEvents = unitlessEvents
+oUF.Tags = {
+	Methods = tags,
+	Events = tagEvents,
+	SharedEvents = unitlessEvents,
 
+}
 oUF:RegisterMetaFunction('Tag', Tag)
 oUF:RegisterMetaFunction('Untag', Untag)
