@@ -62,9 +62,6 @@ do
 		UNIT_ENTERED_VEHICLE = true,
 		UNIT_EXITED_VEHICLE = true,
 		UNIT_PET = true,
-		UNIT_TARGET = true,
-		UNIT_COMBO_POINTS = true,
-		UNIT_THREAT_LIST_UPDATE = true,
 	}
 
 	eventFrame:SetScript('OnEvent', function(_, event, arg1, ...)
