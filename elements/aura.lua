@@ -142,29 +142,21 @@ local updateIcon = function(unit, icons, index, offset, filter, isDebuff, visibl
 	end
 end
 
-local SetPosition = function(icons, x)
-	if(icons and x > 0) then
-		local col = 0
-		local row = 0
-		local sizex = (icons.size or 16) + (icons['spacing-x'] or icons.spacing or 0)
-		local sizey = (icons.size or 16) + (icons['spacing-y'] or icons.spacing or 0)
-		local anchor = icons.initialAnchor or "BOTTOMLEFT"
-		local growthx = (icons["growth-x"] == "LEFT" and -1) or 1
-		local growthy = (icons["growth-y"] == "DOWN" and -1) or 1
-		local cols = math.floor(icons:GetWidth() / sizex + .5)
-		local rows = math.floor(icons:GetHeight() / sizey + .5)
+local SetPosition = function(icons, from, to)
+	local sizex = (icons.size or 16) + (icons['spacing-x'] or icons.spacing or 0)
+	local sizey = (icons.size or 16) + (icons['spacing-y'] or icons.spacing or 0)
+	local anchor = icons.initialAnchor or "BOTTOMLEFT"
+	local growthx = (icons["growth-x"] == "LEFT" and -1) or 1
+	local growthy = (icons["growth-y"] == "DOWN" and -1) or 1
+	local cols = math.floor(icons:GetWidth() / sizex + .5)
 
-		for i = 1, #icons do
-			local button = icons[i]
-			if(col >= cols) then
-				col = 0
-				row = row + 1
-			end
-			button:ClearAllPoints()
-			button:SetPoint(anchor, icons, anchor, col * sizex * growthx, row * sizey * growthy)
+	for i = from, to - 1 do
+		local button = icons[i + 1]
+		local col = i % cols
+		local row = math.floor(i / cols)
 
-			col = col + 1
-		end
+		button:ClearAllPoints()
+		button:SetPoint(anchor, icons, anchor, col * sizex * growthx, row * sizey * growthy)
 	end
 end
 
@@ -244,7 +236,7 @@ local Update = function(self, event, unit)
 		end
 
 		if(auras.PreSetPosition or auras.createdIcons > auras.anchoredIcons) then
-			(auras.SetPosition or SetPosition) (auras, max)
+			(auras.SetPosition or SetPosition) (auras, auras.anchoredIcons, auras.createdIcons)
 			auras.anchoredIcons = auras.createdIcons
 		end
 
@@ -264,7 +256,7 @@ local Update = function(self, event, unit)
 		end
 
 		if(buffs.PreSetPosition or buffs.createdIcons > buffs.anchoredIcons) then
-			(buffs.SetPosition or SetPosition) (buffs, numBuffs)
+			(buffs.SetPosition or SetPosition) (buffs, buffs.anchoredIcons, buffs.createdIcons)
 			buffs.anchoredIcons = buffs.createdIcons
 		end
 
@@ -284,7 +276,7 @@ local Update = function(self, event, unit)
 		end
 
 		if(debuffs.PreSetPosition or debuffs.createdIcons > debuffs.anchoredIcons) then
-			(debuffs.SetPosition or SetPosition) (debuffs, numDebuffs)
+			(debuffs.SetPosition or SetPosition) (debuffs, debuffs.anchoredIcons, debuffs.createdIcons)
 			debuffs.anchoredIcons = debuffs.createdIcons
 		end
 
