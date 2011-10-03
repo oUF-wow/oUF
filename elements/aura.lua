@@ -156,18 +156,14 @@ local SetPosition = function(icons, x)
 
 		for i = 1, #icons do
 			local button = icons[i]
-			if(button and button:IsShown()) then
-				if(col >= cols) then
-					col = 0
-					row = row + 1
-				end
-				button:ClearAllPoints()
-				button:SetPoint(anchor, icons, anchor, col * sizex * growthx, row * sizey * growthy)
-
-				col = col + 1
-			elseif(not button) then
-				break
+			if(col >= cols) then
+				col = 0
+				row = row + 1
 			end
+			button:ClearAllPoints()
+			button:SetPoint(anchor, icons, anchor, col * sizex * growthx, row * sizey * growthy)
+
+			col = col + 1
 		end
 	end
 end
@@ -213,8 +209,11 @@ local Update = function(self, event, unit)
 		local visibleBuffs, hiddenBuffs = filterIcons(unit, auras, auras.buffFilter or auras.filter or 'HELPFUL', numBuffs, nil, 0, true)
 		auras.visibleBuffs = visibleBuffs
 
-		if(auras.gap) then
+		local hasGap
+		if(visibleBuffs ~= 0 and auras.gap) then
+			hasGap = true
 			visibleBuffs = visibleBuffs + 1
+
 			local icon = auras[visibleBuffs] or (auras.CreateIcon or createAuraIcon) (auras, visibleBuffs)
 
 			-- Prevent the icon from displaying anything.
@@ -233,7 +232,7 @@ local Update = function(self, event, unit)
 		local visibleDebuffs, hiddenDebuffs = filterIcons(unit, auras, auras.debuffFilter or auras.filter or 'HARMFUL', numDebuffs, true, visibleBuffs)
 		auras.visibleDebuffs = visibleDebuffs
 
-		if(auras.gap and visibleDebuffs == 0) then
+		if(hasGap and visibleDebuffs == 0) then
 			auras[visibleBuffs]:Hide()
 			visibleBuffs = visibleBuffs - 1
 		end
@@ -244,13 +243,7 @@ local Update = function(self, event, unit)
 			auras:PreSetPosition(max)
 		end
 
-		local hiddenAuras = hiddenBuffs + hiddenDebuffs
-		if(
-			auras.PreSetPosition or
-			hiddenAuras > 0 or
-			auras.createdIcons > auras.anchoredIcons
-		)
-		then
+		if(auras.PreSetPosition or auras.createdIcons > auras.anchoredIcons) then
 			(auras.SetPosition or SetPosition) (auras, max)
 			auras.anchoredIcons = auras.createdIcons
 		end
@@ -270,7 +263,7 @@ local Update = function(self, event, unit)
 			buffs:PreSetPosition(numBuffs)
 		end
 
-		if(buffs.PreSetPosition or hiddenBuffs > 0 or buffs.createdIcons > buffs.anchoredIcons) then
+		if(buffs.PreSetPosition or buffs.createdIcons > buffs.anchoredIcons) then
 			(buffs.SetPosition or SetPosition) (buffs, numBuffs)
 			buffs.anchoredIcons = buffs.createdIcons
 		end
@@ -290,7 +283,7 @@ local Update = function(self, event, unit)
 			debuffs:PreSetPosition(numDebuffs)
 		end
 
-		if(debuffs.PreSetPosition or hiddenDebuffs > 0 or debuffs.createdIcons > debuffs.anchoredIcons) then
+		if(debuffs.PreSetPosition or debuffs.createdIcons > debuffs.anchoredIcons) then
 			(debuffs.SetPosition or SetPosition) (debuffs, numDebuffs)
 			debuffs.anchoredIcons = debuffs.createdIcons
 		end
