@@ -20,6 +20,8 @@ local OnLeave = function()
 end
 
 local createAuraIcon = function(icons, index)
+	icons.createdIcons = icons.createdIcons + 1
+
 	local button = CreateFrame("Button", nil, icons)
 	button:EnableMouse(true)
 	button:RegisterForClicks'RightButtonUp'
@@ -85,7 +87,6 @@ local updateIcon = function(unit, icons, index, offset, filter, isDebuff, visibl
 		local n = visible + offset + 1
 		local icon = icons[n]
 		if(not icon) then
-			icons.createdIcons = icons.createdIcons + 1
 			icon = (icons.CreateIcon or createAuraIcon) (icons, n)
 		end
 
@@ -126,6 +127,7 @@ local updateIcon = function(unit, icons, index, offset, filter, isDebuff, visibl
 			icon.filter = filter
 			icon.debuff = isDebuff
 
+			icon:EnableMouse(true)
 			icon:SetID(index)
 			icon:Show()
 
@@ -144,7 +146,6 @@ local SetPosition = function(icons, x)
 	if(icons and x > 0) then
 		local col = 0
 		local row = 0
-		local gap = icons.gap
 		local sizex = (icons.size or 16) + (icons['spacing-x'] or icons.spacing or 0)
 		local sizey = (icons.size or 16) + (icons['spacing-y'] or icons.spacing or 0)
 		local anchor = icons.initialAnchor or "BOTTOMLEFT"
@@ -156,14 +157,6 @@ local SetPosition = function(icons, x)
 		for i = 1, #icons do
 			local button = icons[i]
 			if(button and button:IsShown()) then
-				if(gap and button.debuff) then
-					if(col > 0) then
-						col = col + 1
-					end
-
-					gap = false
-				end
-
 				if(col >= cols) then
 					col = 0
 					row = row + 1
@@ -217,13 +210,33 @@ local Update = function(self, event, unit)
 		local numDebuffs = auras.numDebuffs or 40
 		local max = numBuffs + numDebuffs
 
-		local pvb = auras.visibleBuffs
 		local visibleBuffs, hiddenBuffs = filterIcons(unit, auras, auras.buffFilter or auras.filter or 'HELPFUL', numBuffs, nil, 0, true)
 		auras.visibleBuffs = visibleBuffs
 
-		local pvd = auras.visibleDebuffs
+		if(auras.gap) then
+			visibleBuffs = visibleBuffs + 1
+			local icon = auras[visibleBuffs] or (auras.CreateIcon or createAuraIcon) (auras, visibleBuffs)
+
+			-- Prevent the icon from displaying anything.
+			if(icon.cd) then icon.cd:Hide() end
+			icon:EnableMouse(false)
+			icon.icon:SetTexture()
+			icon.overlay:Hide()
+			icon.stealable:Hide()
+			icon:Show()
+
+			if(auras.PostUpdateGapIcon) then
+				auras:PostUpdateGapIcon(unit, icon, visibleBuffs)
+			end
+		end
+
 		local visibleDebuffs, hiddenDebuffs = filterIcons(unit, auras, auras.debuffFilter or auras.filter or 'HARMFUL', numDebuffs, true, visibleBuffs)
 		auras.visibleDebuffs = visibleDebuffs
+
+		if(auras.gap and visibleDebuffs == 0) then
+			auras[visibleBuffs]:Hide()
+			visibleBuffs = visibleBuffs - 1
+		end
 
 		auras.visibleAuras = auras.visibleBuffs + auras.visibleDebuffs
 
@@ -235,7 +248,6 @@ local Update = function(self, event, unit)
 		if(
 			auras.PreSetPosition or
 			hiddenAuras > 0 or
-			(auras.gap and (visibleBuffs ~= pvb or visibleDebuffs ~= pvd)) or
 			auras.createdIcons > auras.anchoredIcons
 		)
 		then
