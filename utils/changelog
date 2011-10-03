@@ -41,7 +41,7 @@ local generateLog = function(prevTag, currentTag)
 			else
 				line = line:sub(7)
 			end
-			
+
 			ti(out, sf('   [*] %s', line))
 		elseif(#line == 0) then
 			ti(out, '  [/list]')
