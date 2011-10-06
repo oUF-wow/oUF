@@ -20,6 +20,8 @@ local OnLeave = function()
 end
 
 local createAuraIcon = function(icons, index)
+	icons.createdIcons = icons.createdIcons + 1
+
 	local button = CreateFrame("Button", nil, icons)
 	button:EnableMouse(true)
 	button:RegisterForClicks'RightButtonUp'
@@ -85,7 +87,6 @@ local updateIcon = function(unit, icons, index, offset, filter, isDebuff, visibl
 		local n = visible + offset + 1
 		local icon = icons[n]
 		if(not icon) then
-			icons.createdIcons = icons.createdIcons + 1
 			icon = (icons.CreateIcon or createAuraIcon) (icons, n)
 		end
 
@@ -126,6 +127,7 @@ local updateIcon = function(unit, icons, index, offset, filter, isDebuff, visibl
 			icon.filter = filter
 			icon.debuff = isDebuff
 
+			icon:EnableMouse(true)
 			icon:SetID(index)
 			icon:Show()
 
@@ -140,42 +142,21 @@ local updateIcon = function(unit, icons, index, offset, filter, isDebuff, visibl
 	end
 end
 
-local SetPosition = function(icons, x)
-	if(icons and x > 0) then
-		local col = 0
-		local row = 0
-		local gap = icons.gap
-		local sizex = (icons.size or 16) + (icons['spacing-x'] or icons.spacing or 0)
-		local sizey = (icons.size or 16) + (icons['spacing-y'] or icons.spacing or 0)
-		local anchor = icons.initialAnchor or "BOTTOMLEFT"
-		local growthx = (icons["growth-x"] == "LEFT" and -1) or 1
-		local growthy = (icons["growth-y"] == "DOWN" and -1) or 1
-		local cols = math.floor(icons:GetWidth() / sizex + .5)
-		local rows = math.floor(icons:GetHeight() / sizey + .5)
+local SetPosition = function(icons, from, to)
+	local sizex = (icons.size or 16) + (icons['spacing-x'] or icons.spacing or 0)
+	local sizey = (icons.size or 16) + (icons['spacing-y'] or icons.spacing or 0)
+	local anchor = icons.initialAnchor or "BOTTOMLEFT"
+	local growthx = (icons["growth-x"] == "LEFT" and -1) or 1
+	local growthy = (icons["growth-y"] == "DOWN" and -1) or 1
+	local cols = math.floor(icons:GetWidth() / sizex + .5)
 
-		for i = 1, #icons do
-			local button = icons[i]
-			if(button and button:IsShown()) then
-				if(gap and button.debuff) then
-					if(col > 0) then
-						col = col + 1
-					end
+	for i = from, to - 1 do
+		local button = icons[i + 1]
+		local col = i % cols
+		local row = math.floor(i / cols)
 
-					gap = false
-				end
-
-				if(col >= cols) then
-					col = 0
-					row = row + 1
-				end
-				button:ClearAllPoints()
-				button:SetPoint(anchor, icons, anchor, col * sizex * growthx, row * sizey * growthy)
-
-				col = col + 1
-			elseif(not button) then
-				break
-			end
-		end
+		button:ClearAllPoints()
+		button:SetPoint(anchor, icons, anchor, col * sizex * growthx, row * sizey * growthy)
 	end
 end
 
@@ -217,13 +198,36 @@ local Update = function(self, event, unit)
 		local numDebuffs = auras.numDebuffs or 40
 		local max = numBuffs + numDebuffs
 
-		local pvb = auras.visibleBuffs
 		local visibleBuffs, hiddenBuffs = filterIcons(unit, auras, auras.buffFilter or auras.filter or 'HELPFUL', numBuffs, nil, 0, true)
 		auras.visibleBuffs = visibleBuffs
 
-		local pvd = auras.visibleDebuffs
+		local hasGap
+		if(visibleBuffs ~= 0 and auras.gap) then
+			hasGap = true
+			visibleBuffs = visibleBuffs + 1
+
+			local icon = auras[visibleBuffs] or (auras.CreateIcon or createAuraIcon) (auras, visibleBuffs)
+
+			-- Prevent the icon from displaying anything.
+			if(icon.cd) then icon.cd:Hide() end
+			icon:EnableMouse(false)
+			icon.icon:SetTexture()
+			icon.overlay:Hide()
+			icon.stealable:Hide()
+			icon:Show()
+
+			if(auras.PostUpdateGapIcon) then
+				auras:PostUpdateGapIcon(unit, icon, visibleBuffs)
+			end
+		end
+
 		local visibleDebuffs, hiddenDebuffs = filterIcons(unit, auras, auras.debuffFilter or auras.filter or 'HARMFUL', numDebuffs, true, visibleBuffs)
 		auras.visibleDebuffs = visibleDebuffs
+
+		if(hasGap and visibleDebuffs == 0) then
+			auras[visibleBuffs]:Hide()
+			visibleBuffs = visibleBuffs - 1
+		end
 
 		auras.visibleAuras = auras.visibleBuffs + auras.visibleDebuffs
 
@@ -231,15 +235,8 @@ local Update = function(self, event, unit)
 			auras:PreSetPosition(max)
 		end
 
-		local hiddenAuras = hiddenBuffs + hiddenDebuffs
-		if(
-			auras.PreSetPosition or
-			hiddenAuras > 0 or
-			(auras.gap and (visibleBuffs ~= pvb or visibleDebuffs ~= pvd)) or
-			auras.createdIcons > auras.anchoredIcons
-		)
-		then
-			(auras.SetPosition or SetPosition) (auras, max)
+		if(auras.PreSetPosition or auras.createdIcons > auras.anchoredIcons) then
+			(auras.SetPosition or SetPosition) (auras, auras.anchoredIcons, auras.createdIcons)
 			auras.anchoredIcons = auras.createdIcons
 		end
 
@@ -258,8 +255,8 @@ local Update = function(self, event, unit)
 			buffs:PreSetPosition(numBuffs)
 		end
 
-		if(buffs.PreSetPosition or hiddenBuffs > 0 or buffs.createdIcons > buffs.anchoredIcons) then
-			(buffs.SetPosition or SetPosition) (buffs, numBuffs)
+		if(buffs.PreSetPosition or buffs.createdIcons > buffs.anchoredIcons) then
+			(buffs.SetPosition or SetPosition) (buffs, buffs.anchoredIcons, buffs.createdIcons)
 			buffs.anchoredIcons = buffs.createdIcons
 		end
 
@@ -278,8 +275,8 @@ local Update = function(self, event, unit)
 			debuffs:PreSetPosition(numDebuffs)
 		end
 
-		if(debuffs.PreSetPosition or hiddenDebuffs > 0 or debuffs.createdIcons > debuffs.anchoredIcons) then
-			(debuffs.SetPosition or SetPosition) (debuffs, numDebuffs)
+		if(debuffs.PreSetPosition or debuffs.createdIcons > debuffs.anchoredIcons) then
+			(debuffs.SetPosition or SetPosition) (debuffs, debuffs.anchoredIcons, debuffs.createdIcons)
 			debuffs.anchoredIcons = debuffs.createdIcons
 		end
 
