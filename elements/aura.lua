@@ -68,15 +68,7 @@ local createAuraIcon = function(icons, index)
 end
 
 local customFilter = function(icons, unit, icon, name, rank, texture, count, dtype, duration, timeLeft, caster)
-	local isPlayer
-
-	if(caster == 'player' or caster == 'vehicle') then
-		isPlayer = true
-	end
-
-	if((icons.onlyShowPlayer and isPlayer) or (not icons.onlyShowPlayer and name)) then
-		icon.isPlayer = isPlayer
-		icon.owner = caster
+	if((icons.onlyShowPlayer and icon.isPlayer) or (not icons.onlyShowPlayer and name)) then
 		return true
 	end
 end
@@ -90,8 +82,15 @@ local updateIcon = function(unit, icons, index, offset, filter, isDebuff, visibl
 			icon = (icons.CreateIcon or createAuraIcon) (icons, n)
 		end
 
+		local isPlayer
+		if(caster == 'player' or caster == 'vehicle') then
+			isPlayer = true
+		end
+
+		icon.owner = caster
 		icon.filter = filter
 		icon.isDebuff = isDebuff
+		icon.isPlayer = isPlayer
 
 		local show = (icons.CustomFilter or customFilter) (icons, unit, icon, name, rank, texture, count, dtype, duration, timeLeft, caster, isStealable, shouldConsolidate, spellID, canApplyAura, isBossDebuff)
 		if(show) then
