@@ -90,6 +90,9 @@ local updateIcon = function(unit, icons, index, offset, filter, isDebuff, visibl
 			icon = (icons.CreateIcon or createAuraIcon) (icons, n)
 		end
 
+		icon.filter = filter
+		icon.debuff = isDebuff
+
 		local show = (icons.CustomFilter or customFilter) (icons, unit, icon, name, rank, texture, count, dtype, duration, timeLeft, caster, isStealable, shouldConsolidate, spellID, canApplyAura, isBossDebuff)
 		if(show) then
 			-- We might want to consider delaying the creation of an actual cooldown
@@ -123,9 +126,6 @@ local updateIcon = function(unit, icons, index, offset, filter, isDebuff, visibl
 
 			icon.icon:SetTexture(texture)
 			icon.count:SetText((count > 1 and count))
-
-			icon.filter = filter
-			icon.debuff = isDebuff
 
 			icon:EnableMouse(true)
 			icon:SetID(index)
