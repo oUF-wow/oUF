@@ -91,7 +91,7 @@ local updateIcon = function(unit, icons, index, offset, filter, isDebuff, visibl
 		end
 
 		icon.filter = filter
-		icon.debuff = isDebuff
+		icon.isDebuff = isDebuff
 
 		local show = (icons.CustomFilter or customFilter) (icons, unit, icon, name, rank, texture, count, dtype, duration, timeLeft, caster, isStealable, shouldConsolidate, spellID, canApplyAura, isBossDebuff)
 		if(show) then
