@@ -97,7 +97,7 @@ local Enable = function(self)
 			end
 		end
 
-		self:RegisterEvent('PLAYER_TOTEM_UPDATE', Path)
+		self:RegisterEvent('PLAYER_TOTEM_UPDATE', Path, true)
 
 		TotemFrame.Show = TotemFrame.Hide
 		TotemFrame:Hide()

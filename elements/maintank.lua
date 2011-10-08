@@ -28,8 +28,8 @@ local Enable = function(self)
 		mt.__owner = self
 		mt.ForceUpdate = ForceUpdate
 
-		self:RegisterEvent('PARTY_MEMBERS_CHANGED', Path)
-		self:RegisterEvent('RAID_ROSTER_UPDATE', Path)
+		self:RegisterEvent('PARTY_MEMBERS_CHANGED', Path, true)
+		self:RegisterEvent('RAID_ROSTER_UPDATE', Path, true)
 
 		if(mt:IsObjectType'Texture' and not mt:GetTexture()) then
 			mt:SetTexture[[Interface\GROUPFRAME\UI-GROUP-MAINTANKICON]]

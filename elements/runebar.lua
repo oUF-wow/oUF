@@ -83,8 +83,8 @@ local Enable = function(self, unit)
 			end
 		end
 
-		self:RegisterEvent("RUNE_POWER_UPDATE", UpdateRune)
-		self:RegisterEvent("RUNE_TYPE_UPDATE", UpdateType)
+		self:RegisterEvent("RUNE_POWER_UPDATE", UpdateRune, true)
+		self:RegisterEvent("RUNE_TYPE_UPDATE", UpdateType, true)
 
 		runes:Show()
 
