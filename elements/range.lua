@@ -43,6 +43,8 @@ local Enable = function(self)
 		end
 
 		OnRangeFrame:Show()
+
+		return true
 	end
 end
 
