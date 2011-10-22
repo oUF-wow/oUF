@@ -58,7 +58,7 @@ local generateLog = function(prevTag, currentTag)
 	p:close()
 
 	ti(out, sf('[indent]%s[/indent]', stat:sub(2, -2)))
-	
+
 	return table.concat(out, '\n')
 end
 
