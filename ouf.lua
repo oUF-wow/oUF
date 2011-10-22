@@ -22,6 +22,7 @@ local conv = {
 	['playertarget'] = 'target',
 }
 local elements = {}
+local activeElements = {}
 
 -- updating of "invalid" units.
 local enableTargetUpdate = function(object)
@@ -91,17 +92,30 @@ for k, v in pairs{
 		if(not element or self:IsElementEnabled(name)) then return end
 
 		if(element.enable(self, unit or self.unit)) then
-			table.insert(self.__elements, element.update)
+			activeElements[self][name] = true
+
+			if(element.update) then
+				table.insert(self.__elements, element.update)
+			end
 		end
 	end,
 
 	DisableElement = function(self, name)
 		argcheck(name, 2, 'string')
 
-		local enabled, k = self:IsElementEnabled(name)
+		local enabled = self:IsElementEnabled(name)
+		print('dis', enabled)
 		if(not enabled) then return end
 
-		table.remove(self.__elements, k)
+		local update = elements[name].update
+		for k, func in next, self.__elements do
+			if(func == update) then
+				table.remove(self.__elements, k)
+				break
+			end
+		end
+
+		activeElements[self][name] = nil
 
 		-- We need to run a new update cycle incase we knocked ourself out of sync.
 		-- The main reason we do this is to make sure the full update is completed
@@ -118,11 +132,8 @@ for k, v in pairs{
 		local element = elements[name]
 		if(not element) then return end
 
-		for k, update in next, self.__elements do
-			if(update == element.update) then
-				return true, k
-			end
-		end
+		local active = activeElements[self]
+		return active and active[name]
 	end,
 
 	Enable = RegisterUnitWatch,
@@ -263,6 +274,7 @@ local initObject = function(unit, style, styleFunc, header, ...)
 		object:SetScript("OnAttributeChanged", OnAttributeChanged)
 		object:SetScript("OnShow", OnShow)
 
+		activeElements[object] = {}
 		for element in next, elements do
 			object:EnableElement(element, objectUnit)
 		end
