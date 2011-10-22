@@ -89,7 +89,6 @@ for k, v in pairs{
 		argcheck(name, 2, 'string')
 
 		local enabled = self:IsElementEnabled(name)
-		print('dis', enabled)
 		if(not enabled) then return end
 
 		local update = elements[name].update
