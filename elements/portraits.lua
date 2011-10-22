@@ -10,18 +10,18 @@ local Update = function(self, event, unit)
 	if(portrait:IsObjectType'Model') then
 		local guid = UnitGUID(unit)
 		if(not UnitExists(unit) or not UnitIsConnected(unit) or not UnitIsVisible(unit)) then
-			portrait:ClearModel()
-			portrait:SetModel('interface\\buttons\\talktomequestionmark.m2')
 			portrait:SetCamDistanceScale(0.25)
 			portrait:SetPortraitZoom(0)
 			portrait:SetPosition(0,0,0.5)
+			portrait:ClearModel()
+			portrait:SetModel('interface\\buttons\\talktomequestionmark.m2')
 			portrait.guid = nil
 		elseif(portrait.guid ~= guid or event == 'UNIT_MODEL_CHANGED') then
-			portrait:ClearModel()
-			portrait:SetUnit(unit)
 			portrait:SetCamDistanceScale(1)
 			portrait:SetPortraitZoom(1)
 			portrait:SetPosition(0,0,0)
+			portrait:ClearModel()
+			portrait:SetUnit(unit)
 			portrait.guid = guid
 		end
 	else
