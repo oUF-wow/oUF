@@ -26,9 +26,6 @@ local createAuraIcon = function(icons, index)
 	button:EnableMouse(true)
 	button:RegisterForClicks'RightButtonUp'
 
-	button:SetWidth(icons.size or 16)
-	button:SetHeight(icons.size or 16)
-
 	local cd = CreateFrame("Cooldown", nil, button)
 	cd:SetAllPoints(button)
 
@@ -125,6 +122,9 @@ local updateIcon = function(unit, icons, index, offset, filter, isDebuff, visibl
 
 			icon.icon:SetTexture(texture)
 			icon.count:SetText((count > 1 and count))
+
+			local size = icons.size or 16
+			icon:SetSize(size, size)
 
 			icon:EnableMouse(true)
 			icon:SetID(index)
