@@ -186,7 +186,7 @@ local filterIcons = function(unit, icons, filter, limit, isDebuff, offset, dontH
 	return visible, hidden
 end
 
-local Update = function(self, event, unit)
+local UpdateAuras = function(self, event, unit)
 	if(self.unit ~= unit) then return end
 
 	local auras = self.Auras
@@ -284,13 +284,37 @@ local Update = function(self, event, unit)
 	end
 end
 
+local Update = function(self, event, unit)
+	if(self.unit ~= unit) then return end
+
+	UpdateAuras(self, event, unit)
+
+	-- Assume no event means someone wants to re-anchor things.
+	if(not event) then
+		local buffs = self.Buffs
+		if(buffs) then
+			(buffs.SetPosition or SetPosition) (buffs, 1, buffs.createdIcons)
+		end
+
+		local debuffs = self.Debuffs
+		if(debuffs) then
+			(debuffs.SetPosition or SetPosition) (debuffs, 1, debuffs.createdIcons)
+		end
+
+		local auras = self.Auras
+		if(auras) then
+			(auras.SetPosition or SetPosition) (auras, 1, auras.createdIcons)
+		end
+	end
+end
+
 local ForceUpdate = function(element)
-	return Update(element.__owner, 'ForceUpdate', element.__owner.unit)
+	return UpdateAuras(element.__owner, 'ForceUpdate', element.__owner.unit)
 end
 
 local Enable = function(self)
 	if(self.Buffs or self.Debuffs or self.Auras) then
-		self:RegisterEvent("UNIT_AURA", Update)
+		self:RegisterEvent("UNIT_AURA", UpdateAuras)
 
 		local buffs = self.Buffs
 		if(buffs) then
@@ -325,7 +349,7 @@ end
 
 local Disable = function(self)
 	if(self.Buffs or self.Debuffs or self.Auras) then
-		self:UnregisterEvent("UNIT_AURA", Update)
+		self:UnregisterEvent("UNIT_AURA", UpdateAuras)
 	end
 end
 
