@@ -23,7 +23,6 @@ local createAuraIcon = function(icons, index)
 	icons.createdIcons = icons.createdIcons + 1
 
 	local button = CreateFrame("Button", nil, icons)
-	button:EnableMouse(true)
 	button:RegisterForClicks'RightButtonUp'
 
 	local cd = CreateFrame("Cooldown", nil, button)
