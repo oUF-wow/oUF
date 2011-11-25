@@ -22,7 +22,7 @@ local Update = function(self, event, unit, powerType)
 	end
 
 	if(hp.PostUpdate) then
-		return hp:PostUpdate(unit)
+		return hp:PostUpdate(unit, num)
 	end
 end
 
