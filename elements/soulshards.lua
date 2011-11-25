@@ -22,7 +22,7 @@ local Update = function(self, event, unit, powerType)
 	end
 
 	if(ss.PostUpdate) then
-		return ss:PostUpdate(unit)
+		return ss:PostUpdate(unit, num)
 	end
 end
 
