@@ -22,6 +22,10 @@ local Update = function(self, event, unit)
 			cpoints[i]:Hide()
 		end
 	end
+
+	if(cpoints.PostUpdate) then
+		return cpoints:PostUpdate(cp)
+	end
 end
 
 local Path = function(self, ...)
