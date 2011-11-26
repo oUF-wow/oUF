@@ -382,7 +382,7 @@ local generateName = function(unit, ...)
 			else
 				local _, count = groupFilter:gsub(',', '')
 				if(count == 0) then
-					append = groupFilter
+					append = 'Raid' .. groupFilter
 				else
 					append = 'Raid'
 				end
