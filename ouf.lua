@@ -402,6 +402,8 @@ local generateName = function(unit, ...)
 
 	-- Change oUF_LilyRaidRaid into oUF_LilyRaid
 	name = name:gsub('(%u%l+)([%u%l]*)%1', '%1')
+	-- Change oUF_LilyTargettarget into oUF_LilyTargetTarget
+	name = name:gsub('t(arget)', 'T%1')
 
 	local base = name
 	local i = 2
