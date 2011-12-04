@@ -52,6 +52,8 @@ local UNIT_SPELLCAST_START = function(self, event, unit, spell)
 		sf:SetPoint'RIGHT'
 		sf:SetPoint'TOP'
 		sf:SetPoint'BOTTOM'
+		-- XXX: GetNetStats() returns 0 on mac.
+		sf:Show()
 	end
 
 	--- XXX: 1.6: Kill the rank field.
@@ -213,6 +215,8 @@ local UNIT_SPELLCAST_CHANNEL_START = function(self, event, unit, spellname)
 		sf:SetPoint'LEFT'
 		sf:SetPoint'TOP'
 		sf:SetPoint'BOTTOM'
+		-- XXX: GetNetStats() returns 0 on mac.
+		sf:Show()
 	end
 
 	--- XXX: 1.6: Kill the rank field.
@@ -276,10 +280,15 @@ local onUpdate = function(self, elapsed)
 		if(self.SafeZone) then
 			local width = self:GetWidth()
 			local _, _, _, ms = GetNetStats()
-			-- MADNESS!
-			local safeZonePercent = (width / self.max) * (ms / 1e5)
-			if(safeZonePercent > 1) then safeZonePercent = 1 end
-			self.SafeZone:SetWidth(width * safeZonePercent)
+			-- XXX: GetNetStats() returns 0 on mac.
+			if(ms ~= 0) then
+				-- MADNESS!
+				local safeZonePercent = (width / self.max) * (ms / 1e5)
+				if(safeZonePercent > 1) then safeZonePercent = 1 end
+				self.SafeZone:SetWidth(width * safeZonePercent)
+			else
+				self.SafeZone:Hide()
+			end
 		end
 
 		if(self.Time) then
@@ -318,10 +327,15 @@ local onUpdate = function(self, elapsed)
 		if(self.SafeZone) then
 			local width = self:GetWidth()
 			local _, _, _, ms = GetNetStats()
-			-- MADNESS!
-			local safeZonePercent = (width / self.max) * (ms / 1e5)
-			if(safeZonePercent > 1) then safeZonePercent = 1 end
-			self.SafeZone:SetWidth(width * safeZonePercent)
+			-- XXX: GetNetStats() returns 0 on mac.
+			if(ms ~= 0) then
+				-- MADNESS!
+				local safeZonePercent = (width / self.max) * (ms / 1e5)
+				if(safeZonePercent > 1) then safeZonePercent = 1 end
+				self.SafeZone:SetWidth(width * safeZonePercent)
+			else
+				self.SafeZone:Hide()
+			end
 		end
 
 		if(self.Time) then
