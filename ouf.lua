@@ -121,7 +121,7 @@ for k, v in pairs{
 
 		activeElements[self][name] = nil
 
-		-- We need to run a new update cycle incase we knocked ourself out of sync.
+		-- We need to run a new update cycle in-case we knocked ourself out of sync.
 		-- The main reason we do this is to make sure the full update is completed
 		-- if an element for some reason removes itself _during_ the update
 		-- progress.
@@ -199,7 +199,7 @@ local initObject = function(unit, style, styleFunc, header, ...)
 			object:RegisterEvent('UNIT_ENTERED_VEHICLE', updateActiveUnit)
 			object:RegisterEvent('UNIT_EXITED_VEHICLE', updateActiveUnit)
 
-			-- We don't need to register UNIT_PET for the player unit. We rigester it
+			-- We don't need to register UNIT_PET for the player unit. We register it
 			-- mainly because UNIT_EXITED_VEHICLE and UNIT_ENTERED_VEHICLE doesn't always
 			-- have pet information when they fire for party and raid units.
 			if(objectUnit ~= 'player') then
