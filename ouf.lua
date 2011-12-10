@@ -13,9 +13,6 @@ local error = Private.error
 local styles, style = {}
 local callback, objects = {}, {}
 
-local select = select
-local UnitExists = UnitExists
-
 local elements = {}
 local activeElements = {}
 
