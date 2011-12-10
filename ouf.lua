@@ -172,6 +172,23 @@ local OnShow = function(self)
 	end
 end
 
+local UpdatePet = function(self, event, unit)
+	local petUnit
+	if(unit == 'target') then
+		return
+	elseif(unit == 'player') then
+		petUnit = 'pet'
+	else
+		-- Convert raid26 -> raidpet26
+		petUnit = unit:gsub('^(%a+)(%d+)', '%1pet%2')
+	end
+
+	if(self.unit ~= petUnit) then return end
+	if(not updateActiveUnit(self, event)) then
+		return self:UpdateAllElements(event)
+	end
+end
+
 local initObject = function(unit, style, styleFunc, header, ...)
 	local num = select('#', ...)
 	for i=1, num do
@@ -203,7 +220,7 @@ local initObject = function(unit, style, styleFunc, header, ...)
 			-- mainly because UNIT_EXITED_VEHICLE and UNIT_ENTERED_VEHICLE doesn't always
 			-- have pet information when they fire for party and raid units.
 			if(objectUnit ~= 'player') then
-				object:RegisterEvent('UNIT_PET', updateActiveUnit)
+				object:RegisterEvent('UNIT_PET', UpdatePet)
 			end
 		end
 
