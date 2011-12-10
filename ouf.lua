@@ -39,7 +39,31 @@ local enableTargetUpdate = function(object)
 end
 Private.enableTargetUpdate = enableTargetUpdate
 
-local updateActiveUnit
+local updateActiveUnit = function(self, event, unit)
+	-- Calculate units to work with
+	local realUnit, modUnit = SecureButton_GetUnit(self), SecureButton_GetModifiedUnit(self)
+
+	-- _GetUnit() doesn't rewrite playerpet -> pet like _GetModifiedUnit does.
+	if(realUnit == 'playerpet') then
+		realUnit = 'pet'
+	elseif(realUnit == 'playertarget') then
+		realUnit = 'target'
+	end
+
+	if(modUnit == "pet" and realUnit ~= "pet") then
+		modUnit = "vehicle"
+	end
+
+	-- Drop out if the event unit doesn't match any of the frame units.
+	if(not UnitExists(modUnit) or unit and unit ~= realUnit and unit ~= modUnit) then return end
+
+	-- Change the active unit and run a full update.
+	if Private.UpdateUnits(self, modUnit, realUnit) then
+		self:UpdateAllElements('RefreshUnit')
+
+		return true
+	end
+end
 
 local iterateChildren = function(...)
 	for l = 1, select("#", ...) do
@@ -144,32 +168,6 @@ for k, v in pairs{
 	end,
 } do
 	frame_metatable.__index[k] = v
-end
-
-updateActiveUnit = function(self, event, unit)
-	-- Calculate units to work with
-	local realUnit, modUnit = SecureButton_GetUnit(self), SecureButton_GetModifiedUnit(self)
-
-	-- _GetUnit() doesn't rewrite playerpet -> pet like _GetModifiedUnit does.
-	if(realUnit == 'playerpet') then
-		realUnit = 'pet'
-	elseif(realUnit == 'playertarget') then
-		realUnit = 'target'
-	end
-
-	if(modUnit == "pet" and realUnit ~= "pet") then
-		modUnit = "vehicle"
-	end
-
-	-- Drop out if the event unit doesn't match any of the frame units.
-	if(not UnitExists(modUnit) or unit and unit ~= realUnit and unit ~= modUnit) then return end
-
-	-- Change the active unit and run a full update.
-	if Private.UpdateUnits(self, modUnit, realUnit) then
-		self:UpdateAllElements('RefreshUnit')
-
-		return true
-	end
 end
 
 local OnShow = function(self)
