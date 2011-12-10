@@ -9,7 +9,6 @@ local argcheck = Private.argcheck
 
 local print = Private.print
 local error = Private.error
-local OnEvent = Private.OnEvent
 
 local styles, style = {}
 local callback, objects = {}, {}
