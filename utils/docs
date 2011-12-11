@@ -13,7 +13,6 @@
 -- Things that need fixing:
 --  - Multiple examples are currently not supported.
 --  - No highlighting of Lua code.
---  - Headers are hard-coded.
 --  - Only supports initial multi-line comment.
 --  - Doesn't validate that comments are documentation strings.
 --  - Doesn't parse its own documentation header.
@@ -30,15 +29,6 @@
 --
 -- [1] https://github.com/haste/oUF
 -- [2] http://tomdoc.org/
-
-local validHeaders = {
-	Widget = true,
-	Notes = true,
-	Options = true,
-	Callbacks = true,
-	Hooks = true,
-	Examples = true,
-}
 
 local out
 local lines
@@ -62,7 +52,8 @@ end
 local findNextHeader = function(offest)
 	for i=offest, #lines do
 		local pre, header, post = unpack(lines, i, i + 2)
-		if(pre == '' and post == '' and validHeaders[header]) then
+		-- Single lines without punctuation are headers.
+		if(pre == '' and post == '' and not header:match'%.') then
 			return i + 1
 		end
 	end
