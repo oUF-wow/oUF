@@ -10,7 +10,7 @@ local Update = function(self, event, unit, powerType)
 	if(self.unit ~= unit or (powerType and powerType ~= 'SOUL_SHARDS')) then return end
 
 	local ss = self.SoulShards
-	if(ss.PreUpdate) then ss:PreUpdate(unit) end
+	if(ss.PreUpdate) then ss:PreUpdate() end
 
 	local num = UnitPower('player', SPELL_POWER_SOUL_SHARDS)
 	for i = 1, SHARD_BAR_NUM_SHARDS do
@@ -22,7 +22,7 @@ local Update = function(self, event, unit, powerType)
 	end
 
 	if(ss.PostUpdate) then
-		return ss:PostUpdate(unit, num)
+		return ss:PostUpdate(num)
 	end
 end
 
