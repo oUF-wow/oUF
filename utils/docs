@@ -110,7 +110,7 @@ end
 
 local handleSection = function(start, stop)
 	local line = lines[start]
-	if(line:match('^%S+ %- ')) then
+	if(line:match('^%S+%s*%- ')) then
 		handleArguments(start, stop, '(%S+)%s*%- ()')
 	elseif(line:sub(1, 2) == '  ') then
 		handleExamples(start, stop)
