@@ -1,0 +1,207 @@
+#!/usr/bin/env lua
+-- docs
+-- oUF documentation generator
+--
+-- This is really just a quick and dirty way of generating documentation for
+-- oUF[1]. The syntax is inspired by TomDoc[2], but a lot of the non-oUF and
+-- non-Lua things aren't implemented.
+--
+-- Why implement my own documentation generator?
+-- It was mainly done because oUF is kind-of special, but also because the
+-- available alternatives aren't good enough or have issues I can't workaround.
+--
+-- Things that need fixing:
+--  - Multiple examples are currently not supported.
+--  - No highlighting of Lua code.
+--  - Headers are hard-coded.
+--  - Only supports initial multi-line comment.
+--  - Doesn't validate that comments are documentation strings.
+--  - Doesn't parse its own documentation header.
+--  - Assumes that the first line is a title followed by a description.
+--  - Lacks support for simple markdown like markups.
+--  - Assumes <h1> is where we want to start.
+--  - Close to zero error handling.
+--
+-- Usage
+--
+-- docs [docs path] [file...]
+--
+-- Links
+--
+-- [1] https://github.com/haste/oUF
+-- [2] http://tomdoc.org/
+
+local validHeaders = {
+	Widget = true,
+	Notes = true,
+	Options = true,
+	Callbacks = true,
+	Hooks = true,
+	Examples = true,
+}
+
+local out
+local lines
+
+local tisf = function(fmt, ...)
+	table.insert(out, fmt:format(...))
+end
+
+local trim = function(str)
+	return str:match('^()%s*$') and '' or str:match('^%s*(.*%S)')
+end
+
+local findNextEmpty = function(start, stop)
+	for i=start, stop or #lines do
+		if(lines[i] == '') then
+			return i
+		end
+	end
+end
+
+local findNextHeader = function(offest)
+	for i=offest, #lines do
+		local pre, header, post = unpack(lines, i, i + 2)
+		if(pre == '' and post == '' and validHeaders[header]) then
+			return i + 1
+		end
+	end
+end
+
+local findNextArguent = function(start, stop, pattern)
+	for i=start, stop do
+		if(lines[i]:match(pattern)) then
+			return i
+		end
+	end
+end
+
+local handleArguments = function(start, stop, pattern)
+	tisf('<dl>')
+	repeat
+		-- Tear out the argument name and offset of where the description begins.
+		local def, offset = lines[start]:match(pattern)
+		tisf('<dt>%s</dt>', def)
+
+		-- Insert the first line of the description.
+		tisf('<dd>')
+		tisf(lines[start]:sub(offset))
+
+		-- Find the next argument in the list or continue to the end of the
+		-- current section.
+		local nextarg = (findNextArguent(start + 1, stop, pattern) or stop + 1) - 1
+		for i=start + 1, nextarg do
+			tisf(trim(lines[i]))
+		end
+		tisf('</dd>')
+
+		start = nextarg + 1
+	until start > stop
+	tisf('</dl>')
+end
+
+local handleExamples = function(start, stop)
+	-- An extra line gets added if we don't do this.
+	tisf('<pre><code>%s', trim(lines[start]))
+	for i=start + 1, stop do
+		tisf(trim(lines[i]))
+	end
+	tisf('</pre></code>')
+end
+
+local handleParagraph = function(start, stop)
+	tisf('<p>')
+	for i=start, stop do
+		tisf(trim(lines[i]))
+	end
+	tisf('</p>')
+end
+
+local handleSection = function(start, stop)
+	local line = lines[start]
+	if(line:match('^%S+ %- ')) then
+		handleArguments(start, stop, '(%S+)%s*%- ()')
+	elseif(line:sub(1, 2) == '  ') then
+		handleExamples(start, stop)
+	else
+		handleParagraph(start, stop)
+	end
+end
+
+local generateDocs = function(str)
+	lines = {}
+	out = {}
+
+	for line in str:gmatch('([^\n]*)\n') do
+		table.insert(lines, line:sub(2))
+	end
+
+	-- The first line is always the main header.
+	tisf('<h1>%s</h1>', lines[1])
+
+	-- Then comes the main description.
+	local offset = findNextHeader(1) - 2
+	handleSection(2, offset)
+
+	while(true) do
+		offset = findNextHeader(offset)
+		if(not offset) then break end
+
+		-- Every section has a header.
+		tisf('<h2>%s</h2>', lines[offset])
+
+		-- Find out the size of the section.
+		local start = findNextEmpty(offset) + 1
+		local stop
+
+		local nextHeader = findNextHeader(start)
+		if(nextHeader) then
+			stop = nextHeader - 2
+		else
+			local nextEmpty = findNextEmpty(start)
+			if(nextEmpty) then
+				stop = nextEmpty - 1
+			else
+				stop = #lines
+			end
+		end
+
+		handleSection(start, stop)
+	end
+
+	return table.concat(out, '\n')
+end
+
+local handleFile = function(path)
+	local file = io.open(path, 'r')
+	local content = file:read'*a'
+	file:close()
+
+	-- Parse out the first multi-line comment.
+	local depth, comStart = content:match('%-%-%[(=*)%[\n?()')
+	if(depth) then
+		local comEnd = content:match('()%]' .. depth .. '%]')
+		local comment = content:sub(comStart, comEnd - 1)
+
+		return generateDocs(comment)
+	end
+end
+
+local destination = (...)
+for i=2, select('#', ...) do
+	local file = select(i, ...)
+	local path, filename = file:match('(.+)/(.+)$')
+
+	path = path:sub(4)
+	if(#path == 0) then path = nil end
+	filename = filename:gsub('lua', 'html')
+
+	local doc = handleFile(file)
+	if(doc) then
+		local dfPath = string.format('%s/%s', destination, path or '')
+		os.execute(string.format('mkdir -p %s', dfPath))
+		local docFile = io.open(string.format('%s/%s', dfPath, filename), 'w+')
+		docFile:write(doc)
+		docFile:close()
+	end
+end
