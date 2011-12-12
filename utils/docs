@@ -13,12 +13,10 @@
 -- Things that need fixing:
 --  - Multiple examples are currently not supported.
 --  - No highlighting of Lua code.
---  - Only supports initial multi-line comment.
 --  - Doesn't validate that comments are documentation strings.
 --  - Doesn't parse its own documentation header.
 --  - Assumes that the first line is a title followed by a description.
 --  - Lacks support for simple markdown like markups.
---  - Assumes <h1> is where we want to start.
 --  - Close to zero error handling.
 --
 -- Usage
@@ -120,7 +118,7 @@ local handleSection = function(start, stop)
 	end
 end
 
-local generateDocs = function(str)
+local generateDocs = function(str, level)
 	lines = {}
 	out = {}
 
@@ -129,7 +127,7 @@ local generateDocs = function(str)
 	end
 
 	-- The first line is always the main header.
-	tisf('<h1>%s</h1>', lines[1])
+	tisf('<h%d>%s</h%d>', level, lines[1], level)
 
 	-- Then comes the main description.
 	local offset = findNextHeader(1) - 2
@@ -140,12 +138,16 @@ local generateDocs = function(str)
 		if(not offset) then break end
 
 		-- Every section has a header.
-		tisf('<h2>%s</h2>', lines[offset])
+		tisf('<h%d>%s</h%d>', level + 1, lines[offset], level + 1)
 
 		-- Find out the size of the section.
 		local start = findNextEmpty(offset) + 1
-		local stop
+		if(not lines[start]) then
+			-- There's no section here, only a headline.
+			break
+		end
 
+		local stop
 		local nextHeader = findNextHeader(start)
 		if(nextHeader) then
 			stop = nextHeader - 2
@@ -169,14 +171,24 @@ local handleFile = function(path)
 	local content = file:read'*a'
 	file:close()
 
-	-- Parse out the first multi-line comment.
-	local depth, comStart = content:match('%-%-%[(=*)%[\n?()')
-	if(depth) then
-		local comEnd = content:match('()%]' .. depth .. '%]')
-		local comment = content:sub(comStart, comEnd - 1)
+	local out = {}
+	local init = 1
+	repeat
+		local _, comStart, depth = content:find('%-%-%[(=*)%[ ', init)
+		if(comStart) then
+			local comEnd = content:find('%]' .. depth .. '%]', comStart)
+			local comment = content:sub(comStart, comEnd - 1)
 
-		return generateDocs(comment)
-	end
+			-- The first comment uses h1 and h2, while the subsequent ones uses h3
+			-- and h4.
+			local level = init == 1 and 1 or 3
+			table.insert(out, generateDocs(comment, init == 1 and 1 or 3))
+
+			init = comEnd
+		end
+	until not comStart
+
+	return table.concat(out, '\n')
 end
 
 local destination = (...)
