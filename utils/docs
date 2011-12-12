@@ -80,7 +80,8 @@ local handleArguments = function(start, stop, pattern)
 
 		-- Find the next argument in the list or continue to the end of the
 		-- current section.
-		local nextarg = (findNextArguent(start + 1, stop, pattern) or stop + 1) - 1
+		local nextarg = findNextArguent(start + 1, stop, pattern)
+		nextarg = (nextarg or stop + 1) - 1
 		for i=start + 1, nextarg do
 			tisf(trim(lines[i]))
 		end
