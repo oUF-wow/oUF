@@ -123,7 +123,7 @@ local generateDocs = function(str, level)
 	out = {}
 
 	for line in str:gmatch('([^\n]*)\n') do
-		table.insert(lines, line:sub(2))
+		table.insert(lines, line:gsub('\t*', ''):sub(2))
 	end
 
 	-- The first line is always the main header.
