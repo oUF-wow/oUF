@@ -65,6 +65,12 @@ local findNextArguent = function(start, stop, pattern)
 	end
 end
 
+local replaceMarkup = function(str)
+	return str
+	-- `in-line code` to <code>in-line code</code>
+	:gsub('`([^`]+)`', '<code>%1</code>')
+end
+
 local handleArguments = function(start, stop, pattern)
 	tisf('<dl>')
 	repeat
@@ -178,6 +184,9 @@ local handleFile = function(path)
 		if(comStart) then
 			local comEnd = content:find('%]' .. depth .. '%]', comStart)
 			local comment = content:sub(comStart, comEnd - 1)
+
+			-- Convert markup to html.
+			comment = replaceMarkup(comment)
 
 			-- The first comment uses h1 and h2, while the subsequent ones uses h3
 			-- and h4.
