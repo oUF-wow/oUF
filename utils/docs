@@ -16,7 +16,6 @@
 --  - Doesn't validate that comments are documentation strings.
 --  - Doesn't parse its own documentation header.
 --  - Assumes that the first line is a title followed by a description.
---  - Lacks support for simple markdown like markups.
 --  - Close to zero error handling.
 --
 -- Usage
