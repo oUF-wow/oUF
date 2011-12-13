@@ -69,6 +69,8 @@ local replaceMarkup = function(str)
 	return str
 	-- `in-line code` to <code>in-line code</code>
 	:gsub('`([^`]+)`', '<code>%1</code>')
+	-- [Link](http://example.com) to <a href="http://example.com">Link</a>
+	:gsub('%[([^%]]+)%]%(([^)]+)%)', '<a href="%2">%1</a>')
 end
 
 local handleArguments = function(start, stop, pattern)
