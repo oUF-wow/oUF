@@ -168,6 +168,7 @@ local generateDocs = function(str, level)
 		end
 
 		handleSection(start, stop)
+		offset = stop + 1
 	end
 
 	return table.concat(out, '\n')
