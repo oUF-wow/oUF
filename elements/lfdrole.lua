@@ -4,13 +4,20 @@ local oUF = ns.oUF
 local Update = function(self, event)
 	local lfdrole = self.LFDRole
 
-	local role = UnitGroupRolesAssigned(self.unit)
+	if(lfdrole.PreUpdate) then
+		lfdrole:PreUpdate()
+	end
 
+	local role = UnitGroupRolesAssigned(self.unit)
 	if(role == 'TANK' or role == 'HEALER' or role == 'DAMAGER') then
 		lfdrole:SetTexCoord(GetTexCoordsForRoleSmallCircle(role))
 		lfdrole:Show()
 	else
 		lfdrole:Hide()
+	end
+
+	if(lfdrole.PostUpdate) then
+		lfdrole:PostUpdate(role)
 	end
 end
 
