@@ -3,7 +3,6 @@ local oUF = ns.oUF
 
 local Update = function(self, event)
 	local leader = self.Leader
-
 	if(leader.PreUpdate) then
 		leader:PreUpdate()
 	end
