@@ -17,7 +17,7 @@ local Update = function(self, event)
 	end
 
 	if(lfdrole.PostUpdate) then
-		lfdrole:PostUpdate(role)
+		return lfdrole:PostUpdate(role)
 	end
 end
 
