@@ -2,33 +2,34 @@ local parent, ns = ...
 local oUF = ns.oUF
 
 local Update = function(self, event)
+	local unit = self.unit
+	if(not (UnitInParty(unit) or UnitInRaid(unit))) then return end
+
 	local masterlooter = self.MasterLooter
 
 	if(masterlooter.PreUpdate) then
 		masterlooter:PreUpdate()
 	end
 
-	local unit
 	local method, pid, rid = GetLootMethod()
 	if(method == 'master') then
+		local mlUnit
 		if(pid) then
 			if(pid == 0) then
-				unit = 'player'
+				mlUnit = 'player'
 			else
-				unit = 'party'..pid
+				mlUnit = 'party'..pid
 			end
 		elseif(rid) then
-			unit = 'raid'..rid
-		else
-			return
+			mlUnit = 'raid'..rid
 		end
 
-		if(UnitIsUnit(unit, self.unit)) then
+		if(UnitIsUnit(unit, mlUnit)) then
 			masterlooter:Show()
 		elseif(masterlooter:IsShown()) then
 			masterlooter:Hide()
 		end
-	elseif(masterlooter:IsShown()) then
+	else
 		masterlooter:Hide()
 	end
 
