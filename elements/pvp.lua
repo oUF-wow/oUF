@@ -4,15 +4,29 @@ local oUF = ns.oUF
 local Update = function(self, event, unit)
 	if(unit ~= self.unit) then return end
 
+	local pvp = self.PvP
+	if(pvp.PreUpdate) then
+		pvp:PreUpdate()
+	end
+
+	local status
 	local factionGroup = UnitFactionGroup(unit)
 	if(UnitIsPVPFreeForAll(unit)) then
-		self.PvP:SetTexture[[Interface\TargetingFrame\UI-PVP-FFA]]
-		self.PvP:Show()
+		pvp:SetTexture[[Interface\TargetingFrame\UI-PVP-FFA]]
+		status = 'ffa'
 	elseif(factionGroup and UnitIsPVP(unit)) then
-		self.PvP:SetTexture([[Interface\TargetingFrame\UI-PVP-]]..factionGroup)
-		self.PvP:Show()
+		pvp:SetTexture([[Interface\TargetingFrame\UI-PVP-]]..factionGroup)
+		status = factionGroup
+	end
+
+	if(status) then
+		pvp:Show()
 	else
-		self.PvP:Hide()
+		pvp:Hide()
+	end
+
+	if(pvp.PostUpdate) then
+		return pvp:PostUpdate(status)
 	end
 end
 
