@@ -9,7 +9,7 @@ local Update = function(self, event, unit)
 
 	local cpoints = self.CPoints
 	if(cpoints.PreUpdate) then
-		return cpoints:PreUpdate()
+		cpoints:PreUpdate()
 	end
 
 	local cp
