@@ -3,7 +3,6 @@ local oUF = ns.oUF
 
 local Update = function(self, event)
 	local combat = self.Combat
-
 	if(combat.PreUpdate) then
 		combat:PreUpdate()
 	end
