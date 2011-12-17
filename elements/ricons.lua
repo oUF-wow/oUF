@@ -8,11 +8,19 @@ local Update = function(self, event)
 	local index = GetRaidTargetIndex(self.unit)
 	local icon = self.RaidIcon
 
+	if(icon.PreUpdate) then
+		icon:PreUpdate()
+	end
+
 	if(index) then
 		SetRaidTargetIconTexture(icon, index)
 		icon:Show()
 	else
 		icon:Hide()
+	end
+
+	if(icon.PostUpdate) then
+		return icon:PostUpdate(index)
 	end
 end
 
