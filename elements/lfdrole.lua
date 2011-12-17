@@ -3,7 +3,6 @@ local oUF = ns.oUF
 
 local Update = function(self, event)
 	local lfdrole = self.LFDRole
-
 	if(lfdrole.PreUpdate) then
 		lfdrole:PreUpdate()
 	end
