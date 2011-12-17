@@ -6,7 +6,6 @@ local Update = function(self, event)
 	if(not (UnitInParty(unit) or UnitInRaid(unit))) then return end
 
 	local masterlooter = self.MasterLooter
-
 	if(masterlooter.PreUpdate) then
 		masterlooter:PreUpdate()
 	end
