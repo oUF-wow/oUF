@@ -136,6 +136,18 @@ local updateIcon = function(unit, icons, index, offset, filter, isDebuff, visibl
 		local n = visible + offset + 1
 		local icon = icons[n]
 		if(not icon) then
+			--[[ :CreateIcon(index)
+
+			 Description
+
+			 Arguments
+
+			 index - The offset the icon should be created at
+
+			 Returns
+
+			 A button used to represent aura icons.
+			]]
 			icon = (icons.CreateIcon or createAuraIcon) (icons, n)
 		end
 
