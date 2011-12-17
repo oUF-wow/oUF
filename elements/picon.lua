@@ -3,7 +3,6 @@ local oUF = ns.oUF
 
 local Update = function(self, event)
 	local picon = self.PhaseIcon
-
 	if(picon.PreUpdate) then
 		picon:PreUpdate()
 	end
