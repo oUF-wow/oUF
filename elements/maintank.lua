@@ -6,7 +6,6 @@ local Update = function(self, event)
 	if(not raidID) then return end
 
 	local maintank = self.MainTank
-
 	if(maintank.PreUpdate) then
 		maintank:PreUpdate()
 	end
