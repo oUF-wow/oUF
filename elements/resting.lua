@@ -3,7 +3,6 @@ local oUF = ns.oUF
 
 local Update = function(self, event)
 	local resting = self.Resting
-
 	if(resting.PreUpdate) then
 		resting:PreUpdate()
 	end
