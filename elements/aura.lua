@@ -161,6 +161,25 @@ local updateIcon = function(unit, icons, index, offset, filter, isDebuff, visibl
 		icon.isDebuff = isDebuff
 		icon.isPlayer = isPlayer
 
+
+		--[[ :CustomFilter(unit, icon, ...)
+
+		 Defines a custom filter which controls if the aura icon should be shown
+		 or not.
+
+		 Arguments
+
+		 self  - The widget that holds the aura icon.
+		 unit  - The unit that has the aura.
+		 icon  - The button displaying the aura.
+		 ...   - The return values from
+		 [UnitAura](http://wowprogramming.com/docs/api/UnitAura).
+
+		 Returns
+
+		 A boolean value telling the aura element if it should be show the icon
+		 or not.
+		]]
 		local show = (icons.CustomFilter or customFilter) (icons, unit, icon, name, rank, texture, count, dtype, duration, timeLeft, caster, isStealable, shouldConsolidate, spellID, canApplyAura, isBossDebuff)
 		if(show) then
 			-- We might want to consider delaying the creation of an actual cooldown
