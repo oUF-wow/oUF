@@ -2,6 +2,12 @@ local parent, ns = ...
 local oUF = ns.oUF
 
 local Update = function(self, event)
+	local masterlooter = self.MasterLooter
+
+	if(masterlooter.PreUpdate) then
+		masterlooter:PreUpdate()
+	end
+
 	local unit
 	local method, pid, rid = GetLootMethod()
 	if(method == 'master') then
@@ -18,12 +24,16 @@ local Update = function(self, event)
 		end
 
 		if(UnitIsUnit(unit, self.unit)) then
-			self.MasterLooter:Show()
-		elseif(self.MasterLooter:IsShown()) then
-			self.MasterLooter:Hide()
+			masterlooter:Show()
+		elseif(masterlooter:IsShown()) then
+			masterlooter:Hide()
 		end
-	elseif(self.MasterLooter:IsShown()) then
-		self.MasterLooter:Hide()
+	elseif(masterlooter:IsShown()) then
+		masterlooter:Hide()
+	end
+
+	if(masterlooter.PostUpdate) then
+		return masterlooter:PostUpdate(masterlooter:IsShown())
 	end
 end
 
