@@ -3,7 +3,6 @@ local oUF = ns.oUF
 
 local Update = function(self, event)
 	local resurrect = self.ResurrectIcon
-
 	if(resurrect.PreUpdate) then
 		resurrect:PreUpdate()
 	end
