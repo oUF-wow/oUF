@@ -5,13 +5,12 @@ local GetRaidTargetIndex = GetRaidTargetIndex
 local SetRaidTargetIconTexture = SetRaidTargetIconTexture
 
 local Update = function(self, event)
-	local index = GetRaidTargetIndex(self.unit)
 	local icon = self.RaidIcon
-
 	if(icon.PreUpdate) then
 		icon:PreUpdate()
 	end
 
+	local index = GetRaidTargetIndex(self.unit)
 	if(index) then
 		SetRaidTargetIconTexture(icon, index)
 		icon:Show()
