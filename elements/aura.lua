@@ -1,3 +1,64 @@
+--[[ Element: Auras
+
+ Handles creation and updating of aura icons.
+
+ Widget
+
+ Auras   - A frame to hold icons representing both buffs and debuffs.
+ Buffs   - A frame to hold icons representing buffs.
+ Debuffs - A frame to hold icons representing debuffs.
+
+ Options
+
+ .disableCooldown    - Disables the cooldown spiral. Defaults to false.
+ .size               - Aura icon size. Defaults to 16.
+ .onlyShowPlayer     - Only show auras created by player/vehicle.
+ .showStealableBuffs - Display the stealable texture on buffs that can be
+                       stolen.
+ .spacing            - Spacing between each icon. Defaults to 0.
+ .['spacing-x']      - Horizontal spacing between each icon. Takes priority over
+                       `spacing`.
+ .['spacing-y']      - Vertical spacing between each icon. Takes priority over
+                       `spacing`.
+ .['growth-x']       - Horizontal growth direction. Defaults to RIGHT.
+ .['growth-y']       - Vertical growth direction. Defaults to UP.
+ .initialAnchor      - Anchor point for the icons. Defaults to BOTTOMLEFT.
+ .filter             - Custom filter list for auras to display. Defaults to
+                       HELPFUL on buffs and HARMFUL on debuffs.
+
+ Options Auras
+
+ .numBuffs     - The maximum number of buffs to display. Defaults to 32.
+ .numDebuffs   - The maximum number of debuffs to display. Defaults to 40.
+ .gap          - Controls the creation of an invisible icon between buffs and
+                 debuffs. Defaults to false.
+ .buffFilter   - Custom filter list for buffs to display. Takes priority over
+                 `filter`.
+ .debuffFilter - Custom filter list for debuffs to display. Takes priority over
+                 `filter`.
+
+ Options Buffs
+
+ .num - Number of buffs to display. Defaults to 32.
+
+ Options Debuffs
+
+ .num - Number of debuffs to display. Defaults to 40.
+
+ Examples
+
+   -- Position and size
+   local Buffs = CreateFrame("Frame", nil, self)
+   Buffs:SetPoint("RIGHT", self, "LEFT")
+   Buffs:SetSize(16 * 2, 16 * 16)
+   
+   -- Register with oUF
+   self.Buffs = Buffs
+
+ Hooks
+
+]]
+
 local parent, ns = ...
 local oUF = ns.oUF
 
