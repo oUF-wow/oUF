@@ -3,9 +3,11 @@ local oUF = ns.oUF
 
 local Update = function(self, event)
 	local unit = self.unit
-	if(not (UnitInParty(unit) or UnitInRaid(unit))) then return end
-
 	local masterlooter = self.MasterLooter
+	if(not (UnitInParty(unit) or UnitInRaid(unit))) then
+		return masterlooter:Hide()
+	end
+
 	if(masterlooter.PreUpdate) then
 		masterlooter:PreUpdate()
 	end
