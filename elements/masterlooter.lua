@@ -1,7 +1,7 @@
 local parent, ns = ...
 local oUF = ns.oUF
 
-local function Update(self, event)
+local Update = function(self, event)
 	local unit
 	local method, pid, rid = GetLootMethod()
 	if(method == 'master') then
