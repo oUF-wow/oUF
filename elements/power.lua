@@ -3,9 +3,7 @@ local oUF = ns.oUF
 
 oUF.colors.power = {}
 for power, color in next, PowerBarColor do
-	if(type(power) == 'string') then
-		oUF.colors.power[power] = {color.r, color.g, color.b}
-	end
+	oUF.colors.power[power] = {color.r, color.g, color.b}
 end
 
 local GetDisplayPower = function(power, unit)
@@ -42,12 +40,8 @@ local Update = function(self, event, unit)
 	elseif(power.colorDisconnected and not UnitIsConnected(unit)) then
 		t = self.colors.disconnected
 	elseif(power.colorPower) then
-		local ptype, ptoken, altR, altG, altB = UnitPowerType(unit)
-
-		t = self.colors.power[ptoken]
-		if(not t and altR) then
-			r, g, b = altR, altG, altB
-		end
+		local ptype, ptoken = UnitPowerType(unit)
+		t = self.colors.power[ptoken] or self.colors.power[ptype] or self.colors.power["MANA"]
 	elseif(power.colorClass and UnitIsPlayer(unit)) or
 		(power.colorClassNPC and not UnitIsPlayer(unit)) or
 		(power.colorClassPet and UnitPlayerControlled(unit) and not UnitIsPlayer(unit)) then
