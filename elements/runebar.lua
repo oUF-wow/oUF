@@ -1,5 +1,5 @@
 --[[ Runebar:
-	Authors: Zariel, Haste
+	Authors: Zariel, Haste, Darkend
 ]]
 
 if select(2, UnitClass("player")) ~= "DEATHKNIGHT" then return end
