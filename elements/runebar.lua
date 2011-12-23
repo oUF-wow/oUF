@@ -45,22 +45,10 @@ local OnUpdate = function(self, elapsed)
 	end
 end
 
-local UpdateType = function(self, event, rune, alt)
-	-- local colors = colors[GetRuneType(rune) or alt]
-	-- local rune = self.Runes[rune]
-	-- local r, g, b = colors[1], colors[2], colors[3]
+local GetPlacePoolMod = function(rune)
 
-	-- rune:SetStatusBarColor(r, g, b)
-
-	-- if(rune.bg) then
-		-- local mu = rune.bg.multiplier or 1
-		-- rune.bg:SetVertexColor(r * mu, g * mu, b * mu)
-	-- end
-	
-	   
-    local runeType = GetRuneType( rune )
-    
     local place, pool, modificator
+
     if rune==1 then
         pool = 1
         place = 1
@@ -80,7 +68,16 @@ local UpdateType = function(self, event, rune, alt)
         pool = 3
         place = 2
     end
+
     if place==1 then modificator = 1 else modificator = -1 end
+
+    return place, pool, modificator
+end
+
+local UpdateType = function(self, event, rune, alt)
+	   
+    local runeType = GetRuneType(rune)    
+    local place, pool, modificator = GetPlacePoolMod(rune)
     
     runes[pool][place].runeType = runeType
     
@@ -110,30 +107,9 @@ end
 
 local UpdateRune = function(self, event, rune)
 
-if not rune then return end
-local place, pool, modificator
-
-    if rune==1 then
-        pool = 1
-        place = 1
-    elseif rune==2 then
-        pool = 1
-        place = 2
-    elseif rune==3 then
-        pool = 2
-        place = 1
-    elseif rune==4 then
-        pool = 2
-        place = 2
-    elseif rune==5 then
-        pool = 3
-        place = 1
-    elseif rune==6 then
-        pool = 3
-        place = 2
-    end
-    if place==1 then modificator = 1 else modificator = -1 end
+    if not rune then return end
     
+    local place, pool, modificator = GetPlacePoolMod(rune)  
     local runeOther = rune+modificator
     
     local time = GetTime()
