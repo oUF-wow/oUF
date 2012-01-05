@@ -278,6 +278,13 @@ local tagStrings = {
 			return num
 		end
 	end]],
+
+	['holypower'] = [[funtion()
+		local num = UnitPower('player', SPELL_POWER_HOLY_POWER)
+		if(num > 0) then
+			return num
+		end
+	end]],
 }
 
 local tags = setmetatable(
@@ -356,6 +363,7 @@ local tagEvents = {
 	['curmana']             = 'UNIT_POWER UNIT_MAXPOWER',
 	['maxmana']             = 'UNIT_POWER UNIT_MAXPOWER',
 	['soulshards']          = 'UNIT_POWER',
+	['holypower']           = 'UNIT_POWER',
 }
 
 local unitlessEvents = {
