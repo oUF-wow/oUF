@@ -271,6 +271,13 @@ local tagStrings = {
 	['maxmana'] = [[function(unit)
 		return UnitPowerMax(unit, SPELL_POWER_MANA)
 	end]],
+
+	['soulshards'] = [[function()
+		local num = UnitPower('player', SPELL_POWER_SOUL_SHARDS)
+		if(num > 0) then
+			return num
+		end
+	end]],
 }
 
 local tags = setmetatable(
@@ -348,6 +355,7 @@ local tagEvents = {
 	["pereclipse"]          = 'UNIT_POWER',
 	['curmana']             = 'UNIT_POWER UNIT_MAXPOWER',
 	['maxmana']             = 'UNIT_POWER UNIT_MAXPOWER',
+	['soulshards']          = 'UNIT_POWER',
 }
 
 local unitlessEvents = {
