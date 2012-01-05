@@ -15,9 +15,9 @@ local Update = function(self, event, unit, powerType)
 	local num = UnitPower('player', SPELL_POWER_SOUL_SHARDS)
 	for i = 1, SHARD_BAR_NUM_SHARDS do
 		if(i <= num) then
-			ss[i]:SetAlpha(1)
+			ss[i]:Show()
 		else
-			ss[i]:SetAlpha(0)
+			ss[i]:Hide()
 		end
 	end
 
