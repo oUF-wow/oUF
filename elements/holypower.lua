@@ -15,9 +15,9 @@ local Update = function(self, event, unit, powerType)
 	local num = UnitPower('player', SPELL_POWER_HOLY_POWER)
 	for i = 1, MAX_HOLY_POWER do
 		if(i <= num) then
-			hp[i]:SetAlpha(1)
+			hp[i]:Show()
 		else
-			hp[i]:SetAlpha(0)
+			hp[i]:Hide()
 		end
 	end
 
