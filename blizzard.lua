@@ -49,6 +49,9 @@ function oUF:DisableBlizzard(unit)
 		PlayerFrame:RegisterEvent('UNIT_ENTERED_VEHICLE')
 		PlayerFrame:RegisterEvent('UNIT_EXITING_VEHICLE')
 		PlayerFrame:RegisterEvent('UNIT_EXITED_VEHICLE')
+		-- Disable vehicle transition animations while hidden
+		PlayerFrame:SetUserPlaced(true) -- User placed frames don't animate
+		PlayerFrame:SetDontSavePosition(true)
 	elseif(unit == 'pet') then
 		HandleFrame(PetFrame)
 	elseif(unit == 'target') then
