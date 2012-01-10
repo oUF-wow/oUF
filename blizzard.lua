@@ -1,6 +1,8 @@
 local parent, ns = ...
 local oUF = ns.oUF
 
+local hiddenParent = CreateFrame("Frame")
+hiddenParent:Hide()
 local HandleFrame = function(baseName)
 	local frame
 	if(type(baseName) == 'string') then
@@ -11,8 +13,8 @@ local HandleFrame = function(baseName)
 
 	if(frame) then
 		frame:UnregisterAllEvents()
-		frame.Show = frame.Hide
 		frame:Hide()
+		frame:SetParent(hiddenParent) -- Keep frame hidden without causing taint
 
 		local health = frame.healthbar
 		if(health) then
