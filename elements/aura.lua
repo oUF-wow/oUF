@@ -55,7 +55,7 @@
    -- Register with oUF
    self.Buffs = Buffs
 
- Hooks
+ Hooks and Callbacks
 
 ]]
 
