@@ -242,7 +242,7 @@ local updateIcon = function(unit, icons, index, offset, filter, isDebuff, visibl
 			 offset - The offset the button was created at.
 			 ]]
 			if(icons.PostUpdateIcon) then
-				icons:PostUpdateIcon(unit, icon, index, offset)
+				icons:PostUpdateIcon(unit, icon, index, n)
 			end
 
 			return VISIBLE
