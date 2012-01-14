@@ -119,6 +119,14 @@ local createAuraIcon = function(icons, index)
 	button.count = count
 	button.cd = cd
 
+	--[[ :PostCreateIcon(button)
+
+	 Callback which is called after oUF has created a new aura icon button.
+
+	 Arguments
+
+	 button - The newly created aura icon button.
+	 ]]
 	if(icons.PostCreateIcon) then icons:PostCreateIcon(button) end
 
 	return button
