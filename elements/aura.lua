@@ -252,6 +252,17 @@ local updateIcon = function(unit, icons, index, offset, filter, isDebuff, visibl
 	end
 end
 
+--[[ :SetPosition(from, to)
+
+	 Function used to (re-)anchor aura icons. This function is only called when
+	 new aura icons have been created or if :PreSetPosition is defined.
+
+	 Arguments
+
+	 self - The widget that holds the aura icons.
+	 from - The aura icon before the new aura icon.
+	 to   - The current number of created icons.
+]]
 local SetPosition = function(icons, from, to)
 	local sizex = (icons.size or 16) + (icons['spacing-x'] or icons.spacing or 0)
 	local sizey = (icons.size or 16) + (icons['spacing-y'] or icons.spacing or 0)
