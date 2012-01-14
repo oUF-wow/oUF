@@ -138,7 +138,7 @@ local updateIcon = function(unit, icons, index, offset, filter, isDebuff, visibl
 		if(not icon) then
 			--[[ :CreateIcon(index)
 
-			 Description
+			 A function which creates the aura icon for a given index.
 
 			 Arguments
 
