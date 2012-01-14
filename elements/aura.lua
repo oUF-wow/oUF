@@ -121,7 +121,7 @@ local createAuraIcon = function(icons, index)
 
 	--[[ :PostCreateIcon(button)
 
-	 Callback which is called after oUF has created a new aura icon button.
+	 Callback which is called after a new aura icon button has been created.
 
 	 Arguments
 
