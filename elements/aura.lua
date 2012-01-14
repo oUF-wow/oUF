@@ -229,6 +229,18 @@ local updateIcon = function(unit, icons, index, offset, filter, isDebuff, visibl
 			icon:SetID(index)
 			icon:Show()
 
+			--[[ :PostUpdateIcon(unit, icon, index, offest)
+
+			 Callback which is called after the aura icon was updated.
+
+			 Arguments
+
+			 self   - The widget that holds the aura icon.
+			 unit   - The unit that has the aura.
+			 icon   - The button that was updated.
+			 index  - The index of the aura.
+			 offset - The offset the button was created at.
+			 ]]
 			if(icons.PostUpdateIcon) then
 				icons:PostUpdateIcon(unit, icon, index, offset)
 			end
