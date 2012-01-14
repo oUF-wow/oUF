@@ -341,6 +341,18 @@ local UpdateAuras = function(self, event, unit)
 			icon.count:SetText()
 			icon:Show()
 
+			--[[ :PostUpdateGapIcon(unit, icon, visibleBuffs)
+
+			 Callback which is called after an invisible aura icon has been
+			 created. This is only used by Auras when the `gap` option is enabled.
+
+			 Arguments
+
+			 self         - The widget that holds the aura icon.
+			 unit         - The unit that has the aura icon.
+			 icon         - The invisible aura icon / gap.
+			 visibleBuffs - The number of currently visible buffs.
+			]]
 			if(auras.PostUpdateGapIcon) then
 				auras:PostUpdateGapIcon(unit, icon, visibleBuffs)
 			end
