@@ -86,8 +86,6 @@ local Enable = function(self, unit)
 		self:RegisterEvent("RUNE_POWER_UPDATE", UpdateRune, true)
 		self:RegisterEvent("RUNE_TYPE_UPDATE", UpdateType, true)
 
-		runes:Show()
-
 		-- oUF leaves the vehicle events registered on the player frame, so
 		-- buffs and such are correctly updated when entering/exiting vehicles.
 		--
@@ -100,7 +98,6 @@ local Enable = function(self, unit)
 end
 
 local Disable = function(self)
-	self.Runes:Hide()
 	RuneFrame.Show = nil
 	RuneFrame:Show()
 
