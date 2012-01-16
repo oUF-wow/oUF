@@ -10,12 +10,6 @@
  The default assistant icon will be applied if the UI widget is a texture and
  doesn't have a texture or color defined.
 
- Hooks
-
- Override(self) - Used to completely override the internal update function.
-                  Removing the table key entry will make the element fall-back
-                  to its internal function again.
-
  Examples
 
    -- Position and size
@@ -25,6 +19,12 @@
    
    -- Register it with oUF
    self.Assistant = Assistant
+
+ Hooks
+
+ Override(self) - Used to completely override the internal update function.
+                  Removing the table key entry will make the element fall-back
+                  to its internal function again.
 ]]
 
 local parent, ns = ...
