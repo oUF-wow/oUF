@@ -11,7 +11,6 @@
 -- available alternatives aren't good enough or have issues I can't workaround.
 --
 -- Things that need fixing:
---  - Multiple examples are currently not supported.
 --  - No highlighting of Lua code.
 --  - Doesn't validate that comments are documentation strings.
 --  - Doesn't parse its own documentation header.
@@ -97,12 +96,19 @@ local handleArguments = function(start, stop, pattern)
 end
 
 local handleExamples = function(start, stop)
-	-- An extra line gets added if we don't do this.
-	tisf('<pre><code>%s', trim(lines[start]))
-	for i=start + 1, stop do
-		tisf(trim(lines[i]))
+	while(start) do
+		-- We already know we are in the example section, so split on the first
+		-- empty comment line or process the entire block.
+		local nextEmpty = findNextEmpty(start + 1, stop) or stop
+		-- An extra line gets added if we don't do this.
+		tisf('<pre><code>%s', trim(lines[start]))
+		for i=start + 1, nextEmpty  do
+			tisf(trim(lines[i]))
+		end
+		tisf('</pre></code>')
+
+		start = findNextEmpty(nextEmpty, stop)
 	end
-	tisf('</pre></code>')
 end
 
 local handleParagraph = function(start, stop)
