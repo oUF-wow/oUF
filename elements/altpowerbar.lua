@@ -6,8 +6,7 @@
 
  Widget
 
- AltPowerBar - Any UI widget which supports :Hide(), :Show(), :SetValue() and
- :SetMinMaxValues().
+ AltPowerBar - A StatusBar to represent alternative power.
 
  Examples
 
