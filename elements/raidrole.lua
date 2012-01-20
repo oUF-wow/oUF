@@ -2,17 +2,21 @@ local parent, ns = ...
 local oUF = ns.oUF
 
 local Update = function(self, event)
-	local raidID = UnitInRaid(self.unit)
-	if(not raidID) then return end
+	local unit = self.unit
+	if(not UnitInRaid(unit)) then return end
 
 	local raidrole = self.RaidRole
 	if(raidrole.PreUpdate) then
 		raidrole:PreUpdate()
 	end
 
-	local _, _, _, _, _, _, _, _, _, rinfo = GetRaidRosterInfo(raidID)
-	if(rinfo == 'MAINTANK' and not UnitHasVehicleUI(self.unit)) then
+	local inVehicle = UnitHasVehicleUI(unit)
+	if(GetPartyAssignment('MAINTANK', unit) and not inVehicle) then
 		raidrole:Show()
+		raidrole:SetTexture[[Interface\GROUPFRAME\UI-GROUP-MAINTANKICON]]
+	elseif(GetPartyAssignment('MAINASSIST', unit) and not inVehicle) then
+		raidrole:Show()
+		raidrole:SetTexture[[Interface\GROUPFRAME\UI-GROUP-MAINASSISTICON]]
 	else
 		raidrole:Hide()
 	end
@@ -39,10 +43,6 @@ local Enable = function(self)
 
 		self:RegisterEvent('PARTY_MEMBERS_CHANGED', Path, true)
 		self:RegisterEvent('RAID_ROSTER_UPDATE', Path, true)
-
-		if(raidrole:IsObjectType'Texture' and not raidrole:GetTexture()) then
-			raidrole:SetTexture[[Interface\GROUPFRAME\UI-GROUP-MAINTANKICON]]
-		end
 
 		return true
 	end
