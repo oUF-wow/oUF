@@ -48,6 +48,8 @@ local Update = function(self, event, unit)
 				r, g, b = power:GetAlternativeColor(unit, ptype, ptoken, altR, altG, altB)
 			elseif(altR) then
 				r, g, b = altR, altG, altB
+			else
+				t = self.colors.power[ptype]
 			end
 		end
 	elseif(power.colorClass and UnitIsPlayer(unit)) or
