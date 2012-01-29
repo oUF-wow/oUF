@@ -3,9 +3,7 @@ local oUF = ns.oUF
 
 oUF.colors.power = {}
 for power, color in next, PowerBarColor do
-	if(type(power) == 'string') then
-		oUF.colors.power[power] = {color.r, color.g, color.b}
-	end
+	oUF.colors.power[power] = {color.r, color.g, color.b}
 end
 
 local GetDisplayPower = function(power, unit)
