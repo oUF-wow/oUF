@@ -230,12 +230,13 @@ local UpdateAuras = function(self, event, unit)
 
 		auras.visibleAuras = auras.visibleBuffs + auras.visibleDebuffs
 
+		local fromRange, toRange
 		if(auras.PreSetPosition) then
-			auras:PreSetPosition(max)
+			fromRange, toRange = auras:PreSetPosition(max)
 		end
 
-		if(auras.PreSetPosition or auras.createdIcons > auras.anchoredIcons) then
-			(auras.SetPosition or SetPosition) (auras, auras.anchoredIcons, auras.createdIcons)
+		if(fromRange or auras.createdIcons > auras.anchoredIcons) then
+			(auras.SetPosition or SetPosition) (auras, fromRange or auras.anchoredIcons, toRange or auras.createdIcons)
 			auras.anchoredIcons = auras.createdIcons
 		end
 
