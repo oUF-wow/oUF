@@ -292,8 +292,8 @@ local Update = function(self, event, unit)
 	UpdateAuras(self, event, unit)
 
 	-- Assume no event means someone wants to re-anchor things. This is usually
-	-- done by UpdateAllElements.
-	if(not event) then
+	-- done by UpdateAllElements and :ForceUpdate.
+	if(event == 'ForceUpdate' or not event) then
 		local buffs = self.Buffs
 		if(buffs) then
 			(buffs.SetPosition or SetPosition) (buffs, 0, buffs.createdIcons)
