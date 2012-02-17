@@ -251,12 +251,13 @@ local UpdateAuras = function(self, event, unit)
 		local visibleBuffs, hiddenBuffs = filterIcons(unit, buffs, buffs.filter or 'HELPFUL', numBuffs)
 		buffs.visibleBuffs = visibleBuffs
 
+		local fromRange, toRange
 		if(buffs.PreSetPosition) then
-			buffs:PreSetPosition(numBuffs)
+			fromRange, toRange = buffs:PreSetPosition(numBuffs)
 		end
 
-		if(buffs.PreSetPosition or buffs.createdIcons > buffs.anchoredIcons) then
-			(buffs.SetPosition or SetPosition) (buffs, buffs.anchoredIcons, buffs.createdIcons)
+		if(fromRange or buffs.createdIcons > buffs.anchoredIcons) then
+			(buffs.SetPosition or SetPosition) (buffs, fromRange or buffs.anchoredIcons, toRange or buffs.createdIcons)
 			buffs.anchoredIcons = buffs.createdIcons
 		end
 
@@ -271,12 +272,13 @@ local UpdateAuras = function(self, event, unit)
 		local visibleDebuffs, hiddenDebuffs = filterIcons(unit, debuffs, debuffs.filter or 'HARMFUL', numDebuffs, true)
 		debuffs.visibleDebuffs = visibleDebuffs
 
+		local fromRange, toRange
 		if(debuffs.PreSetPosition) then
-			debuffs:PreSetPosition(numDebuffs)
+			fromRange, toRange = debuffs:PreSetPosition(numDebuffs)
 		end
 
-		if(debuffs.PreSetPosition or debuffs.createdIcons > debuffs.anchoredIcons) then
-			(debuffs.SetPosition or SetPosition) (debuffs, debuffs.anchoredIcons, debuffs.createdIcons)
+		if(fromRange or debuffs.createdIcons > debuffs.anchoredIcons) then
+			(debuffs.SetPosition or SetPosition) (debuffs, fromRange or debuffs.anchoredIcons, toRange or debuffs.createdIcons)
 			debuffs.anchoredIcons = debuffs.createdIcons
 		end
 
