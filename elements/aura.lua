@@ -148,12 +148,12 @@ local SetPosition = function(icons, from, to)
 	local growthy = (icons["growth-y"] == "DOWN" and -1) or 1
 	local cols = math.floor(icons:GetWidth() / sizex + .5)
 
-	for i = from, to - 1 do
-		local button = icons[i + 1]
+	for i = from, to do
+		local button = icons[i]
 
 		-- Bail out if the to range is out of scope.
 		if(not button) then break end
-		local col = i % cols
+		local col = (i % cols) - 1
 		local row = math.floor(i / cols)
 
 		button:ClearAllPoints()
@@ -239,7 +239,7 @@ local UpdateAuras = function(self, event, unit)
 		end
 
 		if(fromRange or auras.createdIcons > auras.anchoredIcons) then
-			(auras.SetPosition or SetPosition) (auras, fromRange or auras.anchoredIcons, toRange or auras.createdIcons)
+			(auras.SetPosition or SetPosition) (auras, fromRange or auras.anchoredIcons + 1, toRange or auras.createdIcons)
 			auras.anchoredIcons = auras.createdIcons
 		end
 
@@ -260,7 +260,7 @@ local UpdateAuras = function(self, event, unit)
 		end
 
 		if(fromRange or buffs.createdIcons > buffs.anchoredIcons) then
-			(buffs.SetPosition or SetPosition) (buffs, fromRange or buffs.anchoredIcons, toRange or buffs.createdIcons)
+			(buffs.SetPosition or SetPosition) (buffs, fromRange or buffs.anchoredIcons + 1, toRange or buffs.createdIcons)
 			buffs.anchoredIcons = buffs.createdIcons
 		end
 
@@ -281,7 +281,7 @@ local UpdateAuras = function(self, event, unit)
 		end
 
 		if(fromRange or debuffs.createdIcons > debuffs.anchoredIcons) then
-			(debuffs.SetPosition or SetPosition) (debuffs, fromRange or debuffs.anchoredIcons, toRange or debuffs.createdIcons)
+			(debuffs.SetPosition or SetPosition) (debuffs, fromRange or debuffs.anchoredIcons + 1, toRange or debuffs.createdIcons)
 			debuffs.anchoredIcons = debuffs.createdIcons
 		end
 
