@@ -150,6 +150,9 @@ local SetPosition = function(icons, from, to)
 
 	for i = from, to - 1 do
 		local button = icons[i + 1]
+
+		-- Bail out if the to range is out of scope.
+		if(not button) then break end
 		local col = i % cols
 		local row = math.floor(i / cols)
 
