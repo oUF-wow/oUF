@@ -148,9 +148,12 @@ local SetPosition = function(icons, from, to)
 	local growthy = (icons["growth-y"] == "DOWN" and -1) or 1
 	local cols = math.floor(icons:GetWidth() / sizex + .5)
 
-	for i = from, to - 1 do
-		local button = icons[i + 1]
-		local col = i % cols
+	for i = from, to do
+		local button = icons[i]
+
+		-- Bail out if the to range is out of scope.
+		if(not button) then break end
+		local col = (i % cols) - 1
 		local row = math.floor(i / cols)
 
 		button:ClearAllPoints()
@@ -236,7 +239,7 @@ local UpdateAuras = function(self, event, unit)
 		end
 
 		if(fromRange or auras.createdIcons > auras.anchoredIcons) then
-			(auras.SetPosition or SetPosition) (auras, fromRange or auras.anchoredIcons, toRange or auras.createdIcons)
+			(auras.SetPosition or SetPosition) (auras, fromRange or auras.anchoredIcons + 1, toRange or auras.createdIcons)
 			auras.anchoredIcons = auras.createdIcons
 		end
 
@@ -251,12 +254,13 @@ local UpdateAuras = function(self, event, unit)
 		local visibleBuffs, hiddenBuffs = filterIcons(unit, buffs, buffs.filter or 'HELPFUL', numBuffs)
 		buffs.visibleBuffs = visibleBuffs
 
+		local fromRange, toRange
 		if(buffs.PreSetPosition) then
-			buffs:PreSetPosition(numBuffs)
+			fromRange, toRange = buffs:PreSetPosition(numBuffs)
 		end
 
-		if(buffs.PreSetPosition or buffs.createdIcons > buffs.anchoredIcons) then
-			(buffs.SetPosition or SetPosition) (buffs, buffs.anchoredIcons, buffs.createdIcons)
+		if(fromRange or buffs.createdIcons > buffs.anchoredIcons) then
+			(buffs.SetPosition or SetPosition) (buffs, fromRange or buffs.anchoredIcons + 1, toRange or buffs.createdIcons)
 			buffs.anchoredIcons = buffs.createdIcons
 		end
 
@@ -271,12 +275,13 @@ local UpdateAuras = function(self, event, unit)
 		local visibleDebuffs, hiddenDebuffs = filterIcons(unit, debuffs, debuffs.filter or 'HARMFUL', numDebuffs, true)
 		debuffs.visibleDebuffs = visibleDebuffs
 
+		local fromRange, toRange
 		if(debuffs.PreSetPosition) then
-			debuffs:PreSetPosition(numDebuffs)
+			fromRange, toRange = debuffs:PreSetPosition(numDebuffs)
 		end
 
-		if(debuffs.PreSetPosition or debuffs.createdIcons > debuffs.anchoredIcons) then
-			(debuffs.SetPosition or SetPosition) (debuffs, debuffs.anchoredIcons, debuffs.createdIcons)
+		if(fromRange or debuffs.createdIcons > debuffs.anchoredIcons) then
+			(debuffs.SetPosition or SetPosition) (debuffs, fromRange or debuffs.anchoredIcons + 1, toRange or debuffs.createdIcons)
 			debuffs.anchoredIcons = debuffs.createdIcons
 		end
 
@@ -289,21 +294,22 @@ local Update = function(self, event, unit)
 
 	UpdateAuras(self, event, unit)
 
-	-- Assume no event means someone wants to re-anchor things.
-	if(not event) then
+	-- Assume no event means someone wants to re-anchor things. This is usually
+	-- done by UpdateAllElements and :ForceUpdate.
+	if(event == 'ForceUpdate' or not event) then
 		local buffs = self.Buffs
 		if(buffs) then
-			(buffs.SetPosition or SetPosition) (buffs, 1, buffs.createdIcons)
+			(buffs.SetPosition or SetPosition) (buffs, 0, buffs.createdIcons)
 		end
 
 		local debuffs = self.Debuffs
 		if(debuffs) then
-			(debuffs.SetPosition or SetPosition) (debuffs, 1, debuffs.createdIcons)
+			(debuffs.SetPosition or SetPosition) (debuffs, 0, debuffs.createdIcons)
 		end
 
 		local auras = self.Auras
 		if(auras) then
-			(auras.SetPosition or SetPosition) (auras, 1, auras.createdIcons)
+			(auras.SetPosition or SetPosition) (auras, 0, auras.createdIcons)
 		end
 	end
 end
