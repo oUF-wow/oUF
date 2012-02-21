@@ -153,8 +153,8 @@ local SetPosition = function(icons, from, to)
 
 		-- Bail out if the to range is out of scope.
 		if(not button) then break end
-		local col = (i % cols) - 1
-		local row = math.floor(i / cols)
+		local col = (i - 1) % cols
+		local row = math.floor((i - 1) / cols)
 
 		button:ClearAllPoints()
 		button:SetPoint(anchor, icons, anchor, col * sizex * growthx, row * sizey * growthy)
