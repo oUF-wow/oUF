@@ -96,19 +96,12 @@ local handleArguments = function(start, stop, pattern)
 end
 
 local handleExamples = function(start, stop)
-	while(start) do
-		-- We already know we are in the example section, so split on the first
-		-- empty comment line or process the entire block.
-		local nextEmpty = findNextEmpty(start + 1, stop) or stop
-		-- An extra line gets added if we don't do this.
-		tisf('<pre><code>%s', lines[start]:sub(3))
-		for i=start + 1, nextEmpty  do
-			tisf(lines[i]:sub(3))
-		end
-		tisf('</pre></code>')
-
-		start = findNextEmpty(nextEmpty, stop)
+	-- An extra line gets added if we don't do this.
+	tisf('<pre><code>%s', lines[start]:sub(3))
+	for i=start + 1, stop  do
+		tisf(lines[i]:sub(3))
 	end
+	tisf('</pre></code>')
 end
 
 local handleParagraph = function(start, stop)
@@ -120,13 +113,28 @@ local handleParagraph = function(start, stop)
 end
 
 local handleSection = function(start, stop)
-	local line = lines[start]
-	if(line:match('^%S+%s*%- ')) then
-		handleArguments(start, stop, '(%S+)%s*%- ()')
-	elseif(line:sub(1, 2) == '  ') then
-		handleExamples(start, stop)
-	else
-		handleParagraph(start, stop)
+	while(start) do
+		-- Find the next empty line or continue until the end of the section.
+		-- findNextEmpty() returns the position of the empty line, so we need to
+		-- subtract one from it.
+		local nextEmpty = findNextEmpty(start + 1, stop)
+		if(nextEmpty) then
+			nextEmpty = nextEmpty - 1
+		else
+			nextEmpty = stop
+		end
+
+		local line = lines[start]
+		if(line:match('^%S+%s*%- ')) then
+			handleArguments(start, nextEmpty, '(%S+)%s*%- ()')
+		elseif(line:sub(1, 2) == '  ') then
+			handleExamples(start, nextEmpty)
+		else
+			handleParagraph(start, nextEmpty)
+		end
+
+		start = findNextEmpty(nextEmpty, stop)
+		if(start) then start = start + 1 end
 	end
 end
 
