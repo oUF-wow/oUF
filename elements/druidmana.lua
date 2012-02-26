@@ -27,9 +27,9 @@
 
  Sub-Widget Options
 
- .multiplier - Defines a multiplier, which is used to tint the background
-               based on the main widgets R, G and B values. Defaults to 1
-               if not present.
+ .multiplier - Defines a multiplier, which is used to tint the background based
+               on the main widgets R, G and B values. Defaults to 1 if not
+               present.
 
  Examples
 
