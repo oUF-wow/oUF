@@ -3,8 +3,21 @@ local oUF = ns.oUF
 
 oUF.colors.power = {}
 for power, color in next, PowerBarColor do
-	oUF.colors.power[power] = {color.r, color.g, color.b}
+	if (type(power) == "string") then
+		oUF.colors.power[power] = {color.r, color.g, color.b}
+	end
 end
+
+oUF.colors.power[0] = oUF.colors.power["MANA"]
+oUF.colors.power[1] = oUF.colors.power["RAGE"]
+oUF.colors.power[2] = oUF.colors.power["FOCUS"]
+oUF.colors.power[3] = oUF.colors.power["ENERGY"]
+oUF.colors.power[4] = oUF.colors.power["UNUSED"]
+oUF.colors.power[5] = oUF.colors.power["RUNES"]
+oUF.colors.power[6] = oUF.colors.power["RUNIC_POWER"]
+oUF.colors.power[7] = oUF.colors.power["SOUL_SHARDS"]
+oUF.colors.power[8] = oUF.colors.power["ECLIPSE"]
+oUF.colors.power[9] = oUF.colors.power["HOLY_POWER"]
 
 local GetDisplayPower = function(power, unit)
 	local _, _, _, _, _, _, showOnRaid = UnitAlternatePowerInfo(unit)
