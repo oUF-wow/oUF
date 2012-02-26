@@ -212,7 +212,10 @@ for i=2, select('#', ...) do
 	local file = select(i, ...)
 	local path, filename = file:match('(.+)/(.+)$')
 
-	path = path:sub(4)
+	if(path:sub(1,3) == '../') then
+		path = path:sub(4)
+	end
+
 	if(#path == 0) then path = nil end
 	filename = filename:gsub('lua', 'html')
 
