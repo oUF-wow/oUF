@@ -1,3 +1,26 @@
+--[[ Element: Alternative Power Bar
+ Handles visibility and updating of the alternative power bar.
+ 
+ This bar is used to display encounter/quest related power information, such as
+ the number of hour glass uses left on the end boss in End Time.
+
+ Widget
+
+ AltPowerBar - A StatusBar to represent alternative power.
+
+ Examples
+
+   -- Position and size
+   local AltPowerBar = CreateFrame('StatusBar', nil, self)
+   AltPowerBar:SetHeight(20)
+   AltPowerBar:SetPoint('BOTTOM')
+   AltPowerBar:SetPoint('LEFT')
+   AltPowerBar:SetPoint('RIGHT')
+   
+   -- Register with oUF
+   self.AltPowerBar = AltPowerBar
+]]
+
 local parent, ns = ...
 local oUF = ns.oUF
 
