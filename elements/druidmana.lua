@@ -1,19 +1,15 @@
--- Druid Mana Bar for Cat and Bear forms
--- Authors: Califpornia aka Ennie // some code taken from oUF`s EclipseBar element
 if(select(2, UnitClass('player')) ~= 'DRUID') then return end
 
 local _, ns = ...
 local oUF = ns.oUF
 
 local function Update(self, event, unit, powertype)
-	--only the player frame will have this unit enabled
-	--i mainly place this check for UNIT_DISPLAYPOWER and entering a vehicle
 	if(unit ~= 'player' or (powertype and powertype ~= 'MANA')) then return end
 
 	local druidmana = self.DruidMana
 	if(druidmana.PreUpdate) then druidmana:PreUpdate(unit) end
 
-	--check form
+	-- Hide the bar if the active power type is mana.
 	if(UnitPowerType('player') == SPELL_POWER_MANA) then
 		return druidmana:Hide()
 	else
