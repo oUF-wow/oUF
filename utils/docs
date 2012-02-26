@@ -101,9 +101,9 @@ local handleExamples = function(start, stop)
 		-- empty comment line or process the entire block.
 		local nextEmpty = findNextEmpty(start + 1, stop) or stop
 		-- An extra line gets added if we don't do this.
-		tisf('<pre><code>%s', trim(lines[start]))
+		tisf('<pre><code>%s', lines[start]:sub(3))
 		for i=start + 1, nextEmpty  do
-			tisf(trim(lines[i]))
+			tisf(lines[i]:sub(3))
 		end
 		tisf('</pre></code>')
 
