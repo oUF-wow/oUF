@@ -3,7 +3,7 @@
 
  Widget
 
- Assistant - Any UI widget which support :Hide() and :Show().
+ Assistant - Any UI widget.
 
  Notes
 
