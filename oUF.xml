@@ -26,7 +26,7 @@
 	<Script file='elements\masterlooter.lua' />
 	<Script file='elements\assistant.lua' />
 	<Script file='elements\runebar.lua' />
-	<Script file='elements\lfdrole.lua' />
+	<Script file='elements\grouprole.lua' />
 	<Script file='elements\healprediction.lua' />
 	<Script file='elements\holypower.lua' />
 	<Script file='elements\soulshards.lua' />
