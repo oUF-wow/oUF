@@ -1,29 +1,29 @@
---[[ Element: LFD Role Icon
+--[[ Element: Group Role Icon
 
- Toggles visibility of the LFD role icon based upon the units current dungeon
+ Toggles visibility of the group role icon based upon the units current dungeon
  role.
 
  Widget
 
- LFDRole - A Texture containing the LFD role icons at specific locations. Look
+ GroupRole - A Texture containing the group role icons at specific locations. Look
            at the default LFD role icon texture for an example of this.
            Alternatively you can look at the return values of
            GetTexCoordsForRoleSmallCircle(role).
 
  Notes
 
- The default LFD role texture will be applied if the UI widget is a texture and
+ The default group role texture will be applied if the UI widget is a texture and
  doesn't have a texture or color defined.
 
  Examples
 
    -- Position and size
-   local LFDRole = self:CreateTexture(nil, "OVERLAY")
-   LFDRole:SetSize(16, 16)
-   LFDRole:SetPoint("LEFT", self)
+   local GroupRole = self:CreateTexture(nil, "OVERLAY")
+   GroupRole:SetSize(16, 16)
+   GroupRole:SetPoint("LEFT", self)
    
    -- Register it with oUF
-   self.LFDRole = LFDRole
+   self.GroupRole = GroupRole
 
  Hooks
 
@@ -36,26 +36,26 @@ local parent, ns = ...
 local oUF = ns.oUF
 
 local Update = function(self, event)
-	local lfdrole = self.LFDRole
-	if(lfdrole.PreUpdate) then
-		lfdrole:PreUpdate()
+	local grouprole = self.GroupRole
+	if(grouprole.PreUpdate) then
+		grouprole:PreUpdate()
 	end
 
 	local role = UnitGroupRolesAssigned(self.unit)
 	if(role == 'TANK' or role == 'HEALER' or role == 'DAMAGER') then
-		lfdrole:SetTexCoord(GetTexCoordsForRoleSmallCircle(role))
-		lfdrole:Show()
+		grouprole:SetTexCoord(GetTexCoordsForRoleSmallCircle(role))
+		grouprole:Show()
 	else
-		lfdrole:Hide()
+		grouprole:Hide()
 	end
 
-	if(lfdrole.PostUpdate) then
-		return lfdrole:PostUpdate(role)
+	if(grouprole.PostUpdate) then
+		return grouprole:PostUpdate(role)
 	end
 end
 
 local Path = function(self, ...)
-	return (self.LFDRole.Override or Update) (self, ...)
+	return (self.GroupRole.Override or Update) (self, ...)
 end
 
 local ForceUpdate = function(element)
@@ -63,10 +63,10 @@ local ForceUpdate = function(element)
 end
 
 local Enable = function(self)
-	local lfdrole = self.LFDRole
-	if(lfdrole) then
-		lfdrole.__owner = self
-		lfdrole.ForceUpdate = ForceUpdate
+	local grouprole = self.GroupRole
+	if(grouprole) then
+		grouprole.__owner = self
+		grouprole.ForceUpdate = ForceUpdate
 
 		if(self.unit == "player") then
 			self:RegisterEvent("PLAYER_ROLES_ASSIGNED", Path, true)
@@ -74,8 +74,8 @@ local Enable = function(self)
 			self:RegisterEvent("PARTY_MEMBERS_CHANGED", Path, true)
 		end
 
-		if(lfdrole:IsObjectType"Texture" and not lfdrole:GetTexture()) then
-			lfdrole:SetTexture[[Interface\LFGFrame\UI-LFG-ICON-PORTRAITROLES]]
+		if(grouprole:IsObjectType"Texture" and not grouprole:GetTexture()) then
+			grouprole:SetTexture[[Interface\LFGFrame\UI-LFG-ICON-PORTRAITROLES]]
 		end
 
 		return true
@@ -83,11 +83,10 @@ local Enable = function(self)
 end
 
 local Disable = function(self)
-	local lfdrole = self.LFDRole
-	if(lfdrole) then
+	if(self.GroupRole) then
 		self:UnregisterEvent("PLAYER_ROLES_ASSIGNED", Path)
 		self:UnregisterEvent("PARTY_MEMBERS_CHANGED", Path)
 	end
 end
 
-oUF:AddElement('LFDRole', Path, Enable, Disable)
+oUF:AddElement('GroupRole', Path, Enable, Disable)
