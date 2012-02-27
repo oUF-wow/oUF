@@ -4,20 +4,20 @@ local oUF = ns.oUF
 local Update = function(self, event, unit)
 	if(unit ~= self.unit) then return end
 
-	local qicon = self.QuestIcon
-	if(qicon.PreUpdate) then
-		qicon:PreUpdate()
+	local icon = self.QuestIcon
+	if(icon.PreUpdate) then
+		icon:PreUpdate()
 	end
 
 	local isQuestBoss = UnitIsQuestBoss(unit)
 	if(isQuestBoss) then
-		qicon:Show()
+		icon:Show()
 	else
-		qicon:Hide()
+		icon:Hide()
 	end
 
-	if(qicon.PostUpdate) then
-		return qicon:PostUpdate(isQuestBoss)
+	if(icon.PostUpdate) then
+		return icon:PostUpdate(isQuestBoss)
 	end
 end
 
@@ -30,15 +30,15 @@ local ForceUpdate = function(element)
 end
 
 local Enable = function(self)
-	local qicon = self.QuestIcon
-	if(qicon) then
-		qicon.__owner = self
-		qicon.ForceUpdate = ForceUpdate
+	local icon = self.QuestIcon
+	if(icon) then
+		icon.__owner = self
+		icon.ForceUpdate = ForceUpdate
 
 		self:RegisterEvent('UNIT_CLASSIFICATION_CHANGED', Path)
 
-		if(qicon:IsObjectType'Texture' and not qicon:GetTexture()) then
-			qicon:SetTexture[[Interface\TargetingFrame\PortraitQuestBadge]]
+		if(icon:IsObjectType'Texture' and not icon:GetTexture()) then
+			icon:SetTexture[[Interface\TargetingFrame\PortraitQuestBadge]]
 		end
 
 		return true
