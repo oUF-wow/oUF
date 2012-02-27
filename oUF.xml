@@ -32,7 +32,7 @@
 	<Script file='elements\soulshards.lua' />
 	<Script file='elements\phaseicon.lua' />
 	<Script file='elements\readycheck.lua' />
-	<Script file='elements\qicon.lua' />
+	<Script file='elements\questicon.lua' />
 	<Script file='elements\eclipsebar.lua' />
 	<Script file='elements\altpowerbar.lua' />
 	<Script file='elements\totems.lua' />
