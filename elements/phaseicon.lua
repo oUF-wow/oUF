@@ -33,20 +33,20 @@ local parent, ns = ...
 local oUF = ns.oUF
 
 local Update = function(self, event)
-	local picon = self.PhaseIcon
-	if(picon.PreUpdate) then
-		picon:PreUpdate()
+	local icon = self.PhaseIcon
+	if(icon.PreUpdate) then
+		icon:PreUpdate()
 	end
 
 	local inPhase = UnitInPhase(self.unit)
 	if(inPhase) then
-		picon:Hide()
+		icon:Hide()
 	else
-		picon:Show()
+		icon:Show()
 	end
 
-	if(picon.PostUpdate) then
-		return picon:PostUpdate(inPhase)
+	if(icon.PostUpdate) then
+		return icon:PostUpdate(inPhase)
 	end
 end
 
@@ -59,15 +59,15 @@ local ForceUpdate = function(element)
 end
 
 local Enable = function(self)
-	local picon = self.PhaseIcon
-	if(picon) then
-		picon.__owner = self
-		picon.ForceUpdate = ForceUpdate
+	local icon = self.PhaseIcon
+	if(icon) then
+		icon.__owner = self
+		icon.ForceUpdate = ForceUpdate
 
 		self:RegisterEvent('UNIT_PHASE', Path, true)
 
-		if(picon:IsObjectType'Texture' and not picon:GetTexture()) then
-			picon:SetTexture[[Interface\TargetingFrame\UI-PhasingIcon]]
+		if(icon:IsObjectType'Texture' and not icon:GetTexture()) then
+			icon:SetTexture[[Interface\TargetingFrame\UI-PhasingIcon]]
 		end
 
 		return true
@@ -75,8 +75,7 @@ local Enable = function(self)
 end
 
 local Disable = function(self)
-	local picon = self.PhaseIcon
-	if(picon) then
+	if(self.PhaseIcon) then
 		self:UnregisterEvent('UNIT_PHASE', Path)
 	end
 end
