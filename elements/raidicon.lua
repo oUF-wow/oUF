@@ -33,15 +33,15 @@ local ForceUpdate = function(element)
 end
 
 local Enable = function(self)
-	local ricon = self.RaidIcon
-	if(ricon) then
-		ricon.__owner = self
-		ricon.ForceUpdate = ForceUpdate
+	local icon = self.RaidIcon
+	if(icon) then
+		icon.__owner = self
+		icon.ForceUpdate = ForceUpdate
 
 		self:RegisterEvent("RAID_TARGET_UPDATE", Path, true)
 
-		if(ricon:IsObjectType"Texture" and not ricon:GetTexture()) then
-			ricon:SetTexture[[Interface\TargetingFrame\UI-RaidTargetingIcons]]
+		if(icon:IsObjectType"Texture" and not icon:GetTexture()) then
+			icon:SetTexture[[Interface\TargetingFrame\UI-RaidTargetingIcons]]
 		end
 
 		return true
@@ -49,8 +49,7 @@ local Enable = function(self)
 end
 
 local Disable = function(self)
-	local ricon = self.RaidIcon
-	if(ricon) then
+	if(self.RaidIcon) then
 		self:UnregisterEvent("RAID_TARGET_UPDATE", Path)
 	end
 end
