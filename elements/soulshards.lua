@@ -21,6 +21,30 @@ local Update = function(self, event, unit, powerType)
 		end
 	end
 
+	if (event == "UNIT_ENTERED_VEHICLE" and UnitHasVehiclePlayerFrameUI("player")) then
+		if (ss.Hide) then
+			ss:Hide()
+		else
+			for i = 1, SHARD_BAR_NUM_SHARDS do
+				if (i <= num) then
+					ss[i]:Hide()
+				end
+			end
+		end
+	end
+
+	if (event == "UNIT_EXITED_VEHICLE" and not UnitHasVehiclePlayerFrameUI("player")) then
+		if (ss.Show) then
+			ss:Show()
+		else
+			for i = 1, SHARD_BAR_NUM_SHARDS do
+				if (i <= num) then
+					ss[i]:Show()
+				end
+			end
+		end
+	end
+
 	if(ss.PostUpdate) then
 		return ss:PostUpdate(num)
 	end
