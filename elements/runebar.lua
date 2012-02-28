@@ -60,6 +60,26 @@ local Update = function(self, event)
 	for i=1, 6 do
 		UpdateRune(self, event, i)
 	end
+
+	if (event == "UNIT_ENTERED_VEHICLE" and UnitHasVehiclePlayerFrameUI("player")) then
+		if (self.Runes.Hide) then
+			self.Runes:Hide()
+		else
+			for i = 1, 6 do
+				self.Runes[i]:Hide()
+			end
+		end
+	end
+
+	if (event == "UNIT_EXITED_VEHICLE" and not UnitHasVehiclePlayerFrameUI("player")) then
+		if (self.Runes.Show) then
+			self.Runes:Show()
+		else
+			for i = 1, 6 do
+				self.Runes[i]:Show()
+			end
+		end
+	end
 end
 
 local ForceUpdate = function(element)
