@@ -1,3 +1,47 @@
+--[[ Element: Eclipse Bar
+ Handle updating and visibility of the Druid eclipse state status bars.
+
+ Widget
+
+ EclipseBar - A frame to hold the status bars representing the lunar and solar power state.
+
+ Sub-Widgets
+
+ LunarBar - A StatusBar used to represent the lunar power state.
+ SolarBar - A StatusBar used to represent the solar power state.
+
+ Notes
+
+ The default StatusBar texture will be applied if the UI widget doesn't have a
+ status bar texture or color defined.
+
+ Examples
+
+   -- Position and size
+   local EclipseBar = CreateFrame('Frame', nil, self)
+   EclipseBar:SetPoint('BOTTOM', 0, -40)
+   EclipseBar:SetSize(160, 20)
+   
+   local LunarBar = CreateFrame('StatusBar', nil, EclipseBar)
+   LunarBar:SetPoint('LEFT')
+   LunarBar:SetSize(160, 20)
+   
+   local SolarBar = CreateFrame('StatusBar', nil, EclipseBar)
+   SolarBar:SetPoint('LEFT', LunarBar:GetStatusBarTexture(), 'RIGHT')
+   SolarBar:SetSize(160, 20)
+   
+   -- Register with oUF
+   EclipseBar.LunarBar = LunarBar
+   EclipseBar.SolarBar = SolarBar
+   self.EclipseBar = EclipseBar
+
+ Hooks
+
+ Override(self) - Used to completely override the internal update function.
+                  Removing the table key entry will make the element fall-back
+                  to its internal function again.
+]]
+
 if(select(2, UnitClass('player')) ~= 'DRUID') then return end
 
 local parent, ns = ...
@@ -26,6 +70,15 @@ local UNIT_POWER = function(self, event, unit, powerType)
 		eb.SolarBar:SetValue(power * -1)
 	end
 
+	--[[ :PostUpdatePower(unit)
+
+	 Callback which is called after lunar and solar bar was updated.
+
+	 Arguments
+
+	 self   - The widget that holds the eclipse frame.
+	 unit   - The unit that has the widget.
+	 ]]
 	if(eb.PostUpdatePower) then
 		return eb:PostUpdatePower(unit)
 	end
@@ -52,6 +105,15 @@ local UPDATE_VISIBILITY = function(self, event)
 		eb:Hide()
 	end
 
+	--[[ :PostUpdateVisibility(unit)
+
+	 Callback which is called after the eclipse frame was shown or hidden.
+
+	 Arguments
+
+	 self   - The widget that holds the eclipse frame.
+	 unit   - The unit that has the widget.
+	 ]]
 	if(eb.PostUpdateVisibility) then
 		return eb:PostUpdateVisibility(self.unit)
 	end
@@ -78,6 +140,15 @@ local UNIT_AURA = function(self, event, unit)
 	eb.hasSolarEclipse = hasSolarEclipse
 	eb.hasLunarEclipse = hasLunarEclipse
 
+	--[[ :PostUnitAura(unit)
+
+	 Callback which is called after the eclipse state was checked.
+
+	 Arguments
+
+	 self   - The widget that holds the eclipse frame.
+	 unit   - The unit that has the widget.
+	 ]]
 	if(eb.PostUnitAura) then
 		return eb:PostUnitAura(unit)
 	end
@@ -88,6 +159,15 @@ local ECLIPSE_DIRECTION_CHANGE = function(self, event, isLunar)
 
 	eb.directionIsLunar = isLunar
 
+	--[[ :PostDirectionChange(unit)
+
+	 Callback which is called after eclipse direction was changed.
+
+	 Arguments
+
+	 self   - The widget that holds the eclipse frame.
+	 unit   - The unit that has the widget.
+	 ]]
 	if(eb.PostDirectionChange) then
 		return eb:PostDirectionChange(self.unit)
 	end
