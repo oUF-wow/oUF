@@ -4,9 +4,9 @@
 
  Widget
 
- Auras   - A frame to hold icons representing both buffs and debuffs.
- Buffs   - A frame to hold icons representing buffs.
- Debuffs - A frame to hold icons representing debuffs.
+ Auras   - A Frame to hold icons representing both buffs and debuffs.
+ Buffs   - A Frame to hold icons representing buffs.
+ Debuffs - A Frame to hold icons representing debuffs.
 
  Options
 
