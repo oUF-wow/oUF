@@ -18,10 +18,6 @@
  Examples
 
    -- Position and size
-   local EclipseBar = CreateFrame('Frame', nil, self)
-   EclipseBar:SetPoint('BOTTOM', 0, -40)
-   EclipseBar:SetSize(160, 20)
-   
    local LunarBar = CreateFrame('StatusBar', nil, EclipseBar)
    LunarBar:SetPoint('LEFT')
    LunarBar:SetSize(160, 20)
@@ -31,9 +27,10 @@
    SolarBar:SetSize(160, 20)
    
    -- Register with oUF
-   EclipseBar.LunarBar = LunarBar
-   EclipseBar.SolarBar = SolarBar
-   self.EclipseBar = EclipseBar
+   self.EclipseBar = {
+      LunarBar = LunarBar,
+      SolarBar = SolarBar,
+   }
 
  Hooks
 
