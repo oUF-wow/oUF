@@ -1,10 +1,11 @@
 --[[ Element: Quest Icon
 
- Handles updating and toggles visibility based upon the units connection to a quest.
+ Handles updating and toggles visibility based upon the units connection to a
+ quest.
 
  Widget
 
- QuestIcon - Any UI widget
+ QuestIcon - Any UI widget.
 
  Notes
 
