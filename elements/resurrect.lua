@@ -4,12 +4,13 @@
 
  Widget
 
- ResurrectIcon - A Texture used to display if the unit has an inccoming resurrect.
+ ResurrectIcon - A Texture used to display if the unit has an incoming
+ resurrect.
 
  Notes
 
- The default resurrect icon will be used if the UI widget is a texture and doesn't
- have a texture or color defined.
+ The default resurrect icon will be used if the UI widget is a texture and
+ doesn't have a texture or color defined.
 
  Examples
 
