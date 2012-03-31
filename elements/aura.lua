@@ -150,7 +150,7 @@ local updateIcon = function(unit, icons, index, offset, filter, isDebuff, visibl
 
 			 Arguments
 
-			 index - The offset the icon should be created at
+			 index - The offset the icon should be created at.
 
 			 Returns
 
