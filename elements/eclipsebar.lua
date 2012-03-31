@@ -74,8 +74,8 @@ local UNIT_POWER = function(self, event, unit, powerType)
 
 		 Arguments
 
-		 self   - The widget that holds the eclipse frame.
-		 unit   - The unit that has the widget.
+		 self - The widget that holds the eclipse frame.
+		 unit - The unit that has the widget.
 		]]
 		return eb:PostUpdatePower(unit)
 	end
@@ -109,8 +109,8 @@ local UPDATE_VISIBILITY = function(self, event)
 
 		 Arguments
 
-		 self   - The widget that holds the eclipse frame.
-		 unit   - The unit that has the widget.
+		 self - The widget that holds the eclipse frame.
+		 unit - The unit that has the widget.
 		]]
 		return eb:PostUpdateVisibility(self.unit)
 	end
@@ -144,8 +144,8 @@ local UNIT_AURA = function(self, event, unit)
 
 		 Arguments
 
-		 self   - The widget that holds the eclipse frame.
-		 unit   - The unit that has the widget.
+		 self - The widget that holds the eclipse frame.
+		 unit - The unit that has the widget.
 		]]
 		return eb:PostUnitAura(unit)
 	end
@@ -163,8 +163,8 @@ local ECLIPSE_DIRECTION_CHANGE = function(self, event, isLunar)
 
 		 Arguments
 
-		 self   - The widget that holds the eclipse frame.
-		 unit   - The unit that has the widget.
+		 self - The widget that holds the eclipse frame.
+		 unit - The unit that has the widget.
 		]]
 		return eb:PostDirectionChange(self.unit)
 	end
