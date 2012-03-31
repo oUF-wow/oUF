@@ -9,7 +9,7 @@
  Notes
 
  This element updates by changing colors of the texture.
- 
+
  The default threat icon will be used if the UI widget is a texture and doesn't
  have a texture or color defined.
 
