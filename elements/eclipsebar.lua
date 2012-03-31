@@ -70,16 +70,16 @@ local UNIT_POWER = function(self, event, unit, powerType)
 		eb.SolarBar:SetValue(power * -1)
 	end
 
-	--[[ :PostUpdatePower(unit)
-
-	 Callback which is called after lunar and solar bar was updated.
-
-	 Arguments
-
-	 self   - The widget that holds the eclipse frame.
-	 unit   - The unit that has the widget.
-	 ]]
 	if(eb.PostUpdatePower) then
+		--[[ :PostUpdatePower(unit)
+
+		 Callback which is called after lunar and solar bar was updated.
+
+		 Arguments
+
+		 self   - The widget that holds the eclipse frame.
+		 unit   - The unit that has the widget.
+		]]
 		return eb:PostUpdatePower(unit)
 	end
 end
@@ -105,16 +105,16 @@ local UPDATE_VISIBILITY = function(self, event)
 		eb:Hide()
 	end
 
-	--[[ :PostUpdateVisibility(unit)
-
-	 Callback which is called after the eclipse frame was shown or hidden.
-
-	 Arguments
-
-	 self   - The widget that holds the eclipse frame.
-	 unit   - The unit that has the widget.
-	 ]]
 	if(eb.PostUpdateVisibility) then
+		--[[ :PostUpdateVisibility(unit)
+
+		 Callback which is called after the eclipse frame was shown or hidden.
+
+		 Arguments
+
+		 self   - The widget that holds the eclipse frame.
+		 unit   - The unit that has the widget.
+		]]
 		return eb:PostUpdateVisibility(self.unit)
 	end
 end
@@ -140,16 +140,16 @@ local UNIT_AURA = function(self, event, unit)
 	eb.hasSolarEclipse = hasSolarEclipse
 	eb.hasLunarEclipse = hasLunarEclipse
 
-	--[[ :PostUnitAura(unit)
-
-	 Callback which is called after the eclipse state was checked.
-
-	 Arguments
-
-	 self   - The widget that holds the eclipse frame.
-	 unit   - The unit that has the widget.
-	 ]]
 	if(eb.PostUnitAura) then
+		--[[ :PostUnitAura(unit)
+
+		 Callback which is called after the eclipse state was checked.
+
+		 Arguments
+
+		 self   - The widget that holds the eclipse frame.
+		 unit   - The unit that has the widget.
+		]]
 		return eb:PostUnitAura(unit)
 	end
 end
@@ -159,16 +159,16 @@ local ECLIPSE_DIRECTION_CHANGE = function(self, event, isLunar)
 
 	eb.directionIsLunar = isLunar
 
-	--[[ :PostDirectionChange(unit)
-
-	 Callback which is called after eclipse direction was changed.
-
-	 Arguments
-
-	 self   - The widget that holds the eclipse frame.
-	 unit   - The unit that has the widget.
-	 ]]
 	if(eb.PostDirectionChange) then
+		--[[ :PostDirectionChange(unit)
+
+		 Callback which is called after eclipse direction was changed.
+
+		 Arguments
+
+		 self   - The widget that holds the eclipse frame.
+		 unit   - The unit that has the widget.
+		]]
 		return eb:PostDirectionChange(self.unit)
 	end
 end
