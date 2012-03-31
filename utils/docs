@@ -54,9 +54,10 @@ local findNextHeader = function(offest)
 	end
 end
 
-local findNextArguent = function(start, stop, pattern)
+local findNextArguent = function(start, stop, padding, pattern)
 	for i=start, stop do
-		if(lines[i]:match(pattern)) then
+		local match, pad = lines[i]:match(pattern)
+		if(match and pad == padding) then
 			return i
 		end
 	end
@@ -74,7 +75,7 @@ local handleArguments = function(start, stop, pattern)
 	tisf('<dl>')
 	repeat
 		-- Tear out the argument name and offset of where the description begins.
-		local def, offset = lines[start]:match(pattern)
+		local def, padding, offset = lines[start]:match(pattern)
 		tisf('<dt>%s</dt>', def)
 
 		-- Insert the first line of the description.
@@ -83,7 +84,7 @@ local handleArguments = function(start, stop, pattern)
 
 		-- Find the next argument in the list or continue to the end of the
 		-- current section.
-		local nextarg = findNextArguent(start + 1, stop, pattern)
+		local nextarg = findNextArguent(start + 1, stop, padding, pattern)
 		nextarg = (nextarg or stop + 1) - 1
 		for i=start + 1, nextarg do
 			tisf(trim(lines[i]))
@@ -126,7 +127,7 @@ local handleSection = function(start, stop)
 
 		local line = lines[start]
 		if(line:match('^%S+%s*%- ')) then
-			handleArguments(start, nextEmpty, '(%S+)%s*%- ()')
+			handleArguments(start, nextEmpty, '(%S+)%s*()%- ()')
 		elseif(line:sub(1, 2) == '  ') then
 			handleExamples(start, nextEmpty)
 		else
