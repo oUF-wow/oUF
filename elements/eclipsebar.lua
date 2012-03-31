@@ -3,7 +3,7 @@
 
  Widget
 
- EclipseBar - A frame to hold the status bars representing the lunar and solar power state.
+ EclipseBar - A table to hold the sub-widgets.
 
  Sub-Widgets
 
@@ -32,7 +32,7 @@
       SolarBar = SolarBar,
    }
 
- Hooks
+ Hooks and Callbacks
 
  Override(self) - Used to completely override the internal update function.
                   Removing the table key entry will make the element fall-back
