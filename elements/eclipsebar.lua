@@ -18,11 +18,11 @@
  Examples
 
    -- Position and size
-   local LunarBar = CreateFrame('StatusBar', nil, EclipseBar)
+   local LunarBar = CreateFrame('StatusBar', nil, self)
    LunarBar:SetPoint('LEFT')
    LunarBar:SetSize(160, 20)
    
-   local SolarBar = CreateFrame('StatusBar', nil, EclipseBar)
+   local SolarBar = CreateFrame('StatusBar', nil, self)
    SolarBar:SetPoint('LEFT', LunarBar:GetStatusBarTexture(), 'RIGHT')
    SolarBar:SetSize(160, 20)
    
