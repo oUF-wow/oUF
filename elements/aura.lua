@@ -177,10 +177,10 @@ local updateIcon = function(unit, icons, index, offset, filter, isDebuff, visibl
 
 		 Arguments
 
-		 self  - The widget that holds the aura icon.
-		 unit  - The unit that has the aura.
-		 icon  - The button displaying the aura.
-		 ...   - The return values from
+		 self - The widget that holds the aura icon.
+		 unit - The unit that has the aura.
+		 icon - The button displaying the aura.
+		 ...  - The return values from
 		 [UnitAura](http://wowprogramming.com/docs/api/UnitAura).
 
 		 Returns
