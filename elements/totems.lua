@@ -48,8 +48,10 @@ local UpdateTotem = function(self, event, slot)
 		end
 
 		totem:Show()
+		totem.isActive = true
 	else
 		totem:Hide()
+		totem.isActive = false
 	end
 
 	if(totems.PostUpdate) then
@@ -64,6 +66,32 @@ end
 local Update = function(self, event)
 	for i = 1, MAX_TOTEMS do
 		Path(self, event, i)
+	end
+
+	if (event == "UNIT_ENTERED_VEHICLE" and UnitHasVehiclePlayerFrameUI("player")) then
+		local _, class = UnitClass("player")
+		if (self.Totems.Hide and class == "SHAMAN") then
+			self.Totems:Hide()
+		elseif (class == "SHAMAN") then
+			for i = 1, MAX_TOTEMS do
+				if (self.Totems[tmap[i]].isActive) then
+					self.Totems[tmap[i]]:Hide()
+				end
+			end
+		end
+	end
+
+	if (event == "UNIT_EXITED_VEHICLE" and not UnitHasVehiclePlayerFrameUI("player")) then
+		local _, class = UnitClass("player")
+		if (self.Totems.Show and class == "SHAMAN") then
+			self.Totems:Show()
+		elseif (class == "SHAMAN") then
+			for i = 1, MAX_TOTEMS do
+				if (self.Totems[tmap[i]].isActive) then
+					self.Totems[tmap[i]]:Show()
+				end
+			end
+		end
 	end
 end
 

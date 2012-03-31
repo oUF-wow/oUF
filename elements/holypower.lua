@@ -53,6 +53,30 @@ local Update = function(self, event, unit, powerType)
 		end
 	end
 
+	if (event == "UNIT_ENTERED_VEHICLE" and UnitHasVehiclePlayerFrameUI("player")) then
+		if (hp.Hide) then
+			hp:Hide()
+		else
+			for i = 1, MAX_HOLY_POWER do
+				if (i <= num) then
+					hp[i]:Hide()
+				end
+			end
+		end
+	end
+
+	if (event == "UNIT_EXITED_VEHICLE" and not UnitHasVehiclePlayerFrameUI("player")) then
+		if (hp.Show) then
+			hp:Show()
+		else
+			for i = 1, MAX_HOLY_POWER do
+				if (i <= num) then
+					hp[i]:Show()
+				end
+			end
+		end
+	end
+
 	if(hp.PostUpdate) then
 		return hp:PostUpdate(num)
 	end

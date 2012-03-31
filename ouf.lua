@@ -55,7 +55,7 @@ local updateActiveUnit = function(self, event, unit)
 
 	-- Change the active unit and run a full update.
 	if Private.UpdateUnits(self, modUnit, realUnit) then
-		self:UpdateAllElements('RefreshUnit')
+		self:UpdateAllElements(event)
 
 		return true
 	end
