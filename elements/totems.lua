@@ -61,7 +61,11 @@
 local parent, ns = ...
 local oUF = ns.oUF
 
-local tmap = SHAMAN_TOTEM_PRIORITIES
+-- Order the list based upon the default UIs priorities.
+local priorities = STANDARD_TOTEM_PRIORITIES
+if(select(2, UnitClass'player') == 'SHAMAN') then
+	priorities = SHAMAN_TOTEM_PRIORITIES
+end
 
 local OnClick = function(self)
 	DestroyTotem(self:GetID())
@@ -85,9 +89,9 @@ end
 local UpdateTotem = function(self, event, slot)
 	local totems = self.Totems
 
-	if(totems.PreUpdate) then totems:PreUpdate(tmap[slot]) end
+	if(totems.PreUpdate) then totems:PreUpdate(priorities[slot]) end
 
-	local totem = totems[tmap[slot]]
+	local totem = totems[priorities[slot]]
 	local haveTotem, name, start, duration, icon = GetTotemInfo(slot)
 	if(duration > 0) then
 		if(totem.Icon) then
@@ -104,7 +108,7 @@ local UpdateTotem = function(self, event, slot)
 	end
 
 	if(totems.PostUpdate) then
-		return totems:PostUpdate(tmap[slot], haveTotem, name, start, duration, icon)
+		return totems:PostUpdate(priorities[slot], haveTotem, name, start, duration, icon)
 	end
 end
 
@@ -132,7 +136,7 @@ local Enable = function(self)
 		for i = 1, MAX_TOTEMS do
 			local totem = totems[i]
 
-			totem:SetID(tmap[i])
+			totem:SetID(priorities[i])
 
 			if(totem:HasScript'OnClick') then
 				totem:SetScript('OnClick', OnClick)
