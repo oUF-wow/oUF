@@ -1,8 +1,67 @@
+--[[ Element: Totem Indicator
+
+ Handles updating and visibility of Shaman totems, Druid mushrooms and Death
+ Knight ghouls.
+
+ Widget
+
+ Totems - A table to hold sub-widgets.
+
+ Sub-Widgets
+
+ Totem     - Any UI widget.
+ .Icon     - A Texture representing the totem icon.
+ .Cooldown - A Cooldown representing the duration of the totem.
+
+ Notes
+
+ A OnClick handler, which calls DestroyTotem() when clicked, will be applied to
+ the `Totem` widget, if it supports OnClick.
+
+ It will also set OnEnter and OnLeave, to display the default Tooltip, if the
+ `Totem` widget is mouse enabled.
+
+ Options
+
+ :UpdateTooltip - The function that should populate the tooltip, when the
+                  `Totem` widget is hovered. A default function, which calls
+                  `:SetTotem(id)`, will be used if none is defined.
+
+ Examples
+
+   local Totems = {}
+   for index = 1, MAX_TOTEMS do
+      -- Position and size of the totem indicator
+      local Totem = CreateFrame('Button', nil, self)
+      Totem:SetSize(40, 40)
+      Totem:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', index * Totem:GetWidth(), 0)
+      
+      local Icon = Totem:CreateTexture(nil, "OVERLAY")
+      Icon:SetAllPoints()
+      
+      local Cooldown = CreateFrame("Cooldown", nil, Totem)
+      Cooldown:SetAllPoints()
+      
+      Totem.Icon = Icon
+      Totem.Cooldown = Cooldown
+      
+      Totems[index] = Totem
+   end
+   
+   -- Register with oUF
+   self.Totems = Totems
+
+ Hooks
+
+ Override(self) - Used to completely override the internal update function.
+                  Removing the table key entry will make the element fall-back
+                  to its internal function again.
+]]
+
 local parent, ns = ...
 local oUF = ns.oUF
 
--- colors
--- from Interface/BUTTONS/UI-TotemBar.blp
+-- Colors from Interface/BUTTONS/UI-TotemBar.blp
 oUF.colors.totems = {
 	[FIRE_TOTEM_SLOT] = { 181/255, 073/255, 033/255 },
 	[EARTH_TOTEM_SLOT] = { 074/255, 142/255, 041/255 },
