@@ -61,14 +61,6 @@
 local parent, ns = ...
 local oUF = ns.oUF
 
--- Colors from Interface/BUTTONS/UI-TotemBar.blp
-oUF.colors.totems = {
-	[FIRE_TOTEM_SLOT] = { 181/255, 073/255, 033/255 },
-	[EARTH_TOTEM_SLOT] = { 074/255, 142/255, 041/255 },
-	[WATER_TOTEM_SLOT] = { 057/255, 146/255, 181/255 },
-	[AIR_TOTEM_SLOT] = { 132/255, 056/255, 231/255 }
-}
-
 local tmap = SHAMAN_TOTEM_PRIORITIES
 
 local OnClick = function(self)
