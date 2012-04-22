@@ -22,9 +22,6 @@
 
  Hooks
 
- Override(self) - Used to completely override the internal update function.
-                  Removing the table key entry will make the element fall-back
-                  to its internal function again.
 ]]
 
 local parent, ns = ...
@@ -51,6 +48,18 @@ local Update = function(self, event)
 end
 
 local Path = function(self, ...)
+	--[[ :Override(self, event, ...)
+
+	 Used to completely override the internal update function. Removing the
+	 table key entry will make the element fall-back to its internal function
+	 again.
+
+	 Arguments
+
+	 self  - The Assistant element.
+	 event - The UI event that fired.
+	 ...   - A vararg with the arguments that accompany the event.
+	]]
 	return (self.Assistant.Override or Update) (self, ...)
 end
 
