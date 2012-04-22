@@ -1,6 +1,7 @@
 --[[ Element: Alternative Power Bar
+
  Handles visibility and updating of the alternative power bar.
- 
+
  This bar is used to display encounter/quest related power information, such as
  the number of hour glass uses left on the end boss in End Time.
 
