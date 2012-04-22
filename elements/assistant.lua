@@ -20,7 +20,7 @@
    -- Register it with oUF
    self.Assistant = Assistant
 
- Hooks
+ Hooks and Callbacks
 
 ]]
 
@@ -30,6 +30,14 @@ local oUF = ns.oUF
 local Update = function(self, event)
 	local assistant = self.Assistant
 
+	--[[ :PreUpdate()
+
+	 Called before the element has been updated.
+
+	 Arguments
+
+	 self - The Assistant element.
+	]]
 	if(assistant.PreUpdate) then
 		assistant:PreUpdate()
 	end
