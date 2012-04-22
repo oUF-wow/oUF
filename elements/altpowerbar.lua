@@ -54,6 +54,17 @@ local UpdatePower = function(self, event, unit, powerType)
 	altpowerbar:SetMinMaxValues(min, max)
 	altpowerbar:SetValue(cur)
 
+	--[[ :PostUpdate(min, cur, max)
+
+	 Called after the element has been updated.
+
+	 Arguments
+
+	 self - The AltPowerBar element.
+	 min  - The minimum possible power value for the active type.
+	 cur  - The current power value.
+	 max  - The maximum possible power value for the active type.
+	]]
 	if(altpowerbar.PostUpdate) then
 		return altpowerbar:PostUpdate(min, cur, max)
 	end
