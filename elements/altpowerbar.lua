@@ -20,6 +20,8 @@
    
    -- Register with oUF
    self.AltPowerBar = AltPowerBar
+
+ Callbacks
 ]]
 
 local parent, ns = ...
@@ -32,6 +34,14 @@ local UpdatePower = function(self, event, unit, powerType)
 
 	local altpowerbar = self.AltPowerBar
 
+	--[[ :PreUpdate()
+
+	 Called before the element has been updated.
+
+	 Arguments
+
+	 self - The AltPowerBar element.
+	 ]]
 	if(altpowerbar.PreUpdate) then
 		altpowerbar:PreUpdate()
 	end
