@@ -126,7 +126,9 @@ local handleSection = function(start, stop)
 		end
 
 		local line = lines[start]
-		if(line:match('^%S+%s*%- ')) then
+		if(not line) then
+			return
+		elseif(line:match('^%S+%s*%- ')) then
 			handleArguments(start, nextEmpty, '(%S+)%s*()%- ()')
 		elseif(line:sub(1, 2) == '  ') then
 			handleExamples(start, nextEmpty)
@@ -151,7 +153,15 @@ local generateDocs = function(str, level)
 	tisf('<h%d>%s</h%d>', level, lines[1], level)
 
 	-- Then comes the main description.
-	local offset = findNextHeader(1) - 2
+	local offset = findNextHeader(1)
+
+	-- Continue until two lines before the header or to the end of the comment.
+	if(offset) then
+		offset = offset - 2
+	else
+		offset = #lines
+	end
+
 	local init = findNextEmpty(1) + 1
 	if(init > offset) then
 		init = 2
