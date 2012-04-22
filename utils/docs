@@ -102,7 +102,7 @@ local handleExamples = function(start, stop)
 	for i=start + 1, stop  do
 		tisf(lines[i]:sub(3))
 	end
-	tisf('</pre></code>')
+	tisf('</code></pre>')
 end
 
 local handleParagraph = function(start, stop)
