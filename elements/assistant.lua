@@ -50,6 +50,15 @@ local Update = function(self, event)
 		assistant:Hide()
 	end
 
+	--[[ :PostUpdate(isAssistant)
+
+	 Called after the element has been updated.
+
+	 Arguments
+
+	 self        - The Assistant element.
+	 isAssistant - A boolean holding whether the unit is a raid officer or not.
+	]]
 	if(assistant.PostUpdate) then
 		return assistant:PostUpdate(isAssistant)
 	end
