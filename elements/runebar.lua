@@ -110,7 +110,7 @@ local UpdateRune = function(self, event, rid)
 			end
 		end
 		
-		
+		UpdateType(self, event, rid)
 
 	end
 
