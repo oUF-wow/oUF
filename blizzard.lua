@@ -1,6 +1,9 @@
 local parent, ns = ...
 local oUF = ns.oUF
 
+local hiddenParent = CreateFrame("Frame")
+hiddenParent:Hide()
+
 local HandleFrame = function(baseName)
 	local frame
 	if(type(baseName) == 'string') then
@@ -11,8 +14,10 @@ local HandleFrame = function(baseName)
 
 	if(frame) then
 		frame:UnregisterAllEvents()
-		frame.Show = frame.Hide
 		frame:Hide()
+
+		-- Keep frame hidden without causing taint
+		frame:SetParent(hiddenParent)
 
 		local health = frame.healthbar
 		if(health) then
@@ -47,6 +52,10 @@ function oUF:DisableBlizzard(unit)
 		PlayerFrame:RegisterEvent('UNIT_ENTERED_VEHICLE')
 		PlayerFrame:RegisterEvent('UNIT_EXITING_VEHICLE')
 		PlayerFrame:RegisterEvent('UNIT_EXITED_VEHICLE')
+
+		-- User placed frames don't animate
+		PlayerFrame:SetUserPlaced(true)
+		PlayerFrame:SetDontSavePosition(true)
 	elseif(unit == 'pet') then
 		HandleFrame(PetFrame)
 	elseif(unit == 'target') then
@@ -88,5 +97,16 @@ function oUF:DisableBlizzard(unit)
 		-- Blizzard_ArenaUI should not be loaded
 		Arena_LoadUI = function() end
 		SetCVar('showArenaEnemyFrames', '0', 'SHOW_ARENA_ENEMY_FRAMES_TEXT')
+	end
+end
+
+for _, menu in pairs(UnitPopupMenus) do
+	for index = #menu, 1, -1 do
+		if
+			menu[index] == 'SET_FOCUS' or
+			menu[index] == 'CLEAR_FOCUS'
+		then
+			table.remove(menu, index)
+		end
 	end
 end
