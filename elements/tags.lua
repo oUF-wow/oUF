@@ -2,6 +2,8 @@
 -- Credits: Vika, Cladhaire, Tekkub
 ]]
 
+local WoW5 = select(4, GetBuildInfo()) == 50001
+
 local parent, ns = ...
 local oUF = ns.oUF
 
@@ -39,13 +41,13 @@ local tagStrings = {
 	end]],
 
 	["leader"] = [[function(u)
-		if(UnitIsPartyLeader(u)) then
+		if(WoW5 and UnitIsGroupLeader(u) or UnitIsPartyLeader(u)) then
 			return 'L'
 		end
 	end]],
 
 	["leaderlong"]  = [[function(u)
-		if(UnitIsPartyLeader(u)) then
+		if(WoW5 and UnitIsGroupLeader(u) or UnitIsPartyLeader(u)) then
 			return 'Leader'
 		end
 	end]],
@@ -238,7 +240,7 @@ local tagStrings = {
 			name = string.format("%s-%s", name, server)
 		end
 
-		for i=1, GetNumRaidMembers() do
+		for i=1, WoW5 and GetNumGroupMembers() or GetNumRaidMembers() do
 			local raidName, _, group = GetRaidRosterInfo(i)
 			if( raidName == name ) then
 				return group
