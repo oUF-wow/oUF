@@ -28,6 +28,7 @@
                   to its internal function again.
 ]]
 
+local WoW5 = select(4, GetBuildInfo()) == 50001
 local parent, ns = ...
 local oUF = ns.oUF
 
@@ -38,7 +39,7 @@ local Update = function(self, event)
 	end
 
 	local unit = self.unit
-	local isLeader = (UnitInParty(unit) or UnitInRaid(unit)) and UnitIsPartyLeader(unit)
+	local isLeader = (UnitInParty(unit) or UnitInRaid(unit)) and (WoW5 and UnitIsGroupLeader(unit) orUnitIsPartyLeader(unit))
 	if(isLeader) then
 		leader:Show()
 	else
