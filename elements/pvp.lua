@@ -43,7 +43,8 @@ local Update = function(self, event, unit)
 	if(UnitIsPVPFreeForAll(unit)) then
 		pvp:SetTexture[[Interface\TargetingFrame\UI-PVP-FFA]]
 		status = 'ffa'
-	elseif(factionGroup and UnitIsPVP(unit)) then
+	-- XXX - WoW5: UnitFactionGroup() can return Neutral as well.
+	elseif(factionGroup and factionGroup ~= 'Neutral' and UnitIsPVP(unit)) then
 		pvp:SetTexture([[Interface\TargetingFrame\UI-PVP-]]..factionGroup)
 		status = factionGroup
 	end
