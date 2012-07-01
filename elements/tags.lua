@@ -281,7 +281,7 @@ local tagStrings = {
 		end
 	end]],
 
-	['holypower'] = [[funtion()
+	['holypower'] = [[function()
 		local num = UnitPower('player', SPELL_POWER_HOLY_POWER)
 		if(num > 0) then
 			return num
