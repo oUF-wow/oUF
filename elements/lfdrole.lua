@@ -32,6 +32,7 @@
                   to its internal function again.
 ]]
 
+local WoW5 = select(4, GetBuildInfo()) == 50001
 local parent, ns = ...
 local oUF = ns.oUF
 
@@ -70,6 +71,8 @@ local Enable = function(self)
 
 		if(self.unit == "player") then
 			self:RegisterEvent("PLAYER_ROLES_ASSIGNED", Path, true)
+		elseif(WoW5) then
+			self:RegisterEvent("GROUP_ROSTER_UPDATE", Path, true)
 		else
 			self:RegisterEvent("PARTY_MEMBERS_CHANGED", Path, true)
 		end
@@ -86,7 +89,11 @@ local Disable = function(self)
 	local lfdrole = self.LFDRole
 	if(lfdrole) then
 		self:UnregisterEvent("PLAYER_ROLES_ASSIGNED", Path)
-		self:UnregisterEvent("PARTY_MEMBERS_CHANGED", Path)
+		if(WoW5) then
+			self:UnregisterEvent("GROUP_ROSTER_UPDATE", Path)
+		else
+			self:UnregisterEvent("PARTY_MEMBERS_CHANGED", Path)
+		end
 	end
 end
 
