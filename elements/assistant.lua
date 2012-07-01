@@ -24,6 +24,7 @@
 
 ]]
 
+local WoW5 = select(4, GetBuilInfo()) == 50001
 local parent, ns = ...
 local oUF = ns.oUF
 
@@ -43,7 +44,7 @@ local Update = function(self, event)
 	end
 
 	local unit = self.unit
-	local isAssistant = UnitInRaid(unit) and UnitIsRaidOfficer(unit) and not UnitIsPartyLeader(unit)
+	local isAssistant = UnitInRaid(unit) and UnitIsRaidOfficer(unit) and not (WoW5 and UnitIsGroupLeader(unit) or UnitIsPartyLeader(unit))
 	if(isAssistant) then
 		assistant:Show()
 	else
