@@ -24,7 +24,7 @@
 
 ]]
 
-local WoW5 = select(4, GetBuilInfo()) == 50001
+local WoW5 = select(4, GetBuildInfo()) == 50001
 local parent, ns = ...
 local oUF = ns.oUF
 
@@ -88,7 +88,11 @@ end
 local Enable = function(self)
 	local assistant = self.Assistant
 	if(assistant) then
-		self:RegisterEvent("PARTY_MEMBERS_CHANGED", Path, true)
+		if(WoW5) then
+			self:RegisterEvent("GROUP_ROSTER_UPDATE", Path, true)
+		else
+			self:RegisterEvent("PARTY_MEMBERS_CHANGED", Path, true)
+		end
 
 		if(assistant:IsObjectType"Texture" and not assistant:GetTexture()) then
 			assistant:SetTexture[[Interface\GroupFrame\UI-Group-AssistantIcon]]
@@ -104,7 +108,11 @@ end
 local Disable = function(self)
 	local assistant = self.Assistant
 	if(assistant) then
-		self:UnregisterEvent("PARTY_MEMBERS_CHANGED", Path)
+		if(WoW5) then
+			self:UnregisterEvent("GROUP_ROSTER_UPDATE", Path)
+		else
+			self:UnregisterEvent("PARTY_MEMBERS_CHANGED", Path)
+		end
 	end
 end
 
