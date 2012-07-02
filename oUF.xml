@@ -39,6 +39,8 @@
 	<Script file='elements\resurrect.lua' />
 	<Script file='elements\maintank.lua' />
 	<Script file='elements\druidmana.lua' />
+	<Script file='elements\harmonyorbs.lua' />
+	<Script file='elements\shadoworbs.lua' />
 
 	<!-- Clique support -->
 	<Button name="oUF_ClickCastUnitTemplate" virtual="true" inherits="SecureUnitButtonTemplate,SecureHandlerEnterLeaveTemplate">
