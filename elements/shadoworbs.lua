@@ -3,7 +3,7 @@
 
  Widget
 
- ShadowOrbs - An array consisting of four UI widgets
+ ShadowOrbs - An array consisting of three UI widgets
 
  Notes
 
