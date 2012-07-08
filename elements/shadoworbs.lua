@@ -1,14 +1,14 @@
 --[[ Element: Shadow Orbs
- Toggles visibility of the players Shadow Orbs
+ Toggles visibility of the players Shadow Orbs.
 
  Widget
 
- ShadowOrbs - An array consisting of three UI widgets
+ ShadowOrbs - An array consisting of three UI widgets.
 
  Notes
 
  The default shadow orbs texture will be applied to textures within the ShadowOrbs
- array that don't have a texture or color defined
+ array that don't have a texture or color defined.
 
  Examples
 
