@@ -1,14 +1,14 @@
 --[[ Element: Harmony Orbs
- Toggles visibility of the players Chi
+ Toggles visibility of the players Chi.
 
  Widget
 
- Harmomy - An array consisting of four UI widgets
+ Harmomy - An array consisting of four UI widgets.
 
  Notes
 
  The default harmony orb texture will be applied to textures within the Harmony
- array that don't have a texture or color defined
+ array that don't have a texture or color defined.
 
  Examples
 
