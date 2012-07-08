@@ -294,6 +294,13 @@ local tagStrings = {
 			return num
 		end
 	end]],
+
+	['shadoworbs'] = [[function()
+		local num = UnitPower('player', SPELL_POWER_SHADOW_ORBS)
+		if(num > 0) then
+			return num
+		end
+	end]],
 }
 
 local tags = setmetatable(
@@ -374,6 +381,7 @@ local tagEvents = {
 	['soulshards']          = 'UNIT_POWER',
 	['holypower']           = 'UNIT_POWER',
 	['chi']                 = 'UNIT_POWER',
+	['shadoworbs']          = 'UNIT_POWER',
 }
 
 local unitlessEvents = {
