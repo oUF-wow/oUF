@@ -44,7 +44,7 @@ local Update = function(self, event)
 	end
 
 	local unit = self.unit
-	local isAssistant = UnitInRaid(unit) (WoW5 and UnitIsGroupAssistant(unit) or UnitIsRaidOfficer(unit)) and not (WoW5 and UnitIsGroupLeader(unit) or UnitIsPartyLeader(unit))
+	local isAssistant = UnitInRaid(unit) and (WoW5 and UnitIsGroupAssistant(unit) or UnitIsRaidOfficer(unit)) and not (WoW5 and UnitIsGroupLeader(unit) or UnitIsPartyLeader(unit))
 	if(isAssistant) then
 		assistant:Show()
 	else
