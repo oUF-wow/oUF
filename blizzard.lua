@@ -48,6 +48,7 @@ function oUF:DisableBlizzard(unit)
 		HandleFrame(PlayerFrame)
 
 		-- For the damn vehicle support:
+		PlayerFrame:RegisterEvent('PLAYER_ENTERING_WORLD')
 		PlayerFrame:RegisterEvent('UNIT_ENTERING_VEHICLE')
 		PlayerFrame:RegisterEvent('UNIT_ENTERED_VEHICLE')
 		PlayerFrame:RegisterEvent('UNIT_EXITING_VEHICLE')
