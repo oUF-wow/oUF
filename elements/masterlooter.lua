@@ -29,7 +29,6 @@
 
 ]]
 
-local WoW5 = select(4, GetBuildInfo()) == 50001
 local parent, ns = ...
 local oUF = ns.oUF
 
@@ -86,11 +85,7 @@ local function Enable(self, unit)
 		masterlooter.ForceUpdate = ForceUpdate
 
 		self:RegisterEvent('PARTY_LOOT_METHOD_CHANGED', Path, true)
-		if(WoW5) then
-			self:RegisterEvent('GROUP_ROSTER_UPDATE', Path, true)
-		else
-			self:RegisterEvent('PARTY_MEMBERS_CHANGED', Path, true)
-		end
+		self:RegisterEvent('GROUP_ROSTER_UPDATE', Path, true)
 
 		if(masterlooter:IsObjectType('Texture') and not masterlooter:GetTexture()) then
 			masterlooter:SetTexture([[Interface\GroupFrame\UI-Group-MasterLooter]])
@@ -103,11 +98,7 @@ end
 local function Disable(self)
 	if(self.MasterLooter) then
 		self:UnregisterEvent('PARTY_LOOT_METHOD_CHANGED', Path)
-		if(WoW5) then
-			self:UnregisterEvent('GROUP_ROSTER_UPDATE', Path)
-		else
-			self:UnregisterEvent('PARTY_MEMBERS_CHANGED', Path)
-		end
+		self:UnregisterEvent('GROUP_ROSTER_UPDATE', Path)
 	end
 end
 
