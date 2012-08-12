@@ -29,7 +29,6 @@
                   to its internal function again.
 ]]
 
-local WoW5 = select(4, GetBuildInfo()) == 50001
 local parent, ns = ...
 local oUF = ns.oUF
 
@@ -73,12 +72,7 @@ local Enable = function(self)
 		raidrole.__owner = self
 		raidrole.ForceUpdate = ForceUpdate
 
-		if(WoW5) then
-			self:RegisterEvent('GROUP_ROSTER_UPDATE', Path, true)
-		else
-			self:RegisterEvent('PARTY_MEMBERS_CHANGED', Path, true)
-			self:RegisterEvent('RAID_ROSTER_UPDATE', Path, true)
-		end
+		self:RegisterEvent('GROUP_ROSTER_UPDATE', Path, true)
 
 		return true
 	end
@@ -88,12 +82,7 @@ local Disable = function(self)
 	local raidrole = self.RaidRole
 
 	if(raidrole) then
-		if(WoW5) then
-			self:UnregisterEvent('GROUP_ROSTER_UPDATE', Path)
-		else
-			self:UnregisterEvent('PARTY_MEMBERS_CHANGED', Path)
-			self:UnregisterEvent('RAID_ROSTER_UPDATE', Path)
-		end
+		self:UnregisterEvent('GROUP_ROSTER_UPDATE', Path)
 	end
 end
 
