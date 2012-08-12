@@ -1,8 +1,5 @@
-local WoW5 = select(4, GetBuildInfo()) == 50001
-
 local parent, ns = ...
--- GetAddOnMetadata() is currently broken on beta.
-local global = GetAddOnMetadata(parent, 'X-oUF') or WoW5 and parent == 'oUF' and parent
+local global = GetAddOnMetadata(parent, 'X-oUF')
 local _VERSION = GetAddOnMetadata(parent, 'version')
 
 local oUF = ns.oUF
