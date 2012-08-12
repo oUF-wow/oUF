@@ -41,7 +41,6 @@
 
 if(select(2, UnitClass('player')) ~= 'DRUID') then return end
 
-local WoW5 = select(4, GetBuildInfo()) == 50001
 local parent, ns = ...
 local oUF = ns.oUF
 
@@ -89,7 +88,7 @@ local UPDATE_VISIBILITY = function(self, event)
 	local showBar
 	local form = GetShapeshiftFormID()
 	if(not form) then
-		local ptt = WoW5 and GetSpecialization() or GetPrimaryTalentTree()
+		local ptt = GetSpecialization()
 		if(ptt and ptt == 1) then -- player has balance spec
 			showBar = true
 		end
