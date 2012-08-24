@@ -13,12 +13,12 @@
  Examples
 
    local Harmony = {}
-   for index = 1, UnitPowerMax('player', SPELL_POWER_LIGHT_FORCE) do
+   for index = 1, 5 do
       local Chi = self:CreateTexture(nil, 'BACKGROUND')
    
       -- Position and size of the chi orbs.
       Chi:SetSize(14, 14)
-      Chi:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', index * Chi:GetWidth(), 0)
+      Chi:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', (index - 1) * Chi:GetWidth(), 0)
    
       Harmony[index] = Chi
    end
@@ -42,13 +42,24 @@ local Update = function(self, event, unit)
 	if(unit ~= 'player') then return end
 
 	local element = self.Harmony
+	local maxChiChanged = false
+
 	if(element.PreUpdate) then
 		element:PreUpdate()
 	end
 
 	local chi = UnitPower(unit, SPELL_POWER_LIGHT_FORCE)
+	local maxChi = UnitPowerMax(unit, SPELL_POWER_LIGHT_FORCE)
 
-	for index = 1, UnitPowerMax(unit, SPELL_POWER_LIGHT_FORCE) do
+	if maxChi ~= element.maxChi then
+		if maxChi == 4 then
+			element[5]:Hide()
+		end
+		maxChiChanged = true
+		element.maxChi = maxChi
+	end
+
+	for index = 1, maxChi do
 		if(index <= chi) then
 			element[index]:Show()
 		else
@@ -57,7 +68,7 @@ local Update = function(self, event, unit)
 	end
 
 	if(element.PostUpdate) then
-		return element:PostUpdate(chi)
+		return element:PostUpdate(chi, maxChi, maxChiChanged)
 	end
 end
 
@@ -75,10 +86,11 @@ local Enable = function(self, unit)
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
 
-		self:RegisterEvent('UNIT_POWER', Path, true)
-		self:RegisterEvent('UNIT_DISPLAYPOWER', Path, true)
+		self:RegisterEvent('UNIT_POWER', Path)
+		self:RegisterEvent('UNIT_DISPLAYPOWER', Path)
+		self:RegisterEvent('PLAYER_TALENT_UPDATE', Path, true)
 
-		for index = 1, UnitPowerMax(unit, SPELL_POWER_LIGHT_FORCE) do
+		for index = 1, 5 do
 			local chi = element[index]
 			if(chi:IsObjectType'Texture' and not chi:GetTexture()) then
 				chi:SetTexture[[Interface\PlayerFrame\MonkUI]]
@@ -95,6 +107,7 @@ local Disable = function(self)
 	if(element) then
 		self:UnregisterEvent('UNIT_POWER', Path)
 		self:UnregisterEvent('UNIT_DISPLAYPOWER', Path)
+		self:UnregisterEvent('PLAYER_TALENT_UPDATE', Path)
 	end
 end
 
