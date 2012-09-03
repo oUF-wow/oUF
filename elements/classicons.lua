@@ -108,6 +108,7 @@ local Update = function(self, event, unit, powerType)
 			end
 		end
 
+		local oldMax = element.__max
 		if(max ~= element.__max) then
 			if(max < element.__max) then
 				for i=max + 1, element.__max do
@@ -119,7 +120,7 @@ local Update = function(self, event, unit, powerType)
 		end
 
 		if(element.PostUpdate) then
-			return element:PostUpdate(cur, max)
+			return element:PostUpdate(cur, max, oldMax ~= max)
 		end
 	end
 end
