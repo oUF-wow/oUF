@@ -79,49 +79,47 @@ end
 
 local Update = function(self, event, unit, powerType)
 	local element = self.ClassIcons
-	if(element.__dualElement) then
-		local hasVehicle = UnitHasVehicleUI('player')
-		if(element.__inVehicle ~= hasVehicle) then
-			element.__inVehicle = hasVehicle
-			ToggleVehicle(self, hasVehicle)
+	local hasVehicle = UnitHasVehicleUI('player')
+	if(element.__inVehicle ~= hasVehicle) then
+		element.__inVehicle = hasVehicle
+		ToggleVehicle(self, hasVehicle)
 
-			-- Continue the update if we left a vehicle.
-			if(hasVehicle) then return end
+		-- Continue the update if we left a vehicle.
+		if(hasVehicle) then return end
+	end
+
+	if((unit and unit ~= 'player') or (powerType and not ClassPowerTypes[powerType])) then
+		return
+	end
+
+	if(element.PreUpdate) then
+		element:PreUpdate()
+	end
+
+	local cur = UnitPower('player', ClassPowerType)
+	local max = UnitPowerMax('player', ClassPowerType)
+
+	for i=1, max do
+		if(i <= cur) then
+			element[i]:Show()
+		else
+			element[i]:Hide()
 		end
+	end
 
-		if((unit and unit ~= 'player') or (powerType and not ClassPowerTypes[powerType])) then
-			return
-		end
-
-		if(element.PreUpdate) then
-			element:PreUpdate()
-		end
-
-		local cur = UnitPower('player', ClassPowerType)
-		local max = UnitPowerMax('player', ClassPowerType)
-
-		for i=1, max do
-			if(i <= cur) then
-				element[i]:Show()
-			else
+	local oldMax = element.__max
+	if(max ~= element.__max) then
+		if(max < element.__max) then
+			for i=max + 1, element.__max do
 				element[i]:Hide()
 			end
 		end
 
-		local oldMax = element.__max
-		if(max ~= element.__max) then
-			if(max < element.__max) then
-				for i=max + 1, element.__max do
-					element[i]:Hide()
-				end
-			end
+		element.__max = max
+	end
 
-			element.__max = max
-		end
-
-		if(element.PostUpdate) then
-			return element:PostUpdate(cur, max, oldMax ~= max)
-		end
+	if(element.PostUpdate) then
+		return element:PostUpdate(cur, max, oldMax ~= max)
 	end
 end
 
@@ -159,7 +157,6 @@ do
 		ClassPowerEnable = function(self)
 			local element = self.ClassIcons
 			element.__max = 4
-			element.__dualElement = true
 
 			self:RegisterEvent('UNIT_DISPLAYPOWER', Update)
 			self:RegisterEvent('UNIT_POWER_FREQUENT', Update)
@@ -178,7 +175,6 @@ do
 		ClassPowerEnable = function(self)
 			local element = self.ClassIcons
 			element.__max = HOLY_POWER_FULL
-			element.__dualElement = true
 
 			self:RegisterEvent('UNIT_DISPLAYPOWER', Update)
 			self:RegisterEvent('UNIT_POWER', Update)
@@ -198,7 +194,6 @@ do
 		ClassPowerEnable = function(self)
 			local element = self.ClassIcons
 			element.__max = PRIEST_BAR_NUM_ORBS
-			element.__dualElement = true
 
 			self:RegisterEvent('UNIT_DISPLAYPOWER', Update)
 			self:RegisterEvent('UNIT_POWER_FREQUENT', Update)
@@ -218,7 +213,6 @@ do
 		ClassPowerEnable = function(self)
 			local element = self.ClassIcons
 			element.__max = 3
-			element.__dualElement = true
 
 			self:RegisterEvent('UNIT_DISPLAYPOWER', Update)
 			self:RegisterEvent('UNIT_POWER_FREQUENT', Update)
