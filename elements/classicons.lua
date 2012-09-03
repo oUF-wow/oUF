@@ -55,7 +55,9 @@ local UpdateTexture = function(element)
 	end
 
 	for i=1, 5 do
-		element[i]:SetDesaturated(desaturated)
+		if(element[i].SetDesaturated) then
+			element[i]:SetDesaturated(desaturated)
+		end
 		element[i]:SetVertexColor(red, green, blue)
 	end
 end
