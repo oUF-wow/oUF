@@ -12,7 +12,6 @@
  Paladin - Holy Power
  Priest  - Shadow Orbs
  Warlock - Soul Shards
- Other   - Combo Points
 
  Examples
 
@@ -40,57 +39,9 @@ local PlayerClass = select(2, UnitClass'player')
 local ClassPowerType, ClassPowerTypes
 local ClassPowerEnable, ClassPowerDisable
 
-local CPointsUpdate, CPoinstEnable, CPointsDisable
-do
-	local Update = function(self, event, unit)
-		if(unit == 'pet') then return end
-
-		local element = self.ClassIcons
-		if(element.PreUpdate) then
-			element:PreUpdate()
-		end
-
-		local cp
-		if(UnitHasVehicleUI'player') then
-			cp = GetComboPoints('vehicle', 'target')
-		else
-			cp = GetComboPoints('player', 'target')
-		end
-
-		for i=1, 5 do
-			if(i <= cp) then
-				element[i]:Show()
-			else
-				element[i]:Hide()
-			end
-		end
-
-		if(element.PostUpdate) then
-			return element:PostUpdate(cp)
-		end
-	end
-
-	CPointsUpdate = function(self, ...)
-		return (self.ClassIcons.OverrideComboPoints or Update) (self, ...)
-	end
-
-	CPointsEnable = function(self)
-		self:RegisterEvent('UNIT_COMBO_POINTS', CPointsUpdate, true)
-		self:RegisterEvent('PLAYER_TARGET_CHANGED', CPointsUpdate, true)
-	end
-
-	CPointsDisable = function(self)
-		self:UnregisterEvent('UNIT_COMBO_POINTS', CPointsUpdate)
-		self:UnregisterEvent('PLAYER_TARGET_CHANGED', CPointsUpdate)
-	end
-end
-
-local UpdateTexture = function(element, forceCP)
+local UpdateTexture = function(element)
 	local red, green, blue, desaturated
-	if(forceCP) then
-		red, green, blue = 1, .96, .41
-		desaturated = true
-	elseif(PlayerClass == 'MONK') then
+	if(PlayerClass == 'MONK') then
 		red, green, blue = 0, 1, .59
 		desaturated = true
 	elseif(PlayerClass == 'WARLOCK') then
@@ -98,7 +49,7 @@ local UpdateTexture = function(element, forceCP)
 		desaturated = true
 	elseif(PlayerClass == 'PRIEST') then
 		red, green, blue = 1, 1, 1
-	else
+	elseif(PlayerClass == 'PALADIN') then
 		red, green, blue = 1, .96, .41
 		desaturated = true
 	end
@@ -115,13 +66,11 @@ local ToggleVehicle = function(self, state)
 		element[i]:Hide()
 	end
 
-	(element.UpdateTexture or UpdateTexture) (element, state)
+	(element.UpdateTexture or UpdateTexture) (element)
 
 	if(state) then
-		CPointsEnable(self)
 		ClassPowerDisable(self)
 	else
-		CPointsDisable(self)
 		ClassPowerEnable(self)
 	end
 end
@@ -170,8 +119,6 @@ local Update = function(self, event, unit, powerType)
 		if(element.PostUpdate) then
 			return element:PostUpdate(cur, max)
 		end
-	else
-		return CPointsUpdate(self, event, unit, powerType)
 	end
 end
 
@@ -295,22 +242,19 @@ local Enable = function(self, unit)
 			self:RegisterEvent('SPELLS_CHANGED', Visibility, true)
 		end
 		ClassPowerEnable(self)
-	else
-		-- Act as a pure combo point element for any other class.
-		CPointsEnable(self)
-	end
 
-	for i=1, 5 do
-		local icon = element[i]
-		if(icon:IsObjectType'Texture' and not icon:GetTexture()) then
-			icon:SetTexCoord(0.45703125, 0.60546875, 0.44531250, 0.73437500)
-			icon:SetTexture([[Interface\PlayerFrame\Priest-ShadowUI]])
+		for i=1, 5 do
+			local icon = element[i]
+			if(icon:IsObjectType'Texture' and not icon:GetTexture()) then
+				icon:SetTexCoord(0.45703125, 0.60546875, 0.44531250, 0.73437500)
+				icon:SetTexture([[Interface\PlayerFrame\Priest-ShadowUI]])
+			end
 		end
+
+		(element.UpdateTexture or UpdateTexture) (element)
+
+		return true
 	end
-
-	(element.UpdateTexture or UpdateTexture) (element, UnitHasVehicleUI'player')
-
-	return true
 end
 
 local Disable = function(self)
@@ -320,7 +264,6 @@ local Disable = function(self)
 	self:UnregisterEvent('SPELLS_CHANGED', Visibility)
 	self:UnregisterEvent('PLAYER_TALENT_UPDATE', Visibility)
 	ClassPowerDisable(self)
-	CPointsDisable(self)
 end
 
 oUF:AddElement('ClassIcons', Update, Enable, Disable)
