@@ -62,34 +62,94 @@ local OnUpdate = function(self, elapsed)
 	end
 end
 
+
 local UpdateType = function(self, event, rid, alt)
-	local rune = self.Runes[runemap[rid]]
-	local colors = self.colors.runes[GetRuneType(rid) or alt]
-	local r, g, b = colors[1], colors[2], colors[3]
 
-	rune:SetStatusBarColor(r, g, b)
-
-	if(rune.bg) then
-		local mu = rune.bg.multiplier or 1
-		rune.bg:SetVertexColor(r * mu, g * mu, b * mu)
+	local otherID = rid + 1
+	if rid % 2 == 0 then
+		otherID = rid - 1 
 	end
+
+	local currentStart, currentDuration, currentReady = GetRuneCooldown(rid)
+	local otherStart, otherDuration, otherReady = GetRuneCooldown(otherID)
+
+	local time = GetTime()
+
+	local rune = self.Runes[runemap[rid]]
+	local other = self.Runes[runemap[otherID]]
+
+	if rid > otherID then
+		rune, other = other, rune
+	end
+
+	if (time - currentStart) < (time - otherStart) then
+		rune, other = other, rune
+	end
+
+	rune:SetStatusBarColor(unpack(self.colors.runes[GetRuneType(rid)]))
+	other:SetStatusBarColor(unpack(self.colors.runes[GetRuneType(otherID)]))
+
 end
 
 local UpdateRune = function(self, event, rid)
+
+	local otherID = rid + 1
+	if rid % 2 == 0 then
+		otherID = rid - 1 
+	end
+
+	local currentStart, currentDuration, currentReady = GetRuneCooldown(rid)
+	local otherStart, otherDuration, otherReady = GetRuneCooldown(otherID)
+
+	local time = GetTime()
+
 	local rune = self.Runes[runemap[rid]]
-	if(rune) then
-		local start, duration, runeReady = GetRuneCooldown(rid)
-		if(runeReady) then
+	local other = self.Runes[runemap[otherID]]
+
+	if rune and other then
+		
+		if rid > otherID then
+			rune, other = other, rune
+		end
+
+		if (time - currentStart) < (time - otherStart) then
+			rune, other = other, rune
+		end
+
+		if currentReady then
 			rune:SetMinMaxValues(0, 1)
 			rune:SetValue(1)
 			rune:SetScript("OnUpdate", nil)
 		else
-			rune.duration = GetTime() - start
-			rune.max = duration
-			rune:SetMinMaxValues(1, duration)
+			rune.duration = GetTime() - currentStart
+			rune.max = currentDuration
+			rune:SetMinMaxValues(1, currentDuration)
 			rune:SetScript("OnUpdate", OnUpdate)
+
+			if rune.duration < 0 then
+				rune:SetValue(0)
+			end
 		end
+
+		if otherReady then
+			other:SetMinMaxValues(0, 1)  
+			other:SetValue(1)
+			other:SetScript("OnUpdate", nil)
+		else
+			other.duration = GetTime() - otherStart
+			other.max = otherDuration
+			other:SetMinMaxValues(1, otherDuration)
+			other:SetScript("OnUpdate", OnUpdate)
+
+			if other.duration < 0 then
+				other:SetValue(0)
+			end
+		end
+		
+		UpdateType(self, event, rid)
+
 	end
+
 end
 
 local Update = function(self, event)
@@ -109,14 +169,14 @@ local Enable = function(self, unit)
 		runes.ForceUpdate = ForceUpdate
 
 		for i=1, 6 do
-			local rune = runes[runemap[i]]
-			if(rune:IsObjectType'StatusBar' and not rune:GetStatusBarTexture()) then
-				rune:SetStatusBarTexture[[Interface\TargetingFrame\UI-StatusBar]]
-			end
-
+			local rune = runes[i]
 			-- From my minor testing this is a okey solution. A full login always remove
 			-- the death runes, or at least the clients knowledge about them.
 			UpdateType(self, nil, i, math.floor((runemap[i]+1)/2))
+
+			if(rune:IsObjectType'StatusBar' and not rune:GetStatusBarTexture()) then
+				rune:SetStatusBarTexture[[Interface\TargetingFrame\UI-StatusBar]]
+			end
 		end
 
 		self:RegisterEvent("RUNE_POWER_UPDATE", UpdateRune, true)
