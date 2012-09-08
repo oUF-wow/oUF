@@ -81,7 +81,8 @@ local UpdateType = function(self, event, rid, alt)
 end
 
 local UpdateRune = function(self, event, rid)
-	local rune = self.Runes[runemap[rid]]
+	local runes = self.Runes
+	local rune = runes[runemap[rid]]
 	if(rune) then
 		local start, duration, runeReady = GetRuneCooldown(rid)
 		if(runeReady) then
@@ -93,6 +94,10 @@ local UpdateRune = function(self, event, rid)
 			rune.max = duration
 			rune:SetMinMaxValues(1, duration)
 			rune:SetScript("OnUpdate", OnUpdate)
+		end
+
+		if(runes.PostUpdateRune) then
+			return runes:PostUpdateRune(rune, rid)
 		end
 	end
 end
