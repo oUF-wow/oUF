@@ -83,22 +83,22 @@ end
 local UpdateRune = function(self, event, rid)
 	local runes = self.Runes
 	local rune = runes[runemap[rid]]
-	if(rune) then
-		local start, duration, runeReady = GetRuneCooldown(rid)
-		if(runeReady) then
-			rune:SetMinMaxValues(0, 1)
-			rune:SetValue(1)
-			rune:SetScript("OnUpdate", nil)
-		else
-			rune.duration = GetTime() - start
-			rune.max = duration
-			rune:SetMinMaxValues(1, duration)
-			rune:SetScript("OnUpdate", OnUpdate)
-		end
+	if(not rune) then return end
 
-		if(runes.PostUpdateRune) then
-			return runes:PostUpdateRune(rune, rid)
-		end
+	local start, duration, runeReady = GetRuneCooldown(rid)
+	if(runeReady) then
+		rune:SetMinMaxValues(0, 1)
+		rune:SetValue(1)
+		rune:SetScript("OnUpdate", nil)
+	else
+		rune.duration = GetTime() - start
+		rune.max = duration
+		rune:SetMinMaxValues(1, duration)
+		rune:SetScript("OnUpdate", OnUpdate)
+	end
+
+	if(runes.PostUpdateRune) then
+		return runes:PostUpdateRune(rune, rid)
 	end
 end
 
