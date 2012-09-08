@@ -63,7 +63,8 @@ local OnUpdate = function(self, elapsed)
 end
 
 local UpdateType = function(self, event, rid, alt)
-	local rune = self.Runes[runemap[rid]]
+	local runes = self.Runes
+	local rune = runes[runemap[rid]]
 	local colors = self.colors.runes[GetRuneType(rid) or alt]
 	local r, g, b = colors[1], colors[2], colors[3]
 
@@ -72,6 +73,10 @@ local UpdateType = function(self, event, rid, alt)
 	if(rune.bg) then
 		local mu = rune.bg.multiplier or 1
 		rune.bg:SetVertexColor(r * mu, g * mu, b * mu)
+	end
+
+	if(runes.PostUpdateType) then
+		return runes:PostUpdateType(rune, rid)
 	end
 end
 
