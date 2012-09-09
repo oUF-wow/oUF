@@ -71,12 +71,13 @@ local Enable = function(self)
 		threat.ForceUpdate = ForceUpdate
 
 		self:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE", Path)
-		threat:Hide()
 
 		if(threat:IsObjectType"Texture" and not threat:GetTexture()) then
 			threat:SetTexture[[Interface\Minimap\ObjectIcons]]
 			threat:SetTexCoord(1/4, 3/8, 0, 1/4)
 		end
+
+		threat:Hide()
 
 		return true
 	end
