@@ -76,7 +76,7 @@ local UpdateType = function(self, event, rid, alt)
 	end
 
 	if(runes.PostUpdateType) then
-		return runes:PostUpdateType(rune, rid)
+		return runes:PostUpdateType(rune, rid, alt)
 	end
 end
 
