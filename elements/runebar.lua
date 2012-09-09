@@ -98,7 +98,7 @@ local UpdateRune = function(self, event, rid)
 	end
 
 	if(runes.PostUpdateRune) then
-		return runes:PostUpdateRune(rune, rid)
+		return runes:PostUpdateRune(rune, rid, start, duration, runeReady)
 	end
 end
 
