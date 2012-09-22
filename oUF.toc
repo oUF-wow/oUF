@@ -1,4 +1,4 @@
-## Interface: 40300
+## Interface: 50001
 ## Title: oUF
 ## Author: Haste
 ## Version: 1.6.0
