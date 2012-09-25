@@ -38,6 +38,7 @@ local PlayerClass = select(2, UnitClass'player')
 -- Holds the class specific stuff.
 local ClassPowerType, ClassPowerTypes
 local ClassPowerEnable, ClassPowerDisable
+local RequireSpec, RequireSpell
 
 local UpdateTexture = function(element)
 	local red, green, blue, desaturated
