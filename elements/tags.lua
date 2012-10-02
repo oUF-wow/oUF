@@ -216,6 +216,8 @@ local tagStrings = {
 			return 'Elite'
 		elseif(c == 'worldboss') then
 			return 'Boss'
+		elseif(c == 'minus') then
+			return 'Affix'
 		end
 	end]],
 
@@ -229,6 +231,8 @@ local tagStrings = {
 			return '+'
 		elseif(c == 'worldboss') then
 			return 'B'
+		elseif(c == 'minus') then
+			return '-'
 		end
 	end]],
 
@@ -297,6 +301,13 @@ local tagStrings = {
 		local num = UnitPower('player', SPELL_POWER_SHADOW_ORBS)
 		if(num > 0) then
 			return num
+		end
+	end]],
+
+	['affix'] = [[function(u)
+		local c = UnitClassification(u)
+		if(c == 'minus') then
+			return 'Affix'
 		end
 	end]],
 }
