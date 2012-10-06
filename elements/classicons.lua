@@ -4,7 +4,7 @@
 
  Widget
 
- ClassIcons - An array consisting of five UI widgets.
+ ClassIcons - An array consisting of five UI Textures.
 
  Notes
 
@@ -59,6 +59,7 @@ local UpdateTexture = function(element)
 		if(element[i].SetDesaturated) then
 			element[i]:SetDesaturated(desaturated)
 		end
+
 		element[i]:SetVertexColor(red, green, blue)
 	end
 end
