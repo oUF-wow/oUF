@@ -87,6 +87,7 @@ local OnLeave = function()
 end
 
 local UpdateTotem = function(self, event, slot)
+	if(slot > MAX_TOTEMS) then return end
 	local totems = self.Totems
 
 	if(totems.PreUpdate) then totems:PreUpdate(priorities[slot]) end
