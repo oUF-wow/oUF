@@ -65,6 +65,12 @@ local OnRangeUpdate = function(self, elapsed)
 							object:SetAlpha(range.insideAlpha)
 						end
 					end
+				else
+					if(range.Override) then
+						range.Override(object, 'offline')
+					elseif(object:GetAlpha() ~= range.insideAlpha) then
+						object:SetAlpha(range.insideAlpha)
+					end
 				end
 			end
 		end
