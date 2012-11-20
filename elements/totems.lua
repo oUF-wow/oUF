@@ -35,19 +35,19 @@
       local Totem = CreateFrame('Button', nil, self)
       Totem:SetSize(40, 40)
       Totem:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', index * Totem:GetWidth(), 0)
-      
+
       local Icon = Totem:CreateTexture(nil, "OVERLAY")
       Icon:SetAllPoints()
-      
+
       local Cooldown = CreateFrame("Cooldown", nil, Totem)
       Cooldown:SetAllPoints()
-      
+
       Totem.Icon = Icon
       Totem.Cooldown = Cooldown
-      
+
       Totems[index] = Totem
    end
-   
+
    -- Register with oUF
    self.Totems = Totems
 
@@ -87,6 +87,7 @@ local OnLeave = function()
 end
 
 local UpdateTotem = function(self, event, slot)
+	if slot < 1 or slot > MAX_TOTEMS then return end
 	local totems = self.Totems
 
 	if(totems.PreUpdate) then totems:PreUpdate(priorities[slot]) end
