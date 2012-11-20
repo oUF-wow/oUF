@@ -11,8 +11,8 @@
 
  Options
 
- .color             - Use `self.color = {255, 0, 0}` to have a red bar instead
- 					  for instance.
+ .color - Use `self.color = {255, 0, 0}` to have a red bar instead for
+          instance.
 
  Examples
 
@@ -51,25 +51,22 @@ local UpdatePower = function(self, event, unit, powerType)
 		altpowerbar:PreUpdate()
 	end
 
-	local barType, min = UnitAlternatePowerInfo(unit)
-
-
-	local texturePath, r, g, b 
-
+	local _, r, g, b
 	if altpowerbar.color then
 		r, g, b = unpack(altpowerbar.color)
 	else
-		texturePath, r, g, b = UnitAlternatePowerTextureInfo(unit, 2)
+		_, r, g, b = UnitAlternatePowerTextureInfo(unit, 2)
 	end
 
 	local cur = UnitPower(unit, ALTERNATE_POWER_INDEX)
 	local max = UnitPowerMax(unit, ALTERNATE_POWER_INDEX)
-	
+
+	local barType, min = UnitAlternatePowerInfo(unit)
 	altpowerbar.barType = barType
 	altpowerbar:SetMinMaxValues(min, max)
 	altpowerbar:SetValue(cur)
 	altpowerbar:SetStatusBarColor(r, g, b)
-	
+
 	--[[ :PostUpdate(min, cur, max)
 
 	 Called after the element has been updated.
