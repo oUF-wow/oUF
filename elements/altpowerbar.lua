@@ -11,8 +11,8 @@
 
  Options
 
- .color - Use `self.color = {255, 0, 0}` to have a red bar instead for
-          instance.
+ .colorTexture  - Use the vertex color values returned by
+                  UnitAlternatePowerTextureInfo to color the bar.
 
  Examples
 
@@ -52,9 +52,7 @@ local UpdatePower = function(self, event, unit, powerType)
 	end
 
 	local _, r, g, b
-	if altpowerbar.color then
-		r, g, b = unpack(altpowerbar.color)
-	else
+	if(altpowerbar.colorTexture) then
 		_, r, g, b = UnitAlternatePowerTextureInfo(unit, 2)
 	end
 
@@ -65,7 +63,10 @@ local UpdatePower = function(self, event, unit, powerType)
 	altpowerbar.barType = barType
 	altpowerbar:SetMinMaxValues(min, max)
 	altpowerbar:SetValue(cur)
-	altpowerbar:SetStatusBarColor(r, g, b)
+
+	if(b) then
+		altpowerbar:SetStatusBarColor(r, g, b)
+	end
 
 	--[[ :PostUpdate(min, cur, max)
 
