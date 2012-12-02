@@ -25,6 +25,8 @@
                       isn't tapped by the player.
  .colorDisconnected - Use `self.colors.disconnected` to color the bar if the
                       unit is offline.
+ .altPowerColor		- A table containing the RGB values to use for a fixed
+					  color if the alt power bar is being displayed instead
  .colorPower        - Use `self.colors.power[token]` to color the bar based on
                       the unit's power type. This method will fall-back to
                       `:GetAlternativeColor()` if it can't find a color matching
@@ -143,6 +145,8 @@ local Update = function(self, event, unit)
 		t = self.colors.tapped
 	elseif(power.colorDisconnected and not UnitIsConnected(unit)) then
 		t = self.colors.disconnected
+	elseif(displayType == ALTERNATE_POWER_INDEX and power.altPowerColor) then
+		t = power.altPowerColor
 	elseif(power.colorPower) then
 		local ptype, ptoken, altR, altG, altB = UnitPowerType(unit)
 
