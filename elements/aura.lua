@@ -51,7 +51,7 @@
    local Buffs = CreateFrame("Frame", nil, self)
    Buffs:SetPoint("RIGHT", self, "LEFT")
    Buffs:SetSize(16 * 2, 16 * 16)
-   
+
    -- Register with oUF
    self.Buffs = Buffs
 
