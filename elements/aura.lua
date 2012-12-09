@@ -450,7 +450,7 @@ local Update = function(self, event, unit)
 end
 
 local ForceUpdate = function(element)
-	return UpdateAuras(element.__owner, 'ForceUpdate', element.__owner.unit)
+	return Update(element.__owner, 'ForceUpdate', element.__owner.unit)
 end
 
 local Enable = function(self)
