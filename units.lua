@@ -14,7 +14,7 @@ function oUF:HandleUnit(object, unit)
 		object:RegisterEvent('UPDATE_MOUSEOVER_UNIT', object.UpdateAllElements)
 	elseif(unit == 'focus') then
 		object:RegisterEvent('PLAYER_FOCUS_CHANGED', object.UpdateAllElements)
-	elseif(unit:match'%w+target' or unit:match'(boss)%d?$' == 'boss') then
+	elseif(unit:match'%w+target') then
 		enableTargetUpdate(object)
 	end
 end
