@@ -295,7 +295,7 @@ local tagStrings = {
 	end]],
 
 	['chi'] = [[function()
-		local num = UnitPower('player', SPELL_POWER_LIGHT_FORCE)
+		local num = UnitPower('player', SPELL_POWER_CHI)
 		if(num > 0) then
 			return num
 		end
