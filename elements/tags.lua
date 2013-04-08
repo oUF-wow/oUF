@@ -214,7 +214,7 @@ local tagStrings = {
 		local c = UnitClassification(u)
 		if(c == 'rare') then
 			return 'Rare'
-		elseif(c == 'eliterare') then
+		elseif(c == 'rareelite') then
 			return 'Rare Elite'
 		elseif(c == 'elite') then
 			return 'Elite'
@@ -229,7 +229,7 @@ local tagStrings = {
 		local c = UnitClassification(u)
 		if(c == 'rare') then
 			return 'R'
-		elseif(c == 'eliterare') then
+		elseif(c == 'rareelite') then
 			return 'R+'
 		elseif(c == 'elite') then
 			return '+'
@@ -378,6 +378,8 @@ local tagEvents = {
 	["threat"]              = "UNIT_THREAT_SITUATION_UPDATE",
 	["threatcolor"]         = "UNIT_THREAT_SITUATION_UPDATE",
 	['cpoints']             = 'UNIT_COMBO_POINTS PLAYER_TARGET_CHANGED',
+	['affix']				= 'UNIT_CLASSIFICATION_CHANGED',
+	['plus']				= 'UNIT_CLASSIFICATION_CHANGED',
 	['rare']                = 'UNIT_CLASSIFICATION_CHANGED',
 	['classification']      = 'UNIT_CLASSIFICATION_CHANGED',
 	['shortclassification'] = 'UNIT_CLASSIFICATION_CHANGED',
