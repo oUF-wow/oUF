@@ -7,6 +7,7 @@
 	<Script file='blizzard.lua' />
 	<Script file='units.lua' />
 	<Script file='colors.lua' />
+	<Script file='menu.lua' />
 	<Script file='finalize.lua' />
 
 	<Script file='elements\power.lua' />
