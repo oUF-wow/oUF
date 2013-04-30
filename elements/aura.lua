@@ -323,7 +323,6 @@ local UpdateAuras = function(self, event, unit)
 		local max = numBuffs + numDebuffs
 
 		local visibleBuffs, hiddenBuffs = filterIcons(unit, auras, auras.buffFilter or auras.filter or 'HELPFUL', numBuffs, nil, 0, true)
-		auras.visibleBuffs = visibleBuffs
 
 		local hasGap
 		if(visibleBuffs ~= 0 and auras.gap) then
@@ -366,6 +365,7 @@ local UpdateAuras = function(self, event, unit)
 			visibleBuffs = visibleBuffs - 1
 		end
 
+		auras.visibleBuffs = visibleBuffs
 		auras.visibleAuras = auras.visibleBuffs + auras.visibleDebuffs
 
 		local fromRange, toRange
