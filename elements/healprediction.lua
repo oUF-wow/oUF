@@ -132,6 +132,7 @@ local function Enable(self)
 		self:RegisterEvent('UNIT_HEALTH', Path)
 		if(hp.absorbBar) then
 			self:RegisterEvent('UNIT_ABSORB_AMOUNT_CHANGED', Path)
+			self:RegisterEvent('UNIT_HEAL_ABSORB_AMOUNT_CHANGED', Path)
 		end
 
 		if(not hp.maxOverflow) then
@@ -160,6 +161,7 @@ local function Disable(self)
 		self:UnregisterEvent('UNIT_HEALTH', Path)
 		if(hp.absorbBar) then
 			self:UnregisterEvent('UNIT_ABSORB_AMOUNT_CHANGED', Path)
+			self:UnregisterEvent('UNIT_HEAL_ABSORB_AMOUNT_CHANGED', Path)
 		end
 	end
 end
