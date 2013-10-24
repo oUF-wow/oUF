@@ -153,6 +153,7 @@ end
 local Disable = function(self)
 	local readyCheck = self.ReadyCheck
 	if(readyCheck) then
+		readyCheck:Hide()
 		self:UnregisterEvent('READY_CHECK', Path)
 		self:UnregisterEvent('READY_CHECK_CONFIRM', Path)
 		self:UnregisterEvent('READY_CHECK_FINISHED', Path)
