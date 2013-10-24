@@ -182,6 +182,8 @@ local function Enable(self)
 			hp.healAbsorbBar:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 		end
 
+		hp:Show()
+
 		return true
 	end
 end
@@ -189,6 +191,7 @@ end
 local function Disable(self)
 	local hp = self.HealPrediction
 	if(hp) then
+		hp:Hide()
 		self:UnregisterEvent('UNIT_HEAL_PREDICTION', Path)
 		self:UnregisterEvent('UNIT_MAXHEALTH', Path)
 		self:UnregisterEvent('UNIT_HEALTH', Path)
