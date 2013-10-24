@@ -144,12 +144,17 @@ local HCYColorGradient = function(...)
 
 end
 
+local ColorGradient = function(...)
+	return (oUF.useHCYColorGradient and HCYColorGradient or RGBColorGradient)(...)
+end
+
 Private.colors = colors
 
 oUF.colors = colors
-oUF.ColorGradient = RGBColorGradient
+oUF.ColorGradient = ColorGradient
 oUF.RGBColorGradient = RGBColorGradient
 oUF.HCYColorGradient = HCYColorGradient
+oUF.useHCYColorGradient = false
 
 frame_metatable.__index.colors = colors
-frame_metatable.__index.ColorGradient = RGBColorGradient
+frame_metatable.__index.ColorGradient = ColorGradient
