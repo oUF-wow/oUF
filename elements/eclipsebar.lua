@@ -206,6 +206,7 @@ end
 local function Disable(self)
 	local eb = self.EclipseBar
 	if(eb) then
+		eb:Hide()
 		self:UnregisterEvent('ECLIPSE_DIRECTION_CHANGE', ECLIPSE_DIRECTION_CHANGE)
 		self:UnregisterEvent('PLAYER_TALENT_UPDATE', UPDATE_VISIBILITY)
 		self:UnregisterEvent('UNIT_AURA', UNIT_AURA)
