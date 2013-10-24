@@ -11,8 +11,10 @@
 
  Options
 
- .colorTexture  - Use the vertex color values returned by
-                  UnitAlternatePowerTextureInfo to color the bar.
+ .colorTexture     - Use the vertex color values returned by
+                     UnitAlternatePowerTextureInfo to color the bar.
+ .showOthersAnyway - Show AltPowerBar for other players even if
+                     UnitAlternatePowerInfo tells we should not.
 
  Notes
 
@@ -94,7 +96,7 @@ local UpdatePower = function(self, event, unit, powerType)
 	altpowerbar.powerName = powerName
 	altpowerbar.powerTooltip = powerTooltip
 	altpowerbar:SetMinMaxValues(min, max)
-	altpowerbar:SetValue(cur)
+	altpowerbar:SetValue(math.min(math.max(cur, min), max))
 
 	if(b) then
 		altpowerbar:SetStatusBarColor(r, g, b)
@@ -116,8 +118,19 @@ local UpdatePower = function(self, event, unit, powerType)
 	end
 end
 
+
+--[[ Hooks
+
+ Override(self) - Used to completely override the internal update function.
+                  Removing the table key entry will make the element fall-back
+                  to its internal function again.
+]]
+local Path = function(self, ...)
+	return (self.AltPowerBar.Override or UpdatePower)(self, ...)
+end
+
 local ForceUpdate = function(element)
-	return UpdatePower(element.__owner, 'ForceUpdate', element.__owner.unit, 'ALTERNATE')
+	return Path(element.__owner, 'ForceUpdate', element.__owner.unit, 'ALTERNATE')
 end
 
 local Toggler = function(self, event, unit)
@@ -125,15 +138,15 @@ local Toggler = function(self, event, unit)
 	local altpowerbar = self.AltPowerBar
 
 	local barType, minPower, _, _, _, hideFromOthers = UnitAlternatePowerInfo(unit)
-	if(barType and (not hideFromOthers or unit == 'player' or self.realUnit == 'player')) then
-		self:RegisterEvent('UNIT_POWER', UpdatePower)
-		self:RegisterEvent('UNIT_MAXPOWER', UpdatePower)
+	if(barType and (altpowerbar.showOthersAnyway or not hideFromOthers or unit == 'player' or self.realUnit == 'player')) then
+		self:RegisterEvent('UNIT_POWER', Path)
+		self:RegisterEvent('UNIT_MAXPOWER', Path)
 
 		ForceUpdate(altpowerbar)
 		altpowerbar:Show()
 	else
-		self:UnregisterEvent('UNIT_POWER', UpdatePower)
-		self:UnregisterEvent('UNIT_MAXPOWER', UpdatePower)
+		self:UnregisterEvent('UNIT_POWER', Path)
+		self:UnregisterEvent('UNIT_MAXPOWER', Path)
 
 		altpowerbar:Hide()
 	end
