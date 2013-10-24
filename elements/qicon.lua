@@ -78,6 +78,7 @@ end
 
 local Disable = function(self)
 	if(self.QuestIcon) then
+		self.QuestIcon:Hide()
 		self:UnregisterEvent('UNIT_CLASSIFICATION_CHANGED', Path)
 	end
 end
