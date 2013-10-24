@@ -83,6 +83,7 @@ end
 local Disable = function(self)
 	local pvp = self.PvP
 	if(pvp) then
+		pvp:Hide()
 		self:UnregisterEvent("UNIT_FACTION", Path)
 	end
 end
