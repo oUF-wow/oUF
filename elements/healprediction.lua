@@ -19,8 +19,10 @@
 
  Options
 
- .maxOverflow - Defines the maximum amount of overflow past the end of the
-                health bar.
+ .maxOverflow     - Defines the maximum amount of overflow past the end of the
+                    health bar.
+ .frequentUpdates - Update on UNIT_HEALTH_FREQUENT instead of UNIT_HEALTH. Use this if
+                    .frequentUpdates is also set on the Health element.
 
  Examples
 
@@ -161,7 +163,11 @@ local function Enable(self)
 
 		self:RegisterEvent('UNIT_HEAL_PREDICTION', Path)
 		self:RegisterEvent('UNIT_MAXHEALTH', Path)
-		self:RegisterEvent('UNIT_HEALTH', Path)
+		if(hp.frequentUpdates) then
+			self:RegisterEvent('UNIT_HEALTH_FREQUENT', Path)
+		else
+			self:RegisterEvent('UNIT_HEALTH', Path)
+		end
 		self:RegisterEvent('UNIT_ABSORB_AMOUNT_CHANGED', Path)
 		self:RegisterEvent('UNIT_HEAL_ABSORB_AMOUNT_CHANGED', Path)
 
@@ -192,6 +198,7 @@ local function Disable(self)
 		self:UnregisterEvent('UNIT_HEAL_PREDICTION', Path)
 		self:UnregisterEvent('UNIT_MAXHEALTH', Path)
 		self:UnregisterEvent('UNIT_HEALTH', Path)
+		self:UnregisterEvent('UNIT_HEALTH_FREQUENT', Path)
 		self:UnregisterEvent('UNIT_ABSORB_AMOUNT_CHANGED', Path)
 		self:UnregisterEvent('UNIT_HEAL_ABSORB_AMOUNT_CHANGED', Path)
 	end
