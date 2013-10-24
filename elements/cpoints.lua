@@ -99,6 +99,9 @@ end
 local Disable = function(self)
 	local cpoints = self.CPoints
 	if(cpoints) then
+		for index = 1, MAX_COMBO_POINTS do
+			cpoints[index]:Hide()
+		end
 		self:UnregisterEvent('UNIT_COMBO_POINTS', Path)
 		self:UnregisterEvent('PLAYER_TARGET_CHANGED', Path)
 	end
