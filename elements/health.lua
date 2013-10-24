@@ -181,6 +181,7 @@ end
 local Disable = function(self)
 	local health = self.Health
 	if(health) then
+		health:Hide()
 		self:UnregisterEvent('UNIT_HEALTH_FREQUENT', Path)
 		self:UnregisterEvent('UNIT_HEALTH', Path)
 		self:UnregisterEvent('UNIT_MAXHEALTH', Path)
