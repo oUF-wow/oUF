@@ -149,6 +149,16 @@ local ForceUpdate = function(element)
 end
 
 do
+	local _ClassPowerEnable = function(self)
+		self:RegisterEvent('UNIT_DISPLAYPOWER', Update)
+		self:RegisterEvent('UNIT_POWER_FREQUENT', Update)
+	end
+
+	local _ClassPowerDisable = function(self)
+		self:UnregisterEvent('UNIT_DISPLAYPOWER', Update)
+		self:UnregisterEvent('UNIT_POWER_FREQUENT', Update)
+	end
+
 	if(PlayerClass == 'MONK') then
 		ClassPowerType = SPELL_POWER_CHI
 		ClassPowerTypes = {
@@ -156,34 +166,16 @@ do
 			['DARK_FORCE'] = true,
 		}
 
-		ClassPowerEnable = function(self)
-			local element = self.ClassIcons
-
-			self:RegisterEvent('UNIT_DISPLAYPOWER', Update)
-			self:RegisterEvent('UNIT_POWER_FREQUENT', Update)
-		end
-
-		ClassPowerDisable = function(self)
-			self:UnregisterEvent('UNIT_DISPLAYPOWER', Update)
-			self:UnregisterEvent('UNIT_POWER_FREQUENT', Update)
-		end
+		ClassPowerEnable = _ClassPowerEnable
+		ClassPowerEnable = _ClassPowerDisable
 	elseif(PlayerClass == 'PALADIN') then
 		ClassPowerType = SPELL_POWER_HOLY_POWER
 		ClassPowerTypes = {
 			HOLY_POWER = true,
 		}
 
-		ClassPowerEnable = function(self)
-			local element = self.ClassIcons
-
-			self:RegisterEvent('UNIT_DISPLAYPOWER', Update)
-			self:RegisterEvent('UNIT_POWER', Update)
-		end
-
-		ClassPowerDisable = function(self)
-			self:UnregisterEvent('UNIT_DISPLAYPOWER', Update)
-			self:UnregisterEvent('UNIT_POWER', Update)
-		end
+		ClassPowerEnable = _ClassPowerEnable
+		ClassPowerEnable = _ClassPowerDisable
 	elseif(PlayerClass == 'PRIEST') then
 		ClassPowerType = SPELL_POWER_SHADOW_ORBS
 		ClassPowerTypes = {
@@ -192,15 +184,13 @@ do
 		RequireSpec = SPEC_PRIEST_SHADOW
 
 		ClassPowerEnable = function(self)
-			local element = self.ClassIcons
-
-			self:RegisterEvent('UNIT_DISPLAYPOWER', Update)
-			self:RegisterEvent('UNIT_POWER_FREQUENT', Update)
+			self:RegisterEvent('PLAYER_TALENT_UPDATE', Visibility, true)
+			return _ClassPowerEnable(self)
 		end
 
 		ClassPowerDisable = function(self)
-			self:UnregisterEvent('UNIT_DISPLAYPOWER', Update)
-			self:UnregisterEvent('UNIT_POWER_FREQUENT', Update)
+			self:UnregisterEvent('PLAYER_TALENT_UPDATE', Visibility)
+			return _ClassPowerDisable(self)
 		end
 	elseif(PlayerClass == 'WARLOCK') then
 		ClassPowerType = SPELL_POWER_SOUL_SHARDS
@@ -210,15 +200,13 @@ do
 		RequireSpell = WARLOCK_SOULBURN
 
 		ClassPowerEnable = function(self)
-			local element = self.ClassIcons
-
-			self:RegisterEvent('UNIT_DISPLAYPOWER', Update)
-			self:RegisterEvent('UNIT_POWER_FREQUENT', Update)
+			self:RegisterEvent('SPELLS_CHANGED', Visibility, true)
+			return _ClassPowerEnable(self)
 		end
 
 		ClassPowerDisable = function(self)
-			self:UnregisterEvent('UNIT_DISPLAYPOWER', Update)
-			self:UnregisterEvent('UNIT_POWER_FREQUENT', Update)
+			self:UnregisterEvent('SPELLS_CHANGED', Visibility)
+			return _ClassPowerDisable(self)
 		end
 	end
 end
@@ -232,11 +220,6 @@ local Enable = function(self, unit)
 	element.ForceUpdate = ForceUpdate
 
 	if(ClassPowerEnable) then
-		if(PlayerClass == 'PRIEST') then
-			self:RegisterEvent('PLAYER_TALENT_UPDATE', Visibility, true)
-		elseif(PlayerClass == 'WARLOCK') then
-			self:RegisterEvent('SPELLS_CHANGED', Visibility, true)
-		end
 		ClassPowerEnable(self)
 
 		for i=1, 5 do
@@ -257,8 +240,6 @@ local Disable = function(self)
 	local element = self.ClassIcons
 	if(not element) then return end
 
-	self:UnregisterEvent('SPELLS_CHANGED', Visibility)
-	self:UnregisterEvent('PLAYER_TALENT_UPDATE', Visibility)
 	ClassPowerDisable(self)
 end
 
