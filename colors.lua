@@ -68,7 +68,7 @@ local function ColorsAndPercent(a, b, ...)
 end
 
 -- http://www.wowwiki.com/ColorGradient
-local ColorGradient = function(...)
+local RGBColorGradient = function(...)
 	local relperc, r1, g1, b1, r2, g2, b2 = ColorsAndPercent(...)
 	if relperc then
 		return r1 + (r2-r1)*relperc, g1 + (g2-g1)*relperc, b1 + (b2-b1)*relperc
@@ -147,8 +147,9 @@ end
 Private.colors = colors
 
 oUF.colors = colors
-oUF.ColorGradient = ColorGradient
+oUF.ColorGradient = RGBColorGradient
+oUF.RGBColorGradient = RGBColorGradient
 oUF.HCYColorGradient = HCYColorGradient
 
 frame_metatable.__index.colors = colors
-frame_metatable.__index.ColorGradient = ColorGradient
+frame_metatable.__index.ColorGradient = RGBColorGradient
