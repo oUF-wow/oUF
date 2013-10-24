@@ -492,6 +492,7 @@ local Disable = function(object, unit)
 	local castbar = object.Castbar
 
 	if(castbar) then
+		castbar:Hide()
 		object:UnregisterEvent("UNIT_SPELLCAST_START", UNIT_SPELLCAST_START)
 		object:UnregisterEvent("UNIT_SPELLCAST_FAILED", UNIT_SPELLCAST_FAILED)
 		object:UnregisterEvent("UNIT_SPELLCAST_STOP", UNIT_SPELLCAST_STOP)
