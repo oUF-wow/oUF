@@ -83,6 +83,7 @@ end
 local Enable = function(self, unit)
 	local portrait = self.Portrait
 	if(portrait) then
+		portrait:Show()
 		portrait.__owner = self
 		portrait.ForceUpdate = ForceUpdate
 
@@ -107,6 +108,7 @@ end
 local Disable = function(self)
 	local portrait = self.Portrait
 	if(portrait) then
+		portrait:Hide()
 		self:UnregisterEvent("UNIT_PORTRAIT_UPDATE", Path)
 		self:UnregisterEvent("UNIT_MODEL_CHANGED", Path)
 		self:UnregisterEvent('PARTY_MEMBER_ENABLE', Path)
