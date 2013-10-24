@@ -104,6 +104,7 @@ local Disable = function(self)
 	local assistant = self.Assistant
 	if(assistant) then
 		self:UnregisterEvent("GROUP_ROSTER_UPDATE", Path)
+		assistant:Hide()
 	end
 end
 
