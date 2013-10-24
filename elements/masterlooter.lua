@@ -97,6 +97,7 @@ end
 
 local function Disable(self)
 	if(self.MasterLooter) then
+		self.MasterLooter:Hide()
 		self:UnregisterEvent('PARTY_LOOT_METHOD_CHANGED', Path)
 		self:UnregisterEvent('GROUP_ROSTER_UPDATE', Path)
 	end

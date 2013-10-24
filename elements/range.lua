@@ -104,6 +104,7 @@ local Disable = function(self)
 				break
 			end
 		end
+		self:SetAlpha(1)
 
 		if(#_FRAMES == 0) then
 			OnRangeFrame:Hide()

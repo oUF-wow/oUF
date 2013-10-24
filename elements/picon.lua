@@ -77,6 +77,7 @@ end
 local Disable = function(self)
 	local picon = self.PhaseIcon
 	if(picon) then
+		picon:Hide()
 		self:UnregisterEvent('UNIT_PHASE', Path)
 	end
 end

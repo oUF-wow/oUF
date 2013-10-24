@@ -174,6 +174,7 @@ end
 local Disable = function(self, unit)
 	local altpowerbar = self.AltPowerBar
 	if(altpowerbar) then
+		altpowerbar:Hide()
 		self:UnregisterEvent('UNIT_POWER_BAR_SHOW', Toggler)
 		self:UnregisterEvent('UNIT_POWER_BAR_HIDE', Toggler)
 

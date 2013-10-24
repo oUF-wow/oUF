@@ -77,6 +77,7 @@ end
 
 local Disable = function(self)
 	if(self.Combat) then
+		self.Combat:Hide()
 		self:UnregisterEvent("PLAYER_REGEN_DISABLED", Path)
 		self:UnregisterEvent("PLAYER_REGEN_ENABLED", Path)
 	end

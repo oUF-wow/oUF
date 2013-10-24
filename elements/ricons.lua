@@ -83,6 +83,7 @@ end
 local Disable = function(self)
 	local ricon = self.RaidIcon
 	if(ricon) then
+		ricon:Hide()
 		self:UnregisterEvent("RAID_TARGET_UPDATE", Path)
 	end
 end

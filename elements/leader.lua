@@ -78,6 +78,7 @@ end
 local Disable = function(self)
 	local leader = self.Leader
 	if(leader) then
+		leader:Hide()
 		self:UnregisterEvent("PARTY_LEADER_CHANGED", Path)
 		self:UnregisterEvent("GROUP_ROSTER_UPDATE", Path)
 	end
