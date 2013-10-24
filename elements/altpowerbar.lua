@@ -94,7 +94,7 @@ local UpdatePower = function(self, event, unit, powerType)
 	altpowerbar.powerName = powerName
 	altpowerbar.powerTooltip = powerTooltip
 	altpowerbar:SetMinMaxValues(min, max)
-	altpowerbar:SetValue(cur)
+	altpowerbar:SetValue(math.min(math.max(cur, min), max))
 
 	if(b) then
 		altpowerbar:SetStatusBarColor(r, g, b)
