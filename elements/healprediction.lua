@@ -58,6 +58,7 @@
       absorbBar = absorbBar,
       healAbsorbBar = healAbsorbBar,
       maxOverflow = 1.05,
+      frequentUpdates = true,
    }
 
  Hooks
@@ -175,20 +176,34 @@ local function Enable(self)
 			hp.maxOverflow = 1.05
 		end
 
-		if(hp.myBar and hp.myBar:IsObjectType'StatusBar' and not hp.myBar:GetStatusBarTexture()) then
-			hp.myBar:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
-		end
-		if(hp.otherBar and hp.otherBar:IsObjectType'StatusBar' and not hp.otherBar:GetStatusBarTexture()) then
-			hp.otherBar:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
-		end
-		if(hp.absorbBar and hp.absorbBar:IsObjectType'StatusBar' and not hp.absorbBar:GetStatusBarTexture()) then
-			hp.absorbBar:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
-		end
-		if(hp.healAbsorbBar and hp.healAbsorbBar:IsObjectType'StatusBar' and not hp.healAbsorbBar:GetStatusBarTexture()) then
-			hp.healAbsorbBar:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
-		end
+		if(hp.myBar) then
+			if(hp.myBar:IsObjectType'StatusBar' and not hp.myBar:GetStatusBarTexture()) then
+				hp.myBar:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+			end
 
-		hp:Show()
+			hp.myBar:Show()
+		end
+		if(hp.otherBar) then
+			if(hp.otherBar:IsObjectType'StatusBar' and not hp.otherBar:GetStatusBarTexture()) then
+				hp.otherBar:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+			end
+
+			hp.otherBar:Show()
+		end
+		if(hp.absorbBar) then
+			if(hp.absorbBar:IsObjectType'StatusBar' and not hp.absorbBar:GetStatusBarTexture()) then
+				hp.absorbBar:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+			end
+
+			hp.absorbBar:Show()
+		end
+		if(hp.healAbsorbBar) then
+			if(hp.healAbsorbBar:IsObjectType'StatusBar' and not hp.healAbsorbBar:GetStatusBarTexture()) then
+				hp.healAbsorbBar:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+			end
+
+			hp.healAbsorbBar:Show()
+		end
 
 		return true
 	end
@@ -197,7 +212,19 @@ end
 local function Disable(self)
 	local hp = self.HealPrediction
 	if(hp) then
-		hp:Hide()
+		if(hp.myBar) then
+			hp.myBar:Hide()
+		end
+		if(hp.otherBar) then
+			hp.otherBar:Hide()
+		end
+		if(hp.absorbBar) then
+			hp.absorbBar:Hide()
+		end
+		if(hp.healAbsorbBar) then
+			hp.healAbsorbBar:Hide()
+		end
+
 		self:UnregisterEvent('UNIT_HEAL_PREDICTION', Path)
 		self:UnregisterEvent('UNIT_MAXHEALTH', Path)
 		self:UnregisterEvent('UNIT_HEALTH', Path)
