@@ -125,6 +125,7 @@ local Enable = function(self)
 
 	if(totems) then
 		totems.__owner = self
+		totems.__map = { unpack(priorities) }
 		totems.ForceUpdate = ForceUpdate
 
 		for i = 1, MAX_TOTEMS do
