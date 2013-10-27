@@ -538,14 +538,15 @@ do
 	end
 end
 
-function oUF:Spawn(unit, overrideName)
+function oUF:Spawn(unit, overrideName, template)
 	argcheck(unit, 2, 'string')
 	if(not style) then return error("Unable to create frame. No styles have been registered.") end
 
 	unit = unit:lower()
+	template = (template or 'SecureUnitButtonTemplate')
 
 	local name = overrideName or generateName(unit)
-	local object = CreateFrame("Button", name, oUF_PetBattleFrameHider, "SecureUnitButtonTemplate")
+	local object = CreateFrame("Button", name, oUF_PetBattleFrameHider, template)
 	Private.UpdateUnits(object, unit)
 
 	self:DisableBlizzard(unit)
