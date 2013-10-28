@@ -22,11 +22,11 @@ Private.UpdateUnits = function(frame, unit, realUnit)
 		for event in next, unitEvents do
 			-- IsEventRegistered returns the units in case of an event
 			-- registered with RegisterUnitEvent
-			local registered, unit1, unit2 = IsEventRegistered(frame, event)
-			if registered and (unit1 ~= unit or unit2 ~= realUnit) then
+			local registered, unit1 = IsEventRegistered(frame, event)
+			if registered and unit1 ~= unit then
 				-- RegisterUnitEvent erases previously registered units so
 				-- do not bother to unregister it
-				RegisterUnitEvent(frame, event, unit, realUnit)
+				RegisterUnitEvent(frame, event, unit)
 			end
 		end
 		frame.unit = unit
@@ -94,7 +94,7 @@ function frame_metatable.__index:RegisterEvent(event, func, unitless)
 			RegisterEvent(self, event)
 		else
 			unitEvents[event] = true
-			RegisterUnitEvent(self, event, self.unit, self.realUnit)
+			RegisterUnitEvent(self, event, self.unit)
 		end
 	end
 end
