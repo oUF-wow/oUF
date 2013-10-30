@@ -167,7 +167,7 @@ do
 		}
 
 		ClassPowerEnable = _ClassPowerEnable
-		ClassPowerEnable = _ClassPowerDisable
+		ClassPowerDisable = _ClassPowerDisable
 	elseif(PlayerClass == 'PALADIN') then
 		ClassPowerType = SPELL_POWER_HOLY_POWER
 		ClassPowerTypes = {
@@ -175,7 +175,7 @@ do
 		}
 
 		ClassPowerEnable = _ClassPowerEnable
-		ClassPowerEnable = _ClassPowerDisable
+		ClassPowerDisable = _ClassPowerDisable
 	elseif(PlayerClass == 'PRIEST') then
 		ClassPowerType = SPELL_POWER_SHADOW_ORBS
 		ClassPowerTypes = {
