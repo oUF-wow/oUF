@@ -291,6 +291,8 @@ local walkObject = function(object, unit)
 		object.hasChildren = true
 		object:SetScript('OnAttributeChanged', OnAttributeChanged)
 		return initObject(unit, style, styleFunc, header, object:GetChildren())
+	elseif(object:GetAttribute'oUF-onlyProcessSelf') then
+		return initObject(unit, style, styleFunc, header, object)
 	end
 
 	return initObject(unit, style, styleFunc, header, object, object:GetChildren())
@@ -482,6 +484,8 @@ do
 			if(body) then
 				frame:Run(body, unit)
 			end
+
+			if frame:GetAttribute'oUF-onlyProcessSelf' then break end
 		end
 
 		header:CallMethod('styleFunction', self:GetName())
@@ -502,7 +506,8 @@ do
 		local name = overrideName or generateName(nil, ...)
 		local header = CreateFrame('Frame', name, oUF_PetBattleFrameHider, template)
 
-		header:SetAttribute("template", "oUF_ClickCastUnitTemplate")
+		local existingUnitTemplate = header:GetAttribute'template'
+		header:SetAttribute("template", existingUnitTemplate and ("oUF_ClickCastUnitTemplate, "..existingUnitTemplate) or "oUF_ClickCastUnitTemplate")
 		for i=1, select("#", ...), 2 do
 			local att, val = select(i, ...)
 			if(not att) then break end
