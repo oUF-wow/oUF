@@ -77,8 +77,6 @@ local Enable = function(self)
 			threat:SetTexCoord(6/8, 7/8, 1/8, 2/8)
 		end
 
-		threat:Hide()
-
 		return true
 	end
 end
