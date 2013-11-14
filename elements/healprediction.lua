@@ -9,13 +9,15 @@
 
  myBar    - A StatusBar used to represent your incoming heals.
  otherBar - A StatusBar used to represent other peoples incoming heals.
- absorbBar - A StatusBar used to represent total absorbs.
  healAbsorbBar - A StatusBar used to represent heal absorbs.
+ absorbBar - A StatusBar used to represent total absorbs.
 
  Notes
 
  The default StatusBar texture will be applied if the UI widget doesn't have a
  status bar texture or color defined.
+ This element handles anchoring part on its own, if you need to override it use
+ .UpdateAnchorOverride(...) hook.
 
  Options
 
@@ -30,33 +32,29 @@
    local myBar = CreateFrame('StatusBar', nil, self.Health)
    myBar:SetPoint('TOP')
    myBar:SetPoint('BOTTOM')
-   myBar:SetPoint('LEFT', self.Health:GetStatusBarTexture(), 'RIGHT')
    myBar:SetWidth(200)
    
    local otherBar = CreateFrame('StatusBar', nil, self.Health)
    otherBar:SetPoint('TOP')
    otherBar:SetPoint('BOTTOM')
-   otherBar:SetPoint('LEFT', self.Health:GetStatusBarTexture(), 'RIGHT')
    otherBar:SetWidth(200)
-
-   local absorbBar = CreateFrame('StatusBar', nil, self.Health)
-   absorbBar:SetPoint('TOP')
-   absorbBar:SetPoint('BOTTOM')
-   absorbBar:SetPoint('LEFT', self.Health:GetStatusBarTexture(), 'RIGHT')
-   absorbBar:SetWidth(200)
 
    local healAbsorbBar = CreateFrame('StatusBar', nil, self.Health)
    healAbsorbBar:SetPoint('TOP')
    healAbsorbBar:SetPoint('BOTTOM')
-   healAbsorbBar:SetPoint('LEFT', self.Health:GetStatusBarTexture(), 'RIGHT')
    healAbsorbBar:SetWidth(200)
+
+   local absorbBar = CreateFrame('StatusBar', nil, self.Health)
+   absorbBar:SetPoint('TOP')
+   absorbBar:SetPoint('BOTTOM')
+   absorbBar:SetWidth(200)
    
    -- Register with oUF
    self.HealPrediction = {
       myBar = myBar,
       otherBar = otherBar,
-      absorbBar = absorbBar,
       healAbsorbBar = healAbsorbBar,
+      absorbBar = absorbBar,
       maxOverflow = 1.05,
       frequentUpdates = true,
    }
@@ -71,6 +69,11 @@
 local _, ns = ...
 local oUF = ns.oUF
 
+local function UpdateBarAnchor(self, appendTexture)
+	self:SetPoint('LEFT', appendTexture, 'RIGHT')
+	return self:GetStatusBarTexture()
+end
+
 local function Update(self, event, unit)
 	if(self.unit ~= unit) then return end
 
@@ -82,6 +85,8 @@ local function Update(self, event, unit)
 	local totalAbsorb = UnitGetTotalAbsorbs(unit) or 0
 	local myCurrentHealAbsorb = UnitGetTotalHealAbsorbs(unit) or 0
 	local health, maxHealth = UnitHealth(unit), UnitHealthMax(unit)
+
+	local appendTexture = self.Health:GetStatusBarTexture()
 
 	local overHealAbsorb = false
 	if(health < myCurrentHealAbsorb) then
@@ -131,16 +136,33 @@ local function Update(self, event, unit)
 		hp.otherBar:Show()
 	end
 
+	if(hp.healAbsorbBar) then
+		hp.healAbsorbBar:SetMinMaxValues(0, maxHealth)
+		hp.healAbsorbBar:SetValue(myCurrentHealAbsorb)
+		hp.healAbsorbBar:Show()
+	end
+
 	if(hp.absorbBar) then
 		hp.absorbBar:SetMinMaxValues(0, maxHealth)
 		hp.absorbBar:SetValue(totalAbsorb)
 		hp.absorbBar:Show()
 	end
 
-	if(hp.healAbsorbBar) then
-		hp.healAbsorbBar:SetMinMaxValues(0, maxHealth)
-		hp.healAbsorbBar:SetValue(myCurrentHealAbsorb)
-		hp.healAbsorbBar:Show()
+	if(hp.UpdateAnchorOverride) then
+		hp:UpdateAnchorOverride(unit, myIncomingHeal, otherIncomingHeal, myCurrentHealAbsorb, totalAbsorb)
+	else
+		if(hp.myBar and myIncomingHeal > 0) then
+			appendTexture = UpdateBarAnchor(hp.myBar, appendTexture)
+		end
+		if(hp.otherBar and otherIncomingHeal > 0) then
+			appendTexture = UpdateBarAnchor(hp.otherBar, appendTexture)
+		end
+		if(hp.healAbsorbBar and myCurrentHealAbsorb > 0) then
+			appendTexture = UpdateBarAnchor(hp.healAbsorbBar, self.Health:GetStatusBarTexture())
+		end
+		if(hp.absorbBar and totalAbsorb > 0) then
+			appendTexture = UpdateBarAnchor(hp.absorbBar, appendTexture)
+		end
 	end
 
 	if(hp.PostUpdate) then
@@ -180,29 +202,21 @@ local function Enable(self)
 			if(hp.myBar:IsObjectType'StatusBar' and not hp.myBar:GetStatusBarTexture()) then
 				hp.myBar:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 			end
-
-			hp.myBar:Show()
 		end
 		if(hp.otherBar) then
 			if(hp.otherBar:IsObjectType'StatusBar' and not hp.otherBar:GetStatusBarTexture()) then
 				hp.otherBar:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 			end
-
-			hp.otherBar:Show()
-		end
-		if(hp.absorbBar) then
-			if(hp.absorbBar:IsObjectType'StatusBar' and not hp.absorbBar:GetStatusBarTexture()) then
-				hp.absorbBar:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
-			end
-
-			hp.absorbBar:Show()
 		end
 		if(hp.healAbsorbBar) then
 			if(hp.healAbsorbBar:IsObjectType'StatusBar' and not hp.healAbsorbBar:GetStatusBarTexture()) then
-				hp.healAbsorbBar:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+				hp.healAbsorbBar:SetStatusBarTexture([[Interface\RaidFrame\Shield-Fill]])
 			end
-
-			hp.healAbsorbBar:Show()
+		end
+		if(hp.absorbBar) then
+			if(hp.absorbBar:IsObjectType'StatusBar' and not hp.absorbBar:GetStatusBarTexture()) then
+				hp.absorbBar:SetStatusBarTexture([[Interface\RaidFrame\Shield-Fill]])
+			end
 		end
 
 		return true
@@ -218,11 +232,11 @@ local function Disable(self)
 		if(hp.otherBar) then
 			hp.otherBar:Hide()
 		end
-		if(hp.absorbBar) then
-			hp.absorbBar:Hide()
-		end
 		if(hp.healAbsorbBar) then
 			hp.healAbsorbBar:Hide()
+		end
+		if(hp.absorbBar) then
+			hp.absorbBar:Hide()
 		end
 
 		self:UnregisterEvent('UNIT_HEAL_PREDICTION', Path)
