@@ -69,8 +69,8 @@
 local _, ns = ...
 local oUF = ns.oUF
 
-local function UpdateBarAnchor(self, appendTexture)
-	self:SetPoint('LEFT', appendTexture, 'RIGHT')
+local function UpdateBarAnchor(self, appendTexture, offsetX)
+	self:SetPoint('LEFT', appendTexture, 'RIGHT', offsetX or 0, 0)
 	return self:GetStatusBarTexture()
 end
 
@@ -151,16 +151,18 @@ local function Update(self, event, unit)
 	if(hp.UpdateAnchorOverride) then
 		hp:UpdateAnchorOverride(unit, myIncomingHeal, otherIncomingHeal, myCurrentHealAbsorb, totalAbsorb)
 	else
-		if(hp.myBar and myIncomingHeal > 0) then
-			appendTexture = UpdateBarAnchor(hp.myBar, appendTexture)
+		local healthWidth = self.Health:GetWidth()
+		local myInitialHealAbsorb = UnitGetTotalHealAbsorbs(unit) or 0
+		if(hp.myBar) then
+			appendTexture = UpdateBarAnchor(hp.myBar, appendTexture, -(healthWidth * myInitialHealAbsorb / maxHealth))
 		end
-		if(hp.otherBar and otherIncomingHeal > 0) then
+		if(hp.otherBar) then
 			appendTexture = UpdateBarAnchor(hp.otherBar, appendTexture)
 		end
-		if(hp.healAbsorbBar and myCurrentHealAbsorb > 0) then
-			appendTexture = UpdateBarAnchor(hp.healAbsorbBar, self.Health:GetStatusBarTexture())
+		if(hp.healAbsorbBar) then
+			appendTexture = UpdateBarAnchor(hp.healAbsorbBar, self.Health:GetStatusBarTexture(), -(healthWidth * myCurrentHealAbsorb / maxHealth))
 		end
-		if(hp.absorbBar and totalAbsorb > 0) then
+		if(hp.absorbBar) then
 			appendTexture = UpdateBarAnchor(hp.absorbBar, appendTexture)
 		end
 	end
