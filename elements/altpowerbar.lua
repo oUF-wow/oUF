@@ -164,7 +164,7 @@ local Enable = function(self, unit)
 		altpowerbar:Hide()
 
 		if(altpowerbar:IsMouseEnabled()) then
-			if(not altpowerbar:HasScript('OnEnter')) then
+			if(not altpowerbar:GetScript('OnEnter')) then
 				altpowerbar:SetScript('OnEnter', OnEnter)
 			end
 			altpowerbar:SetScript('OnLeave', OnLeave)
