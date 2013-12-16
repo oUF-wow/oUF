@@ -75,14 +75,21 @@ local Update = function(element, elapsed)
 	element.elapsed = element.elapsed - elapsed
 	if(element.elapsed > 0) then return end
 
-	if(element.PreUpdate) then
-		element:PreUpdate()
-	end
-
 	local maxHealth = UnitHealthMax("player")
 	local stagger = UnitStagger("player")
 	local staggerPercent = stagger / maxHealth
 
+	-- drop out early if there is nothing to update
+	if(staggerPercent == element.staggerPercent) then
+		element.elapsed = element.throttle or 0.5
+		return
+	end
+
+	if(element.PreUpdate) then
+		element:PreUpdate()
+	end
+
+	element.staggerPercent = staggerPercent
 	element:SetMinMaxValues(0, maxHealth)
 	element:SetValue(stagger)
 
@@ -105,7 +112,7 @@ local Update = function(element, elapsed)
 	end
 
 	if(element.PostUpdate) then
-		element:PostUpdate(maxHealth, stagger, staggerPercent, r, g, b)
+		element:PostUpdate(maxHealth, stagger, r, g, b)
 	end
 
 	element.elapsed = element.throttle or 0.5
