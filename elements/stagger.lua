@@ -19,11 +19,6 @@
  In order to override the internal update define the 'OnUpdate' script on the
  widget in the layout
 
- Options
-
- .throttle - A value in seconds used to throttle the OnUpdate script that handles
-             updating the widget. Defaults to 0.5 if not present.
-
  Sub-Widgets Options
 
  .multiplier - Defines a multiplier, which is used to tint the background based
@@ -41,7 +36,7 @@
 
  Hooks
 
- Override(self) - Used to completely override the internal visibility function.
+ Override(self) - Used to completely override the internal update function.
                   Removing the table key entry will make the element fall-back
                   to its internal function again.
 ]]
@@ -71,9 +66,9 @@ oUF.colors.power[BREWMASTER_POWER_BAR_NAME] = {
 }
 local color
 
-local Update = function(element, elapsed)
-	element.elapsed = element.elapsed - elapsed
-	if(element.elapsed > 0) then return end
+local Update = function(self, event, unit)
+	if unit and unit ~= self.unit then return end
+	local element = self.Stagger
 
 	if(element.PreUpdate) then
 		element:PreUpdate()
@@ -107,24 +102,25 @@ local Update = function(element, elapsed)
 	if(element.PostUpdate) then
 		element:PostUpdate(maxHealth, stagger, staggerPercent, r, g, b)
 	end
+end
 
-	element.elapsed = element.throttle or 0.5
+local Path = function(self, ...)
+	return (self.Stagger.Override or Update)(self, ...)
 end
 
 local Visibility = function(self, event, unit)
 	if(SPEC_MONK_BREWMASTER ~= GetSpecialization() or UnitHasVehiclePlayerFrameUI("player")) then
 		self.Stagger:Hide()
+		self:UnregisterEvent('UNIT_AURA', Path)
 	else
 		self.Stagger:Show()
+		self:RegisterEvent('UNIT_AURA', Path)
+		return Path(self, event, unit)
 	end
 end
 
-local Path = function(self, ...)
-	return (self.Stagger.Override or Visibility)(self, ...)
-end
-
 local ForceUpdate = function(element)
-	return Path(element.__owner, "ForceUpdate", element.__owner.unit)
+	return Visibility(element.__owner, "ForceUpdate", element.__owner.unit)
 end
 
 local Enable = function(self, unit)
@@ -137,14 +133,8 @@ local Enable = function(self, unit)
 
 		color = self.colors.power[BREWMASTER_POWER_BAR_NAME]
 
-		self:RegisterEvent('UNIT_DISPLAYPOWER', Path)
-		self:RegisterEvent('PLAYER_SPECIALIZATION_CHANGED', Path)
-
-		if(not element:GetScript('OnUpdate')) then
-			element:SetScript('OnUpdate', Update)
-		end
-
-		element.elapsed = element.throttle or 0.5
+		self:RegisterEvent('UNIT_DISPLAYPOWER', Visibility)
+		self:RegisterEvent('PLAYER_SPECIALIZATION_CHANGED', Visibility)
 
 		if(element:IsObjectType'StatusBar' and not element:GetStatusBarTexture()) then
 			element:SetStatusBarTexture[[Interface\TargetingFrame\UI-StatusBar]]
@@ -164,9 +154,9 @@ local Disable = function(self)
 	local element = self.Stagger
 	if(element) then
 		element:Hide()
-		element:SetScript('OnUpdate', nil)
-		self:UnregisterEvent('UNIT_DISPLAYPOWER', Path)
-		self:UnregisterEvent('PLAYER_SPECIALIZATION_CHANGED', Path)
+		self:UnregisterEvent('UNIT_AURA', Path)
+		self:UnregisterEvent('UNIT_DISPLAYPOWER', Visibility)
+		self:UnregisterEvent('PLAYER_SPECIALIZATION_CHANGED', Visibility)
 
 		MonkStaggerBar.Show = nil
 		MonkStaggerBar:Show()
@@ -177,4 +167,4 @@ local Disable = function(self)
 	end
 end
 
-oUF:AddElement("Stagger", Path, Enable, Disable)
+oUF:AddElement("Stagger", Visibility, Enable, Disable)
