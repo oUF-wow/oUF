@@ -87,10 +87,10 @@ local Update = function(element, elapsed)
 	element:SetValue(stagger)
 
 	local rgb
-	if(staggerPercent > STAGGER_YELLOW_TRANSITION and staggerPercent < STAGGER_RED_TRANSITION) then
-		rgb = color[YELLOW_INDEX]
-	elseif(staggerPercent >= STAGGER_RED_TRANSITION) then
+	if(staggerPercent >= STAGGER_RED_TRANSITION) then
 		rgb = color[RED_INDEX]
+	elseif(staggerPercent > STAGGER_YELLOW_TRANSITION) then
+		rgb = color[YELLOW_INDEX]
 	else
 		rgb = color[GREEN_INDEX]
 	end
