@@ -13,8 +13,6 @@
 
  .colorTexture     - Use the vertex color values returned by
                      UnitAlternatePowerTextureInfo to color the bar.
- .showOthersAnyway - Show AltPowerBar for other players even if
-                     UnitAlternatePowerInfo tells we should not.
 
  Notes
 
@@ -137,8 +135,8 @@ local Toggler = function(self, event, unit)
 	if(unit ~= self.unit) then return end
 	local altpowerbar = self.AltPowerBar
 
-	local barType, minPower, _, _, _, hideFromOthers = UnitAlternatePowerInfo(unit)
-	if(barType and (altpowerbar.showOthersAnyway or not hideFromOthers or unit == 'player' or self.realUnit == 'player')) then
+	local barType, _, _, _, _, hideFromOthers, showOnRaid = UnitAlternatePowerInfo(unit)
+	if(barType and (showOnRaid and (UnitInParty(unit) or UnitInRaid(unit)) or not hideFromOthers or unit == 'player' or self.realUnit == 'player')) then
 		self:RegisterEvent('UNIT_POWER', Path)
 		self:RegisterEvent('UNIT_MAXPOWER', Path)
 
