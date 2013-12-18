@@ -36,9 +36,12 @@
 
  Hooks
 
- Override(self) - Used to completely override the internal update function.
-                  Removing the table key entry will make the element fall-back
-                  to its internal function again.
+ OverrideVisibility(self) - Used to completely override the internal visibility function.
+                            Removing the table key entry will make the element fall-back
+                            to its internal function again.
+ Override(self)           - Used to completely override the internal update function.
+                            Removing the table key entry will make the element fall-back
+                            to its internal function again.
 ]]
 
 local parent, ns = ...
@@ -121,8 +124,12 @@ local Visibility = function(self, event, unit)
 	end
 end
 
+local VisibilityPath = function(self, ...)
+	return (self.Stagger.OverrideVisibility or Visibility)(self, ...)
+end
+
 local ForceUpdate = function(element)
-	return Visibility(element.__owner, "ForceUpdate", element.__owner.unit)
+	return VisibilityPath(element.__owner, "ForceUpdate", element.__owner.unit)
 end
 
 local Enable = function(self, unit)
@@ -135,8 +142,8 @@ local Enable = function(self, unit)
 
 		color = self.colors.power[BREWMASTER_POWER_BAR_NAME]
 
-		self:RegisterEvent('UNIT_DISPLAYPOWER', Visibility)
-		self:RegisterEvent('UPDATE_SHAPESHIFT_FORM', Visibility)
+		self:RegisterEvent('UNIT_DISPLAYPOWER', VisibilityPath)
+		self:RegisterEvent('UPDATE_SHAPESHIFT_FORM', VisibilityPath)
 
 		if(element:IsObjectType'StatusBar' and not element:GetStatusBarTexture()) then
 			element:SetStatusBarTexture[[Interface\TargetingFrame\UI-StatusBar]]
@@ -157,8 +164,8 @@ local Disable = function(self)
 	if(element) then
 		element:Hide()
 		self:UnregisterEvent('UNIT_AURA', Path)
-		self:UnregisterEvent('UNIT_DISPLAYPOWER', Visibility)
-		self:UnregisterEvent('UPDATE_SHAPESHIFT_FORM', Visibility)
+		self:UnregisterEvent('UNIT_DISPLAYPOWER', VisibilityPath)
+		self:UnregisterEvent('UPDATE_SHAPESHIFT_FORM', VisibilityPath)
 
 		MonkStaggerBar.Show = nil
 		MonkStaggerBar:Show()
@@ -169,4 +176,4 @@ local Disable = function(self)
 	end
 end
 
-oUF:AddElement("Stagger", Visibility, Enable, Disable)
+oUF:AddElement("Stagger", VisibilityPath, Enable, Disable)
