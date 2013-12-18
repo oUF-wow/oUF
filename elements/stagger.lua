@@ -115,9 +115,11 @@ end
 
 local Visibility = function(self, event, unit)
 	if(STANCE_OF_THE_STURY_OX_ID ~= GetShapeshiftFormID() or UnitHasVehiclePlayerFrameUI("player")) then
-		self.Stagger:Hide()
-		self:UnregisterEvent('UNIT_AURA', Path)
-	else
+		if self.Stagger:IsShown() then
+			self.Stagger:Hide()
+			self:UnregisterEvent('UNIT_AURA', Path)
+		end
+	elseif not self.Stagger:IsShown() then
 		self.Stagger:Show()
 		self:RegisterEvent('UNIT_AURA', Path)
 		return Path(self, event, unit)
