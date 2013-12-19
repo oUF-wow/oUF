@@ -104,6 +104,7 @@ local Update = function(self, event, unit, powerType)
 	local cur = UnitPower('player', ClassPowerType)
 	local max = UnitPowerMax('player', ClassPowerType)
 
+	local oldMax = element.__max
 	if event ~= "UpdateVisibilityOnDisable" then
 		for i=1, max do
 			if(i <= cur) then
@@ -113,7 +114,6 @@ local Update = function(self, event, unit, powerType)
 			end
 		end
 
-		local oldMax = element.__max
 		if(max ~= element.__max) then
 			if(max < element.__max) then
 				for i=max + 1, element.__max do
