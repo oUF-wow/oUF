@@ -1,7 +1,7 @@
 ## Interface: 50400
 ## Title: oUF
 ## Author: Haste
-## Version: 1.6.5
+## Version: 1.6.6
 ## OptionalDeps: Clique
 ## X-eMail: troeks@gmail.com
 ## X-oUF: oUF
