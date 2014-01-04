@@ -123,6 +123,8 @@ local Update = function(self, event, unit, powerType)
 
 			element.__max = max
 		end
+	else
+		cur, max = 0, 0
 	end
 
 	if(element.PostUpdate) then
