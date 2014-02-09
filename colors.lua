@@ -77,9 +77,9 @@ local RGBColorGradient = function(...)
 	end
 end
 
-
+-- HCY functions are based on http://www.chilliant.com/rgb2hsv.html
 local function GetY(r, g, b)
-	return 0.3 * r + 0.59 * g + 0.11 * b
+	return 0.299 * r + 0.587 * g + 0.114 * b
 end
 
 local function RGBToHCY(r, g, b)
@@ -102,7 +102,7 @@ end
 local abs = math.abs
 local function HCYtoRGB(hue, chroma, luma)
 	local r, g, b = 0, 0, 0
-	if hue then
+	if hue and luma > 0 then
 		local h2 = hue * 6
 		local x = chroma * (1 - abs(h2 % 2 - 1))
 		if h2 < 1 then
@@ -118,9 +118,17 @@ local function HCYtoRGB(hue, chroma, luma)
 		else
 			r, g, b = chroma, 0, x
 		end
+		local y = GetY(r, g, b)
+		if luma < y then
+			chroma = chroma * (luma / y)
+		elseif y < 1 then
+			chroma = chroma * (1 - luma) / (1 - y)
+		end
+		r = (r - y) * chroma + luma
+		g = (g - y) * chroma + luma
+		b = (b - y) * chroma + luma
 	end
-	local m = luma - GetY(r, g, b)
-	return r + m, g + m, b + m
+	return r, g, b
 end
 
 local HCYColorGradient = function(...)
