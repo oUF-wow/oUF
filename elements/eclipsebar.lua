@@ -17,20 +17,23 @@
 
  Examples
 
+   local EclipseBar = CreateFrame('Frame', nil, self)
+   EclipseBar:SetPoint('BOTTOM', self, 'TOP')
+   EclipseBar:SetSize(160, 20)
+   
    -- Position and size
-   local LunarBar = CreateFrame('StatusBar', nil, self)
+   local LunarBar = CreateFrame('StatusBar', nil, EclipseBar)
    LunarBar:SetPoint('LEFT')
    LunarBar:SetSize(160, 20)
    
-   local SolarBar = CreateFrame('StatusBar', nil, self)
+   local SolarBar = CreateFrame('StatusBar', nil, EclipseBar)
    SolarBar:SetPoint('LEFT', LunarBar:GetStatusBarTexture(), 'RIGHT')
    SolarBar:SetSize(160, 20)
    
    -- Register with oUF
-   self.EclipseBar = {
-      LunarBar = LunarBar,
-      SolarBar = SolarBar,
-   }
+   EclipseBar.LunarBar = LunarBar
+   EclipseBar.SolarBar = SolarBar
+   self.EclipseBar = EclipseBar
 
  Hooks and Callbacks
 
@@ -76,8 +79,11 @@ local UNIT_POWER = function(self, event, unit, powerType)
 
 		 self - The widget that holds the eclipse frame.
 		 unit - The unit that has the widget.
+		 power - The unit's current power.
+		 maxPower - The unit's maximum power.
+		 powerType - The unit's power type (always 'ECLIPSE').
 		]]
-		return eb:PostUpdatePower(unit)
+		return eb:PostUpdatePower(unit, power, maxPower, powerType)
 	end
 end
 
