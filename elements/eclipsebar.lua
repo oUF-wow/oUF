@@ -140,6 +140,7 @@ local UNIT_AURA = function(self, event, unit)
 	until not spellID
 
 	local eb = self.EclipseBar
+	if(eb.hasSolarEclipse == hasSolarEclipse and eb.hasLunarEclipse == hasLunarEclipse) then return end
 	eb.hasSolarEclipse = hasSolarEclipse
 	eb.hasLunarEclipse = hasLunarEclipse
 
