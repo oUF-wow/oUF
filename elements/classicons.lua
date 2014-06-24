@@ -18,14 +18,14 @@
    local ClassIcons = {}
    for index = 1, 5 do
       local Icon = self:CreateTexture(nil, 'BACKGROUND')
-   
+
       -- Position and size.
       Icon:SetSize(16, 16)
       Icon:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', index * Icon:GetWidth(), 0)
-   
+
       ClassIcons[index] = Icon
    end
-   
+
    -- Register with oUF
    self.ClassIcons = ClassIcons
 
@@ -168,6 +168,7 @@ do
 	ClassPowerEnable = function(self)
 		self:RegisterEvent('UNIT_DISPLAYPOWER', Path)
 		self:RegisterEvent('UNIT_POWER_FREQUENT', Path)
+        Path(self, 'ClassPowerEnable')
 	end
 
 	ClassPowerDisable = function(self, event)
