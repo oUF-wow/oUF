@@ -40,7 +40,7 @@ local _, PlayerClass = UnitClass'player'
 -- Holds the class specific stuff.
 local ClassPowerType, ClassPowerTypes
 local ClassPowerEnable, ClassPowerDisable
-local RequireSpell
+local RequireSpec, RequireSpell
 
 local UpdateTexture = function(element)
 	local red, green, blue, desaturated
@@ -125,15 +125,28 @@ local Update = function(self, event, unit, powerType)
 	end
 end
 
-local Visibility = function(self, event, unit)
+local Visibility
+Visibility = function(self, event, unit)
     local element = self.ClassIcons
-    local hasVehicle = UnitHasVehicleUI('player')
     local isEnabled
-    if(hasVehicle or RequireSpell and not IsPlayerSpell(RequireSpell)) then
-        ClassPowerDisable(self)
+
+    if(not UnitHasVehicleUI('player')) then
+        if(not RequireSpec or RequireSpec == GetSpecialization()) then
+            if(not RequireSpell or IsPlayerSpell(RequireSpell)) then
+                self:UnregisterEvent('SPELLS_CHANGED', Visibility)
+                ClassPowerEnable(self)
+                isEnabled = true
+            else
+                -- spell required but not known
+                self:RegisterEvent('SPELLS_CHANGED', Visibility, true)
+                ClassPowerDisable(self)
+            end
+        else
+            -- spec required but not in it
+            ClassPowerDisable(self)
+        end
     else
-        ClassPowerEnable(self)
-        isEnabled = true
+        ClassPowerDisable(self)
     end
 
     --[[ :PostVisibility(isEnabled)
@@ -171,7 +184,7 @@ do
         Path(self, 'ClassPowerEnable')
 	end
 
-	ClassPowerDisable = function(self, event)
+	ClassPowerDisable = function(self)
 		self:UnregisterEvent('UNIT_DISPLAYPOWER', Path)
 		self:UnregisterEvent('UNIT_POWER_FREQUENT', Path)
 
@@ -198,12 +211,14 @@ do
 		ClassPowerTypes = {
 			SHADOW_ORBS = true,
 		}
+        RequireSpec = SPEC_PRIEST_SHADOW
         RequireSpell = 95740 -- Shadow Orbs
 	elseif(PlayerClass == 'WARLOCK') then
 		ClassPowerType = SPELL_POWER_SOUL_SHARDS
 		ClassPowerTypes = {
 			SOUL_SHARDS = true,
 		}
+        RequireSpec = SPEC_WARLOCK_AFFLICTION
 		RequireSpell = WARLOCK_SOULBURN
 	end
 end
@@ -218,8 +233,8 @@ local Enable = function(self, unit)
 	element.__max = 0
 	element.ForceUpdate = ForceUpdate
 
-    if(RequireSpell) then
-        self:RegisterEvent('SPELLS_CHANGED', Visibility, true)
+    if(RequireSpec) then
+        self:RegisterEvent('PLAYER_TALENT_UPDATE', Visibility, true)
     end
 
 	for i = 1, 5 do
