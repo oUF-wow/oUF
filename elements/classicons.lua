@@ -58,7 +58,7 @@ local UpdateTexture = function(element)
 	end
 
 	for i = 1, 5 do
-        local icon = element[i]
+		local icon = element[i]
 		if(icon.SetDesaturated) then
 			icon:SetDesaturated(desaturated)
 		end
@@ -74,14 +74,14 @@ local Update = function(self, event, unit, powerType)
 
     local element = self.ClassIcons
 
-    --[[ :PreUpdate()
+	--[[ :PreUpdate()
 
-     Called before the element has been updated
+	 Called before the element has been updated
 
-     Arguments
+	 Arguments
 
-     self - The ClassIcons element
-    ]]
+	 self - The ClassIcons element
+	]]
 	if(element.PreUpdate) then
 		element:PreUpdate()
 	end
@@ -108,18 +108,18 @@ local Update = function(self, event, unit, powerType)
 		element.__max = max
 	end
 
-    --[[ :PostUpdate(cur, max, hasMaxChanged)
+	--[[ :PostUpdate(cur, max, hasMaxChanged)
 
-     Called after the element has been updated
+	 Called after the element has been updated
 
-     Arguments
+	 Arguments
 
-     self          - The ClassIcons element
-     cur           - The current amount of power
-     max           - The maximum amount of power
-     hasMaxChanged - Shows if the maximum amount has changed since the last
-                     update
-    ]]
+	 self          - The ClassIcons element
+	 cur           - The current amount of power
+	 max           - The maximum amount of power
+	 hasMaxChanged - Shows if the maximum amount has changed since the last
+	                 update
+	]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(cur, max, oldMax ~= max)
 	end
@@ -127,41 +127,41 @@ end
 
 local Visibility
 Visibility = function(self, event, unit)
-    local element = self.ClassIcons
-    local isEnabled
+	local element = self.ClassIcons
+	local isEnabled
 
-    if(not UnitHasVehicleUI('player')) then
-        if(not RequireSpec or RequireSpec == GetSpecialization()) then
-            if(not RequireSpell or IsPlayerSpell(RequireSpell)) then
-                self:UnregisterEvent('SPELLS_CHANGED', Visibility)
-                ClassPowerEnable(self)
-                isEnabled = true
-            else
-                -- spell required but not known
-                self:RegisterEvent('SPELLS_CHANGED', Visibility, true)
-                ClassPowerDisable(self)
-            end
-        else
-            -- spec required but not in it
-            ClassPowerDisable(self)
-        end
-    else
-        ClassPowerDisable(self)
-    end
+	if(not UnitHasVehicleUI('player')) then
+		if(not RequireSpec or RequireSpec == GetSpecialization()) then
+			if(not RequireSpell or IsPlayerSpell(RequireSpell)) then
+				self:UnregisterEvent('SPELLS_CHANGED', Visibility)
+				ClassPowerEnable(self)
+				isEnabled = true
+			else
+				-- spell required but not known
+				self:RegisterEvent('SPELLS_CHANGED', Visibility, true)
+				ClassPowerDisable(self)
+			end
+		else
+			-- spec required but not in it
+			ClassPowerDisable(self)
+		end
+	else
+		ClassPowerDisable(self)
+	end
 
-    --[[ :PostVisibility(isEnabled)
+	--[[ :PostVisibility(isEnabled)
 
-     Called after the visibility of the element has been updated
+	 Called after the visibility of the element has been updated
 
-     Arguments
+	 Arguments
 
-     self      - The ClassIcons element
-     isEnabled - Shows if the update function is enabled.
-                 If it isn't then the element is hidden.
-    ]]
-    if(element.PostVisibility) then
-        return element:PostVisibility(isEnabled)
-    end
+	 self      - The ClassIcons element
+	 isEnabled - Shows if the update function is enabled.
+	             If it isn't then the element is hidden.
+	]]
+	if(element.PostVisibility) then
+		return element:PostVisibility(isEnabled)
+	end
 end
 --[[ Hooks
 
@@ -181,17 +181,17 @@ do
 	ClassPowerEnable = function(self)
 		self:RegisterEvent('UNIT_DISPLAYPOWER', Path)
 		self:RegisterEvent('UNIT_POWER_FREQUENT', Path)
-        Path(self, 'ClassPowerEnable')
+		Path(self, 'ClassPowerEnable')
 	end
 
 	ClassPowerDisable = function(self)
 		self:UnregisterEvent('UNIT_DISPLAYPOWER', Path)
 		self:UnregisterEvent('UNIT_POWER_FREQUENT', Path)
 
-        local element = self.ClassIcons
-        for i = 1, 5 do
-            element[i]:Hide()
-        end
+		local element = self.ClassIcons
+		for i = 1, 5 do
+			element[i]:Hide()
+		end
 	end
 
 	if(PlayerClass == 'MONK') then
@@ -205,26 +205,26 @@ do
 		ClassPowerTypes = {
 			HOLY_POWER = true,
 		}
-        RequireSpell = 85673 -- Word of Glory
+		RequireSpell = 85673 -- Word of Glory
 	elseif(PlayerClass == 'PRIEST') then
 		ClassPowerType = SPELL_POWER_SHADOW_ORBS
 		ClassPowerTypes = {
 			SHADOW_ORBS = true,
 		}
-        RequireSpec = SPEC_PRIEST_SHADOW
-        RequireSpell = 95740 -- Shadow Orbs
+		RequireSpec = SPEC_PRIEST_SHADOW
+		RequireSpell = 95740 -- Shadow Orbs
 	elseif(PlayerClass == 'WARLOCK') then
 		ClassPowerType = SPELL_POWER_SOUL_SHARDS
 		ClassPowerTypes = {
 			SOUL_SHARDS = true,
 		}
-        RequireSpec = SPEC_WARLOCK_AFFLICTION
+		RequireSpec = SPEC_WARLOCK_AFFLICTION
 		RequireSpell = WARLOCK_SOULBURN
 	end
 end
 
 local Enable = function(self, unit)
-    if(unit ~= 'player' or not ClassPowerType) then return end
+	if(unit ~= 'player' or not ClassPowerType) then return end
 
 	local element = self.ClassIcons
 	if(not element) then return end
@@ -233,9 +233,9 @@ local Enable = function(self, unit)
 	element.__max = 0
 	element.ForceUpdate = ForceUpdate
 
-    if(RequireSpec) then
-        self:RegisterEvent('PLAYER_TALENT_UPDATE', Visibility, true)
-    end
+	if(RequireSpec) then
+		self:RegisterEvent('PLAYER_TALENT_UPDATE', Visibility, true)
+	end
 
 	for i = 1, 5 do
 		local icon = element[i]
