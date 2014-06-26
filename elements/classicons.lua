@@ -72,7 +72,7 @@ local Update = function(self, event, unit, powerType)
 		return
 	end
 
-    local element = self.ClassIcons
+	local element = self.ClassIcons
 
 	--[[ :PreUpdate()
 
@@ -170,7 +170,7 @@ end
                    to its internal function again.
 ]]
 local Path = function(self, ...)
-    return (self.ClassIcons.Override or Update) (self, ...)
+	return (self.ClassIcons.Override or Update) (self, ...)
 end
 
 local ForceUpdate = function(element)
