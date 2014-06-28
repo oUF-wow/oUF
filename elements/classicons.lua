@@ -128,14 +128,12 @@ end
 local Visibility
 Visibility = function(self, event, unit)
 	local element = self.ClassIcons
-	local isEnabled
 
 	if(not UnitHasVehicleUI('player')) then
 		if(not RequireSpec or RequireSpec == GetSpecialization()) then
 			if(not RequireSpell or IsPlayerSpell(RequireSpell)) then
 				self:UnregisterEvent('SPELLS_CHANGED', Visibility)
 				ClassPowerEnable(self)
-				isEnabled = true
 			else
 				-- spell required but not known
 				self:RegisterEvent('SPELLS_CHANGED', Visibility, true)
@@ -147,20 +145,6 @@ Visibility = function(self, event, unit)
 		end
 	else
 		ClassPowerDisable(self)
-	end
-
-	--[[ :PostVisibility(isEnabled)
-
-	 Called after the visibility of the element has been updated
-
-	 Arguments
-
-	 self      - The ClassIcons element
-	 isEnabled - Shows if the update function is enabled.
-	             If it isn't then the element is hidden.
-	]]
-	if(element.PostVisibility) then
-		return element:PostVisibility(isEnabled)
 	end
 end
 --[[ Hooks
@@ -192,6 +176,8 @@ do
 		for i = 1, 5 do
 			element[i]:Hide()
 		end
+
+		Path(self, 'ClassPowerDisable')
 	end
 
 	if(PlayerClass == 'MONK') then
