@@ -71,7 +71,6 @@ local Update = function(self, event, unit, powerType)
 	if(unit and unit ~= 'player' or powerType and not ClassPowerTypes[powerType]) then
 		return
 	end
-	print("Update:", event, unit, powerType)
 
 	local element = self.ClassIcons
 
