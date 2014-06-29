@@ -40,7 +40,7 @@ local _, PlayerClass = UnitClass'player'
 -- Holds the class specific stuff.
 local ClassPowerType, ClassPowerTypes
 local ClassPowerEnable, ClassPowerDisable
-local RequireSpec, RequireSpell
+local RequireSpec, RequireSpell, isEnabled
 
 local UpdateTexture = function(element)
 	local red, green, blue, desaturated
@@ -71,6 +71,7 @@ local Update = function(self, event, unit, powerType)
 	if(unit and unit ~= 'player' or powerType and not ClassPowerTypes[powerType]) then
 		return
 	end
+	print("Update:", event, unit, powerType)
 
 	local element = self.ClassIcons
 
@@ -80,35 +81,38 @@ local Update = function(self, event, unit, powerType)
 
 	 Arguments
 
-	 self - The ClassIcons element
+	 self  - The ClassIcons element
+	 event - The event, that the update is being triggered for
 	]]
 	if(element.PreUpdate) then
-		element:PreUpdate()
+		element:PreUpdate(event)
 	end
 
-	local cur = UnitPower('player', ClassPowerType)
-	local max = UnitPowerMax('player', ClassPowerType)
+	local cur, max, oldMax
+	if(event ~= 'ClassPowerDisable') then
+		cur = UnitPower('player', ClassPowerType)
+		max = UnitPowerMax('player', ClassPowerType)
 
-	for i = 1, max do
-		if(i <= cur) then
-			element[i]:Show()
-		else
-			element[i]:Hide()
-		end
-	end
-
-	local oldMax = element.__max
-	if(max ~= oldMax) then
-		if(max < oldMax) then
-			for i = max + 1, oldMax do
+		for i = 1, max do
+			if(i <= cur) then
+				element[i]:Show()
+			else
 				element[i]:Hide()
 			end
 		end
 
-		element.__max = max
-	end
+		oldMax = element.__max
+		if(max ~= oldMax) then
+			if(max < oldMax) then
+				for i = max + 1, oldMax do
+					element[i]:Hide()
+				end
+			end
 
-	--[[ :PostUpdate(cur, max, hasMaxChanged)
+			element.__max = max
+		end
+	end
+	--[[ :PostUpdate(cur, max, hasMaxChanged, event)
 
 	 Called after the element has been updated
 
@@ -119,31 +123,32 @@ local Update = function(self, event, unit, powerType)
 	 max           - The maximum amount of power
 	 hasMaxChanged - Shows if the maximum amount has changed since the last
 	                 update
+	 event         - The event, which the update happened for
 	]]
 	if(element.PostUpdate) then
-		return element:PostUpdate(cur, max, oldMax ~= max)
+		return element:PostUpdate(cur, max, oldMax ~= max, event)
 	end
 end
 
 local Visibility
 Visibility = function(self, event, unit)
 	local element = self.ClassIcons
+	local shouldEnable
 
 	if(not UnitHasVehicleUI('player')) then
 		if(not RequireSpec or RequireSpec == GetSpecialization()) then
 			if(not RequireSpell or IsPlayerSpell(RequireSpell)) then
 				self:UnregisterEvent('SPELLS_CHANGED', Visibility)
-				ClassPowerEnable(self)
+				shouldEnable = true
 			else
-				-- spell required but not known
 				self:RegisterEvent('SPELLS_CHANGED', Visibility, true)
-				ClassPowerDisable(self)
 			end
-		else
-			-- spec required but not in it
-			ClassPowerDisable(self)
 		end
-	else
+	end
+
+	if(shouldEnable and not isEnabled) then
+		ClassPowerEnable(self)
+	elseif(not shouldEnable and isEnabled) then
 		ClassPowerDisable(self)
 	end
 end
@@ -166,6 +171,7 @@ do
 		self:RegisterEvent('UNIT_DISPLAYPOWER', Path)
 		self:RegisterEvent('UNIT_POWER_FREQUENT', Path)
 		Path(self, 'ClassPowerEnable')
+		isEnabled = true
 	end
 
 	ClassPowerDisable = function(self)
@@ -178,6 +184,7 @@ do
 		end
 
 		Path(self, 'ClassPowerDisable')
+		isEnabled = nil
 	end
 
 	if(PlayerClass == 'MONK') then
