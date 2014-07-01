@@ -29,6 +29,17 @@
    -- Register with oUF
    self.ClassIcons = ClassIcons
 
+ Hooks
+
+ Override(self)         - Used to completely override the internal update function.
+                          Removing the table key entry will make the element
+                          fall-back to its internal function again.
+
+ UpdateTexture(element) - Used to completely override the internal function for
+                          updating the power icon textures. Removing the table key
+                          entry will make the element fall-back to its internal
+                          function again.
+
  Callbacks
 ]]
 
@@ -151,12 +162,7 @@ Visibility = function(self, event, unit)
 		ClassPowerDisable(self)
 	end
 end
---[[ Hooks
 
-  Override(self) - Used to completely override the internal update function.
-                   Removing the table key entry will make the element fall-back
-                   to its internal function again.
-]]
 local Path = function(self, ...)
 	return (self.ClassIcons.Override or Update) (self, ...)
 end
