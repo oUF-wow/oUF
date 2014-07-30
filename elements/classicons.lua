@@ -95,6 +95,11 @@ local Update = function(self, event, unit, powerType)
 		return
 	end
 
+	if((event ~= 'UNIT_DISPLAYPOWER' and event ~= 'UNIT_POWER_FREQUENT') and
+		RequireSpell and not IsPlayerSpell(RequireSpell)) then
+		return
+	end
+
 	if(element.PreUpdate) then
 		element:PreUpdate()
 	end
