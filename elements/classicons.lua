@@ -181,10 +181,7 @@ do
 			return _ClassPowerEnable(self)
 		end
 
-		ClassPowerDisable = function(self)
-			self:UnregisterEvent('PLAYER_TALENT_UPDATE', Visibility)
-			return _ClassPowerDisable(self)
-		end
+		ClassPowerDisable = _ClassPowerDisable
 	elseif(PlayerClass == 'WARLOCK') then
 		ClassPowerType = SPELL_POWER_SOUL_SHARDS
 		ClassPowerTypes = 'SOUL_SHARDS'
@@ -195,10 +192,7 @@ do
 			return _ClassPowerEnable(self)
 		end
 
-		ClassPowerDisable = function(self)
-			self:UnregisterEvent('SPELLS_CHANGED', Visibility)
-			return _ClassPowerDisable(self)
-		end
+		ClassPowerDisable = _ClassPowerDisable
 	end
 end
 
