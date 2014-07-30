@@ -90,7 +90,7 @@ local Update = function(self, event, unit, powerType)
 		if(hasVehicle) then return end
 	end
 
-	if((unit and unit ~= 'player') or (powerType and not ClassPowerTypes[powerType])) then
+	if((unit and unit ~= 'player') or (powerType and not ClassPowerTypes == powerType)) then
 		return
 	end
 
@@ -161,25 +161,19 @@ do
 
 	if(PlayerClass == 'MONK') then
 		ClassPowerType = SPELL_POWER_CHI
-		ClassPowerTypes = {
-			CHI = true,
-		}
+		ClassPowerTypes = 'CHI'
 
 		ClassPowerEnable = _ClassPowerEnable
 		ClassPowerDisable = _ClassPowerDisable
 	elseif(PlayerClass == 'PALADIN') then
 		ClassPowerType = SPELL_POWER_HOLY_POWER
-		ClassPowerTypes = {
-			HOLY_POWER = true,
-		}
+		ClassPowerTypes = 'HOLY_POWER'
 
 		ClassPowerEnable = _ClassPowerEnable
 		ClassPowerDisable = _ClassPowerDisable
 	elseif(PlayerClass == 'PRIEST') then
 		ClassPowerType = SPELL_POWER_SHADOW_ORBS
-		ClassPowerTypes = {
-			SHADOW_ORBS = true,
-		}
+		ClassPowerTypes = 'SHADOW_ORBS'
 		RequireSpec = SPEC_PRIEST_SHADOW
 
 		ClassPowerEnable = function(self)
@@ -193,9 +187,7 @@ do
 		end
 	elseif(PlayerClass == 'WARLOCK') then
 		ClassPowerType = SPELL_POWER_SOUL_SHARDS
-		ClassPowerTypes = {
-			SOUL_SHARDS = true,
-		}
+		ClassPowerTypes = 'SOUL_SHARDS'
 		RequireSpell = WARLOCK_SOULBURN
 
 		ClassPowerEnable = function(self)
