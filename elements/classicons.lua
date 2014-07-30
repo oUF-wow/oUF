@@ -8,7 +8,7 @@
 
  Notes
 
- Monk    - Harmony Orbs
+ Monk    - Chi Orbs
  Paladin - Holy Power
  Priest  - Shadow Orbs
  Warlock - Soul Shards
@@ -162,8 +162,7 @@ do
 	if(PlayerClass == 'MONK') then
 		ClassPowerType = SPELL_POWER_CHI
 		ClassPowerTypes = {
-			['CHI'] = true,
-			['DARK_FORCE'] = true,
+			CHI = true,
 		}
 
 		ClassPowerEnable = _ClassPowerEnable
