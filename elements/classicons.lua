@@ -147,6 +147,7 @@ do
 	elseif(PlayerClass == 'PALADIN') then
 		ClassPowerTypeID = SPELL_POWER_HOLY_POWER
 		ClassPowerType = 'HOLY_POWER'
+		RequireSpell = 85673 -- Word of Glory
 	elseif(PlayerClass == 'PRIEST') then
 		ClassPowerTypeID = SPELL_POWER_SHADOW_ORBS
 		ClassPowerType = 'SHADOW_ORBS'
