@@ -38,7 +38,7 @@ local PlayerClass = select(2, UnitClass'player')
 -- Holds the class specific stuff.
 local ClassPowerType, ClassPowerTypes
 local ClassPowerEnable, ClassPowerDisable
-local RequireSpec, RequireSpell
+local RequireSpell
 
 local UpdateTexture = function(element)
 	local red, green, blue, desaturated
@@ -131,9 +131,7 @@ end
 
 local Visibility = function(self, event, unit)
 	local element = self.ClassIcons
-	if(
-		(RequireSpec and RequireSpec ~= GetSpecialization())
-		or (RequireSpell and not IsPlayerSpell(RequireSpell))) then
+	if(RequireSpell and not IsPlayerSpell(RequireSpell)) then
 		for i=1, 5 do
 			element[i]:Hide()
 		end
@@ -174,10 +172,10 @@ do
 	elseif(PlayerClass == 'PRIEST') then
 		ClassPowerType = SPELL_POWER_SHADOW_ORBS
 		ClassPowerTypes = 'SHADOW_ORBS'
-		RequireSpec = SPEC_PRIEST_SHADOW
+		RequireSpell = 95740 -- Shadow Orbs
 
 		ClassPowerEnable = function(self)
-			self:RegisterEvent('PLAYER_TALENT_UPDATE', Visibility, true)
+			self:RegisterEvent('SPELLS_CHANGED', Visibility, true)
 			return _ClassPowerEnable(self)
 		end
 
