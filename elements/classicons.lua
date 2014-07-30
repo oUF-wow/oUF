@@ -39,6 +39,7 @@ local PlayerClass = select(2, UnitClass'player')
 local ClassPowerTypeID, ClassPowerType
 local ClassPowerEnable, ClassPowerDisable
 local RequireSpell
+local UpdateVisibility
 
 local UpdateTexture = function(element)
 	local red, green, blue, desaturated
@@ -65,31 +66,8 @@ local UpdateTexture = function(element)
 	end
 end
 
-local ToggleVehicle = function(self, state)
-	local element = self.ClassIcons
-	for i=1, 5 do
-		element[i]:Hide()
-	end
-
-	(element.UpdateTexture or UpdateTexture) (element)
-
-	if(state) then
-		ClassPowerDisable(self)
-	else
-		ClassPowerEnable(self)
-	end
-end
-
 local Update = function(self, event, unit, powerType)
 	local element = self.ClassIcons
-	local hasVehicle = UnitHasVehicleUI('player')
-	if(element.__inVehicle ~= hasVehicle) then
-		element.__inVehicle = hasVehicle
-		ToggleVehicle(self, hasVehicle)
-
-		-- Continue the update if we left a vehicle.
-		if(hasVehicle) then return end
-	end
 
 	if((unit and unit ~= 'player') or (powerType and not ClassPowerType == powerType)) then
 		return
@@ -132,12 +110,12 @@ local Update = function(self, event, unit, powerType)
 end
 
 local Path = function(self, ...)
-	return (self.ClassIcons.Override or Update) (self, ...)
+	return (self.ClassIcons.Override or UpdateVisibility) (self, ...)
 end
 
-local UpdateVisibility = function(self, event, unit)
+UpdateVisibility = function(self, event, unit)
 	local element = self.ClassIcons
-	if(RequireSpell and not IsPlayerSpell(RequireSpell)) then
+	if(UnitHasVehicleUI('player') or (RequireSpell and not IsPlayerSpell(RequireSpell))) then
 		for i=1, 5 do
 			element[i]:Hide()
 		end
@@ -220,4 +198,4 @@ local Disable = function(self)
 	end
 end
 
-oUF:AddElement('ClassIcons', Update, Enable, Disable)
+oUF:AddElement('ClassIcons', UpdateVisibility, Enable, Disable)
