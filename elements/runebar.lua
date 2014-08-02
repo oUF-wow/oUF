@@ -85,6 +85,12 @@ local UpdateRune = function(self, event, rid)
 	local rune = runes[runemap[rid]]
 	if(not rune) then return end
 
+	if(UnitHasVehicleUI'player') then
+		return rune:Hide()
+	else
+		rune:Show()
+	end
+
 	local start, duration, runeReady = GetRuneCooldown(rid)
 	if(runeReady) then
 		rune:SetMinMaxValues(0, 1)

@@ -101,6 +101,10 @@ local UPDATE_VISIBILITY = function(self, event)
 		showBar = true
 	end
 
+	if(UnitHasVehicleUI'player') then
+		showBar = false
+	end
+
 	if(showBar) then
 		eb:Show()
 	else
