@@ -147,7 +147,7 @@ local Update = function(self, event, unit)
 		UnitIsTapped(unit) and not UnitIsTappedByPlayer(unit) and not
 		UnitIsTappedByAllThreatList(unit)) then
 		t = self.colors.tapped
-	elseif(power.colorDisconnected and not UnitIsConnected(unit)) then
+	elseif(disconnected and power.colorDisconnected) then
 		t = self.colors.disconnected
 	elseif(displayType == ALTERNATE_POWER_INDEX and power.altPowerColor) then
 		t = power.altPowerColor
