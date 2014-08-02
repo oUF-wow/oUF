@@ -29,8 +29,8 @@
                       isn't tapped by the player.
  .colorDisconnected - Use `self.colors.disconnected` to color the bar if the
                       unit is offline.
- .altPowerColor		- A table containing the RGB values to use for a fixed
-					  color if the alt power bar is being displayed instead
+ .altPowerColor     - A table containing the RGB values to use for a fixed
+                      color if the alt power bar is being displayed instead
  .colorPower        - Use `self.colors.power[token]` to color the bar based on
                       the unit's power type. This method will fall-back to
                       `:GetAlternativeColor()` if it can't find a color matching
