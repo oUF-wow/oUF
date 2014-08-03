@@ -4,12 +4,17 @@
 
  Widget
 
- WarlockPowerBar - an array consisting of 4 UI StatusBars
+ WarlockPowerBar - an array consisting of 5 UI StatusBars
+
+ Notes
+
+ The first 4 status bars represent burning embers.
+ The fifth status bar represents demonic fury.
 
  Example
 
    local wpb = {}
-   for index = 1, 4 do
+   for index = 1, 5 do
       local bar = CreateFrame("StatusBar", nil, self)
 
       -- Position and size.
@@ -72,7 +77,7 @@ local Update = function(self, event, unit, powerType)
 	if(powerType == 'DEMONIC_FURY') then
 		power = UnitPower('player', SPELL_POWER_DEMONIC_FURY)
 
-		element[1]:SetValue(power)
+		element[5]:SetValue(power)
 	elseif(powerType == 'BURNING_EMBERS') then
 		power = UnitPower('player', SPELL_POWER_BURNING_EMBERS, true)
 
@@ -88,12 +93,12 @@ local Update = function(self, event, unit, powerType)
 	 Arguments
 
 	 self      - The WarlockPowerBar element.
-	 powerType - Power type for which the update was done.
-	             Either `'DEMONIC_FURY'` or `'BURNING_EMBERS'`.
+	 powerType - Power type which the update was done for (`'DEMONIC_FURY'` or `'BURNING_EMBERS'`).
 	 power     - Current amount of demonic fury or burning embers.
+	 spec      - The current spec of the warlock (`2` or `3`).
 	]]
 	if(element.PostUpdate) then
-		element:PostUpdate(powerType, power)
+		element:PostUpdate(powerType, power, spec)
 	end
 end
 
@@ -118,9 +123,9 @@ Visibility = function(self, event)
 			local color = self.colors.power[specPowerType]
 			local red, green, blue = color[1], color[2], color[3]
 
-			for i = 1, 4 do
+			for i = 1, 5 do
 				local segment = element[i]
-				if(i > 1) then
+				if(i < 5) then
 					segment:Hide()
 				else
 					segment:SetMinMaxValues(0, UnitPowerMax('player', SPELL_POWER_DEMONIC_FURY))
@@ -158,6 +163,7 @@ Visibility = function(self, event)
 					end
 					segment:Show()
 				end
+				element[5]:Hide()
 			end
 		end
 	end
@@ -167,7 +173,7 @@ Visibility = function(self, event)
 		self:UnregisterEvent('UNIT_DISPLAYPOWER', Path)
 		self:UnregisterEvent('SPELLS_CHANGED', Visibility)
 
-		for i = 1, 4 do
+		for i = 1, 5 do
 			element[i]:Hide()
 		end
 	end
@@ -207,7 +213,7 @@ local Enable = function(self, unit)
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
 
-		for i = 1, 4 do
+		for i = 1, 5 do
 			local segment = element[i]
 			if(segment:IsObjectType'StatusBar' and not segment:GetStatusBarTexture()) then
 				segment:SetStatusBarTexture[=[Interface\TargetingFrame\UI-StatusBar]=]
@@ -229,7 +235,7 @@ local Disable = function(self)
 		self:UnregisterEvent('PLAYER_TALENT_UPDATE', Visibility)
 		self:UnregisterEvent('SPELLS_CHANGED', Visibility)
 
-		for i = 1, 4 do
+		for i = 1, 5 do
 			element[i]:Hide()
 		end
 	end
