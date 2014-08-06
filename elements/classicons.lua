@@ -28,6 +28,15 @@
    
    -- Register with oUF
    self.ClassIcons = ClassIcons
+
+ Hooks
+
+ OverrideVisibility(self) - Used to completely override the internal visibility function.
+                            Removing the table key entry will make the element fall-back
+                            to its internal function again.
+ Override(self)           - Used to completely override the internal update function.
+                            Removing the table key entry will make the element fall-back
+                            to its internal function again.
 ]]
 
 local parent, ns = ...
@@ -39,7 +48,6 @@ local PlayerClass = select(2, UnitClass'player')
 local ClassPowerTypeID, ClassPowerType
 local ClassPowerEnable, ClassPowerDisable
 local RequireSpell
-local UpdateVisibility
 
 local UpdateTexture = function(element)
 	local red, green, blue, desaturated
@@ -110,10 +118,10 @@ local Update = function(self, event, unit, powerType)
 end
 
 local Path = function(self, ...)
-	return (self.ClassIcons.Override or UpdateVisibility) (self, ...)
+	return (self.ClassIcons.Override or Update) (self, ...)
 end
 
-UpdateVisibility = function(self, event, unit)
+local Visibility = function(self, event, unit)
 	local element = self.ClassIcons
 	if(UnitHasVehicleUI('player') or (RequireSpell and not IsPlayerSpell(RequireSpell))) then
 		for i=1, 5 do
@@ -126,19 +134,23 @@ UpdateVisibility = function(self, event, unit)
 	end
 end
 
+local VisibilityPath = function(self, ...)
+	return (self.ClassIcons.OverrideVisibility or Visibility) (self, ...)
+end
+
 local ForceUpdate = function(element)
-	return Path(element.__owner, 'ForceUpdate', element.__owner.unit)
+	return VisibilityPath(element.__owner, 'ForceUpdate', element.__owner.unit)
 end
 
 do
 	ClassPowerEnable = function(self)
-		self:RegisterEvent('UNIT_DISPLAYPOWER', Update)
-		self:RegisterEvent('UNIT_POWER_FREQUENT', Update)
+		self:RegisterEvent('UNIT_DISPLAYPOWER', Path)
+		self:RegisterEvent('UNIT_POWER_FREQUENT', Path)
 	end
 
 	ClassPowerDisable = function(self)
-		self:UnregisterEvent('UNIT_DISPLAYPOWER', Update)
-		self:UnregisterEvent('UNIT_POWER_FREQUENT', Update)
+		self:UnregisterEvent('UNIT_DISPLAYPOWER', Path)
+		self:UnregisterEvent('UNIT_POWER_FREQUENT', Path)
 	end
 
 	if(PlayerClass == 'MONK') then
@@ -168,10 +180,10 @@ local Enable = function(self, unit)
 	element.ForceUpdate = ForceUpdate
 
 	if(ClassPowerType) then
-		UpdateVisibility(self)
+		VisibilityPath(self)
 
 		if(RequireSpell) then
-			self:RegisterEvent('SPELLS_CHANGED', UpdateVisibility, true)
+			self:RegisterEvent('SPELLS_CHANGED', VisibilityPath, true)
 		end
 
 		for i=1, 5 do
@@ -195,8 +207,8 @@ local Disable = function(self)
 	ClassPowerDisable(self)
 
 	if(RequireSpell) then
-		self:UnregisterEvent('SPELLS_CHANGED', UpdateVisibility)
+		self:UnregisterEvent('SPELLS_CHANGED', VisibilityPath)
 	end
 end
 
-oUF:AddElement('ClassIcons', UpdateVisibility, Enable, Disable)
+oUF:AddElement('ClassIcons', VisibilityPath, Enable, Disable)
