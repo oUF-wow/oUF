@@ -37,6 +37,10 @@
                           Removing the table key entry will make the element
                           fall-back to its internal function again.
 
+ Visibility(self)       - Used to completely override the internal visibility function.
+                          Removing the table key entry will make the element
+                          fall-back to its internal function again.
+
  UpdateTexture(element) - Used to completely override the internal function for
                           updating the power icon textures. Removing the table key
                           entry will make the element fall-back to its internal
@@ -53,7 +57,7 @@ local _, PlayerClass = UnitClass'player'
 -- Holds the class specific stuff.
 local ClassPowerID, ClassPowerType
 local ClassPowerEnable, ClassPowerDisable
-local RequireSpec, RequireSpell, isEnabled
+local RequireSpec, RequireSpell
 
 local UpdateTexture = function(element)
 	local red, green, blue, desaturated
@@ -158,6 +162,7 @@ Visibility = function(self, event, unit)
 		end
 	end
 
+	local isEnabled = element.isEnabled
 	if(shouldEnable and not isEnabled) then
 		ClassPowerEnable(self)
 	elseif(not shouldEnable and isEnabled) then
@@ -169,8 +174,12 @@ local Path = function(self, ...)
 	return (self.ClassIcons.Override or Update) (self, ...)
 end
 
+local VisibilityPath = function(self, ...)
+	return (self.ClassIcons.Visibility or Visibility) (self, ...)
+end
+
 local ForceUpdate = function(element)
-	return Visibility(element.__owner, 'ForceUpdate', element.__owner.unit)
+	return VisibilityPath(element.__owner, 'ForceUpdate', element.__owner.unit)
 end
 
 do
@@ -178,7 +187,7 @@ do
 		self:RegisterEvent('UNIT_DISPLAYPOWER', Path)
 		self:RegisterEvent('UNIT_POWER_FREQUENT', Path)
 		Path(self, 'ClassPowerEnable', 'player', ClassPowerType)
-		isEnabled = true
+		self.ClassIcons.isEnabled = true
 	end
 
 	ClassPowerDisable = function(self)
@@ -191,7 +200,7 @@ do
 		end
 
 		Path(self, 'ClassPowerDisable', 'player', ClassPowerType)
-		isEnabled = nil
+		self.ClassIcons.isEnabled = nil
 	end
 
 	if(PlayerClass == 'MONK') then
@@ -225,8 +234,11 @@ local Enable = function(self, unit)
 	element.ForceUpdate = ForceUpdate
 
 	if(RequireSpec) then
-		self:RegisterEvent('PLAYER_TALENT_UPDATE', Visibility, true)
+		self:RegisterEvent('PLAYER_TALENT_UPDATE', VisibilityPath, true)
 	end
+
+	element.ClassPowerEnable = ClassPowerEnable
+	element.ClassPowerDisable = ClassPowerDisable
 
 	for i = 1, #element do
 		local icon = element[i]
@@ -248,4 +260,4 @@ local Disable = function(self)
 	ClassPowerDisable(self)
 end
 
-oUF:AddElement('ClassIcons', Visibility, Enable, Disable)
+oUF:AddElement('ClassIcons', VisibilityPath, Enable, Disable)
