@@ -49,7 +49,7 @@ local oUF = ns.oUF
 local _, PlayerClass = UnitClass'player'
 
 -- Holds the class specific stuff.
-local ClassPowerType, ClassPowerTypes
+local ClassPowerID, ClassPowerType
 local ClassPowerEnable, ClassPowerDisable
 local RequireSpec, RequireSpell, isEnabled
 
@@ -79,7 +79,7 @@ local UpdateTexture = function(element)
 end
 
 local Update = function(self, event, unit, powerType)
-	if(unit and unit ~= 'player' or powerType and not ClassPowerTypes[powerType]) then
+	if(unit and unit ~= 'player' or powerType ~= ClassPowerType) then
 		return
 	end
 
@@ -100,8 +100,8 @@ local Update = function(self, event, unit, powerType)
 
 	local cur, max, oldMax
 	if(event ~= 'ClassPowerDisable') then
-		cur = UnitPower('player', ClassPowerType)
-		max = UnitPowerMax('player', ClassPowerType)
+		cur = UnitPower('player', ClassPowerID)
+		max = UnitPowerMax('player', ClassPowerID)
 
 		for i = 1, max do
 			if(i <= cur) then
@@ -193,36 +193,27 @@ do
 	end
 
 	if(PlayerClass == 'MONK') then
-		ClassPowerType = SPELL_POWER_CHI
-		ClassPowerTypes = {
-			CHI = true,
-			DARK_FORCE = true,
-		}
+		ClassPowerID = SPELL_POWER_CHI
+		ClassPowerType = "CHI"
 	elseif(PlayerClass == 'PALADIN') then
-		ClassPowerType = SPELL_POWER_HOLY_POWER
-		ClassPowerTypes = {
-			HOLY_POWER = true,
-		}
+		ClassPowerID = SPELL_POWER_HOLY_POWER
+		ClassPowerType = "HOLY_POWER"
 		RequireSpell = 85673 -- Word of Glory
 	elseif(PlayerClass == 'PRIEST') then
-		ClassPowerType = SPELL_POWER_SHADOW_ORBS
-		ClassPowerTypes = {
-			SHADOW_ORBS = true,
-		}
+		ClassPowerID = SPELL_POWER_SHADOW_ORBS
+		ClassPowerType = "SHADOW_ORBS"
 		RequireSpec = SPEC_PRIEST_SHADOW
 		RequireSpell = 95740 -- Shadow Orbs
 	elseif(PlayerClass == 'WARLOCK') then
-		ClassPowerType = SPELL_POWER_SOUL_SHARDS
-		ClassPowerTypes = {
-			SOUL_SHARDS = true,
-		}
+		ClassPowerID = SPELL_POWER_SOUL_SHARDS
+		ClassPowerType = "SOUL_SHARDS"
 		RequireSpec = SPEC_WARLOCK_AFFLICTION
 		RequireSpell = WARLOCK_SOULBURN
 	end
 end
 
 local Enable = function(self, unit)
-	if(unit ~= 'player' or not ClassPowerType) then return end
+	if(unit ~= 'player' or not ClassPowerID) then return end
 
 	local element = self.ClassIcons
 	if(not element) then return end
