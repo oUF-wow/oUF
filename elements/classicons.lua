@@ -1,10 +1,12 @@
 --[[ Element: Class Icons
+
  Toggles the visibility of icons depending on the player's class and
  specialization.
 
  Widget
 
- ClassIcons - An array consisting of five UI Textures.
+ ClassIcons - An array consisting of as many UI Textures as the theoretical maximum
+ return of `UnitPowerMax`.
 
  Notes
 
@@ -68,7 +70,7 @@ local UpdateTexture = function(element)
 		desaturated = true
 	end
 
-	for i = 1, 5 do
+	for i = 1, #element do
 		local icon = element[i]
 		if(icon.SetDesaturated) then
 			icon:SetDesaturated(desaturated)
@@ -184,7 +186,7 @@ do
 		self:UnregisterEvent('UNIT_POWER_FREQUENT', Path)
 
 		local element = self.ClassIcons
-		for i = 1, 5 do
+		for i = 1, #element do
 			element[i]:Hide()
 		end
 
@@ -226,7 +228,7 @@ local Enable = function(self, unit)
 		self:RegisterEvent('PLAYER_TALENT_UPDATE', Visibility, true)
 	end
 
-	for i = 1, 5 do
+	for i = 1, #element do
 		local icon = element[i]
 		if(icon:IsObjectType'Texture' and not icon:GetTexture()) then
 			icon:SetTexCoord(0.45703125, 0.60546875, 0.44531250, 0.73437500)
