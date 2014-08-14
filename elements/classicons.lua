@@ -18,7 +18,7 @@
  Examples
 
    local ClassIcons = {}
-   for index = 1, 5 do
+   for index = 1, 6 do
       local Icon = self:CreateTexture(nil, 'BACKGROUND')
 
       -- Position and size.
@@ -81,7 +81,7 @@ local UpdateTexture = function(element)
 end
 
 local Update = function(self, event, unit, powerType)
-	if(unit and unit ~= 'player' or powerType ~= ClassPowerType) then
+	if(unit ~= 'player' or powerType ~= ClassPowerType) then
 		return
 	end
 
@@ -177,7 +177,7 @@ do
 	ClassPowerEnable = function(self)
 		self:RegisterEvent('UNIT_DISPLAYPOWER', Path)
 		self:RegisterEvent('UNIT_POWER_FREQUENT', Path)
-		Path(self, 'ClassPowerEnable')
+		Path(self, 'ClassPowerEnable', 'player', ClassPowerType)
 		isEnabled = true
 	end
 
@@ -190,7 +190,7 @@ do
 			element[i]:Hide()
 		end
 
-		Path(self, 'ClassPowerDisable')
+		Path(self, 'ClassPowerDisable', 'player', ClassPowerType)
 		isEnabled = nil
 	end
 
