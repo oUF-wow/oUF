@@ -8,7 +8,7 @@
 
  Notes
 
- Monk    - Harmony Orbs
+ Monk    - Chi Orbs
  Paladin - Holy Power
  Priest  - Shadow Orbs
  Warlock - Soul Shards
@@ -28,6 +28,15 @@
    
    -- Register with oUF
    self.ClassIcons = ClassIcons
+
+ Hooks
+
+ OverrideVisibility(self) - Used to completely override the internal visibility function.
+                            Removing the table key entry will make the element fall-back
+                            to its internal function again.
+ Override(self)           - Used to completely override the internal update function.
+                            Removing the table key entry will make the element fall-back
+                            to its internal function again.
 ]]
 
 local parent, ns = ...
@@ -36,9 +45,9 @@ local oUF = ns.oUF
 local PlayerClass = select(2, UnitClass'player')
 
 -- Holds the class specific stuff.
-local ClassPowerType, ClassPowerTypes
+local ClassPowerTypeID, ClassPowerType
 local ClassPowerEnable, ClassPowerDisable
-local RequireSpec, RequireSpell
+local RequireSpell
 
 local UpdateTexture = function(element)
 	local red, green, blue, desaturated
@@ -56,41 +65,24 @@ local UpdateTexture = function(element)
 	end
 
 	for i=1, 5 do
-		if(element[i].SetDesaturated) then
-			element[i]:SetDesaturated(desaturated)
+		local icon = element[i]
+		if(icon.SetDesaturated) then
+			icon:SetDesaturated(desaturated)
 		end
 
-		element[i]:SetVertexColor(red, green, blue)
-	end
-end
-
-local ToggleVehicle = function(self, state)
-	local element = self.ClassIcons
-	for i=1, 5 do
-		element[i]:Hide()
-	end
-
-	(element.UpdateTexture or UpdateTexture) (element)
-
-	if(state) then
-		ClassPowerDisable(self)
-	else
-		ClassPowerEnable(self)
+		icon:SetVertexColor(red, green, blue)
 	end
 end
 
 local Update = function(self, event, unit, powerType)
 	local element = self.ClassIcons
-	local hasVehicle = UnitHasVehicleUI('player')
-	if(element.__inVehicle ~= hasVehicle) then
-		element.__inVehicle = hasVehicle
-		ToggleVehicle(self, hasVehicle)
 
-		-- Continue the update if we left a vehicle.
-		if(hasVehicle) then return end
+	if((unit and unit ~= 'player') or (powerType and not ClassPowerType == powerType)) then
+		return
 	end
 
-	if((unit and unit ~= 'player') or (powerType and not ClassPowerTypes[powerType])) then
+	if((event ~= 'UNIT_DISPLAYPOWER' and event ~= 'UNIT_POWER_FREQUENT') and
+		RequireSpell and not IsPlayerSpell(RequireSpell)) then
 		return
 	end
 
@@ -98,8 +90,8 @@ local Update = function(self, event, unit, powerType)
 		element:PreUpdate()
 	end
 
-	local cur = UnitPower('player', ClassPowerType)
-	local max = UnitPowerMax('player', ClassPowerType)
+	local cur = UnitPower('player', ClassPowerTypeID)
+	local max = UnitPowerMax('player', ClassPowerTypeID)
 
 	for i=1, max do
 		if(i <= cur) then
@@ -110,9 +102,9 @@ local Update = function(self, event, unit, powerType)
 	end
 
 	local oldMax = element.__max
-	if(max ~= element.__max) then
-		if(max < element.__max) then
-			for i=max + 1, element.__max do
+	if(max ~= oldMax) then
+		if(max < oldMax) then
+			for i=max + 1, oldMax do
 				element[i]:Hide()
 			end
 		end
@@ -131,9 +123,7 @@ end
 
 local Visibility = function(self, event, unit)
 	local element = self.ClassIcons
-	if(
-		(RequireSpec and RequireSpec ~= GetSpecialization())
-		or (RequireSpell and not IsPlayerSpell(RequireSpell))) then
+	if(UnitHasVehicleUI('player') or (RequireSpell and not IsPlayerSpell(RequireSpell))) then
 		for i=1, 5 do
 			element[i]:Hide()
 		end
@@ -144,70 +134,40 @@ local Visibility = function(self, event, unit)
 	end
 end
 
+local VisibilityPath = function(self, ...)
+	return (self.ClassIcons.OverrideVisibility or Visibility) (self, ...)
+end
+
 local ForceUpdate = function(element)
-	return Path(element.__owner, 'ForceUpdate', element.__owner.unit)
+	return VisibilityPath(element.__owner, 'ForceUpdate', element.__owner.unit)
 end
 
 do
-	local _ClassPowerEnable = function(self)
-		self:RegisterEvent('UNIT_DISPLAYPOWER', Update)
-		self:RegisterEvent('UNIT_POWER_FREQUENT', Update)
+	ClassPowerEnable = function(self)
+		self:RegisterEvent('UNIT_DISPLAYPOWER', Path)
+		self:RegisterEvent('UNIT_POWER_FREQUENT', Path)
 	end
 
-	local _ClassPowerDisable = function(self)
-		self:UnregisterEvent('UNIT_DISPLAYPOWER', Update)
-		self:UnregisterEvent('UNIT_POWER_FREQUENT', Update)
+	ClassPowerDisable = function(self)
+		self:UnregisterEvent('UNIT_DISPLAYPOWER', Path)
+		self:UnregisterEvent('UNIT_POWER_FREQUENT', Path)
 	end
 
 	if(PlayerClass == 'MONK') then
-		ClassPowerType = SPELL_POWER_CHI
-		ClassPowerTypes = {
-			['CHI'] = true,
-			['DARK_FORCE'] = true,
-		}
-
-		ClassPowerEnable = _ClassPowerEnable
-		ClassPowerDisable = _ClassPowerDisable
+		ClassPowerTypeID = SPELL_POWER_CHI
+		ClassPowerType = 'CHI'
 	elseif(PlayerClass == 'PALADIN') then
-		ClassPowerType = SPELL_POWER_HOLY_POWER
-		ClassPowerTypes = {
-			HOLY_POWER = true,
-		}
-
-		ClassPowerEnable = _ClassPowerEnable
-		ClassPowerDisable = _ClassPowerDisable
+		ClassPowerTypeID = SPELL_POWER_HOLY_POWER
+		ClassPowerType = 'HOLY_POWER'
+		RequireSpell = 85673 -- Word of Glory
 	elseif(PlayerClass == 'PRIEST') then
-		ClassPowerType = SPELL_POWER_SHADOW_ORBS
-		ClassPowerTypes = {
-			SHADOW_ORBS = true,
-		}
-		RequireSpec = SPEC_PRIEST_SHADOW
-
-		ClassPowerEnable = function(self)
-			self:RegisterEvent('PLAYER_TALENT_UPDATE', Visibility, true)
-			return _ClassPowerEnable(self)
-		end
-
-		ClassPowerDisable = function(self)
-			self:UnregisterEvent('PLAYER_TALENT_UPDATE', Visibility)
-			return _ClassPowerDisable(self)
-		end
+		ClassPowerTypeID = SPELL_POWER_SHADOW_ORBS
+		ClassPowerType = 'SHADOW_ORBS'
+		RequireSpell = 95740 -- Shadow Orbs
 	elseif(PlayerClass == 'WARLOCK') then
-		ClassPowerType = SPELL_POWER_SOUL_SHARDS
-		ClassPowerTypes = {
-			SOUL_SHARDS = true,
-		}
+		ClassPowerTypeID = SPELL_POWER_SOUL_SHARDS
+		ClassPowerType = 'SOUL_SHARDS'
 		RequireSpell = WARLOCK_SOULBURN
-
-		ClassPowerEnable = function(self)
-			self:RegisterEvent('SPELLS_CHANGED', Visibility, true)
-			return _ClassPowerEnable(self)
-		end
-
-		ClassPowerDisable = function(self)
-			self:UnregisterEvent('SPELLS_CHANGED', Visibility)
-			return _ClassPowerDisable(self)
-		end
 	end
 end
 
@@ -219,8 +179,12 @@ local Enable = function(self, unit)
 	element.__max = 0
 	element.ForceUpdate = ForceUpdate
 
-	if(ClassPowerEnable) then
-		ClassPowerEnable(self)
+	if(ClassPowerType) then
+		VisibilityPath(self)
+
+		if(RequireSpell) then
+			self:RegisterEvent('SPELLS_CHANGED', VisibilityPath, true)
+		end
 
 		for i=1, 5 do
 			local icon = element[i]
@@ -241,6 +205,10 @@ local Disable = function(self)
 	if(not element) then return end
 
 	ClassPowerDisable(self)
+
+	if(RequireSpell) then
+		self:UnregisterEvent('SPELLS_CHANGED', VisibilityPath)
+	end
 end
 
-oUF:AddElement('ClassIcons', Update, Enable, Disable)
+oUF:AddElement('ClassIcons', VisibilityPath, Enable, Disable)
