@@ -38,7 +38,10 @@ local PlayerClass = select(2, UnitClass'player')
 -- Holds the class specific stuff.
 local ClassPowerType, ClassPowerTypes
 local ClassPowerEnable, ClassPowerDisable
-local RequireSpec, RequireSpell
+local RequireSpell
+
+local PALADIN_WORD_OF_GLORY = 85673
+local PRIEST_SHADOW_ORBS = 95740
 
 local UpdateTexture = function(element)
 	local red, green, blue, desaturated
@@ -101,23 +104,27 @@ local Update = function(self, event, unit, powerType)
 	local cur = UnitPower('player', ClassPowerType)
 	local max = UnitPowerMax('player', ClassPowerType)
 
-	for i=1, max do
-		if(i <= cur) then
-			element[i]:Show()
-		else
-			element[i]:Hide()
-		end
-	end
-
 	local oldMax = element.__max
-	if(max ~= element.__max) then
-		if(max < element.__max) then
-			for i=max + 1, element.__max do
+	if event ~= "UpdateVisibilityOnDisable" then
+		for i=1, max do
+			if(i <= cur) then
+				element[i]:Show()
+			else
 				element[i]:Hide()
 			end
 		end
 
-		element.__max = max
+		if(max ~= element.__max) then
+			if(max < element.__max) then
+				for i=max + 1, element.__max do
+					element[i]:Hide()
+				end
+			end
+
+			element.__max = max
+		end
+	else
+		cur, max = 0, 0
 	end
 
 	if(element.PostUpdate) then
@@ -129,18 +136,18 @@ local Path = function(self, ...)
 	return (self.ClassIcons.Override or Update) (self, ...)
 end
 
+
 local Visibility = function(self, event, unit)
 	local element = self.ClassIcons
-	if(
-		(RequireSpec and RequireSpec ~= GetSpecialization())
-		or (RequireSpell and not IsPlayerSpell(RequireSpell))) then
+	if(RequireSpell and not IsPlayerSpell(RequireSpell)) then
 		for i=1, 5 do
 			element[i]:Hide()
 		end
 		ClassPowerDisable(self)
+		return Path(self, 'UpdateVisibilityOnDisable')
 	else
 		ClassPowerEnable(self)
-		return Path(self, 'UpdateVisibility')
+		return Path(self, 'UpdateVisibilityOnEnable')
 	end
 end
 
@@ -149,12 +156,12 @@ local ForceUpdate = function(element)
 end
 
 do
-	local _ClassPowerEnable = function(self)
+	ClassPowerEnable = function(self)
 		self:RegisterEvent('UNIT_DISPLAYPOWER', Update)
 		self:RegisterEvent('UNIT_POWER_FREQUENT', Update)
 	end
 
-	local _ClassPowerDisable = function(self)
+	ClassPowerDisable = function(self)
 		self:UnregisterEvent('UNIT_DISPLAYPOWER', Update)
 		self:UnregisterEvent('UNIT_POWER_FREQUENT', Update)
 	end
@@ -165,49 +172,24 @@ do
 			['CHI'] = true,
 			['DARK_FORCE'] = true,
 		}
-
-		ClassPowerEnable = _ClassPowerEnable
-		ClassPowerDisable = _ClassPowerDisable
 	elseif(PlayerClass == 'PALADIN') then
 		ClassPowerType = SPELL_POWER_HOLY_POWER
 		ClassPowerTypes = {
 			HOLY_POWER = true,
 		}
-
-		ClassPowerEnable = _ClassPowerEnable
-		ClassPowerDisable = _ClassPowerDisable
+		RequireSpell = PALADIN_WORD_OF_GLORY
 	elseif(PlayerClass == 'PRIEST') then
 		ClassPowerType = SPELL_POWER_SHADOW_ORBS
 		ClassPowerTypes = {
 			SHADOW_ORBS = true,
 		}
-		RequireSpec = SPEC_PRIEST_SHADOW
-
-		ClassPowerEnable = function(self)
-			self:RegisterEvent('PLAYER_TALENT_UPDATE', Visibility, true)
-			return _ClassPowerEnable(self)
-		end
-
-		ClassPowerDisable = function(self)
-			self:UnregisterEvent('PLAYER_TALENT_UPDATE', Visibility)
-			return _ClassPowerDisable(self)
-		end
+		RequireSpell = PRIEST_SHADOW_ORBS
 	elseif(PlayerClass == 'WARLOCK') then
 		ClassPowerType = SPELL_POWER_SOUL_SHARDS
 		ClassPowerTypes = {
 			SOUL_SHARDS = true,
 		}
 		RequireSpell = WARLOCK_SOULBURN
-
-		ClassPowerEnable = function(self)
-			self:RegisterEvent('SPELLS_CHANGED', Visibility, true)
-			return _ClassPowerEnable(self)
-		end
-
-		ClassPowerDisable = function(self)
-			self:UnregisterEvent('SPELLS_CHANGED', Visibility)
-			return _ClassPowerDisable(self)
-		end
 	end
 end
 
@@ -219,28 +201,30 @@ local Enable = function(self, unit)
 	element.__max = 0
 	element.ForceUpdate = ForceUpdate
 
-	if(ClassPowerEnable) then
-		ClassPowerEnable(self)
-
-		for i=1, 5 do
-			local icon = element[i]
-			if(icon:IsObjectType'Texture' and not icon:GetTexture()) then
-				icon:SetTexCoord(0.45703125, 0.60546875, 0.44531250, 0.73437500)
-				icon:SetTexture([[Interface\PlayerFrame\Priest-ShadowUI]])
-			end
-		end
-
-		(element.UpdateTexture or UpdateTexture) (element)
-
-		return true
+	if(RequireSpell) then
+		self:RegisterEvent('SPELLS_CHANGED', Visibility)
 	end
+
+	for i=1, 5 do
+		local icon = element[i]
+		if(icon:IsObjectType'Texture' and not icon:GetTexture()) then
+			icon:SetTexCoord(0.45703125, 0.60546875, 0.44531250, 0.73437500)
+			icon:SetTexture([[Interface\PlayerFrame\Priest-ShadowUI]])
+		end
+	end
+
+	(element.UpdateTexture or UpdateTexture) (element)
+
+	return true
 end
 
 local Disable = function(self)
 	local element = self.ClassIcons
 	if(not element) then return end
 
-	ClassPowerDisable(self)
+	if(RequireSpell) then
+		self:UnregisterEvent('SPELLS_CHANGED', Visibility)
+	end
 end
 
 oUF:AddElement('ClassIcons', Update, Enable, Disable)
