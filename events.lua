@@ -26,7 +26,7 @@ Private.UpdateUnits = function(frame, unit, realUnit)
 			if registered and unit1 ~= unit then
 				-- RegisterUnitEvent erases previously registered units so
 				-- do not bother to unregister it
-				RegisterUnitEvent(frame, event, unit)
+				RegisterUnitEvent(frame, event, unit, realUnit)
 			end
 		end
 		frame.unit = unit
