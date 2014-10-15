@@ -58,7 +58,7 @@
 
 	<!--
 		Sub-object as a child of the parent unit frame:
-	<Button name="oUF_HeaderTargetTemplate" inherits="SecureUnitButtonTemplate" hidden="true" virtual="true">
+	<Button name="oUF_HeaderTargetTemplate" inherits="SecureUnitButtonTemplate" virtual="true">
 		<Frames>
 			<Button name="$parentTarget" inherits="SecureUnitButtonTemplate">
 				<Attributes>
@@ -70,7 +70,7 @@
 	</Button>
 
 		Separate unit template example:
-	<Button name="oUF_HeaderSeparateSubOjectsTemplate" inherits="SecureUnitButtonTemplate" hidden="true" virtual="true">
+	<Button name="oUF_HeaderSeparateSubOjectsTemplate" inherits="SecureUnitButtonTemplate" virtual="true">
 		<Attributes>
 			<Attribute name="oUF-onlyProcessChildren" type="boolean" value="true"/>
 		</Attributes>
