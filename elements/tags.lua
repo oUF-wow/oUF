@@ -281,16 +281,20 @@ local tagStrings = {
 	end]],
 
 	['soulshards'] = [[function()
-		local num = UnitPower('player', SPELL_POWER_SOUL_SHARDS)
-		if(num > 0) then
-			return num
+		if(IsPlayerSpell(WARLOCK_SOULBURN)) then
+			local num = UnitPower('player', SPELL_POWER_SOUL_SHARDS)
+			if(num > 0) then
+				return num
+			end
 		end
 	end]],
 
 	['holypower'] = [[function()
-		local num = UnitPower('player', SPELL_POWER_HOLY_POWER)
-		if(num > 0) then
-			return num
+		if(IsPlayerSpell(85673)) then
+			local num = UnitPower('player', SPELL_POWER_HOLY_POWER)
+			if(num > 0) then
+				return num
+			end
 		end
 	end]],
 
@@ -302,9 +306,11 @@ local tagStrings = {
 	end]],
 
 	['shadoworbs'] = [[function()
-		local num = UnitPower('player', SPELL_POWER_SHADOW_ORBS)
-		if(num > 0) then
-			return num
+		if(IsPlayerSpell(95740)) then
+			local num = UnitPower('player', SPELL_POWER_SHADOW_ORBS)
+			if(num > 0) then
+				return num
+			end
 		end
 	end]],
 
@@ -393,10 +399,10 @@ local tagEvents = {
 	["pereclipse"]          = 'UNIT_POWER',
 	['curmana']             = 'UNIT_POWER UNIT_MAXPOWER',
 	['maxmana']             = 'UNIT_POWER UNIT_MAXPOWER',
-	['soulshards']          = 'UNIT_POWER',
-	['holypower']           = 'UNIT_POWER',
+	['soulshards']          = 'UNIT_POWER SPELLS_CHANGED',
+	['holypower']           = 'UNIT_POWER SPELLS_CHANGED',
 	['chi']                 = 'UNIT_POWER',
-	['shadoworbs']          = 'UNIT_POWER',
+	['shadoworbs']          = 'UNIT_POWER SPELLS_CHANGED',
 }
 
 local unitlessEvents = {
