@@ -151,10 +151,10 @@ local UNIT_AURA = function(self, event, unit)
 	end
 end
 
-local ECLIPSE_DIRECTION_CHANGE = function(self, event, isLunar)
+local ECLIPSE_DIRECTION_CHANGE = function(self, event, direction)
 	local eb = self.EclipseBar
 
-	eb.directionIsLunar = isLunar
+	eb.direction = direction
 
 	if(eb.PostDirectionChange) then
 		--[[ :PostDirectionChange(unit)
