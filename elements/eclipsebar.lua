@@ -47,8 +47,8 @@ if(select(2, UnitClass('player')) ~= 'DRUID') then return end
 local parent, ns = ...
 local oUF = ns.oUF
 
-local ECLIPSE_BAR_SOLAR_BUFF = GetSpellInfo(ECLIPSE_BAR_SOLAR_BUFF_ID)
-local ECLIPSE_BAR_LUNAR_BUFF = GetSpellInfo(ECLIPSE_BAR_LUNAR_BUFF_ID)
+local ECLIPSE_BAR_SOLAR_BUFF = GetSpellInfo(171744)
+local ECLIPSE_BAR_LUNAR_BUFF = GetSpellInfo(171743)
 local SPELL_POWER_ECLIPSE = SPELL_POWER_ECLIPSE
 local MOONKIN_FORM = MOONKIN_FORM
 
