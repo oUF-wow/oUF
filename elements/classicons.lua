@@ -5,8 +5,8 @@
 
  Widget
 
- ClassIcons - An array consisting of as many UI Textures as the theoretical maximum
- return of `UnitPowerMax`.
+ ClassIcons - An array consisting of as many UI Textures as the theoretical
+ maximum return of `UnitPowerMax`.
 
  Notes
 
@@ -33,16 +33,17 @@
 
  Hooks
 
- OverrideVisibility(self) - Used to completely override the internal visibility function.
-                            Removing the table key entry will make the element fall-back
-                            to its internal function again.
- Override(self)           - Used to completely override the internal update function.
-                            Removing the table key entry will make the element fall-back
-                            to its internal function again.
- UpdateTexture(element)   - Used to completely override the internal function for
-                            updating the power icon textures. Removing the table key
-                            entry will make the element fall-back to its internal
-                            function again.
+ OverrideVisibility(self) - Used to completely override the internal visibility
+                            function. Removing the table key entry will make
+                            the element fall-back to its internal function
+                            again.
+ Override(self)           - Used to completely override the internal update
+                            function. Removing the table key entry will make the
+                            element fall-back to its internal function again.
+ UpdateTexture(element)   - Used to completely override the internal function
+                            for updating the power icon textures. Removing the
+                            table key entry will make the element fall-back to
+                            its internal function again.
 
 ]]
 
