@@ -36,12 +36,14 @@
 
  Hooks
 
- OverrideVisibility(self) - Used to completely override the internal visibility function.
-                            Removing the table key entry will make the element fall-back
-                            to its internal function again.
- Override(self)           - Used to completely override the internal update function.
-                            Removing the table key entry will make the element fall-back
-                            to its internal function again.
+ OverrideVisibility(self) - Used to completely override the internal visibility
+                            function. Removing the table key entry will make
+                            the element fall-back to its internal function
+                            again.
+ Override(self)           - Used to completely override the internal
+                            update function. Removing the table key entry will
+                            make the element fall-back to its internal function
+                            again.
 ]]
 
 local parent, ns = ...
