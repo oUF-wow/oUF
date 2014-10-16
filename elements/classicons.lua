@@ -143,7 +143,7 @@ local Update = function(self, event, unit, powerType)
 	end
 end
 
-local Visibility = function(self, event, unit)
+local function Visibility(self, event, unit)
 	local element = self.ClassIcons
 	local shouldEnable
 
