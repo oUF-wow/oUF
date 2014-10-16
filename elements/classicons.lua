@@ -161,7 +161,7 @@ local function Visibility(self, event, unit)
 	local isEnabled = element.isEnabled
 	if(shouldEnable and not isEnabled) then
 		ClassPowerEnable(self)
-	elseif(not shouldEnable and isEnabled) then
+	elseif(not shouldEnable and (isEnabled or isEnabled == nil)) then
 		ClassPowerDisable(self)
 	end
 end
@@ -196,7 +196,7 @@ do
 		end
 
 		Path(self, 'ClassPowerDisable', 'player', ClassPowerType)
-		self.ClassIcons.isEnabled = nil
+		self.ClassIcons.isEnabled = false
 	end
 
 	if(PlayerClass == 'MONK') then
