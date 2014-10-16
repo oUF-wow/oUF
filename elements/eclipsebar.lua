@@ -154,6 +154,7 @@ end
 local ECLIPSE_DIRECTION_CHANGE = function(self, event, direction)
 	local eb = self.EclipseBar
 
+	eb.directionIsLunar = direction == "moon"
 	eb.direction = direction
 
 	if(eb.PostDirectionChange) then
