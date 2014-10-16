@@ -227,7 +227,7 @@ local Enable = function(self, unit)
 	if(not element) then return end
 
 	element.__owner = self
-	element.__max = 0
+	element.__max = #element
 	element.ForceUpdate = ForceUpdate
 
 	if(RequireSpec) then
