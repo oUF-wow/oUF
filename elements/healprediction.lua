@@ -21,8 +21,8 @@
 
  .maxOverflow     - Defines the maximum amount of overflow past the end of the
                     health bar.
- .frequentUpdates - Update on UNIT_HEALTH_FREQUENT instead of UNIT_HEALTH. Use this if
-                    .frequentUpdates is also set on the Health element.
+ .frequentUpdates - Update on UNIT_HEALTH_FREQUENT instead of UNIT_HEALTH. Use
+                    this if .frequentUpdates is also set on the Health element.
 
  Examples
 
