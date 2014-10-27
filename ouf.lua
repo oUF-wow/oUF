@@ -11,7 +11,7 @@ local print = Private.print
 local error = Private.error
 
 local styles, style = {}
-local callback, objects = {}, {}
+local callback, objects, headers = {}, {}, {}
 
 local elements = {}
 local activeElements = {}
@@ -512,6 +512,9 @@ do
 		header.style = style
 		header.styleFunction = styleProxy
 
+		-- Expose the header through oUF.headers.
+		table.insert(headers, header)
+
 		-- We set it here so layouts can't directly override it.
 		header:SetAttribute('initialConfigFunction', initialConfigFunction)
 		header:SetAttribute('oUF-headerType', isPetHeader and 'pet' or 'group')
@@ -573,6 +576,7 @@ end
 
 oUF.version = _VERSION
 oUF.objects = objects
+oUF.headers = headers
 
 if(global) then
 	if(parent ~= 'oUF' and global == 'oUF') then
