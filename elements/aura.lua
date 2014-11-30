@@ -81,8 +81,6 @@ local OnLeave = function()
 end
 
 local createAuraIcon = function(icons, index)
-	icons.createdIcons = icons.createdIcons + 1
-
 	local button = CreateFrame("Button", nil, icons)
 	button:RegisterForClicks'RightButtonUp'
 
@@ -113,7 +111,6 @@ local createAuraIcon = function(icons, index)
 	button:SetScript("OnEnter", OnEnter)
 	button:SetScript("OnLeave", OnLeave)
 
-	table.insert(icons, button)
 
 	button.icon = icon
 	button.count = count
@@ -157,6 +154,9 @@ local updateIcon = function(unit, icons, index, offset, filter, isDebuff, visibl
 			 A button used to represent aura icons.
 			]]
 			icon = (icons.CreateIcon or createAuraIcon) (icons, n)
+			table.insert(icons, icon)
+			icons.createdIcons = icons.createdIcons + 1
+
 		end
 
 		local isPlayer
