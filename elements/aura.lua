@@ -153,10 +153,14 @@ local updateIcon = function(unit, icons, index, offset, filter, isDebuff, visibl
 
 			 A button used to represent aura icons.
 			]]
+			local prev = icons.createdIcons
 			icon = (icons.CreateIcon or createAuraIcon) (icons, n)
-			table.insert(icons, icon)
-			icons.createdIcons = icons.createdIcons + 1
 
+			-- XXX: Update the counters if the layout doesn't.
+			if(prev == icons.createdIcons) then
+				table.insert(icons, icon)
+				icons.createdIcons = icons.createdIcons + 1
+			end
 		end
 
 		local isPlayer
