@@ -333,7 +333,16 @@ local UpdateAuras = function(self, event, unit)
 			hasGap = true
 			visibleBuffs = visibleBuffs + 1
 
-			local icon = auras[visibleBuffs] or (auras.CreateIcon or createAuraIcon) (auras, visibleBuffs)
+			local icon = auras[visibleBuffs]
+			if(not icon) then
+				local prev = auras.createdIcons
+				icon = (auras.CreateIcon or createAuraIcon) (auras, visibleBuffs)
+				-- XXX: Update the counters if the layout doesn't.
+				if(prev == auras.createdIcons) then
+					table.insert(auras, icon)
+					auras.createdIcons = auras.createdIcons + 1
+				end
+			end
 
 			-- Prevent the icon from displaying anything.
 			if(icon.cd) then icon.cd:Hide() end
