@@ -36,7 +36,7 @@
       local Icon = Totem:CreateTexture(nil, "OVERLAY")
       Icon:SetAllPoints()
       
-      local Cooldown = CreateFrame("Cooldown", nil, Totem)
+      local Cooldown = CreateFrame("Cooldown", nil, Totem, "CooldownFrameTemplate")
       Cooldown:SetAllPoints()
       
       Totem.Icon = Icon
