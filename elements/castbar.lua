@@ -14,6 +14,8 @@
  .Shield   - A Texture to represent if it's possible to interrupt or spell
              steal.
  .SafeZone - A Texture to represent latency.
+ .Ticks    - An array of Textures to represent when channelled spells tick.
+             Expects Ticks[0] through Ticks[oUF.MAX_TICK_LINES - 1] elements.
 
  Credits
 
@@ -64,6 +66,15 @@
    -- Add safezone
    local SafeZone = Castbar:CreateTexture(nil, "OVERLAY")
    
+   -- Add ticks
+   local Ticks = {}
+    for k = 0, oUF.MAX_TICK_LINES - 1 do
+        Tick = CastBar:CreateTexture(nil, 'OVERLAY')
+        Tick:SetSize(20, 20)
+        Tick:SetBlendMode("ADD")
+        Ticks[k] = Tick
+    end
+
    -- Register it with oUF
    self.Castbar = Castbar
    self.Castbar.bg = Background
@@ -72,6 +83,7 @@
    self.Castbar.Text = Text
    self.Castbar.Icon = Icon
    self.Castbar.SafeZone = SafeZone
+   self.Castbar.Ticks = Ticks
 
  Hooks and Callbacks
 
@@ -83,6 +95,81 @@ local UnitName = UnitName
 local GetTime = GetTime
 local UnitCastingInfo = UnitCastingInfo
 local UnitChannelInfo = UnitChannelInfo
+
+-- Tick infos by spell name.
+local TickInfos = {
+	-- first : Whether the first tick is immediate upon cast
+	-- ticks : Number of total ticks.
+
+	-- druid
+	[GetSpellInfo(740)  ] = {first=false, ticks=4 }, -- Tranquility
+	[GetSpellInfo(16914)] = {first=false, ticks=10}, -- Hurricane
+
+	-- hunter
+	[GetSpellInfo(136)] = {first=false, ticks=5}, -- Mend Pet
+
+	-- mage
+	[GetSpellInfo(10)   ] = {first=false, ticks=8}, -- Blizzard
+	[GetSpellInfo(5143) ] = {first=false, ticks=5}, -- Arcane Missiles
+	[GetSpellInfo(12051)] = {first=true , ticks=4}, -- Evocation
+
+	-- monk
+	[GetSpellInfo(113656)] = {first=false, ticks=4}, -- Fists of Fury
+	[GetSpellInfo(115175)] = {first=false, ticks=8}, -- Soothing Mist
+	[GetSpellInfo(117952)] = {first=false, ticks=4}, -- Crackling Jade Lightning
+
+	-- priest
+	[GetSpellInfo(15407) ] = {first=false, ticks=4}, -- Mind Flay
+	[GetSpellInfo(32000) ] = {first=true , ticks=6}, -- Mind Sear
+	[GetSpellInfo(47540) ] = {first=true , ticks=3}, -- Penance
+	[GetSpellInfo(64843) ] = {first=false, ticks=4}, -- Divine Hymn
+	[GetSpellInfo(129197)] = {first=false, ticks=4}, -- Insanity
+
+	-- warlock
+	[GetSpellInfo(689)   ] = {first=false, ticks=6 }, -- Drain Life
+	[GetSpellInfo(755)   ] = {first=false, ticks=6 }, -- Health Funnel
+	[GetSpellInfo(1949)  ] = {first=true , ticks=15}, -- Hellfire
+	[GetSpellInfo(4629)  ] = {first=false, ticks=6 }, -- Rain of Fire
+	[GetSpellInfo(103103)] = {first=false, ticks=4 }, -- Drain Soul
+	[GetSpellInfo(108371)] = {first=false, ticks=6 }, -- Harvest Life
+}
+
+local MAX_TICK_LINES = 0
+
+local linesForTickinfo = function(tickinfo)
+	return (tickinfo.ticks
+		-- Don't show the 0% tick.
+		- 1
+		-- Don't show the 100% tick if there is one.
+		- (tickinfo.first and 1 or 0)
+	)
+end
+
+for spellId, tickinfo in pairs(TickInfos) do
+  MAX_TICK_LINES = math.max(MAX_TICK_LINES, linesForTickinfo(tickinfo))
+end
+
+local updateChannelTicks = function(castbar, tickinfo)
+	local ticks = castbar.Ticks
+	if not ticks then return end
+
+	if tickinfo and tickinfo.ticks > 1 then
+		local sections = tickinfo.ticks - (tickinfo.first and 1 or 0)
+		local delta = castbar:GetWidth() / sections
+		for k = 1, linesForTickinfo(tickinfo) do
+			local tick = ticks[k - 1]
+			if tick then
+				tick:ClearAllPoints()
+				tick:SetPoint("CENTER", castbar, "LEFT", delta * k, 0 )
+				tick:Show()
+			end
+		end
+	else
+		for k, v in pairs(ticks) do
+			v:Hide()
+		end
+	end
+end
 
 local updateSafeZone = function(self)
 	local sz = self.SafeZone
@@ -144,6 +231,8 @@ local UNIT_SPELLCAST_START = function(self, event, unit, spell)
 		sf:SetPoint'BOTTOM'
 		updateSafeZone(castbar)
 	end
+
+	updateChannelTicks(castbar, nil)
 
 	if(castbar.PostCastStart) then
 		castbar:PostCastStart(unit, name, castid)
@@ -302,6 +391,8 @@ local UNIT_SPELLCAST_CHANNEL_START = function(self, event, unit, spellname)
 		updateSafeZone(castbar)
 	end
 
+	updateChannelTicks(castbar, TickInfos[name])
+
 	if(castbar.PostChannelStart) then castbar:PostChannelStart(unit, name) end
 	castbar:Show()
 end
@@ -339,6 +430,8 @@ local UNIT_SPELLCAST_CHANNEL_STOP = function(self, event, unit, spellname)
 
 		castbar:SetValue(castbar.max)
 		castbar:Hide()
+
+		updateChannelTicks(castbar, nil)
 
 		if(castbar.PostChannelStop) then
 			return castbar:PostChannelStop(unit, spellname)
@@ -482,6 +575,16 @@ local Enable = function(object, unit)
 			sz:SetTexture(1, 0, 0)
 		end
 
+		local ticks = castbar.Ticks
+		if (ticks) then
+			for ticknum = 0, MAX_TICK_LINES - 1 do
+				local tick = ticks[ticknum]
+				if tick and (tick:IsObjectType'Texture' and not tick:GetTexture()) then
+					tick:SetTexture[[Interface\CastingBar\UI-CastingBar-Spark]]
+				end
+			end
+		end
+
 		castbar:Hide()
 
 		return true
@@ -509,3 +612,4 @@ local Disable = function(object, unit)
 end
 
 oUF:AddElement('Castbar', Update, Enable, Disable)
+oUF.MAX_TICK_LINES = MAX_TICK_LINES
