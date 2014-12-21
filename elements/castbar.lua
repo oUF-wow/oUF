@@ -15,7 +15,7 @@
              steal.
  .SafeZone - A Texture to represent latency.
  .Ticks    - An array of Textures to represent when channelled spells tick.
-             Expects at Ticks[0] through Ticks[oUF.MAX_TICK_LINES - 1] elements.
+             Expects Ticks[0] through Ticks[oUF.MAX_TICK_LINES - 1] elements.
 
  Credits
 
@@ -69,11 +69,10 @@
    -- Add ticks
    local Ticks = {}
     for k = 0, oUF.MAX_TICK_LINES - 1 do
-        Ticks[k] = CastBar:CreateTexture(nil, 'OVERLAY')
-        Ticks[k]:SetTexture(CastTexture)
-        Ticks[k]:SetVertexColor(0.8, 0.6, 0.6, 0.6)
-        Ticks[k]:SetWidth(2)
-        Ticks[k]:SetHeight(CastBar:GetHeight())
+        Tick = CastBar:CreateTexture(nil, 'OVERLAY')
+        Tick:SetSize(20, 20)
+        Tick:SetBlendMode("ADD")
+        Ticks[k] = Tick
     end
 
    -- Register it with oUF
@@ -581,10 +580,7 @@ local Enable = function(object, unit)
 			for ticknum = 0, MAX_TICK_LINES - 1 do
 				local tick = ticks[ticknum]
 				if tick and (tick:IsObjectType'Texture' and not tick:GetTexture()) then
-					tick:SetStatusBarTexture[[Interface\TargetingFrame\UI-StatusBar]]
-					tick:SetVertexColor(0.8, 0.6, 0.6)
-					tick:SetWidth(1)
-					tick:SetHeight(castbar:GetHeight())
+					tick:SetTexture[[Interface\CastingBar\UI-CastingBar-Spark]]
 				end
 			end
 		end
