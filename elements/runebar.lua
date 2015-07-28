@@ -92,6 +92,11 @@ local UpdateRune = function(self, event, rid)
 	end
 
 	local start, duration, runeReady = GetRuneCooldown(rid)
+	if(not start) then
+		-- As of 6.2.0 GetRuneCooldown returns nil values when zoning
+		return
+	end
+
 	if(runeReady) then
 		rune:SetMinMaxValues(0, 1)
 		rune:SetValue(1)
