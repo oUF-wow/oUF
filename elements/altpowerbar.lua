@@ -165,7 +165,10 @@ local Enable = function(self, unit)
 			if(not altpowerbar:GetScript('OnEnter')) then
 				altpowerbar:SetScript('OnEnter', OnEnter)
 			end
-			altpowerbar:SetScript('OnLeave', OnLeave)
+
+			if(not altpowerbar:GetScript('OnLeave')) then
+				altpowerbar:SetScript('OnLeave', OnLeave)
+			end
 
 			if(not altpowerbar.UpdateTooltip) then
 				altpowerbar.UpdateTooltip = UpdateTooltip
