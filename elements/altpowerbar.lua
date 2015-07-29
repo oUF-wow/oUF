@@ -89,7 +89,7 @@ local UpdatePower = function(self, event, unit, powerType)
 	local cur = UnitPower(unit, ALTERNATE_POWER_INDEX)
 	local max = UnitPowerMax(unit, ALTERNATE_POWER_INDEX)
 
-	local barType, min, _, _, _, _, _, _, _, powerName, powerTooltip = UnitAlternatePowerInfo(unit)
+	local barType, min, _, _, _, _, _, _, _, _, powerName, powerTooltip = UnitAlternatePowerInfo(unit)
 	altpowerbar.barType = barType
 	altpowerbar.powerName = powerName
 	altpowerbar.powerTooltip = powerTooltip
