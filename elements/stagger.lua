@@ -121,9 +121,12 @@ local Visibility = function(self, event, unit)
 			self.Stagger:Hide()
 			self:UnregisterEvent('UNIT_AURA', Path)
 		end
-	elseif not self.Stagger:IsShown() then
-		self.Stagger:Show()
-		self:RegisterEvent('UNIT_AURA', Path)
+	else
+		if(not self.Stagger:IsShown()) then
+			self.Stagger:Show()
+			self:RegisterEvent('UNIT_AURA', Path)
+		end
+
 		return Path(self, event, unit)
 	end
 end
