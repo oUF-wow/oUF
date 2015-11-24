@@ -4,6 +4,7 @@
 
 local parent, ns = ...
 local oUF = ns.oUF
+local isBetaClient = select(4, GetBuildInfo()) >= 70000
 
 local _PATTERN = '%[..-%]+'
 
@@ -322,6 +323,15 @@ local tagStrings = {
 	end]],
 }
 
+if(isBetaClient) then
+	tagStrings['arcanecharges'] = [[function()
+		local num = UnitPower('player', SPELL_POWER_ARCANE_CHARGES)
+		if(num > 0) then
+			return num
+		end
+	end]]
+end
+
 local tags = setmetatable(
 	{
 		curhp = UnitHealth,
@@ -404,6 +414,10 @@ local tagEvents = {
 	['chi']                 = 'UNIT_POWER',
 	['shadoworbs']          = 'UNIT_POWER SPELLS_CHANGED',
 }
+
+if(isBetaClient) then
+	tagEvents['arcanecharges'] = 'UNIT_POWER SPELLS_CHANGED'
+end
 
 local unitlessEvents = {
 	PLAYER_LEVEL_UP = true,
