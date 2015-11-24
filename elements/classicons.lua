@@ -217,7 +217,7 @@ do
 		else
 			RequireSpell = 85673 -- Word of Glory
 		end
-	elseif(PlayerClass == 'PRIEST') then
+	elseif(PlayerClass == 'PRIEST' and not isBetaClient) then
 		ClassPowerID = SPELL_POWER_SHADOW_ORBS
 		ClassPowerType = "SHADOW_ORBS"
 		RequireSpec = SPEC_PRIEST_SHADOW
