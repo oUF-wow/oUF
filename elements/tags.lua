@@ -274,11 +274,13 @@ local tagStrings = {
 	end]],
 
 	['soulshards'] = [[function()
-		if(IsPlayerSpell(WARLOCK_SOULBURN)) then
-			local num = UnitPower('player', SPELL_POWER_SOUL_SHARDS)
-			if(num > 0) then
-				return num
-			end
+		if(not isBetaClient and not IsPlayerSpell(WARLOCK_SOULBURN)) then
+			return
+		end
+
+		local num = UnitPower('player', SPELL_POWER_SOUL_SHARDS)
+		if(num > 0) then
+			return num
 		end
 	end]],
 
