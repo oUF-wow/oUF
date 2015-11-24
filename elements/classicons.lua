@@ -230,6 +230,10 @@ do
 			RequireSpec = SPEC_WARLOCK_AFFLICTION
 			RequireSpell = WARLOCK_SOULBURN
 		end
+	elseif(isBetaClient and PlayerClass == 'MAGE') then
+		ClassPowerID = SPELL_POWER_ARCANE_CHARGES
+		ClassPowerType = 'ARCANE_CHARGES'
+		RequireSpec = SPEC_MAGE_ARCANE
 	end
 end
 
