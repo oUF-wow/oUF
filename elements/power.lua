@@ -97,6 +97,7 @@
 
 local parent, ns = ...
 local oUF = ns.oUF
+local isBetaClient = select(4, GetBuildInfo()) >= 70000
 
 oUF.colors.power = {}
 for power, color in next, PowerBarColor do
@@ -113,8 +114,17 @@ oUF.colors.power[4] = oUF.colors.power["CHI"]
 oUF.colors.power[5] = oUF.colors.power["RUNES"]
 oUF.colors.power[6] = oUF.colors.power["RUNIC_POWER"]
 oUF.colors.power[7] = oUF.colors.power["SOUL_SHARDS"]
-oUF.colors.power[8] = oUF.colors.power["ECLIPSE"]
 oUF.colors.power[9] = oUF.colors.power["HOLY_POWER"]
+
+if(isBetaClient) then
+	oUF.colors.power[8] = oUF.colors.power['LUNAR_POWER']
+	oUF.colors.power[11] = oUF.colors.power['MAELSTROM']
+	oUF.colors.power[13] = oUF.colors.power['INSANITY']
+	oUF.colors.power[17] = oUF.colors.power['FURY']
+	oUF.colors.power[18] = oUF.colors.power['PAIN']
+else
+	oUF.colors.power[8] = oUF.colors.power['ECLIPSE']
+end
 
 local GetDisplayPower = function(unit)
 	local _, min, _, _, _, _, showOnRaid = UnitAlternatePowerInfo(unit)
