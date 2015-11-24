@@ -16,6 +16,7 @@ local _ENV = {
 		return string.format("|cff%02x%02x%02x", r*255, g*255, b*255)
 	end,
 	ColorGradient = oUF.ColorGradient,
+	isBetaClient = isBetaClient
 }
 local _PROXY = setmetatable(_ENV, {__index = _G})
 
@@ -291,6 +292,10 @@ local tagStrings = {
 	end]],
 
 	['chi'] = [[function()
+		if(isBetaClient and GetSpecialization() ~= SPEC_MONK_WINDWALKER) then
+			return
+		end
+
 		local num = UnitPower('player', SPELL_POWER_CHI)
 		if(num > 0) then
 			return num
@@ -410,14 +415,15 @@ local tagEvents = {
 	['maxmana']             = 'UNIT_POWER UNIT_MAXPOWER',
 	['soulshards']          = 'UNIT_POWER SPELLS_CHANGED',
 	['holypower']           = 'UNIT_POWER SPELLS_CHANGED',
-	['chi']                 = 'UNIT_POWER',
 }
 
 if(isBetaClient) then
 	tagEvents['arcanecharges'] = 'UNIT_POWER SPELLS_CHANGED'
+	tagEvents['chi'] = 'UNIT_POWER SPELLS_CHANGED'
 else
 	tagEvents['pereclipse'] = 'UNIT_POWER'
 	tagEvents['shadoworbs'] = 'UNIT_POWER SPELLS_CHANGED'
+	tagEvents['chi'] = 'UNIT_POWER'
 end
 
 local unitlessEvents = {
