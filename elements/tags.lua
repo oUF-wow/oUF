@@ -285,6 +285,10 @@ local tagStrings = {
 	end]],
 
 	['holypower'] = [[function()
+		if(isBetaClient and GetSpecialization() ~= SPEC_PALADIN_RETRIBUTION) then
+			return
+		end
+
 		if(IsPlayerSpell(85673)) then
 			local num = UnitPower('player', SPELL_POWER_HOLY_POWER)
 			if(num > 0) then
