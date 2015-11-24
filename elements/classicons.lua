@@ -230,6 +230,9 @@ do
 			RequireSpec = SPEC_WARLOCK_AFFLICTION
 			RequireSpell = WARLOCK_SOULBURN
 		end
+	elseif(PlayerClass == 'ROGUE' or PlayerClass == 'DRUID') then
+		ClassPowerID = SPELL_POWER_COMBO_POINTS
+		ClassPowerType = 'COMBO_POINTS'
 	elseif(isBetaClient and PlayerClass == 'MAGE') then
 		ClassPowerID = SPELL_POWER_ARCANE_CHARGES
 		ClassPowerType = 'ARCANE_CHARGES'
