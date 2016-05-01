@@ -205,7 +205,7 @@ do
 		ClassPowerType = "HOLY_POWER"
 
 		if(isBetaClient) then
-			RequireSpec = SPEC_PALADIN_RETRIBUTION
+			RequireSpell = 85256 -- Templar's Verdict
 		else
 			RequireSpell = 85673 -- Word of Glory
 		end
