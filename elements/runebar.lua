@@ -44,9 +44,7 @@ local parent, ns = ...
 local oUF = ns.oUF
 local isBetaClient = select(4, GetBuildInfo()) >= 70000
 
-if(isBetaClient) then
-	oUF.colors.rune = {0.8, 0.1, 1}
-else
+if(not isBetaClient) then
 	oUF.colors.runes = {
 		{1, 0, 0},   -- blood
 		{0, .5, 0},  -- unholy
@@ -149,7 +147,7 @@ local Enable = function(self, unit)
 				rune:SetStatusBarTexture[[Interface\TargetingFrame\UI-StatusBar]]
 
 				if(isBetaClient) then
-					local colors = oUF.colors.rune
+					local colors = oUF.colors.power.RUNES
 					rune:SetStatusBarColor(colors[1], colors[2], colors[3])
 				end
 			end
