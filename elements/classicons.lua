@@ -249,15 +249,22 @@ local Enable = function(self, unit)
 	element.ClassPowerEnable = ClassPowerEnable
 	element.ClassPowerDisable = ClassPowerDisable
 
+	local isChildrenTextures
 	for i = 1, #element do
 		local icon = element[i]
-		if(icon:IsObjectType'Texture' and not icon:GetTexture()) then
-			icon:SetTexCoord(0.45703125, 0.60546875, 0.44531250, 0.73437500)
-			icon:SetTexture([[Interface\PlayerFrame\Priest-ShadowUI]])
+		if(icon:IsObjectType'Texture') then
+			if(not icon:GetTexture()) then
+				icon:SetTexCoord(0.45703125, 0.60546875, 0.44531250, 0.73437500)
+				icon:SetTexture([[Interface\PlayerFrame\Priest-ShadowUI]])
+			end
+
+			isChildrenTextures = true
 		end
 	end
 
-	(element.UpdateTexture or UpdateTexture) (element)
+	if(isChildrenTextures) then
+		(element.UpdateTexture or UpdateTexture) (element)
+	end
 
 	return true
 end
