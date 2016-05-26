@@ -60,11 +60,6 @@ local RequireSpec, RequireSpell
 
 local UpdateTexture = function(element)
 	local color = oUF.colors.power[ClassPowerType]
-	if(not isBetaClient and ClassPowerType == 'COMBO_POINTS') then
-		-- COMBO_POINTS don't have a color pre-Legion so we need to supply that color
-		color = {1, 0.96, 0.41}
-	end
-
 	for i = 1, #element do
 		local icon = element[i]
 		if(icon.SetDesaturated) then

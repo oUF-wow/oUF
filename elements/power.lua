@@ -114,6 +114,11 @@ for power, color in next, PowerBarColor do
 	end
 end
 
+if(not isBetaClient) then
+	-- COMBO_POINTS don't have a color pre-Legion so we need to supply that color
+	oUF.colors.power.COMBO_POINTS = {1, 0.96, 0.41}
+end
+
 -- sourced from FrameXML/Constants.lua
 oUF.colors.power[0] = oUF.colors.power.MANA
 oUF.colors.power[1] = oUF.colors.power.RAGE
