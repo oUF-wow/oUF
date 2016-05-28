@@ -10,9 +10,10 @@
 
  Notes
 
+ All     - Combo Points
+ Mage    - Arcane Charges
  Monk    - Chi Orbs
  Paladin - Holy Power
- Priest  - Shadow Orbs
  Warlock - Soul Shards
 
  Examples
