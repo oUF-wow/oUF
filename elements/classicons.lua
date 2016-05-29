@@ -141,6 +141,10 @@ local Update = function(self, event, unit, powerType)
 	end
 end
 
+local Path = function(self, ...)
+	return (self.ClassIcons.Override or Update) (self, ...)
+end
+
 local function Visibility(self, event, unit)
 	local element = self.ClassIcons
 	local shouldEnable
@@ -163,11 +167,9 @@ local function Visibility(self, event, unit)
 		ClassPowerEnable(self)
 	elseif(not shouldEnable and (isEnabled or isEnabled == nil)) then
 		ClassPowerDisable(self)
+	elseif(shouldEnable and isEnabled) then
+		Path(self, event, unit, ClassPowerType)
 	end
-end
-
-local Path = function(self, ...)
-	return (self.ClassIcons.Override or Update) (self, ...)
 end
 
 local VisibilityPath = function(self, ...)
