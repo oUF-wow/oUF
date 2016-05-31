@@ -98,6 +98,8 @@
 local parent, ns = ...
 local oUF = ns.oUF
 
+local isBetaClient = select(4, GetBuildInfo()) >= 70000
+
 oUF.colors.power = {}
 for power, color in next, PowerBarColor do
 	if (type(power) == "string") then
@@ -147,8 +149,8 @@ local Update = function(self, event, unit)
 
 	local r, g, b, t
 	if(power.colorTapping and not UnitPlayerControlled(unit) and
-		UnitIsTapped(unit) and not UnitIsTappedByPlayer(unit) and not
-		UnitIsTappedByAllThreatList(unit)) then
+		(isBetaClient and UnitIsTapDenied(unit) or not isBetaClient and UnitIsTapped(unit) and
+		not UnitIsTappedByPlayer(unit) and not UnitIsTappedByAllThreatList(unit))) then
 		t = self.colors.tapped
 	elseif(power.colorDisconnected and disconnected) then
 		t = self.colors.disconnected
