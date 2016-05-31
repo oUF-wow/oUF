@@ -81,7 +81,7 @@ local Enable = function(self)
 		cpoints.__owner = self
 		cpoints.ForceUpdate = ForceUpdate
 
-		self:RegisterEvent('UNIT_COMBO_POINTS', Path, true)
+		self:RegisterEvent('UNIT_POWER_FREQUENT', Path)
 		self:RegisterEvent('PLAYER_TARGET_CHANGED', Path, true)
 
 		for index = 1, MAX_COMBO_POINTS do
@@ -102,7 +102,7 @@ local Disable = function(self)
 		for index = 1, MAX_COMBO_POINTS do
 			cpoints[index]:Hide()
 		end
-		self:UnregisterEvent('UNIT_COMBO_POINTS', Path)
+		self:UnregisterEvent('UNIT_POWER_FREQUENT', Path)
 		self:UnregisterEvent('PLAYER_TARGET_CHANGED', Path)
 	end
 end
