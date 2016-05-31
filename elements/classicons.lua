@@ -10,9 +10,11 @@
 
  Notes
 
+ Druid   - Combo Points
  Mage    - Arcane Charges
  Monk    - Chi Orbs
  Paladin - Holy Power
+ Rogue   - Combo Points
  Warlock - Soul Shards
 
  Examples
@@ -232,6 +234,13 @@ do
 		if(not isBetaClient) then
 			RequireSpec = SPEC_WARLOCK_AFFLICTION
 			RequireSpell = WARLOCK_SOULBURN
+		end
+	elseif(PlayerClass == 'ROGUE' or PlayerClass == 'DRUID') then
+		ClassPowerID = SPELL_POWER_COMBO_POINTS
+		ClassPowerType = 'COMBO_POINTS'
+
+		if(isBetaClient and PlayerClass == 'DRUID') then
+			RequireSpell = 5221 -- Shred
 		end
 	elseif(PlayerClass == 'MAGE' and isBetaClient) then
 		ClassPowerID = SPELL_POWER_ARCANE_CHARGES
