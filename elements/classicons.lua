@@ -227,8 +227,11 @@ do
 	elseif(PlayerClass == 'WARLOCK') then
 		ClassPowerID = SPELL_POWER_SOUL_SHARDS
 		ClassPowerType = "SOUL_SHARDS"
-		RequireSpec = SPEC_WARLOCK_AFFLICTION
-		RequireSpell = WARLOCK_SOULBURN
+
+		if(not isBetaClient) then
+			RequireSpec = SPEC_WARLOCK_AFFLICTION
+			RequireSpell = WARLOCK_SOULBURN
+		end
 	end
 end
 
