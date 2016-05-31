@@ -134,10 +134,11 @@ local Update = function(self, event, unit, powerType)
 	 max           - The maximum amount of power
 	 hasMaxChanged - Shows if the maximum amount has changed since the last
 	                 update
+	 powerType     - The type of power used
 	 event         - The event, which the update happened for
 	]]
 	if(element.PostUpdate) then
-		return element:PostUpdate(cur, max, oldMax ~= max, event)
+		return element:PostUpdate(cur, max, oldMax ~= max, powerType, event)
 	end
 end
 
