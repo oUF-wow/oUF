@@ -151,6 +151,14 @@ local function Disable(self)
 	local pp = self.PowerPrediction
 
 	if(pp) then
+		if(pp.mainBar) then
+			pp.mainBar:Hide()
+		end
+
+		if(pp.altBar) then
+			pp.altBar:Hide()
+		end
+
 		self:UnregisterEvent('UNIT_SPELLCAST_START', Path)
 		self:UnregisterEvent('UNIT_SPELLCAST_STOP', Path)
 		self:UnregisterEvent('UNIT_SPELLCAST_FAILED', Path)
