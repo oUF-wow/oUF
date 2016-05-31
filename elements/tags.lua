@@ -314,6 +314,15 @@ local tagStrings = {
 		end
 	end]],
 
+	['arcanecharges'] = [[function()
+		if(GetSpecialization() == SPEC_MAGE_ARCANE) then
+			local num = UnitPower('player', SPELL_POWER_ARCANE_CHARGES)
+			if(num > 0) then
+				return num
+			end
+		end
+	end]],
+
 	['affix'] = [[function(u)
 		local c = UnitClassification(u)
 		if(c == 'minus') then
@@ -403,6 +412,7 @@ local tagEvents = {
 	['holypower']           = 'UNIT_POWER SPELLS_CHANGED',
 	['chi']                 = 'UNIT_POWER',
 	['shadoworbs']          = 'UNIT_POWER SPELLS_CHANGED',
+	['arcanecharges']       = 'UNIT_POWER SPELLS_CHANGED',
 }
 
 local unitlessEvents = {
