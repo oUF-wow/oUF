@@ -62,27 +62,14 @@ local ClassPowerEnable, ClassPowerDisable
 local RequireSpec, RequireSpell
 
 local UpdateTexture = function(element)
-	local red, green, blue, desaturated
-	if(PlayerClass == 'MONK') then
-		red, green, blue = 0, 1, .59
-		desaturated = true
-	elseif(PlayerClass == 'WARLOCK') then
-		red, green, blue = 1, .5, 1
-		desaturated = true
-	elseif(PlayerClass == 'PRIEST') then
-		red, green, blue = 1, 1, 1
-	elseif(PlayerClass == 'PALADIN') then
-		red, green, blue = 1, .96, .41
-		desaturated = true
-	end
-
+	local color = oUF.colors.power[ClassPowerType]
 	for i = 1, #element do
 		local icon = element[i]
 		if(icon.SetDesaturated) then
-			icon:SetDesaturated(desaturated)
+			icon:SetDesaturated(PlayerClass ~= 'PRIEST')
 		end
 
-		icon:SetVertexColor(red, green, blue)
+		icon:SetVertexColor(color[1], color[2], color[3])
 	end
 end
 
