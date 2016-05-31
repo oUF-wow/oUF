@@ -10,6 +10,7 @@
 
  Notes
 
+ Mage    - Arcane Charges
  Monk    - Chi Orbs
  Paladin - Holy Power
  Warlock - Soul Shards
@@ -232,6 +233,10 @@ do
 			RequireSpec = SPEC_WARLOCK_AFFLICTION
 			RequireSpell = WARLOCK_SOULBURN
 		end
+	elseif(PlayerClass == 'MAGE' and isBetaClient) then
+		ClassPowerID = SPELL_POWER_ARCANE_CHARGES
+		ClassPowerType = 'ARCANE_CHARGES'
+		RequireSpec = SPEC_MAGE_ARCANE
 	end
 end
 
