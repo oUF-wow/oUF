@@ -10,11 +10,10 @@
 
  Notes
 
- Druid   - Combo Points
+ All     - Combo Points
  Mage    - Arcane Charges
  Monk    - Chi Orbs
  Paladin - Holy Power
- Rogue   - Combo Points
  Warlock - Soul Shards
 
  Examples
@@ -74,7 +73,8 @@ local UpdateTexture = function(element)
 end
 
 local Update = function(self, event, unit, powerType)
-	if(unit ~= 'player' or powerType ~= ClassPowerType) then
+	if(not (unit == 'player' and powerType == ClassPowerType)
+		and not (unit == 'vehicle' and powerType == 'COMBO_POINTS')) then
 		return
 	end
 
@@ -95,8 +95,14 @@ local Update = function(self, event, unit, powerType)
 
 	local cur, max, oldMax
 	if(event ~= 'ClassPowerDisable') then
-		cur = UnitPower('player', ClassPowerID)
-		max = UnitPowerMax('player', ClassPowerID)
+		if(unit == 'vehicle') then
+			-- XXX: UnitPower is bugged for vehicles, always returns 0 combo points
+			cur = GetComboPoints('vehicle', 'target')
+			max = MAX_COMBO_POINTS
+		else
+			cur = UnitPower('player', ClassPowerID)
+			max = UnitPowerMax('player', ClassPowerID)
+		end
 
 		for i = 1, max do
 			if(i <= cur) then
@@ -143,7 +149,9 @@ local function Visibility(self, event, unit)
 	local element = self.ClassIcons
 	local shouldEnable
 
-	if(not UnitHasVehicleUI('player')) then
+	if(UnitHasVehicleUI('player')) then
+		shouldEnable = true
+	elseif(ClassPowerID) then
 		if(not RequireSpec or RequireSpec == GetSpecialization()) then
 			if(not RequireSpell or IsPlayerSpell(RequireSpell)) then
 				self:UnregisterEvent('SPELLS_CHANGED', Visibility)
@@ -160,7 +168,7 @@ local function Visibility(self, event, unit)
 	elseif(not shouldEnable and (isEnabled or isEnabled == nil)) then
 		ClassPowerDisable(self)
 	elseif(shouldEnable and isEnabled) then
-		Path(self, event, unit, ClassPowerType)
+		Path(self, event, unit, unit == 'vehicle' and 'COMBO_POINTS' or ClassPowerType)
 	end
 end
 
@@ -176,7 +184,12 @@ do
 	ClassPowerEnable = function(self)
 		self:RegisterEvent('UNIT_DISPLAYPOWER', Path)
 		self:RegisterEvent('UNIT_POWER_FREQUENT', Path)
-		Path(self, 'ClassPowerEnable', 'player', ClassPowerType)
+
+		if(UnitHasVehicleUI('player')) then
+			Path(self, 'ClassPowerEnable', 'vehicle', 'COMBO_POINTS')
+		else
+			Path(self, 'ClassPowerEnable', 'player', ClassPowerType)
+		end
 		self.ClassIcons.isEnabled = true
 	end
 
@@ -237,7 +250,7 @@ do
 end
 
 local Enable = function(self, unit)
-	if(unit ~= 'player' or not ClassPowerID) then return end
+	if(unit ~= 'player') then return end
 
 	local element = self.ClassIcons
 	if(not element) then return end
