@@ -103,7 +103,15 @@ local isBetaClient = select(4, GetBuildInfo()) >= 70000
 oUF.colors.power = {}
 for power, color in next, PowerBarColor do
 	if (type(power) == "string") then
-		oUF.colors.power[power] = {color.r, color.g, color.b}
+		if(type(select(2, next(color))) == 'table') then
+			oUF.colors.power[power] = {}
+
+			for index, color in next, color do
+				oUF.colors.power[power][index] = {color.r, color.g, color.b}
+			end
+		else
+			oUF.colors.power[power] = {color.r, color.g, color.b}
+		end
 	end
 end
 
