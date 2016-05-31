@@ -50,6 +50,8 @@
 local parent, ns = ...
 local oUF = ns.oUF
 
+local isBetaClient = select(4, GetBuildInfo()) >= 70000
+
 local _, PlayerClass = UnitClass'player'
 
 -- Holds the class specific stuff.
@@ -205,6 +207,10 @@ do
 	if(PlayerClass == 'MONK') then
 		ClassPowerID = SPELL_POWER_CHI
 		ClassPowerType = "CHI"
+
+		if(isBetaClient) then
+			RequireSpec = SPEC_MONK_WINDWALKER
+		end
 	elseif(PlayerClass == 'PALADIN') then
 		ClassPowerID = SPELL_POWER_HOLY_POWER
 		ClassPowerType = "HOLY_POWER"
