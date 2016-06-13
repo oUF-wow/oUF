@@ -129,6 +129,7 @@ local function Enable(self)
 		self:RegisterEvent('UNIT_SPELLCAST_START', Path)
 		self:RegisterEvent('UNIT_SPELLCAST_STOP', Path)
 		self:RegisterEvent('UNIT_SPELLCAST_FAILED', Path)
+		self:RegisterEvent('UNIT_SPELLCAST_SUCCEEDED', Path)
 		self:RegisterEvent('UNIT_DISPLAYPOWER', Path)
 
 		if(pp.mainBar) then
@@ -162,6 +163,7 @@ local function Disable(self)
 		self:UnregisterEvent('UNIT_SPELLCAST_START', Path)
 		self:UnregisterEvent('UNIT_SPELLCAST_STOP', Path)
 		self:UnregisterEvent('UNIT_SPELLCAST_FAILED', Path)
+		self:UnregisterEvent('UNIT_SPELLCAST_SUCCEEDED', Path)
 		self:UnregisterEvent('UNIT_DISPLAYPOWER', Path)
 	end
 end
