@@ -28,6 +28,7 @@
 	<Script file='elements\runebar.lua' />
 	<Script file='elements\lfdrole.lua' />
 	<Script file='elements\healprediction.lua' />
+	<Script file='elements\powerprediction.lua' />
 	<Script file='elements\picon.lua' />
 	<Script file='elements\readycheck.lua' />
 	<Script file='elements\qicon.lua' />
@@ -38,6 +39,7 @@
 	<Script file='elements\druidmana.lua' />
 	<Script file='elements\classicons.lua' />
 	<Script file='elements\stagger.lua' />
+	<Script file='elements\prestige.lua' />
 
 	<!-- Clique support -->
 	<Button name="oUF_ClickCastUnitTemplate" virtual="true" inherits="SecureUnitButtonTemplate,SecureHandlerEnterLeaveTemplate">

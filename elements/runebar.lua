@@ -42,15 +42,16 @@ if select(2, UnitClass("player")) ~= "DEATHKNIGHT" then return end
 
 local parent, ns = ...
 local oUF = ns.oUF
+local isBetaClient = select(4, GetBuildInfo()) >= 70000
 
-oUF.colors.runes = {
-	{1, 0, 0},   -- blood
-	{0, .5, 0},  -- unholy
-	{0, 1, 1},   -- frost
-	{.9, .1, 1}, -- death
-}
-
-local runemap = { 1, 2, 5, 6, 3, 4 }
+if(not isBetaClient) then
+	oUF.colors.runes = {
+		{1, 0, 0},   -- blood
+		{0, .5, 0},  -- unholy
+		{0, 1, 1},   -- frost
+		{.9, .1, 1}, -- death
+	}
+end
 
 local OnUpdate = function(self, elapsed)
 	local duration = self.duration + elapsed
@@ -62,27 +63,37 @@ local OnUpdate = function(self, elapsed)
 	end
 end
 
-local UpdateType = function(self, event, rid, alt)
-	local runes = self.Runes
-	local rune = runes[runemap[rid]]
-	local colors = self.colors.runes[GetRuneType(rid) or alt]
-	local r, g, b = colors[1], colors[2], colors[3]
+local UpdateType, runemap
+if(not isBetaClient) then
+	runemap = { 1, 2, 5, 6, 3, 4 }
+	UpdateType = function(self, event, rid, alt)
+		local runes = self.Runes
+		local rune = runes[runemap[rid]]
+		local colors = self.colors.runes[GetRuneType(rid) or alt]
+		local r, g, b = colors[1], colors[2], colors[3]
 
-	rune:SetStatusBarColor(r, g, b)
+		rune:SetStatusBarColor(r, g, b)
 
-	if(rune.bg) then
-		local mu = rune.bg.multiplier or 1
-		rune.bg:SetVertexColor(r * mu, g * mu, b * mu)
-	end
+		if(rune.bg) then
+			local mu = rune.bg.multiplier or 1
+			rune.bg:SetVertexColor(r * mu, g * mu, b * mu)
+		end
 
-	if(runes.PostUpdateType) then
-		return runes:PostUpdateType(rune, rid, alt)
+		if(runes.PostUpdateType) then
+			return runes:PostUpdateType(rune, rid, alt)
+		end
 	end
 end
 
 local UpdateRune = function(self, event, rid)
 	local runes = self.Runes
-	local rune = runes[runemap[rid]]
+	local rune
+	if(isBetaClient) then
+		rune = runes[rid]
+	else
+		rune = runes[runemap[rid]]
+	end
+
 	if(not rune) then return end
 
 	if(UnitHasVehicleUI'player') then
@@ -130,18 +141,34 @@ local Enable = function(self, unit)
 		runes.ForceUpdate = ForceUpdate
 
 		for i=1, 6 do
-			local rune = runes[runemap[i]]
-			if(rune:IsObjectType'StatusBar' and not rune:GetStatusBarTexture()) then
-				rune:SetStatusBarTexture[[Interface\TargetingFrame\UI-StatusBar]]
+			local rune
+			if(isBetaClient) then
+				rune = runes[i]
+			else
+				rune = runes[runemap[i]]
 			end
 
-			-- From my minor testing this is a okey solution. A full login always remove
-			-- the death runes, or at least the clients knowledge about them.
-			UpdateType(self, nil, i, math.floor((i+1)/2))
+			if(rune:IsObjectType'StatusBar' and not rune:GetStatusBarTexture()) then
+				rune:SetStatusBarTexture[[Interface\TargetingFrame\UI-StatusBar]]
+
+				if(isBetaClient) then
+					local colors = oUF.colors.power.RUNES
+					rune:SetStatusBarColor(colors[1], colors[2], colors[3])
+				end
+			end
+
+			if(not isBetaClient) then
+				-- From my minor testing this is a okey solution. A full login always remove
+				-- the death runes, or at least the clients knowledge about them.
+				UpdateType(self, nil, i, math.floor((i+1)/2))
+			end
 		end
 
 		self:RegisterEvent("RUNE_POWER_UPDATE", UpdateRune, true)
-		self:RegisterEvent("RUNE_TYPE_UPDATE", UpdateType, true)
+
+		if(not isBetaClient) then
+			self:RegisterEvent("RUNE_TYPE_UPDATE", UpdateType, true)
+		end
 
 		-- oUF leaves the vehicle events registered on the player frame, so
 		-- buffs and such are correctly updated when entering/exiting vehicles.
@@ -159,7 +186,10 @@ local Disable = function(self)
 	RuneFrame:Show()
 
 	self:UnregisterEvent("RUNE_POWER_UPDATE", UpdateRune)
-	self:UnregisterEvent("RUNE_TYPE_UPDATE", UpdateType)
+
+	if(not isBetaClient) then
+		self:UnregisterEvent("RUNE_TYPE_UPDATE", UpdateType)
+	end
 end
 
 oUF:AddElement("Runes", Update, Enable, Disable)

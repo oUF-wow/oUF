@@ -42,6 +42,7 @@
                   to its internal function again.
 ]]
 
+if(select(4, GetBuildInfo()) >= 70000) then return end -- XXX: beta client
 if(select(2, UnitClass('player')) ~= 'DRUID') then return end
 
 local parent, ns = ...
