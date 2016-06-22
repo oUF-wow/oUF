@@ -54,9 +54,9 @@ local STAGGER_YELLOW_TRANSITION = STAGGER_YELLOW_TRANSITION
 local STAGGER_RED_TRANSITION = STAGGER_RED_TRANSITION
 
 -- table indices of bar colors
-local GREEN_INDEX = 1;
-local YELLOW_INDEX = 2;
-local RED_INDEX = 3;
+local STAGGER_GREEN_INDEX = STAGGER_GREEN_INDEX
+local STAGGER_YELLOW_INDEX = STAGGER_YELLOW_INDEX
+local STAGGER_RED_INDEX = STAGGER_RED_INDEX
 
 local UnitHealthMax = UnitHealthMax
 local UnitStagger = UnitStagger
@@ -88,11 +88,11 @@ local Update = function(self, event, unit)
 
 	local rgb
 	if(staggerPercent >= STAGGER_RED_TRANSITION) then
-		rgb = color[RED_INDEX]
+		rgb = color[STAGGER_RED_INDEX]
 	elseif(staggerPercent > STAGGER_YELLOW_TRANSITION) then
-		rgb = color[YELLOW_INDEX]
+		rgb = color[STAGGER_YELLOW_INDEX]
 	else
-		rgb = color[GREEN_INDEX]
+		rgb = color[STAGGER_GREEN_INDEX]
 	end
 
 	local r, g, b = rgb[1], rgb[2], rgb[3]
