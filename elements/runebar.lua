@@ -65,27 +65,28 @@ local Update = function(self, event, rid)
 	local rune = runes[rid]
 	if(not rune) then return end
 
+	local start, duration, runeReady
 	if(UnitHasVehicleUI'player') then
-		return rune:Hide()
+		rune:Hide()
 	else
+		start, duration, runeReady = GetRuneCooldown(rid)
+		if(not start) then
+			-- As of 6.2.0 GetRuneCooldown returns nil values when zoning
+			return
+		end
+
+		if(runeReady) then
+			rune:SetMinMaxValues(0, 1)
+			rune:SetValue(1)
+			rune:SetScript("OnUpdate", nil)
+		else
+			rune.duration = GetTime() - start
+			rune.max = duration
+			rune:SetMinMaxValues(1, duration)
+			rune:SetScript("OnUpdate", OnUpdate)
+		end
+
 		rune:Show()
-	end
-
-	local start, duration, runeReady = GetRuneCooldown(rid)
-	if(not start) then
-		-- As of 6.2.0 GetRuneCooldown returns nil values when zoning
-		return
-	end
-
-	if(runeReady) then
-		rune:SetMinMaxValues(0, 1)
-		rune:SetValue(1)
-		rune:SetScript("OnUpdate", nil)
-	else
-		rune.duration = GetTime() - start
-		rune.max = duration
-		rune:SetMinMaxValues(1, duration)
-		rune:SetScript("OnUpdate", OnUpdate)
 	end
 
 	if(runes.PostUpdate) then
