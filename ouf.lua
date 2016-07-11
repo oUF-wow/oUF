@@ -62,7 +62,7 @@ local updateActiveUnit = function(self, event, unit)
 end
 
 local function updateArenaPreparation(self, event)
-	if(event == 'ARENA_OPPONENT_UPDATE' and not UnitWatchRegistered(self)) then
+	if(event == 'ARENA_OPPONENT_UPDATE' and not self:IsEnabled()) then
 		self:Enable()
 		self:UnregisterEvent(event, updateArenaPreparation)
 	elseif(event == 'PLAYER_ENTERING_WORLD' and not UnitExists(self.unit)) then
@@ -70,7 +70,7 @@ local function updateArenaPreparation(self, event)
 	elseif(event == 'ARENA_PREP_OPPONENT_SPECIALIZATIONS') then
 		local specID = GetArenaOpponentSpec(self.id)
 		if(specID) then
-			if(UnitWatchRegistered(self)) then
+			if(self:IsEnabled()) then
 				self:Disable()
 				self:RegisterEvent('ARENA_OPPONENT_UPDATE', updateArenaPreparation)
 			end
@@ -160,6 +160,7 @@ for k, v in pairs{
 		return active and active[name]
 	end,
 
+	IsEnabled = UnitWatchRegistered,
 	Enable = RegisterUnitWatch,
 	Disable = function(self)
 		UnregisterUnitWatch(self)
