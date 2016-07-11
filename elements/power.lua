@@ -124,7 +124,8 @@ local GetDisplayPower = function(unit)
 end
 
 local Update = function(self, event, unit)
-	if(self.unit ~= unit) then return end
+	local arenaPrep = event == 'ArenaPreparation'
+	if(self.unit ~= unit and not arenaPrep) then return end
 	local power = self.Power
 
 	if(power.PreUpdate) then power:PreUpdate(unit) end
@@ -133,7 +134,14 @@ local Update = function(self, event, unit)
 	if power.displayAltPower then
 		displayType, min = GetDisplayPower(unit)
 	end
-	local cur, max = UnitPower(unit, displayType), UnitPowerMax(unit, displayType)
+
+	local cur, max
+	if(arenaPrep) then
+		cur, max = 1, 1
+	else
+		cur, max = UnitPower(unit, displayType), UnitPowerMax(unit, displayType)
+	end
+
 	local disconnected = not UnitIsConnected(unit)
 	power:SetMinMaxValues(min or 0, max)
 
