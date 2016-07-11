@@ -154,7 +154,10 @@ local Update = function(self, event, unit)
 	power.disconnected = disconnected
 
 	local r, g, b, t
-	if(power.colorTapping and not UnitPlayerControlled(unit) and
+	if(power.colorClass and arenaPrep) then
+		local _, _, _, _, _, _, class = GetSpecializationInfoByID(GetArenaOpponentSpec(self.id))
+		t = self.colors.class[class]
+	elseif(power.colorTapping and not UnitPlayerControlled(unit) and
 		UnitIsTapped(unit) and not UnitIsTappedByPlayer(unit) and not
 		UnitIsTappedByAllThreatList(unit)) then
 		t = self.colors.tapped
