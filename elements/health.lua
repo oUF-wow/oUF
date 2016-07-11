@@ -89,12 +89,19 @@ local oUF = ns.oUF
 oUF.colors.health = {49/255, 207/255, 37/255}
 
 local Update = function(self, event, unit)
-	if(self.unit ~= unit) then return end
+	local arenaPrep = event == 'ArenaPreparation'
+	if(self.unit ~= unit and not arenaPrep) then return end
 	local health = self.Health
 
 	if(health.PreUpdate) then health:PreUpdate(unit) end
 
-	local min, max = UnitHealth(unit), UnitHealthMax(unit)
+	local min, max
+	if(arenaPrep) then
+		min, max = 1, 1
+	else
+		min, max = UnitHealth(unit), UnitHealthMax(unit)
+	end
+
 	local disconnected = not UnitIsConnected(unit)
 	health:SetMinMaxValues(0, max)
 
