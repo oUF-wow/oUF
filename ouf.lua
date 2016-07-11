@@ -61,6 +61,25 @@ local updateActiveUnit = function(self, event, unit)
 	end
 end
 
+local function updateArenaPreparation(self, event)
+	if(event == 'ARENA_OPPONENT_UPDATE' and not UnitWatchRegistered(self)) then
+		self:Enable()
+		self:UnregisterEvent(event, updateArenaPreparation)
+	elseif(event == 'PLAYER_ENTERING_WORLD' and not UnitExists(self.unit)) then
+		updateArenaPreparation(self, 'ARENA_PREP_OPPONENT_SPECIALIZATIONS')
+	elseif(event == 'ARENA_PREP_OPPONENT_SPECIALIZATIONS') then
+		local specID = GetArenaOpponentSpec(self.id)
+		if(specID) then
+			if(UnitWatchRegistered(self)) then
+				self:Disable()
+				self:RegisterEvent('ARENA_OPPONENT_UPDATE', updateArenaPreparation)
+			end
+
+			self:Show()
+		end
+	end
+end
+
 local iterateChildren = function(...)
 	for l = 1, select("#", ...) do
 		local obj = select(l, ...)
@@ -271,6 +290,12 @@ local initObject = function(unit, style, styleFunc, header, ...)
 
 		for _, func in next, callback do
 			func(object)
+		end
+
+		-- Arena preparation fluff
+		if(unit and unit:match'(arena)%d?$' == 'arena') then
+			object:RegisterEvent('ARENA_PREP_OPPONENT_SPECIALIZATIONS', updateArenaPreparation, true)
+			object:HookScript('OnEvent', updateArenaPreparation)
 		end
 
 		-- Make Clique happy
