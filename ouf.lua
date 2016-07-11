@@ -76,6 +76,7 @@ local function updateArenaPreparation(self, event)
 			end
 
 			self:Show()
+			self:ForceUpdateAllElements('ArenaPreparation')
 		end
 	end
 end
@@ -165,20 +166,24 @@ for k, v in pairs{
 		self:Hide()
 	end,
 
-	UpdateAllElements = function(self, event)
-		local unit = self.unit
-		if(not UnitExists(unit)) then return end
-
+	ForceUpdateAllElements = function(self, event)
 		if(self.PreUpdate) then
 			self:PreUpdate(event)
 		end
 
+		local unit = self.unit
 		for _, func in next, self.__elements do
 			func(self, event, unit)
 		end
 
 		if(self.PostUpdate) then
 			self:PostUpdate(event)
+		end
+	end,
+
+	UpdateAllElements = function(self, event)
+		if(UnitExists(self.unit)) then
+			self:ForceUpdateAllElements(event)
 		end
 	end,
 } do
