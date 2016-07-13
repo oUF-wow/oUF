@@ -42,11 +42,36 @@ local parent, ns = ...
 local oUF = ns.oUF
 
 local function OnFinished(self)
-	self:GetParent():Hide()
+	local element = self:GetParent()
+	element:Hide()
+
+	--[[ :PostUpdateFadeOut()
+
+	 Called after the element has been faded out.
+
+	 Arguments
+
+	 self - The ReadyCheck element.
+	]]
+	if(element.PostUpdateFadeOut) then
+		element:PostUpdateFadeOut()
+	end
 end
 
 local Update = function(self, event)
 	local element = self.ReadyCheck
+
+	--[[ :PreUpdate()
+
+	 Called before the element has been updated.
+
+	 Arguments
+
+	 self - The ReadyCheck element.
+	]]
+	if(element.PreUpdate) then
+		element:PreUpdate()
+	end
 
 	local unit = self.unit
 	local status = GetReadyCheckStatus(unit)
@@ -72,6 +97,19 @@ local Update = function(self, event)
 		end
 
 		element.Animation:Play()
+	end
+
+	--[[ :PostUpdate(status)
+
+	 Called after the element has been updated.
+
+	 Arguments
+
+	 self   - The ReadyCheck element.
+	 status - The units ready check status, if any.
+	]]
+	if(element.PostUpdate) then
+		return element:PostUpdate(status)
 	end
 end
 
