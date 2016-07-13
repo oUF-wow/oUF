@@ -13,10 +13,13 @@
 
  Options
 
- .finishedTime - The number of seconds the icon should stick after a check has
-                 completed. Defaults to 10 seconds.
- .fadeTime     - The number of seconds the icon should used to fade away after
-                 the stick duration has completed. Defaults to 1.5 seconds.
+ .finishedTime    - The number of seconds the icon should stick after a check has
+                    completed. Defaults to 10 seconds.
+ .fadeTime        - The number of seconds the icon should used to fade away after
+                    the stick duration has completed. Defaults to 1.5 seconds.
+ .readyTexture    - Path to alternate texture for the ready check "ready" status.
+ .notReadyTexture - Path to alternate texture for the ready check "notready" status.
+ .waitingTexture  - Path to alternate texture for the ready check "waiting" status.
 
  Examples
 
@@ -49,11 +52,11 @@ local Update = function(self, event)
 	local status = GetReadyCheckStatus(unit)
 	if(UnitExists(unit) and status) then
 		if(status == 'ready') then
-			element:SetTexture(READY_CHECK_READY_TEXTURE)
+			element:SetTexture(element.readyTexture or READY_CHECK_READY_TEXTURE)
 		elseif(status == 'notready') then
-			element:SetTexture(READY_CHECK_NOT_READY_TEXTURE)
+			element:SetTexture(element.notReadyTexture or READY_CHECK_NOT_READY_TEXTURE)
 		else
-			element:SetTexture(READY_CHECK_WAITING_TEXTURE)
+			element:SetTexture(element.waitingTexture or READY_CHECK_WAITING_TEXTURE)
 		end
 
 		element.status = status
