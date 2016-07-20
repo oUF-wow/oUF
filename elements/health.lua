@@ -86,6 +86,8 @@
 local parent, ns = ...
 local oUF = ns.oUF
 
+local isBetaClient = select(4, GetBuildInfo()) >= 70000
+
 oUF.colors.health = {49/255, 207/255, 37/255}
 
 local Update = function(self, event, unit)
@@ -108,8 +110,8 @@ local Update = function(self, event, unit)
 
 	local r, g, b, t
 	if(health.colorTapping and not UnitPlayerControlled(unit) and
-		UnitIsTapped(unit) and not UnitIsTappedByPlayer(unit) and not
-		UnitIsTappedByAllThreatList(unit)) then
+		(isBetaClient and UnitIsTapDenied(unit) or not isBetaClient and UnitIsTapped(unit) and
+		not UnitIsTappedByPlayer(unit) and not UnitIsTappedByAllThreatList(unit))) then
 		t = self.colors.tapped
 	elseif(health.colorDisconnected and not UnitIsConnected(unit)) then
 		t = self.colors.disconnected
