@@ -62,13 +62,15 @@ local RequireSpec, RequireSpell
 
 local UpdateTexture = function(element)
 	local color = oUF.colors.power[ClassPowerType]
-	for i = 1, #element do
-		local icon = element[i]
-		if(icon.SetDesaturated) then
-			icon:SetDesaturated(PlayerClass ~= 'PRIEST')
-		end
+	if (color ~= nil) then
+		for i = 1, #element do
+			local icon = element[i]
+			if(icon.SetDesaturated) then
+				icon:SetDesaturated(PlayerClass ~= 'PRIEST')
+			end
 
-		icon:SetVertexColor(color[1], color[2], color[3])
+			icon:SetVertexColor(color[1], color[2], color[3])
+		end
 	end
 end
 
