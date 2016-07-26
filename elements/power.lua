@@ -61,8 +61,9 @@
 
  Examples
 
-   -- Position and size
+   -- Position, size and custom layout
    local Power = CreateFrame("StatusBar", nil, self)
+   Power.statusbar = "StatusBar"
    Power:SetHeight(20)
    Power:SetPoint('BOTTOM')
    Power:SetPoint('LEFT')
@@ -80,6 +81,7 @@
    Power.colorPower = true
    Power.colorClass = true
    Power.colorReaction = true
+   Power.atlasEnable = true
    
    -- Make the background darker.
    Background.multiplier = .5
@@ -99,6 +101,8 @@ local parent, ns = ...
 local oUF = ns.oUF
 
 local isBetaClient = select(4, GetBuildInfo()) >= 70000
+-- required to proper working SetStatusBarAtlas()
+local statusbar = [[Interface\TargetingFrame\UI-StatusBar]] -- default StatusBarTexture
 
 oUF.colors.power = {}
 for power, color in next, PowerBarColor do
@@ -110,7 +114,7 @@ for power, color in next, PowerBarColor do
 				oUF.colors.power[power][index] = {color.r, color.g, color.b}
 			end
 		else
-			oUF.colors.power[power] = {color.r, color.g, color.b}
+			oUF.colors.power[power] = {color.r, color.g, color.b, atlas = color.atlas}
 		end
 	end
 end
@@ -208,9 +212,23 @@ local Update = function(self, event, unit)
         local adjust = 0 - (min or 0)
 		r, g, b = self.ColorGradient(cur + adjust, max + adjust, unpack(power.smoothGradient or self.colors.smooth))
 	end
-
+	
+	if(power.statusbar) then
+		statusbar = power.statusbar
+	end
+	
 	if(t) then
-		r, g, b = t[1], t[2], t[3]
+		if ( power.colorPower and power.atlasEnable ) then
+			if ( t.atlas ) then
+				power:SetStatusBarAtlas(t.atlas);
+				power:SetStatusBarColor(1, 1, 1);
+			else
+				power:SetStatusBarTexture(statusbar)
+				r, g, b = t[1], t[2], t[3]
+			end
+		else
+			r, g, b = t[1], t[2], t[3]
+		end
 	end
 
 	if(b) then
@@ -258,7 +276,10 @@ local Enable = function(self, unit)
 		self:RegisterEvent('UNIT_FACTION', Path)
 
 		if(power:IsObjectType'StatusBar' and not power:GetStatusBarTexture()) then
-			power:SetStatusBarTexture[[Interface\TargetingFrame\UI-StatusBar]]
+			if(power.colorPower and power.statusbar and power.atlasEnable) then
+				statusbar = power.statusbar
+			end
+			power:SetStatusBarTexture(statusbar)
 		end
 
 		return true
