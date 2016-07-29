@@ -305,15 +305,6 @@ local tagStrings = {
 		end
 	end]],
 
-	['shadoworbs'] = [[function()
-		if(IsPlayerSpell(95740)) then
-			local num = UnitPower('player', SPELL_POWER_SHADOW_ORBS)
-			if(num > 0) then
-				return num
-			end
-		end
-	end]],
-
 	['arcanecharges'] = [[function()
 		if(GetSpecialization() == SPEC_MAGE_ARCANE) then
 			local num = UnitPower('player', SPELL_POWER_ARCANE_CHARGES)
@@ -411,7 +402,6 @@ local tagEvents = {
 	['soulshards']          = 'UNIT_POWER SPELLS_CHANGED',
 	['holypower']           = 'UNIT_POWER SPELLS_CHANGED',
 	['chi']                 = 'UNIT_POWER',
-	['shadoworbs']          = 'UNIT_POWER SPELLS_CHANGED',
 	['arcanecharges']       = 'UNIT_POWER SPELLS_CHANGED',
 }
 
