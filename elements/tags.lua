@@ -288,7 +288,7 @@ local tagStrings = {
 	end]],
 
 	['holypower'] = [[function()
-		if(IsPlayerSpell(85673)) then
+		if(GetSpecialization() == SPEC_PALADIN_RETRIBUTION) then
 			local num = UnitPower('player', SPELL_POWER_HOLY_POWER)
 			if(num > 0) then
 				return num
