@@ -299,9 +299,11 @@ local tagStrings = {
 	end]],
 
 	['chi'] = [[function()
-		local num = UnitPower('player', SPELL_POWER_CHI)
-		if(num > 0) then
-			return num
+		if(GetSpecialization() == SPEC_MONK_WINDWALKER) then
+			local num = UnitPower('player', SPELL_POWER_CHI)
+			if(num > 0) then
+				return num
+			end
 		end
 	end]],
 
@@ -401,7 +403,7 @@ local tagEvents = {
 	['maxmana']             = 'UNIT_POWER UNIT_MAXPOWER',
 	['soulshards']          = 'UNIT_POWER SPELLS_CHANGED',
 	['holypower']           = 'UNIT_POWER SPELLS_CHANGED',
-	['chi']                 = 'UNIT_POWER',
+	['chi']                 = 'UNIT_POWER SPELLS_CHANGED',
 	['arcanecharges']       = 'UNIT_POWER SPELLS_CHANGED',
 }
 
