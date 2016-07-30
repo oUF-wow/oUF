@@ -129,14 +129,14 @@ local createAuraIcon = function(icons, index)
 	return button
 end
 
-local customFilter = function(icons, unit, icon, name, rank, texture, count, dtype, duration, timeLeft, caster)
+local customFilter = function(icons, unit, icon, name, rank, texture, count, dtype, duration, expirationTime, caster)
 	if((icons.onlyShowPlayer and icon.isPlayer) or (not icons.onlyShowPlayer and name)) then
 		return true
 	end
 end
 
 local updateIcon = function(unit, icons, index, offset, filter, isDebuff, visible)
-	local name, rank, texture, count, dtype, duration, timeLeft, caster, isStealable, shouldConsolidate, spellID, canApplyAura, isBossDebuff = UnitAura(unit, index, filter)
+	local name, rank, texture, count, dtype, duration, expirationTime, caster, isStealable, shouldConsolidate, spellID, canApplyAura, isBossDebuff, casterIsPlayer, nameplateShowAll = UnitAura(unit, index, filter)
 	if(name) then
 		local n = visible + offset + 1
 		local icon = icons[n]
@@ -192,7 +192,7 @@ local updateIcon = function(unit, icons, index, offset, filter, isDebuff, visibl
 		 A boolean value telling the aura element if it should be show the icon
 		 or not.
 		]]
-		local show = (icons.CustomFilter or customFilter) (icons, unit, icon, name, rank, texture, count, dtype, duration, timeLeft, caster, isStealable, shouldConsolidate, spellID, canApplyAura, isBossDebuff)
+		local show = (icons.CustomFilter or customFilter) (icons, unit, icon, name, rank, texture, count, dtype, duration, expirationTime, caster, isStealable, shouldConsolidate, spellID, canApplyAura, isBossDebuff, casterIsPlayer, nameplateShowAll)
 		if(show) then
 			-- We might want to consider delaying the creation of an actual cooldown
 			-- object to this point, but I think that will just make things needlessly
@@ -200,7 +200,7 @@ local updateIcon = function(unit, icons, index, offset, filter, isDebuff, visibl
 			local cd = icon.cd
 			if(cd and not icons.disableCooldown) then
 				if(duration and duration > 0) then
-					cd:SetCooldown(timeLeft - duration, duration)
+					cd:SetCooldown(expirationTime - duration, duration)
 					cd:Show()
 				else
 					cd:Hide()
