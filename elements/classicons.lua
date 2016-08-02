@@ -260,7 +260,7 @@ local Enable = function(self, unit)
 	element.__max = #element
 	element.ForceUpdate = ForceUpdate
 
-	if(RequireSpec) then
+	if(RequireSpec or RequireSpell) then
 		self:RegisterEvent('PLAYER_TALENT_UPDATE', VisibilityPath, true)
 	end
 
