@@ -18,12 +18,14 @@
 
  Options
 
- .colorClass  - Use `self.colors.class[class]` to color the bar. This will
-                always use DRUID as class.
- .colorSmooth - Use `self.colors.smooth` to color the bar with a smooth
-                gradient based on the players current mana percentage.
- .colorPower  - Use `self.colors.power[token]` to color the bar. This will
-                always use MANA as token.
+ .colorClass   - Use `self.colors.class[class]` to color the bar. This will
+                 always use DRUID as class.
+ .colorSmooth  - Use `self.colors.smooth` to color the bar with a smooth
+                 gradient based on the players current mana percentage.
+ .colorPower   - Use `self.colors.power[token]` to color the bar. This will
+                 always use MANA as token.
+ .displayPairs - Overridable table of pairs used to match class and power to
+                 display or hide the element.
 
  Sub-Widget Options
 
@@ -136,9 +138,9 @@ local function Visibility(self, event, unit)
 	if(not UnitHasVehicleUI('player')) then
 		if(UnitPowerMax(unit, ADDITIONAL_POWER_BAR_INDEX) ~= 0) then
 			if(isBetaClient) then
-				if(ALT_MANA_BAR_PAIR_DISPLAY_INFO[playerClass]) then
+				if(druidmana.displayPairs[playerClass]) then
 					local powerType = UnitPowerType(unit)
-					shouldEnable = ALT_MANA_BAR_PAIR_DISPLAY_INFO[playerClass][powerType]
+					shouldEnable = druidmana.displayPairs[playerClass][powerType]
 				end
 			else
 				if(playerClass == 'DRUID' and UnitPowerType(unit) == ADDITIONAL_POWER_BAR_INDEX) then
@@ -166,6 +168,7 @@ end
 local Enable = function(self, unit)
 	local druidmana = self.DruidMana
 	if(druidmana and unit == 'player') then
+		druidmana.displayPairs = druidmana.displayPairs or ALT_MANA_BAR_PAIR_DISPLAY_INFO
 		druidmana.__owner = self
 		druidmana.ForceUpdate = ForceUpdate
 
