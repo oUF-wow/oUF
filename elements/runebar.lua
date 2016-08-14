@@ -4,7 +4,7 @@
 
  Widget
 
- Runes - An array holding six StatusBar's.
+ Runes - An array holding StatusBar's.
 
  Sub-Widgets
 
@@ -66,10 +66,7 @@ local Update = function(self, event, rid, energized)
 		rune:Hide()
 	else
 		start, duration, runeReady = GetRuneCooldown(rid)
-		if(not start) then
-			-- As of 6.2.0 GetRuneCooldown returns nil values when zoning
-			return
-		end
+		if(not start) then return end
 
 		if(energized or runeReady) then
 			rune:SetMinMaxValues(0, 1)
@@ -91,11 +88,12 @@ local Update = function(self, event, rid, energized)
 end
 
 local Path = function(self, event, ...)
-	local UpdateMethod = self.Runes.Override or Update
+	local runes = self.Runes
+	local UpdateMethod = runes.Override or Update
 	if(event == 'RUNE_POWER_UPDATE') then
 		return UpdateMethod(self, event, ...)
 	else
-		for index = 1, 6 do
+		for index = 1, #runes do
 			UpdateMethod(self, event, index)
 		end
 	end
@@ -111,7 +109,7 @@ local Enable = function(self, unit)
 		runes.__owner = self
 		runes.ForceUpdate = ForceUpdate
 
-		for i=1, 6 do
+		for i = 1, #runes do
 			local rune = runes[i]
 
 			local r, g, b = unpack(self.colors.power.RUNES)
