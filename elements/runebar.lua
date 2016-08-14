@@ -52,12 +52,8 @@ local oUF = ns.oUF
 
 local OnUpdate = function(self, elapsed)
 	local duration = self.duration + elapsed
-	if(duration >= self.max) then
-		return self:SetScript("OnUpdate", nil)
-	else
-		self.duration = duration
-		return self:SetValue(duration)
-	end
+	self.duration = duration
+	self:SetValue(duration)
 end
 
 local Update = function(self, event, rid, energized)
