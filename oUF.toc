@@ -1,4 +1,4 @@
-## Interface: 60000
+## Interface: 70000
 ## Title: oUF
 ## Author: Haste
 ## Version: 1.6.8
