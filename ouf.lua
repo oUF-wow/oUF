@@ -145,7 +145,7 @@ for k, v in pairs{
 		local unit = self.unit
 		if(not UnitExists(unit)) then return end
 
-		assert(type(event) == 'string', 'Missing argument "event" in UpdateAllElements.')
+		assert(type(event) == 'string', 'Invalid argument "event" in UpdateAllElements.')
 
 		if(self.PreUpdate) then
 			self:PreUpdate(event)
