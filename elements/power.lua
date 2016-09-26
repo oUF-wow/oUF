@@ -208,7 +208,7 @@ local Update = function(self, event, unit)
 	end
 
 	t = self.colors.power[ptoken or ptype]
-	local atlas = power.atlas or t.atlas
+	local atlas = power.atlas or (t and t.atlas)
 	if(power.useAtlas and atlas and displayType ~= ALTERNATE_POWER_INDEX) then
 		power:SetStatusBarAtlas(atlas)
 		power:SetStatusBarColor(1, 1, 1)
@@ -216,7 +216,7 @@ local Update = function(self, event, unit)
 			t = disconnected and self.colors.disconnected or self.colors.tapped
 			power:GetStatusBarTexture():SetDesaturated(disconnected or tapped)
 		end
-		if(b) then
+		if(t and b) then
 			r, g, b = t[1], t[2], t[3]
 		end
 	else
