@@ -150,6 +150,7 @@ local function Visibility(self, event, unit)
 
 	if(UnitHasVehicleUI('player')) then
 		shouldEnable = true
+		unit = 'vehicle'
 	elseif(ClassPowerID) then
 		if(not RequireSpec or RequireSpec == GetSpecialization()) then
 			if(not RequireSpell or IsPlayerSpell(RequireSpell)) then
