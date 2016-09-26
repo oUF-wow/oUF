@@ -71,12 +71,12 @@
    Power:SetPoint('BOTTOM')
    Power:SetPoint('LEFT')
    Power:SetPoint('RIGHT')
-   
+
    -- Add a background
    local Background = Power:CreateTexture(nil, 'BACKGROUND')
    Background:SetAllPoints(Power)
    Background:SetTexture(1, 1, 1, .5)
-   
+
    -- Options
    Power.frequentUpdates = true
    Power.colorTapping = true
@@ -84,10 +84,10 @@
    Power.colorPower = true
    Power.colorClass = true
    Power.colorReaction = true
-   
+
    -- Make the background darker.
    Background.multiplier = .5
-   
+
    -- Register it with oUF
    self.Power = Power
    self.Power.bg = Background
