@@ -542,6 +542,18 @@ do
 	end
 end
 
+function oUF:SpawnNamePlate(unit, overrideName, nameplate)
+	argcheck(unit, 2, 'string')
+	if(not style) then return error("Unable to create frame. No styles have been registered.") end
+	unit = unit:lower()
+	local name = overrideName or generateName(unit)
+	local object = CreateFrame("Button", name, nameplate)
+	Private.UpdateUnits(object, unit)
+	walkObject(object, unit)
+	object:SetAttribute("unit", unit)
+	return object
+end
+
 function oUF:Spawn(unit, overrideName)
 	argcheck(unit, 2, 'string')
 	if(not style) then return error("Unable to create frame. No styles have been registered.") end
