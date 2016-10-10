@@ -85,6 +85,7 @@
 local _, ns = ...
 local oUF = ns.oUF
 
+local GetNetStats = GetNetStats
 local GetTime = GetTime
 local UnitCastingInfo = UnitCastingInfo
 local UnitChannelInfo = UnitChannelInfo
