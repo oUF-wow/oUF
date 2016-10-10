@@ -15,6 +15,12 @@
              steal.
  .SafeZone - A Texture to represent latency.
 
+ Options
+
+ .holdTime - A Number to indicate for how long the castbar should be visible
+             after a _FAILED or _INTERRUPTED event. This value will be
+             compared to the return of `GetTime()`. Defaults to 0.
+
  Credits
 
  Based upon oUF_Castbar by starlon.
@@ -32,38 +38,38 @@
    Castbar:SetPoint('TOP')
    Castbar:SetPoint('LEFT')
    Castbar:SetPoint('RIGHT')
-   
+
    -- Add a background
    local Background = Castbar:CreateTexture(nil, 'BACKGROUND')
    Background:SetAllPoints(Castbar)
    Background:SetTexture(1, 1, 1, .5)
-   
+
    -- Add a spark
    local Spark = Castbar:CreateTexture(nil, "OVERLAY")
    Spark:SetSize(20, 20)
    Spark:SetBlendMode("ADD")
-   
+
    -- Add a timer
    local Time = Castbar:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
    Time:SetPoint("RIGHT", Castbar)
-   
+
    -- Add spell text
    local Text = Castbar:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
    Text:SetPoint("LEFT", Castbar)
-   
+
    -- Add spell icon
    local Icon = Castbar:CreateTexture(nil, "OVERLAY")
    Icon:SetSize(20, 20)
    Icon:SetPoint("TOPLEFT", Castbar, "TOPLEFT")
-   
+
    -- Add Shield
    local Shield = Castbar:CreateTexture(nil, "OVERLAY")
    Shield:SetSize(20, 20)
    Shield:SetPoint("CENTER", Castbar)
-   
+
    -- Add safezone
    local SafeZone = Castbar:CreateTexture(nil, "OVERLAY")
-   
+
    -- Register it with oUF
    self.Castbar = Castbar
    self.Castbar.bg = Background
@@ -121,6 +127,7 @@ local UNIT_SPELLCAST_START = function(self, event, unit, spell)
 	castbar.delay = 0
 	castbar.casting = true
 	castbar.interrupt = interrupt
+	castbar.holdTime = 0
 
 	castbar:SetMinMaxValues(0, max)
 	castbar:SetValue(0)
@@ -190,12 +197,12 @@ end
 local UNIT_SPELLCAST_INTERRUPTIBLE = function(self, event, unit)
 	if(self.unit ~= unit and self.realUnit ~= unit) then return end
 
-	local shield = self.Castbar.Shield
+	local castbar = self.Castbar
+	local shield = castbar.Shield
 	if(shield) then
 		shield:Hide()
 	end
 
-	local castbar = self.Castbar
 	if(castbar.PostCastInterruptible) then
 		return castbar:PostCastInterruptible(unit)
 	end
@@ -204,12 +211,12 @@ end
 local UNIT_SPELLCAST_NOT_INTERRUPTIBLE = function(self, event, unit)
 	if(self.unit ~= unit and self.realUnit ~= unit) then return end
 
-	local shield = self.Castbar.Shield
+	local castbar = self.Castbar
+	local shield = castbar.Shield
 	if(shield) then
 		shield:Show()
 	end
 
-	local castbar = self.Castbar
 	if(castbar.PostCastNotInterruptible) then
 		return castbar:PostCastNotInterruptible(unit)
 	end
@@ -272,6 +279,7 @@ local UNIT_SPELLCAST_CHANNEL_START = function(self, event, unit, spellname)
 	castbar.delay = 0
 	castbar.channeling = true
 	castbar.interrupt = interrupt
+	castbar.holdTime = 0
 
 	-- We have to do this, as it's possible for spell casts to never have _STOP
 	-- executed or be fully completed by the OnUpdate handler before CHANNEL_START
@@ -411,6 +419,8 @@ local onUpdate = function(self, elapsed)
 		if(self.Spark) then
 			self.Spark:SetPoint("CENTER", self, "LEFT", (duration / self.max) * self:GetWidth(), 0)
 		end
+	elseif(GetTime() < self.holdTime) then
+		return
 	else
 		self.unitName = nil
 		self.casting = nil
@@ -451,6 +461,7 @@ local Enable = function(object, unit)
 			object:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP", UNIT_SPELLCAST_CHANNEL_STOP)
 		end
 
+		castbar.holdTime = 0
 		castbar:SetScript("OnUpdate", castbar.OnUpdate or onUpdate)
 
 		if(object.unit == "player") then
