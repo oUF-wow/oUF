@@ -113,8 +113,7 @@ local UNIT_SPELLCAST_START = function(self, event, unit)
 	local castbar = self.Castbar
 	local name, _, text, texture, startTime, endTime, _, castid, notInterruptible = UnitCastingInfo(unit)
 	if(not name) then
-		castbar:Hide()
-		return
+		return castbar:Hide()
 	end
 
 	endTime = endTime / 1e3
@@ -170,8 +169,6 @@ local UNIT_SPELLCAST_FAILED = function(self, event, unit, spellname, _, castid)
 	castbar.casting = nil
 	castbar.interrupt = nil -- NOTE: deprecated; to be removed
 	castbar.notInterruptible = nil
-	castbar:SetValue(0)
-	castbar:Hide()
 
 	if(castbar.PostCastFailed) then
 		return castbar:PostCastFailed(unit, spellname, castid)
@@ -185,11 +182,9 @@ local UNIT_SPELLCAST_INTERRUPTED = function(self, event, unit, spellname, _, cas
 	if(castbar.castid ~= castid) then
 		return
 	end
+
 	castbar.casting = nil
 	castbar.channeling = nil
-
-	castbar:SetValue(0)
-	castbar:Hide()
 
 	if(castbar.PostCastInterrupted) then
 		return castbar:PostCastInterrupted(unit, spellname, castid)
@@ -261,8 +256,6 @@ local UNIT_SPELLCAST_STOP = function(self, event, unit, spellname, _, castid)
 	castbar.casting = nil
 	castbar.interrupt = nil -- NOTE: deprecated; to be removed
 	castbar.notInterruptible = nil
-	castbar:SetValue(0)
-	castbar:Hide()
 
 	if(castbar.PostCastStop) then
 		return castbar:PostCastStop(unit, spellname, castid)
@@ -356,9 +349,6 @@ local UNIT_SPELLCAST_CHANNEL_STOP = function(self, event, unit, spellname)
 		castbar.interrupt = nil -- NOTE: deprecated; to be removed
 		castbar.notInterruptible = nil
 
-		castbar:SetValue(castbar.max)
-		castbar:Hide()
-
 		if(castbar.PostChannelStop) then
 			return castbar:PostChannelStop(unit, spellname)
 		end
@@ -437,7 +427,6 @@ local onUpdate = function(self, elapsed)
 		self.castid = nil
 		self.channeling = nil
 
-		self:SetValue(1)
 		self:Hide()
 	end
 end
