@@ -82,10 +82,9 @@
  Hooks and Callbacks
 
 ]]
-local parent, ns = ...
+local _, ns = ...
 local oUF = ns.oUF
 
-local UnitName = UnitName
 local GetTime = GetTime
 local UnitCastingInfo = UnitCastingInfo
 local UnitChannelInfo = UnitChannelInfo
@@ -107,7 +106,7 @@ local updateSafeZone = function(self)
 	end
 end
 
-local UNIT_SPELLCAST_START = function(self, event, unit, spell)
+local UNIT_SPELLCAST_START = function(self, event, unit)
 	if(self.unit ~= unit and self.realUnit ~= unit) then return end
 
 	local castbar = self.Castbar
@@ -224,11 +223,11 @@ local UNIT_SPELLCAST_NOT_INTERRUPTIBLE = function(self, event, unit)
 	end
 end
 
-local UNIT_SPELLCAST_DELAYED = function(self, event, unit, spellname, _, castid)
+local UNIT_SPELLCAST_DELAYED = function(self, event, unit)
 	if(self.unit ~= unit and self.realUnit ~= unit) then return end
 
 	local castbar = self.Castbar
-	local name, _, text, texture, startTime, endTime = UnitCastingInfo(unit)
+	local name, _, _, _, startTime, _, _, castid = UnitCastingInfo(unit)
 	if(not startTime or not castbar:IsShown()) then return end
 
 	local duration = GetTime() - (startTime / 1000)
@@ -263,11 +262,11 @@ local UNIT_SPELLCAST_STOP = function(self, event, unit, spellname, _, castid)
 	end
 end
 
-local UNIT_SPELLCAST_CHANNEL_START = function(self, event, unit, spellname)
+local UNIT_SPELLCAST_CHANNEL_START = function(self, event, unit)
 	if(self.unit ~= unit and self.realUnit ~= unit) then return end
 
 	local castbar = self.Castbar
-	local name, _, text, texture, startTime, endTime, isTrade, notInterruptible = UnitChannelInfo(unit)
+	local name, _, _, texture, startTime, endTime, _, notInterruptible = UnitChannelInfo(unit)
 	if(not name) then
 		return
 	end
@@ -318,11 +317,11 @@ local UNIT_SPELLCAST_CHANNEL_START = function(self, event, unit, spellname)
 	castbar:Show()
 end
 
-local UNIT_SPELLCAST_CHANNEL_UPDATE = function(self, event, unit, spellname)
+local UNIT_SPELLCAST_CHANNEL_UPDATE = function(self, event, unit)
 	if(self.unit ~= unit and self.realUnit ~= unit) then return end
 
 	local castbar = self.Castbar
-	local name, _, text, texture, startTime, endTime, oldStart = UnitChannelInfo(unit)
+	local name, _, _, _, startTime, endTime = UnitChannelInfo(unit)
 	if(not name or not castbar:IsShown()) then
 		return
 	end
@@ -427,7 +426,6 @@ local onUpdate = function(self, elapsed)
 	elseif(GetTime() < self.holdTime) then
 		return
 	else
-		self.unitName = nil
 		self.casting = nil
 		self.castid = nil
 		self.channeling = nil
@@ -504,7 +502,7 @@ local Enable = function(object, unit)
 	end
 end
 
-local Disable = function(object, unit)
+local Disable = function(object)
 	local castbar = object.Castbar
 
 	if(castbar) then
