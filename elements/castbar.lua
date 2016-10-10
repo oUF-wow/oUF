@@ -111,7 +111,7 @@ local UNIT_SPELLCAST_START = function(self, event, unit, spell)
 	if(self.unit ~= unit and self.realUnit ~= unit) then return end
 
 	local castbar = self.Castbar
-	local name, _, text, texture, startTime, endTime, _, castid, interrupt = UnitCastingInfo(unit)
+	local name, _, text, texture, startTime, endTime, _, castid, notInterruptible = UnitCastingInfo(unit)
 	if(not name) then
 		castbar:Hide()
 		return
@@ -126,7 +126,8 @@ local UNIT_SPELLCAST_START = function(self, event, unit, spell)
 	castbar.max = max
 	castbar.delay = 0
 	castbar.casting = true
-	castbar.interrupt = interrupt
+	castbar.interrupt = notInterruptible -- NOTE: deprecated; to be removed
+	castbar.notInterruptible = notInterruptible
 	castbar.holdTime = 0
 
 	castbar:SetMinMaxValues(0, max)
@@ -137,7 +138,7 @@ local UNIT_SPELLCAST_START = function(self, event, unit, spell)
 	if(castbar.Time) then castbar.Time:SetText() end
 
 	local shield = castbar.Shield
-	if(shield and interrupt) then
+	if(shield and notInterruptible) then
 		shield:Show()
 	elseif(shield) then
 		shield:Hide()
@@ -167,7 +168,8 @@ local UNIT_SPELLCAST_FAILED = function(self, event, unit, spellname, _, castid)
 	end
 
 	castbar.casting = nil
-	castbar.interrupt = nil
+	castbar.interrupt = nil -- NOTE: deprecated; to be removed
+	castbar.notInterruptible = nil
 	castbar:SetValue(0)
 	castbar:Hide()
 
@@ -251,7 +253,8 @@ local UNIT_SPELLCAST_STOP = function(self, event, unit, spellname, _, castid)
 	end
 
 	castbar.casting = nil
-	castbar.interrupt = nil
+	castbar.interrupt = nil -- NOTE: deprecated; to be removed
+	castbar.notInterruptible = nil
 	castbar:SetValue(0)
 	castbar:Hide()
 
@@ -264,7 +267,7 @@ local UNIT_SPELLCAST_CHANNEL_START = function(self, event, unit, spellname)
 	if(self.unit ~= unit and self.realUnit ~= unit) then return end
 
 	local castbar = self.Castbar
-	local name, _, text, texture, startTime, endTime, isTrade, interrupt = UnitChannelInfo(unit)
+	local name, _, text, texture, startTime, endTime, isTrade, notInterruptible = UnitChannelInfo(unit)
 	if(not name) then
 		return
 	end
@@ -278,7 +281,8 @@ local UNIT_SPELLCAST_CHANNEL_START = function(self, event, unit, spellname)
 	castbar.max = max
 	castbar.delay = 0
 	castbar.channeling = true
-	castbar.interrupt = interrupt
+	castbar.interrupt = notInterruptible -- NOTE: deprecated; to be removed
+	castbar.notInterruptible = notInterruptible
 	castbar.holdTime = 0
 
 	-- We have to do this, as it's possible for spell casts to never have _STOP
@@ -295,7 +299,7 @@ local UNIT_SPELLCAST_CHANNEL_START = function(self, event, unit, spellname)
 	if(castbar.Time) then castbar.Time:SetText() end
 
 	local shield = castbar.Shield
-	if(shield and interrupt) then
+	if(shield and notInterruptible) then
 		shield:Show()
 	elseif(shield) then
 		shield:Hide()
@@ -343,7 +347,8 @@ local UNIT_SPELLCAST_CHANNEL_STOP = function(self, event, unit, spellname)
 	local castbar = self.Castbar
 	if(castbar:IsShown()) then
 		castbar.channeling = nil
-		castbar.interrupt = nil
+		castbar.interrupt = nil -- NOTE: deprecated; to be removed
+		castbar.notInterruptible = nil
 
 		castbar:SetValue(castbar.max)
 		castbar:Hide()
