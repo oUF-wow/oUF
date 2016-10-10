@@ -205,6 +205,9 @@ local UNIT_SPELLCAST_INTERRUPTIBLE = function(self, event, unit)
 		shield:Hide()
 	end
 
+	castbar.interrupt = nil -- NOTE: deprecated; to be removed
+	castbar.notInterruptible = nil
+
 	if(castbar.PostCastInterruptible) then
 		return castbar:PostCastInterruptible(unit)
 	end
@@ -218,6 +221,9 @@ local UNIT_SPELLCAST_NOT_INTERRUPTIBLE = function(self, event, unit)
 	if(shield) then
 		shield:Show()
 	end
+
+	castbar.interrupt = true -- NOTE: deprecated; to be removed
+	castbar.notInterruptible = true
 
 	if(castbar.PostCastNotInterruptible) then
 		return castbar:PostCastNotInterruptible(unit)
