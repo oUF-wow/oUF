@@ -166,6 +166,11 @@ local UNIT_SPELLCAST_FAILED = function(self, event, unit, spellname, _, castid)
 		return
 	end
 
+	local text = castbar.Text
+	if(text) then
+		text:SetText(FAILED)
+	end
+
 	castbar.casting = nil
 	castbar.interrupt = nil -- NOTE: deprecated; to be removed
 	castbar.notInterruptible = nil
@@ -181,6 +186,11 @@ local UNIT_SPELLCAST_INTERRUPTED = function(self, event, unit, spellname, _, cas
 	local castbar = self.Castbar
 	if(castbar.castid ~= castid) then
 		return
+	end
+
+	local text = castbar.Text
+	if(text) then
+		text:SetText(INTERRUPTED)
 	end
 
 	castbar.casting = nil
