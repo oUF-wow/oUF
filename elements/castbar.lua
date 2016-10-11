@@ -17,9 +17,8 @@
 
  Options
 
- .holdTime - A Number to indicate for how long the castbar should be visible
-             after a _FAILED or _INTERRUPTED event. This value will be
-             compared to the return of `GetTime()`. Defaults to 0.
+ .timeToHold - A Number to indicate for how many seconds the castbar should be
+               visible after a _FAILED or _INTERRUPTED event. Defaults to 0.
 
  Credits
 
@@ -174,6 +173,7 @@ local UNIT_SPELLCAST_FAILED = function(self, event, unit, spellname, _, castid, 
 	castbar.casting = nil
 	castbar.interrupt = nil -- NOTE: deprecated; to be removed
 	castbar.notInterruptible = nil
+	castbar.holdTime = castbar.timeToHold or 0
 
 	if(castbar.PostCastFailed) then
 		return castbar:PostCastFailed(unit, spellname, castid, spellid)
@@ -195,6 +195,7 @@ local UNIT_SPELLCAST_INTERRUPTED = function(self, event, unit, spellname, _, cas
 
 	castbar.casting = nil
 	castbar.channeling = nil
+	castbar.holdTime = castbar.timeToHold or 0
 
 	if(castbar.PostCastInterrupted) then
 		return castbar:PostCastInterrupted(unit, spellname, castid, spellid)
@@ -430,8 +431,8 @@ local onUpdate = function(self, elapsed)
 		if(self.Spark) then
 			self.Spark:SetPoint("CENTER", self, "LEFT", (duration / self.max) * self:GetWidth(), 0)
 		end
-	elseif(GetTime() < self.holdTime) then
-		return
+	elseif(self.holdTime > 0) then
+		self.holdTime = self.holdTime - elapsed
 	else
 		self.casting = nil
 		self.castid = nil
