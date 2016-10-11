@@ -111,7 +111,7 @@ local UNIT_SPELLCAST_START = function(self, event, unit)
 	if(self.unit ~= unit and self.realUnit ~= unit) then return end
 
 	local castbar = self.Castbar
-	local name, _, text, texture, startTime, endTime, _, castid, notInterruptible = UnitCastingInfo(unit)
+	local name, _, text, texture, startTime, endTime, _, castid, notInterruptible, spellid = UnitCastingInfo(unit)
 	if(not name) then
 		return castbar:Hide()
 	end
@@ -153,12 +153,12 @@ local UNIT_SPELLCAST_START = function(self, event, unit)
 	end
 
 	if(castbar.PostCastStart) then
-		castbar:PostCastStart(unit, name, castid)
+		castbar:PostCastStart(unit, name, castid, spellid)
 	end
 	castbar:Show()
 end
 
-local UNIT_SPELLCAST_FAILED = function(self, event, unit, spellname, _, castid)
+local UNIT_SPELLCAST_FAILED = function(self, event, unit, spellname, _, castid, spellid)
 	if(self.unit ~= unit and self.realUnit ~= unit) then return end
 
 	local castbar = self.Castbar
@@ -176,11 +176,11 @@ local UNIT_SPELLCAST_FAILED = function(self, event, unit, spellname, _, castid)
 	castbar.notInterruptible = nil
 
 	if(castbar.PostCastFailed) then
-		return castbar:PostCastFailed(unit, spellname, castid)
+		return castbar:PostCastFailed(unit, spellname, castid, spellid)
 	end
 end
 
-local UNIT_SPELLCAST_INTERRUPTED = function(self, event, unit, spellname, _, castid)
+local UNIT_SPELLCAST_INTERRUPTED = function(self, event, unit, spellname, _, castid, spellid)
 	if(self.unit ~= unit and self.realUnit ~= unit) then return end
 
 	local castbar = self.Castbar
@@ -197,7 +197,7 @@ local UNIT_SPELLCAST_INTERRUPTED = function(self, event, unit, spellname, _, cas
 	castbar.channeling = nil
 
 	if(castbar.PostCastInterrupted) then
-		return castbar:PostCastInterrupted(unit, spellname, castid)
+		return castbar:PostCastInterrupted(unit, spellname, castid, spellid)
 	end
 end
 
@@ -235,7 +235,7 @@ local UNIT_SPELLCAST_NOT_INTERRUPTIBLE = function(self, event, unit)
 	end
 end
 
-local UNIT_SPELLCAST_DELAYED = function(self, event, unit)
+local UNIT_SPELLCAST_DELAYED = function(self, event, unit, _, _, _, spellid)
 	if(self.unit ~= unit and self.realUnit ~= unit) then return end
 
 	local castbar = self.Castbar
@@ -251,11 +251,11 @@ local UNIT_SPELLCAST_DELAYED = function(self, event, unit)
 	castbar:SetValue(duration)
 
 	if(castbar.PostCastDelayed) then
-		return castbar:PostCastDelayed(unit, name, castid)
+		return castbar:PostCastDelayed(unit, name, castid, spellid)
 	end
 end
 
-local UNIT_SPELLCAST_STOP = function(self, event, unit, spellname, _, castid)
+local UNIT_SPELLCAST_STOP = function(self, event, unit, spellname, _, castid, spellid)
 	if(self.unit ~= unit and self.realUnit ~= unit) then return end
 
 	local castbar = self.Castbar
@@ -268,11 +268,11 @@ local UNIT_SPELLCAST_STOP = function(self, event, unit, spellname, _, castid)
 	castbar.notInterruptible = nil
 
 	if(castbar.PostCastStop) then
-		return castbar:PostCastStop(unit, spellname, castid)
+		return castbar:PostCastStop(unit, spellname, castid, spellid)
 	end
 end
 
-local UNIT_SPELLCAST_CHANNEL_START = function(self, event, unit)
+local UNIT_SPELLCAST_CHANNEL_START = function(self, event, unit, _, _, _, spellid)
 	if(self.unit ~= unit and self.realUnit ~= unit) then return end
 
 	local castbar = self.Castbar
@@ -323,11 +323,11 @@ local UNIT_SPELLCAST_CHANNEL_START = function(self, event, unit)
 		updateSafeZone(castbar)
 	end
 
-	if(castbar.PostChannelStart) then castbar:PostChannelStart(unit, name) end
+	if(castbar.PostChannelStart) then castbar:PostChannelStart(unit, name, spellid) end
 	castbar:Show()
 end
 
-local UNIT_SPELLCAST_CHANNEL_UPDATE = function(self, event, unit)
+local UNIT_SPELLCAST_CHANNEL_UPDATE = function(self, event, unit, _, _, _, spellid)
 	if(self.unit ~= unit and self.realUnit ~= unit) then return end
 
 	local castbar = self.Castbar
@@ -346,11 +346,11 @@ local UNIT_SPELLCAST_CHANNEL_UPDATE = function(self, event, unit)
 	castbar:SetValue(duration)
 
 	if(castbar.PostChannelUpdate) then
-		return castbar:PostChannelUpdate(unit, name)
+		return castbar:PostChannelUpdate(unit, name, spellid)
 	end
 end
 
-local UNIT_SPELLCAST_CHANNEL_STOP = function(self, event, unit, spellname)
+local UNIT_SPELLCAST_CHANNEL_STOP = function(self, event, unit, spellname, _, _, spellid)
 	if(self.unit ~= unit and self.realUnit ~= unit) then return end
 
 	local castbar = self.Castbar
@@ -360,7 +360,7 @@ local UNIT_SPELLCAST_CHANNEL_STOP = function(self, event, unit, spellname)
 		castbar.notInterruptible = nil
 
 		if(castbar.PostChannelStop) then
-			return castbar:PostChannelStop(unit, spellname)
+			return castbar:PostChannelStop(unit, spellname, spellid)
 		end
 	end
 end
