@@ -1,11 +1,18 @@
 local _, ns = ...
 local oUF = ns.oUF
 
+local function ResetStatusBar(bar)
+	bar.elapsed = 0
+	bar:SetMinMaxValues(0, 1)
+	bar:SetValue(0)
+	bar:Hide()
+end
+
 local function OnUpdate(self, elapsed)
 	self.elapsed = self.elapsed + elapsed
 
 	if(self.elapsed >= self.updateDelay) then
-		self:Hide()
+		ResetStatusBar(self)
 	end
 end
 
@@ -34,16 +41,42 @@ local function Update(self, event, unit, powerType)
 	element.old = cur
 
 	if(diff ~= 0 or GetTime() - (element.lastUpdate or 0) > element.updateDelay) then
-		element:SetMinMaxValues(0, max)
-		element:SetValue(math.abs(diff))
+		if(diff > 0) then
+			if(element.gainBar) then
+				ResetStatusBar(element.gainBar)
 
-		if(diff ~= 0) then
-			element.elapsed = 0
-			element:SetScript("OnUpdate", OnUpdate)
-			element:Show()
+				element.gainBar:SetScript('OnUpdate', OnUpdate)
+				element.gainBar:SetMinMaxValues(0, max)
+				element.gainBar:SetValue(diff)
+				element.gainBar:Show()
+			end
+		elseif(diff < 0) then
+			if(element.gainBar) then
+				element.gainBar:SetScript('OnUpdate', nil)
+
+				ResetStatusBar(element.gainBar)
+			end
+
+			if(element.lossBar) then
+				ResetStatusBar(element.lossBar)
+
+				element.lossBar:SetScript('OnUpdate', OnUpdate)
+				element.lossBar:SetMinMaxValues(0, max)
+				element.lossBar:SetValue(math.abs(diff))
+				element.lossBar:Show()
+			end
 		else
-			element:SetScript("OnUpdate", nil)
-			element:Hide()
+			if(element.gainBar) then
+				element.gainBar:SetScript('OnUpdate', nil)
+
+				ResetStatusBar(element.gainBar)
+			end
+
+			if(element.lossBar) then
+				element.lossBar:SetScript('OnUpdate', nil)
+
+				ResetStatusBar(element.lossBar)
+			end
 		end
 
 		element.lastUpdate = GetTime()
@@ -73,8 +106,20 @@ local function Enable(self)
 
 		self:RegisterEvent('UNIT_POWER_FREQUENT', Path)
 
-		if(element:IsObjectType('StatusBar') and not element:GetStatusBarTexture()) then
-			element:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+		if(element.gainBar) then
+			element.gainBar.updateDelay = element.updateDelay
+
+			if(element.gainBar:IsObjectType('StatusBar') and not element.gainBar:GetStatusBarTexture()) then
+				element.gainBar:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+			end
+		end
+
+		if(element.lossBar) then
+			element.lossBar.updateDelay = element.updateDelay
+
+			if(element.lossBar:IsObjectType('StatusBar') and not element.lossBar:GetStatusBarTexture()) then
+				element.lossBar:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+			end
 		end
 
 		return true
@@ -85,6 +130,14 @@ local function Disable(self)
 	local element = self.TempName
 
 	if(element) then
+		if(element.gainBar) then
+			element.gainBar:Hide()
+		end
+
+		if(element.lossBar) then
+			element.lossBar:Hide()
+		end
+
 		self:UnregisterEvent('UNIT_POWER_FREQUENT', Path)
 	end
 end
