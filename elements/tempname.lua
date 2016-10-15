@@ -27,11 +27,12 @@ local function Update(self, event, unit, powerType)
 
 	local cur = UnitPower(unit, powerType)
 	local max = UnitPowerMax(unit, powerType)
+	local old = element.old
 	local _, powerToken = UnitPowerType(unit)
 	local diff = 0
 
-	if(max ~= 0 and element.old and powerType == powerToken) then
-		diff = cur - element.old
+	if(max ~= 0 and old and powerType == powerToken) then
+		diff = cur - old
 
 		if(math.abs(diff) / max < element.diffThreshold) then
 			diff = 0
@@ -82,7 +83,7 @@ local function Update(self, event, unit, powerType)
 		element.lastUpdate = GetTime()
 
 		if(element.PostUpdate) then
-			return element:PostUpdate(unit, diff)
+			return element:PostUpdate(unit, diff > 0 and diff or 0, diff < 0 and diff or 0, old, cur, max)
 		end
 	end
 end
