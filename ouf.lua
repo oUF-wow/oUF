@@ -566,7 +566,7 @@ function oUF:Spawn(unit, overrideName, nameplate)
 end
 
 --oUF:SpawnNamePlates
-function oUF:SpawnNamePlates(styleName,namePrefix,nameplateCallback)
+function oUF:SpawnNamePlates(styleName,namePrefix,nameplateCallback,nameplateCVars)
 	local function UpdateNamePlateOptions(...)
 		if nameplateCallback then
 			nameplateCallback("UpdateNamePlateOptions",...)
@@ -615,6 +615,13 @@ function oUF:SpawnNamePlates(styleName,namePrefix,nameplateCallback)
 			nameplateCallback(event,nameplate)
 		end
 	end
+	--NPEH:PLAYER_LOGIN
+	function NPEH:PLAYER_LOGIN(event)
+		if not nameplateCVars or type(nameplateCVars) ~= "table" then return end
+		for key, value in next, nameplateCVars do
+			SetCVar(key,value)
+		end
+	end
 	--NPEH:OnEvent
 	function NPEH:OnEvent(event,...)
 		self[event](self,event,...)
@@ -623,6 +630,7 @@ function oUF:SpawnNamePlates(styleName,namePrefix,nameplateCallback)
 	NPEH:RegisterEvent("NAME_PLATE_UNIT_ADDED")
 	NPEH:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
 	NPEH:RegisterEvent("PLAYER_TARGET_CHANGED")
+	NPEH:RegisterEvent("PLAYER_LOGIN")
 end
 
 function oUF:AddElement(name, update, enable, disable)
