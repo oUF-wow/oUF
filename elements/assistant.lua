@@ -13,10 +13,10 @@
  Examples
 
    -- Position and size
-   local Assistant = self:CreateTexture(nil, "OVERLAY")
+   local Assistant = self:CreateTexture(nil, 'OVERLAY')
    Assistant:SetSize(16, 16)
    Assistant:SetPoint('TOP', self)
-   
+
    -- Register it with oUF
    self.Assistant = Assistant
 
@@ -27,8 +27,8 @@
 local parent, ns = ...
 local oUF = ns.oUF
 
-local Update = function(self, event)
-	local assistant = self.Assistant
+local function Update(self, event)
+	local element = self.Assistant
 
 	--[[ :PreUpdate()
 
@@ -38,16 +38,16 @@ local Update = function(self, event)
 
 	 self - The Assistant element.
 	]]
-	if(assistant.PreUpdate) then
-		assistant:PreUpdate()
+	if(element.PreUpdate) then
+		element:PreUpdate()
 	end
 
 	local unit = self.unit
 	local isAssistant = UnitInRaid(unit) and UnitIsGroupAssistant(unit) and not UnitIsGroupLeader(unit)
 	if(isAssistant) then
-		assistant:Show()
+		element:Show()
 	else
-		assistant:Hide()
+		element:Hide()
 	end
 
 	--[[ :PostUpdate(isAssistant)
@@ -59,12 +59,12 @@ local Update = function(self, event)
 	 self        - The Assistant element.
 	 isAssistant - A boolean holding whether the unit is a raid officer or not.
 	]]
-	if(assistant.PostUpdate) then
-		return assistant:PostUpdate(isAssistant)
+	if(element.PostUpdate) then
+		return element:PostUpdate(isAssistant)
 	end
 end
 
-local Path = function(self, ...)
+local function Path(self, ...)
 	--[[ :Override(self, event, ...)
 
 	 Used to completely override the internal update function. Removing the
@@ -80,31 +80,32 @@ local Path = function(self, ...)
 	return (self.Assistant.Override or Update) (self, ...)
 end
 
-local ForceUpdate = function(element)
+local function ForceUpdate(element)
 	return Path(element.__owner, 'ForceUpdate')
 end
 
-local Enable = function(self)
-	local assistant = self.Assistant
-	if(assistant) then
-		self:RegisterEvent("GROUP_ROSTER_UPDATE", Path, true)
+local function Enable(self)
+	local element = self.Assistant
+	if(element) then
+		self:RegisterEvent('GROUP_ROSTER_UPDATE', Path, true)
 
-		if(assistant:IsObjectType"Texture" and not assistant:GetTexture()) then
-			assistant:SetTexture[[Interface\GroupFrame\UI-Group-AssistantIcon]]
+		if(element:IsObjectType('Texture') and not element:GetTexture()) then
+			element:SetTexture([[Interface\GroupFrame\UI-Group-AssistantIcon]])
 		end
 
-		assistant.__owner = self
-		assistant.ForceUpdate = ForceUpdate
+		element.__owner = self
+		element.ForceUpdate = ForceUpdate
 
 		return true
 	end
 end
 
-local Disable = function(self)
-	local assistant = self.Assistant
-	if(assistant) then
-		self:UnregisterEvent("GROUP_ROSTER_UPDATE", Path)
-		assistant:Hide()
+local function Disable(self)
+	local element = self.Assistant
+	if(element) then
+		element:Hide()
+
+		self:UnregisterEvent('GROUP_ROSTER_UPDATE', Path)
 	end
 end
 

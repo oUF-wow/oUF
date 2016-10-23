@@ -18,10 +18,10 @@
  Examples
 
    -- Position and size
-   local LFDRole = self:CreateTexture(nil, "OVERLAY")
+   local LFDRole = self:CreateTexture(nil, 'OVERLAY')
    LFDRole:SetSize(16, 16)
-   LFDRole:SetPoint("LEFT", self)
-   
+   LFDRole:SetPoint('LEFT', self)
+
    -- Register it with oUF
    self.LFDRole = LFDRole
 
@@ -35,59 +35,60 @@
 local parent, ns = ...
 local oUF = ns.oUF
 
-local Update = function(self, event)
-	local lfdrole = self.LFDRole
-	if(lfdrole.PreUpdate) then
-		lfdrole:PreUpdate()
+local function Update(self, event)
+	local element = self.LFDRole
+	if(element.PreUpdate) then
+		element:PreUpdate()
 	end
 
 	local role = UnitGroupRolesAssigned(self.unit)
 	if(role == 'TANK' or role == 'HEALER' or role == 'DAMAGER') then
-		lfdrole:SetTexCoord(GetTexCoordsForRoleSmallCircle(role))
-		lfdrole:Show()
+		element:SetTexCoord(GetTexCoordsForRoleSmallCircle(role))
+		element:Show()
 	else
-		lfdrole:Hide()
+		element:Hide()
 	end
 
-	if(lfdrole.PostUpdate) then
-		return lfdrole:PostUpdate(role)
+	if(element.PostUpdate) then
+		return element:PostUpdate(role)
 	end
 end
 
-local Path = function(self, ...)
+local function Path(self, ...)
 	return (self.LFDRole.Override or Update) (self, ...)
 end
 
-local ForceUpdate = function(element)
+local function ForceUpdate(element)
 	return Path(element.__owner, 'ForceUpdate')
 end
 
-local Enable = function(self)
-	local lfdrole = self.LFDRole
-	if(lfdrole) then
-		lfdrole.__owner = self
-		lfdrole.ForceUpdate = ForceUpdate
+local function Enable(self)
+	local element = self.LFDRole
+	if(element) then
+		element.__owner = self
+		element.ForceUpdate = ForceUpdate
 
-		if(self.unit == "player") then
-			self:RegisterEvent("PLAYER_ROLES_ASSIGNED", Path, true)
+		if(self.unit == 'player') then
+			self:RegisterEvent('PLAYER_ROLES_ASSIGNED', Path, true)
 		else
-			self:RegisterEvent("GROUP_ROSTER_UPDATE", Path, true)
+			self:RegisterEvent('GROUP_ROSTER_UPDATE', Path, true)
 		end
 
-		if(lfdrole:IsObjectType"Texture" and not lfdrole:GetTexture()) then
-			lfdrole:SetTexture[[Interface\LFGFrame\UI-LFG-ICON-PORTRAITROLES]]
+		if(element:IsObjectType('Texture') and not element:GetTexture()) then
+			element:SetTexture([[Interface\LFGFrame\UI-LFG-ICON-PORTRAITROLES]])
 		end
 
 		return true
 	end
 end
 
-local Disable = function(self)
-	local lfdrole = self.LFDRole
-	if(lfdrole) then
-		lfdrole:Hide()
-		self:UnregisterEvent("PLAYER_ROLES_ASSIGNED", Path)
-		self:UnregisterEvent("GROUP_ROSTER_UPDATE", Path)
+local function Disable(self)
+	local element = self.LFDRole
+	if(element) then
+		element:Hide()
+
+		self:UnregisterEvent('PLAYER_ROLES_ASSIGNED', Path)
+		self:UnregisterEvent('GROUP_ROSTER_UPDATE', Path)
 	end
 end
 

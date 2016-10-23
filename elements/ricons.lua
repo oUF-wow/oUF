@@ -19,7 +19,7 @@
    local RaidIcon = self:CreateTexture(nil, 'OVERLAY')
    RaidIcon:SetSize(16, 16)
    RaidIcon:SetPoint('TOPRIGHT', self)
-   
+
    -- Register it with oUF
    self.RaidIcon = RaidIcon
 
@@ -36,55 +36,56 @@ local oUF = ns.oUF
 local GetRaidTargetIndex = GetRaidTargetIndex
 local SetRaidTargetIconTexture = SetRaidTargetIconTexture
 
-local Update = function(self, event)
-	local icon = self.RaidIcon
-	if(icon.PreUpdate) then
-		icon:PreUpdate()
+local function Update(self, event)
+	local element = self.RaidIcon
+	if(element.PreUpdate) then
+		element:PreUpdate()
 	end
 
 	local index = GetRaidTargetIndex(self.unit)
 	if(index) then
-		SetRaidTargetIconTexture(icon, index)
-		icon:Show()
+		SetRaidTargetIconTexture(element, index)
+		element:Show()
 	else
-		icon:Hide()
+		element:Hide()
 	end
 
-	if(icon.PostUpdate) then
-		return icon:PostUpdate(index)
+	if(element.PostUpdate) then
+		return element:PostUpdate(index)
 	end
 end
 
-local Path = function(self, ...)
+local function Path(self, ...)
 	return (self.RaidIcon.Override or Update) (self, ...)
 end
 
-local ForceUpdate = function(element)
+local function ForceUpdate(element)
 	if(not element.__owner.unit) then return end
 	return Path(element.__owner, 'ForceUpdate')
 end
 
-local Enable = function(self)
-	local ricon = self.RaidIcon
-	if(ricon) then
-		ricon.__owner = self
-		ricon.ForceUpdate = ForceUpdate
+local function Enable(self)
+	local element = self.RaidIcon
+	if(element) then
+		element.__owner = self
+		element.ForceUpdate = ForceUpdate
 
-		self:RegisterEvent("RAID_TARGET_UPDATE", Path, true)
+		self:RegisterEvent('RAID_TARGET_UPDATE', Path, true)
 
-		if(ricon:IsObjectType"Texture" and not ricon:GetTexture()) then
-			ricon:SetTexture[[Interface\TargetingFrame\UI-RaidTargetingIcons]]
+		if(element:IsObjectType('Texture') and not element:GetTexture()) then
+			element:SetTexture([[Interface\TargetingFrame\UI-RaidTargetingIcons]])
 		end
 
 		return true
 	end
 end
 
-local Disable = function(self)
-	local ricon = self.RaidIcon
-	if(ricon) then
-		ricon:Hide()
-		self:UnregisterEvent("RAID_TARGET_UPDATE", Path)
+local function Disable(self)
+	local element = self.RaidIcon
+	if(element) then
+		element:Hide()
+
+		self:UnregisterEvent('RAID_TARGET_UPDATE', Path)
 	end
 end
 

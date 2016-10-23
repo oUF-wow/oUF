@@ -27,7 +27,7 @@
    AltPowerBar:SetPoint('BOTTOM')
    AltPowerBar:SetPoint('LEFT')
    AltPowerBar:SetPoint('RIGHT')
-   
+
    -- Register with oUF
    self.AltPowerBar = AltPowerBar
 
@@ -47,27 +47,27 @@ local ALTERNATE_POWER_INDEX = ALTERNATE_POWER_INDEX
 
  self - The AltPowerBar element.
 ]]
-local UpdateTooltip = function(self)
+local function updateTooltip(self)
 	GameTooltip:SetText(self.powerName, 1, 1, 1)
 	GameTooltip:AddLine(self.powerTooltip, nil, nil, nil, 1)
 	GameTooltip:Show()
 end
 
-local OnEnter = function(self)
+local function onEnter(self)
 	if(not self:IsVisible()) then return end
 
 	GameTooltip_SetDefaultAnchor(GameTooltip, self)
 	self:UpdateTooltip()
 end
 
-local OnLeave = function()
+local function onLeave()
 	GameTooltip:Hide()
 end
 
-local UpdatePower = function(self, event, unit, powerType)
+local function UpdatePower(self, event, unit, powerType)
 	if(self.unit ~= unit or powerType ~= 'ALTERNATE') then return end
 
-	local altpowerbar = self.AltPowerBar
+	local element = self.AltPowerBar
 
 	--[[ :PreUpdate()
 
@@ -77,12 +77,12 @@ local UpdatePower = function(self, event, unit, powerType)
 
 	 self - The AltPowerBar element.
 	 ]]
-	if(altpowerbar.PreUpdate) then
-		altpowerbar:PreUpdate()
+	if(element.PreUpdate) then
+		element:PreUpdate()
 	end
 
 	local _, r, g, b
-	if(altpowerbar.colorTexture) then
+	if(element.colorTexture) then
 		_, r, g, b = UnitAlternatePowerTextureInfo(unit, 2)
 	end
 
@@ -90,14 +90,14 @@ local UpdatePower = function(self, event, unit, powerType)
 	local max = UnitPowerMax(unit, ALTERNATE_POWER_INDEX)
 
 	local barType, min, _, _, _, _, _, _, _, _, powerName, powerTooltip = UnitAlternatePowerInfo(unit)
-	altpowerbar.barType = barType
-	altpowerbar.powerName = powerName
-	altpowerbar.powerTooltip = powerTooltip
-	altpowerbar:SetMinMaxValues(min, max)
-	altpowerbar:SetValue(math.min(math.max(cur, min), max))
+	element.barType = barType
+	element.powerName = powerName
+	element.powerTooltip = powerTooltip
+	element:SetMinMaxValues(min, max)
+	element:SetValue(math.min(math.max(cur, min), max))
 
-	if(b) then
-		altpowerbar:SetStatusBarColor(r, g, b)
+	if(r or g or b) then
+		element:SetStatusBarColor(r, g, b)
 	end
 
 	--[[ :PostUpdate(min, cur, max)
@@ -111,8 +111,8 @@ local UpdatePower = function(self, event, unit, powerType)
 	 cur  - The current power value.
 	 max  - The maximum possible power value for the active type.
 	]]
-	if(altpowerbar.PostUpdate) then
-		return altpowerbar:PostUpdate(min, cur, max)
+	if(element.PostUpdate) then
+		return element:PostUpdate(min, cur, max)
 	end
 end
 
@@ -123,79 +123,80 @@ end
                   Removing the table key entry will make the element fall-back
                   to its internal function again.
 ]]
-local Path = function(self, ...)
+local function Path(self, ...)
 	return (self.AltPowerBar.Override or UpdatePower)(self, ...)
 end
 
-local ForceUpdate = function(element)
+local function ForceUpdate(element)
 	return Path(element.__owner, 'ForceUpdate', element.__owner.unit, 'ALTERNATE')
 end
 
-local Toggler = function(self, event, unit)
+local function Toggler(self, event, unit)
 	if(unit ~= self.unit) then return end
-	local altpowerbar = self.AltPowerBar
+	local element = self.AltPowerBar
 
 	local barType, _, _, _, _, hideFromOthers, showOnRaid = UnitAlternatePowerInfo(unit)
 	if(barType and (showOnRaid and (UnitInParty(unit) or UnitInRaid(unit)) or not hideFromOthers or unit == 'player' or self.realUnit == 'player')) then
 		self:RegisterEvent('UNIT_POWER', Path)
 		self:RegisterEvent('UNIT_MAXPOWER', Path)
 
-		ForceUpdate(altpowerbar)
-		altpowerbar:Show()
+		ForceUpdate(element)
+		element:Show()
 	else
 		self:UnregisterEvent('UNIT_POWER', Path)
 		self:UnregisterEvent('UNIT_MAXPOWER', Path)
 
-		altpowerbar:Hide()
+		element:Hide()
 	end
 end
 
-local Enable = function(self, unit)
-	local altpowerbar = self.AltPowerBar
-	if(altpowerbar) then
-		altpowerbar.__owner = self
-		altpowerbar.ForceUpdate = ForceUpdate
+local function Enable(self, unit)
+	local element = self.AltPowerBar
+	if(element) then
+		element.__owner = self
+		element.ForceUpdate = ForceUpdate
 
 		self:RegisterEvent('UNIT_POWER_BAR_SHOW', Toggler)
 		self:RegisterEvent('UNIT_POWER_BAR_HIDE', Toggler)
 
-		altpowerbar:Hide()
+		element:Hide()
 
-		if(altpowerbar:IsMouseEnabled()) then
-			if(not altpowerbar:GetScript('OnEnter')) then
-				altpowerbar:SetScript('OnEnter', OnEnter)
+		if(element:IsMouseEnabled()) then
+			if(not element:GetScript('OnEnter')) then
+				element:SetScript('OnEnter', onEnter)
 			end
 
-			if(not altpowerbar:GetScript('OnLeave')) then
-				altpowerbar:SetScript('OnLeave', OnLeave)
+			if(not element:GetScript('OnLeave')) then
+				element:SetScript('OnLeave', onLeave)
 			end
 
-			if(not altpowerbar.UpdateTooltip) then
-				altpowerbar.UpdateTooltip = UpdateTooltip
+			if(not element.UpdateTooltip) then
+				element.UpdateTooltip = updateTooltip
 			end
 		end
 
 		if(unit == 'player') then
-			PlayerPowerBarAlt:UnregisterEvent'UNIT_POWER_BAR_SHOW'
-			PlayerPowerBarAlt:UnregisterEvent'UNIT_POWER_BAR_HIDE'
-			PlayerPowerBarAlt:UnregisterEvent'PLAYER_ENTERING_WORLD'
+			PlayerPowerBarAlt:UnregisterEvent('UNIT_POWER_BAR_SHOW')
+			PlayerPowerBarAlt:UnregisterEvent('UNIT_POWER_BAR_HIDE')
+			PlayerPowerBarAlt:UnregisterEvent('PLAYER_ENTERING_WORLD')
 		end
 
 		return true
 	end
 end
 
-local Disable = function(self, unit)
-	local altpowerbar = self.AltPowerBar
-	if(altpowerbar) then
-		altpowerbar:Hide()
+local function Disable(self, unit)
+	local element = self.AltPowerBar
+	if(element) then
+		element:Hide()
+
 		self:UnregisterEvent('UNIT_POWER_BAR_SHOW', Toggler)
 		self:UnregisterEvent('UNIT_POWER_BAR_HIDE', Toggler)
 
 		if(unit == 'player') then
-			PlayerPowerBarAlt:RegisterEvent'UNIT_POWER_BAR_SHOW'
-			PlayerPowerBarAlt:RegisterEvent'UNIT_POWER_BAR_HIDE'
-			PlayerPowerBarAlt:RegisterEvent'PLAYER_ENTERING_WORLD'
+			PlayerPowerBarAlt:RegisterEvent('UNIT_POWER_BAR_SHOW')
+			PlayerPowerBarAlt:RegisterEvent('UNIT_POWER_BAR_HIDE')
+			PlayerPowerBarAlt:RegisterEvent('PLAYER_ENTERING_WORLD')
 		end
 	end
 end

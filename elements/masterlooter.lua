@@ -17,7 +17,7 @@
    local MasterLooter = self:CreateTexture(nil, 'OVERLAY')
    MasterLooter:SetSize(16, 16)
    MasterLooter:SetPoint('TOPRIGHT', self)
-   
+
    -- Register it with oUF
    self.MasterLooter = MasterLooter
 
@@ -32,63 +32,63 @@
 local parent, ns = ...
 local oUF = ns.oUF
 
-local Update = function(self, event)
+local function Update(self, event)
 	local unit = self.unit
-	local masterlooter = self.MasterLooter
+	local element = self.MasterLooter
 	if(not (UnitInParty(unit) or UnitInRaid(unit))) then
-		return masterlooter:Hide()
+		return element:Hide()
 	end
 
-	if(masterlooter.PreUpdate) then
-		masterlooter:PreUpdate()
+	if(element.PreUpdate) then
+		element:PreUpdate()
 	end
 
-	local method, pid, rid = GetLootMethod()
+	local method, partyIndex, raidIndex = GetLootMethod()
 	if(method == 'master') then
 		local mlUnit
-		if(pid) then
-			if(pid == 0) then
+		if(partyIndex) then
+			if(partyIndex == 0) then
 				mlUnit = 'player'
 			else
-				mlUnit = 'party'..pid
+				mlUnit = 'party' .. partyIndex
 			end
-		elseif(rid) then
-			mlUnit = 'raid'..rid
+		elseif(raidIndex) then
+			mlUnit = 'raid' .. raidIndex
 		end
 
 		if(UnitIsUnit(unit, mlUnit)) then
-			masterlooter:Show()
-		elseif(masterlooter:IsShown()) then
-			masterlooter:Hide()
+			element:Show()
+		elseif(element:IsShown()) then
+			element:Hide()
 		end
 	else
-		masterlooter:Hide()
+		element:Hide()
 	end
 
-	if(masterlooter.PostUpdate) then
-		return masterlooter:PostUpdate(masterlooter:IsShown())
+	if(element.PostUpdate) then
+		return element:PostUpdate(element:IsShown())
 	end
 end
 
-local Path = function(self, ...)
+local function Path(self, ...)
 	return (self.MasterLooter.Override or Update) (self, ...)
 end
 
-local ForceUpdate = function(element)
+local function ForceUpdate(element)
 	return Path(element.__owner, 'ForceUpdate')
 end
 
 local function Enable(self, unit)
-	local masterlooter = self.MasterLooter
-	if(masterlooter) then
-		masterlooter.__owner = self
-		masterlooter.ForceUpdate = ForceUpdate
+	local element = self.MasterLooter
+	if(element) then
+		element.__owner = self
+		element.ForceUpdate = ForceUpdate
 
 		self:RegisterEvent('PARTY_LOOT_METHOD_CHANGED', Path, true)
 		self:RegisterEvent('GROUP_ROSTER_UPDATE', Path, true)
 
-		if(masterlooter:IsObjectType('Texture') and not masterlooter:GetTexture()) then
-			masterlooter:SetTexture([[Interface\GroupFrame\UI-Group-MasterLooter]])
+		if(element:IsObjectType('Texture') and not element:GetTexture()) then
+			element:SetTexture([[Interface\GroupFrame\UI-Group-MasterLooter]])
 		end
 
 		return true
@@ -96,8 +96,10 @@ local function Enable(self, unit)
 end
 
 local function Disable(self)
-	if(self.MasterLooter) then
-		self.MasterLooter:Hide()
+	local element = self.MasterLooter
+	if(element) then
+		element:Hide()
+
 		self:UnregisterEvent('PARTY_LOOT_METHOD_CHANGED', Path)
 		self:UnregisterEvent('GROUP_ROSTER_UPDATE', Path)
 	end

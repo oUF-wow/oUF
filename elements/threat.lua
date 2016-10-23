@@ -19,7 +19,7 @@
    local Threat = self:CreateTexture(nil, 'OVERLAY')
    Threat:SetSize(16, 16)
    Threat:SetPoint('TOPRIGHT', self)
-   
+
    -- Register it with oUF
    self.Threat = Threat
 
@@ -33,11 +33,11 @@
 local parent, ns = ...
 local oUF = ns.oUF
 
-local Update = function(self, event, unit)
+local function Update(self, event, unit)
 	if(unit ~= self.unit) then return end
 
-	local threat = self.Threat
-	if(threat.PreUpdate) then threat:PreUpdate(unit) end
+	local element = self.Threat
+	if(element.PreUpdate) then element:PreUpdate(unit) end
 
 	unit = unit or self.unit
 	local status = UnitThreatSituation(unit)
@@ -45,47 +45,48 @@ local Update = function(self, event, unit)
 	local r, g, b
 	if(status and status > 0) then
 		r, g, b = GetThreatStatusColor(status)
-		threat:SetVertexColor(r, g, b)
-		threat:Show()
+		element:SetVertexColor(r, g, b)
+		element:Show()
 	else
-		threat:Hide()
+		element:Hide()
 	end
 
-	if(threat.PostUpdate) then
-		return threat:PostUpdate(unit, status, r, g, b)
+	if(element.PostUpdate) then
+		return element:PostUpdate(unit, status, r, g, b)
 	end
 end
 
-local Path = function(self, ...)
+local function Path(self, ...)
 	return (self.Threat.Override or Update) (self, ...)
 end
 
-local ForceUpdate = function(element)
+local function ForceUpdate(element)
 	return Path(element.__owner, 'ForceUpdate', element.__owner.unit)
 end
 
-local Enable = function(self)
-	local threat = self.Threat
-	if(threat) then
-		threat.__owner = self
-		threat.ForceUpdate = ForceUpdate
+local function Enable(self)
+	local element = self.Threat
+	if(element) then
+		element.__owner = self
+		element.ForceUpdate = ForceUpdate
 
-		self:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE", Path)
+		self:RegisterEvent('UNIT_THREAT_SITUATION_UPDATE', Path)
 
-		if(threat:IsObjectType"Texture" and not threat:GetTexture()) then
-			threat:SetTexture[[Interface\Minimap\ObjectIcons]]
-			threat:SetTexCoord(6/8, 7/8, 1/8, 2/8)
+		if(element:IsObjectType('Texture') and not element:GetTexture()) then
+			element:SetTexture([[Interface\Minimap\ObjectIcons]])
+			element:SetTexCoord(6/8, 7/8, 1/8, 2/8)
 		end
 
 		return true
 	end
 end
 
-local Disable = function(self)
-	local threat = self.Threat
-	if(threat) then
-		threat:Hide()
-		self:UnregisterEvent("UNIT_THREAT_SITUATION_UPDATE", Path)
+local function Disable(self)
+	local element = self.Threat
+	if(element) then
+		element:Hide()
+
+		self:UnregisterEvent('UNIT_THREAT_SITUATION_UPDATE', Path)
 	end
 end
 

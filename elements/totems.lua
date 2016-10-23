@@ -32,19 +32,19 @@
       local Totem = CreateFrame('Button', nil, self)
       Totem:SetSize(40, 40)
       Totem:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', index * Totem:GetWidth(), 0)
-      
-      local Icon = Totem:CreateTexture(nil, "OVERLAY")
+
+      local Icon = Totem:CreateTexture(nil, 'OVERLAY')
       Icon:SetAllPoints()
-      
-      local Cooldown = CreateFrame("Cooldown", nil, Totem, "CooldownFrameTemplate")
+
+      local Cooldown = CreateFrame('Cooldown', nil, Totem, 'CooldownFrameTemplate')
       Cooldown:SetAllPoints()
-      
+
       Totem.Icon = Icon
       Totem.Cooldown = Cooldown
-      
+
       Totems[index] = Totem
    end
-   
+
    -- Register with oUF
    self.Totems = Totems
 
@@ -58,28 +58,28 @@
 local parent, ns = ...
 local oUF = ns.oUF
 
-local UpdateTooltip = function(self)
+local function UpdateTooltip(self)
 	GameTooltip:SetTotem(self:GetID())
 end
 
-local OnEnter = function(self)
+local function OnEnter(self)
 	if(not self:IsVisible()) then return end
 
 	GameTooltip:SetOwner(self, 'ANCHOR_BOTTOMRIGHT')
 	self:UpdateTooltip()
 end
 
-local OnLeave = function()
+local function OnLeave()
 	GameTooltip:Hide()
 end
 
-local UpdateTotem = function(self, event, slot)
-	local totems = self.Totems
-	if(slot > #totems) then return end
+local function UpdateTotem(self, event, slot)
+	local element = self.Totems
+	if(slot > #element) then return end
 
-	if(totems.PreUpdate) then totems:PreUpdate(slot) end
+	if(element.PreUpdate) then element:PreUpdate(slot) end
 
-	local totem = totems[slot]
+	local totem = element[slot]
 	local haveTotem, name, start, duration, icon = GetTotemInfo(slot)
 	if(haveTotem and duration > 0) then
 		if(totem.Icon) then
@@ -95,34 +95,33 @@ local UpdateTotem = function(self, event, slot)
 		totem:Hide()
 	end
 
-	if(totems.PostUpdate) then
-		return totems:PostUpdate(slot, haveTotem, name, start, duration, icon)
+	if(element.PostUpdate) then
+		return element:PostUpdate(slot, haveTotem, name, start, duration, icon)
 	end
 end
 
-local Path = function(self, ...)
+local function Path(self, ...)
 	return (self.Totems.Override or UpdateTotem) (self, ...)
 end
 
-local Update = function(self, event)
+local function Update(self, event)
 	for i = 1, #self.Totems do
 		Path(self, event, i)
 	end
 end
 
-local ForceUpdate = function(element)
+local function ForceUpdate(element)
 	return Update(element.__owner, 'ForceUpdate')
 end
 
-local Enable = function(self)
-	local totems = self.Totems
+local function Enable(self)
+	local element = self.Totems
+	if(element) then
+		element.__owner = self
+		element.ForceUpdate = ForceUpdate
 
-	if(totems) then
-		totems.__owner = self
-		totems.ForceUpdate = ForceUpdate
-
-		for i = 1, #totems do
-			local totem = totems[i]
+		for i = 1, #element do
+			local totem = element[i]
 
 			totem:SetID(i)
 
@@ -138,30 +137,29 @@ local Enable = function(self)
 
 		self:RegisterEvent('PLAYER_TOTEM_UPDATE', Path, true)
 
-		TotemFrame:UnregisterEvent"PLAYER_TOTEM_UPDATE"
-		TotemFrame:UnregisterEvent"PLAYER_ENTERING_WORLD"
-		TotemFrame:UnregisterEvent"UPDATE_SHAPESHIFT_FORM"
-		TotemFrame:UnregisterEvent"PLAYER_TALENT_UPDATE"
+		TotemFrame:UnregisterEvent('PLAYER_TOTEM_UPDATE')
+		TotemFrame:UnregisterEvent('PLAYER_ENTERING_WORLD')
+		TotemFrame:UnregisterEvent('UPDATE_SHAPESHIFT_FORM')
+		TotemFrame:UnregisterEvent('PLAYER_TALENT_UPDATE')
 
 		return true
 	end
 end
 
-local Disable = function(self)
-	local totems = self.Totems
-
-	if(totems) then
-		for i = 1, #totems do
-			totems[i]:Hide()
+local function Disable(self)
+	local element = self.Totems
+	if(element) then
+		for i = 1, #element do
+			element[i]:Hide()
 		end
 
-		TotemFrame:RegisterEvent"PLAYER_TOTEM_UPDATE"
-		TotemFrame:RegisterEvent"PLAYER_ENTERING_WORLD"
-		TotemFrame:RegisterEvent"UPDATE_SHAPESHIFT_FORM"
-		TotemFrame:RegisterEvent"PLAYER_TALENT_UPDATE"
+		TotemFrame:RegisterEvent('PLAYER_TOTEM_UPDATE')
+		TotemFrame:RegisterEvent('PLAYER_ENTERING_WORLD')
+		TotemFrame:RegisterEvent('UPDATE_SHAPESHIFT_FORM')
+		TotemFrame:RegisterEvent('PLAYER_TALENT_UPDATE')
 
 		self:UnregisterEvent('PLAYER_TOTEM_UPDATE', Path)
 	end
 end
 
-oUF:AddElement("Totems", Update, Enable, Disable)
+oUF:AddElement('Totems', Update, Enable, Disable)

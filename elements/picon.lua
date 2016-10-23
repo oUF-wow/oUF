@@ -18,7 +18,7 @@
    local PhaseIcon = self:CreateTexture(nil, 'OVERLAY')
    PhaseIcon:SetSize(16, 16)
    PhaseIcon:SetPoint('TOPLEFT', self)
-   
+
    -- Register it with oUF
    self.PhaseIcon = PhaseIcon
 
@@ -32,52 +32,53 @@
 local parent, ns = ...
 local oUF = ns.oUF
 
-local Update = function(self, event)
-	local picon = self.PhaseIcon
-	if(picon.PreUpdate) then
-		picon:PreUpdate()
+local function Update(self, event)
+	local element = self.PhaseIcon
+	if(element.PreUpdate) then
+		element:PreUpdate()
 	end
 
 	local inPhase = UnitInPhase(self.unit)
 	if(inPhase) then
-		picon:Hide()
+		element:Hide()
 	else
-		picon:Show()
+		element:Show()
 	end
 
-	if(picon.PostUpdate) then
-		return picon:PostUpdate(inPhase)
+	if(element.PostUpdate) then
+		return element:PostUpdate(inPhase)
 	end
 end
 
-local Path = function(self, ...)
+local function Path(self, ...)
 	return (self.PhaseIcon.Override or Update) (self, ...)
 end
 
-local ForceUpdate = function(element)
+local function ForceUpdate(element)
 	return Path(element.__owner, 'ForceUpdate')
 end
 
-local Enable = function(self)
-	local picon = self.PhaseIcon
-	if(picon) then
-		picon.__owner = self
-		picon.ForceUpdate = ForceUpdate
+local function Enable(self)
+	local element = self.PhaseIcon
+	if(element) then
+		element.__owner = self
+		element.ForceUpdate = ForceUpdate
 
 		self:RegisterEvent('UNIT_PHASE', Path, true)
 
-		if(picon:IsObjectType'Texture' and not picon:GetTexture()) then
-			picon:SetTexture[[Interface\TargetingFrame\UI-PhasingIcon]]
+		if(element:IsObjectType('Texture') and not element:GetTexture()) then
+			element:SetTexture([[Interface\TargetingFrame\UI-PhasingIcon]])
 		end
 
 		return true
 	end
 end
 
-local Disable = function(self)
-	local picon = self.PhaseIcon
-	if(picon) then
-		picon:Hide()
+local function Disable(self)
+	local element = self.PhaseIcon
+	if(element) then
+		element:Hide()
+
 		self:UnregisterEvent('UNIT_PHASE', Path)
 	end
 end

@@ -41,31 +41,32 @@
 local parent, ns = ...
 local oUF = ns.oUF
 
+local FFA_ICON = [[Interface\TargetingFrame\UI-PVP-FFA]]
+local FACTION_ICON = [[Interface\TargetingFrame\UI-PVP-]]
+
 local function Update(self, event, unit)
 	if(unit ~= self.unit) then return end
 
-	local pvp = self.PvP
-
-	if(pvp.PreUpdate) then
-		pvp:PreUpdate(unit)
+	local element = self.PvP
+	if(element.PreUpdate) then
+		element:PreUpdate(unit)
 	end
 
 	local status
 	local hasPrestige
-	local level = UnitPrestige(unit)
+	local prestigeLevel = UnitPrestige(unit)
 	local factionGroup = UnitFactionGroup(unit)
 
 	if(UnitIsPVPFreeForAll(unit)) then
-		if(level > 0 and pvp.Prestige) then
-			pvp:SetTexture(GetPrestigeInfo(level))
-			pvp:SetTexCoord(0, 1, 0, 1)
-
-			pvp.Prestige:SetAtlas('honorsystem-portrait-neutral', false)
+		if(prestigeLevel > 0 and element.Prestige) then
+			element:SetTexture(GetPrestigeInfo(prestigeLevel))
+			element:SetTexCoord(0, 1, 0, 1)
+			element.Prestige:SetAtlas('honorsystem-portrait-neutral', false)
 
 			hasPrestige = true
 		else
-			pvp:SetTexture('Interface\\TargetingFrame\\UI-PVP-FFA')
-			pvp:SetTexCoord(0, 0.65625, 0, 0.65625)
+			element:SetTexture(FFA_ICON)
+			element:SetTexCoord(0, 0.65625, 0, 0.65625)
 		end
 
 		status = 'ffa'
@@ -78,41 +79,40 @@ local function Update(self, event, unit)
 			end
 		end
 
-		if(level > 0 and pvp.Prestige) then
-			pvp:SetTexture(GetPrestigeInfo(level))
-			pvp:SetTexCoord(0, 1, 0, 1)
-
-			pvp.Prestige:SetAtlas('honorsystem-portrait-'..factionGroup, false)
+		if(prestigeLevel > 0 and element.Prestige) then
+			element:SetTexture(GetPrestigeInfo(prestigeLevel))
+			element:SetTexCoord(0, 1, 0, 1)
+			element.Prestige:SetAtlas('honorsystem-portrait-' .. factionGroup, false)
 
 			hasPrestige = true
 		else
-			pvp:SetTexture('Interface\\TargetingFrame\\UI-PVP-'..factionGroup)
-			pvp:SetTexCoord(0, 0.65625, 0, 0.65625)
+			element:SetTexture(FACTION_ICON .. factionGroup)
+			element:SetTexCoord(0, 0.65625, 0, 0.65625)
 		end
 
 		status = factionGroup
 	end
 
 	if(status) then
-		pvp:Show()
+		element:Show()
 
-		if(pvp.Prestige) then
+		if(element.Prestige) then
 			if(hasPrestige) then
-				pvp.Prestige:Show()
+				element.Prestige:Show()
 			else
-				pvp.Prestige:Hide()
+				element.Prestige:Hide()
 			end
 		end
 	else
-		pvp:Hide()
+		element:Hide()
 
-		if(pvp.Prestige) then
-			pvp.Prestige:Hide()
+		if(element.Prestige) then
+			element.Prestige:Hide()
 		end
 	end
 
-	if(pvp.PostUpdate) then
-		return pvp:PostUpdate(unit, status, hasPrestige, level)
+	if(element.PostUpdate) then
+		return element:PostUpdate(unit, status, hasPrestige, level)
 	end
 end
 
@@ -125,15 +125,14 @@ local function ForceUpdate(element)
 end
 
 local function Enable(self)
-	local pvp = self.PvP
-
-	if(pvp) then
-		pvp.__owner = self
-		pvp.ForceUpdate = ForceUpdate
+	local element = self.PvP
+	if(element) then
+		element.__owner = self
+		element.ForceUpdate = ForceUpdate
 
 		self:RegisterEvent('UNIT_FACTION', Path)
 
-		if(pvp.Prestige) then
+		if(element.Prestige) then
 			self:RegisterEvent('HONOR_PRESTIGE_UPDATE', Path)
 		end
 
@@ -142,15 +141,14 @@ local function Enable(self)
 end
 
 local function Disable(self)
-	local pvp = self.PvP
-
-	if(pvp) then
-		pvp:Hide()
+	local element = self.PvP
+	if(element) then
+		element:Hide()
 
 		self:UnregisterEvent('UNIT_FACTION', Path)
 
-		if(pvp.Prestige) then
-			pvp.Prestige:Hide()
+		if(element.Prestige) then
+			element.Prestige:Hide()
 
 			self:UnregisterEvent('HONOR_PRESTIGE_UPDATE', Path)
 		end

@@ -18,7 +18,7 @@
    local RaidRole = self:CreateTexture(nil, 'OVERLAY')
    RaidRole:SetSize(16, 16)
    RaidRole:SetPoint('TOPLEFT')
-   
+
    -- Register it with oUF
    self.RaidRole = RaidRole
 
@@ -32,45 +32,47 @@
 local parent, ns = ...
 local oUF = ns.oUF
 
-local Update = function(self, event)
+local MAINTANK_ICON = [[Interface\GROUPFRAME\UI-GROUP-MAINTANKICON]]
+local MAINASSIST_ICON = [[Interface\GROUPFRAME\UI-GROUP-MAINASSISTICON]]
+
+local function Update(self, event)
 	local unit = self.unit
 	if(not UnitInRaid(unit)) then return end
 
-	local raidrole = self.RaidRole
-	if(raidrole.PreUpdate) then
-		raidrole:PreUpdate()
+	local element = self.RaidRole
+	if(element.PreUpdate) then
+		element:PreUpdate()
 	end
 
 	local inVehicle = UnitHasVehicleUI(unit)
 	if(GetPartyAssignment('MAINTANK', unit) and not inVehicle) then
-		raidrole:Show()
-		raidrole:SetTexture[[Interface\GROUPFRAME\UI-GROUP-MAINTANKICON]]
+		element:Show()
+		element:SetTexture(MAINTANK_ICON)
 	elseif(GetPartyAssignment('MAINASSIST', unit) and not inVehicle) then
-		raidrole:Show()
-		raidrole:SetTexture[[Interface\GROUPFRAME\UI-GROUP-MAINASSISTICON]]
+		element:Show()
+		element:SetTexture(MAINASSIST_ICON)
 	else
-		raidrole:Hide()
+		element:Hide()
 	end
 
-	if(raidrole.PostUpdate) then
-		return raidrole:PostUpdate(rinfo)
+	if(element.PostUpdate) then
+		return element:PostUpdate(rinfo)
 	end
 end
 
-local Path = function(self, ...)
+local function Path(self, ...)
 	return (self.RaidRole.Override or Update)(self, ...)
 end
 
-local ForceUpdate = function(element)
+local function ForceUpdate(element)
 	return Path(element.__owner, 'ForceUpdate')
 end
 
-local Enable = function(self)
-	local raidrole = self.RaidRole
-
-	if(raidrole) then
-		raidrole.__owner = self
-		raidrole.ForceUpdate = ForceUpdate
+local function Enable(self)
+	local element = self.RaidRole
+	if(element) then
+		element.__owner = self
+		element.ForceUpdate = ForceUpdate
 
 		self:RegisterEvent('GROUP_ROSTER_UPDATE', Path, true)
 
@@ -78,10 +80,11 @@ local Enable = function(self)
 	end
 end
 
-local Disable = function(self)
-	local raidrole = self.RaidRole
+local function Disable(self)
+	local element = self.RaidRole
+	if(element) then
+		element:Hide()
 
-	if(raidrole) then
 		self:UnregisterEvent('GROUP_ROSTER_UPDATE', Path)
 	end
 end

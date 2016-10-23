@@ -17,9 +17,9 @@
                     completed. Defaults to 10 seconds.
  .fadeTime        - The number of seconds the icon should used to fade away after
                     the stick duration has completed. Defaults to 1.5 seconds.
- .readyTexture    - Path to alternate texture for the ready check "ready" status.
- .notReadyTexture - Path to alternate texture for the ready check "notready" status.
- .waitingTexture  - Path to alternate texture for the ready check "waiting" status.
+ .readyTexture    - Path to alternate texture for the ready check 'ready' status.
+ .notReadyTexture - Path to alternate texture for the ready check 'notready' status.
+ .waitingTexture  - Path to alternate texture for the ready check 'waiting' status.
 
  Examples
 
@@ -27,7 +27,7 @@
    local ReadyCheck = self:CreateTexture(nil, 'OVERLAY')
    ReadyCheck:SetSize(16, 16)
    ReadyCheck:SetPoint('TOP')
-   
+
    -- Register with oUF
    self.ReadyCheck = ReadyCheck
 
@@ -58,7 +58,7 @@ local function OnFinished(self)
 	end
 end
 
-local Update = function(self, event)
+local function Update(self, event)
 	local element = self.ReadyCheck
 
 	--[[ :PreUpdate()
@@ -113,15 +113,15 @@ local Update = function(self, event)
 	end
 end
 
-local Path = function(self, ...)
+local function Path(self, ...)
 	return (self.ReadyCheck.Override or Update) (self, ...)
 end
 
-local ForceUpdate = function(element)
+local function ForceUpdate(element)
 	return Path(element.__owner, 'ForceUpdate')
 end
 
-local Enable = function(self, unit)
+local function Enable(self, unit)
 	local element = self.ReadyCheck
 	if(element and (unit and (unit:sub(1, 5) == 'party' or unit:sub(1,4) == 'raid'))) then
 		element.__owner = self
@@ -145,7 +145,7 @@ local Enable = function(self, unit)
 	end
 end
 
-local Disable = function(self)
+local function Disable(self)
 	local element = self.ReadyCheck
 	if(element) then
 		element:Hide()

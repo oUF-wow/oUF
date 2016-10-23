@@ -18,7 +18,7 @@
    local ResurrectIcon = self:CreateTexture(nil, 'OVERLAY')
    ResurrectIcon:SetSize(16, 16)
    ResurrectIcon:SetPoint('TOPRIGHT', self)
-   
+
    -- Register it with oUF
    self.ResurrectIcon = ResurrectIcon
 
@@ -32,51 +32,53 @@
 local parent, ns = ...
 local oUF = ns.oUF
 
-local Update = function(self, event)
-	local resurrect = self.ResurrectIcon
-	if(resurrect.PreUpdate) then
-		resurrect:PreUpdate()
+local function Update(self, event)
+	local element = self.ResurrectIcon
+	if(element.PreUpdate) then
+		element:PreUpdate()
 	end
 
 	local incomingResurrect = UnitHasIncomingResurrection(self.unit)
 	if(incomingResurrect) then
-		resurrect:Show()
+		element:Show()
 	else
-		resurrect:Hide()
+		element:Hide()
 	end
 
-	if(resurrect.PostUpdate) then
-		return resurrect:PostUpdate(incomingResurrect)
+	if(element.PostUpdate) then
+		return element:PostUpdate(incomingResurrect)
 	end
 end
 
-local Path = function(self, ...)
+local function Path(self, ...)
 	return (self.ResurrectIcon.Override or Update) (self, ...)
 end
 
-local ForceUpdate = function(element)
+local function ForceUpdate(element)
 	return Path(element.__owner, 'ForceUpdate')
 end
 
-local Enable = function(self)
-	local resurrect = self.ResurrectIcon
-	if(resurrect) then
-		resurrect.__owner = self
-		resurrect.ForceUpdate = ForceUpdate
+local function Enable(self)
+	local element = self.ResurrectIcon
+	if(element) then
+		element.__owner = self
+		element.ForceUpdate = ForceUpdate
 
 		self:RegisterEvent('INCOMING_RESURRECT_CHANGED', Path, true)
 
-		if(resurrect:IsObjectType('Texture') and not resurrect:GetTexture()) then
-			resurrect:SetTexture[[Interface\RaidFrame\Raid-Icon-Rez]]
+		if(element:IsObjectType('Texture') and not element:GetTexture()) then
+			element:SetTexture([[Interface\RaidFrame\Raid-Icon-Rez]])
 		end
 
 		return true
 	end
 end
 
-local Disable = function(self)
-	local resurrect = self.ResurrectIcon
-	if(resurrect) then
+local function Disable(self)
+	local element = self.ResurrectIcon
+	if(element) then
+		element:Hide()
+
 		self:UnregisterEvent('INCOMING_RESURRECT_CHANGED', Path)
 	end
 end

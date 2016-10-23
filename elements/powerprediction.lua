@@ -55,10 +55,9 @@ local playerClass = select(2, UnitClass('player'))
 local function Update(self, event, unit)
 	if(self.unit ~= unit) then return end
 
-	local pp = self.PowerPrediction
-
-	if(pp.PreUpdate) then
-		pp:PreUpdate(unit)
+	local element = self.PowerPrediction
+	if(element.PreUpdate) then
+		element:PreUpdate(unit)
 	end
 
 	local _, _, _, _, startTime, endTime, _, _, _, spellID = UnitCastingInfo(unit)
@@ -70,16 +69,15 @@ local function Update(self, event, unit)
 		local costTable = GetSpellPowerCost(spellID)
 
 		for _, costInfo in pairs(costTable) do
-			--[[costInfo content:
-				-- name: string (powerToken)
-				-- type: number (powerType)
-				-- cost: number
-				-- costPercent: number
-				-- costPerSec: number
-				-- minCost: number
-				-- hasRequiredAura: boolean
-				-- requiredAuraID: number
-			]]
+			-- costInfo content:
+			-- - name: string (powerToken)
+			-- - type: number (powerType)
+			-- - cost: number
+			-- - costPercent: number
+			-- - costPerSec: number
+			-- - minCost: number
+			-- - hasRequiredAura: boolean
+			-- - requiredAuraID: number
 			if(costInfo.type == mainPowerType) then
 				mainCost = costInfo.cost
 
@@ -92,20 +90,20 @@ local function Update(self, event, unit)
 		end
 	end
 
-	if(pp.mainBar) then
-		pp.mainBar:SetMinMaxValues(0, UnitPowerMax(unit, mainPowerType))
-		pp.mainBar:SetValue(mainCost)
-		pp.mainBar:Show()
+	if(element.mainBar) then
+		element.mainBar:SetMinMaxValues(0, UnitPowerMax(unit, mainPowerType))
+		element.mainBar:SetValue(mainCost)
+		element.mainBar:Show()
 	end
 
-	if(pp.altBar and hasAltManaBar) then
-		pp.altBar:SetMinMaxValues(0, UnitPowerMax(unit, ADDITIONAL_POWER_BAR_INDEX))
-		pp.altBar:SetValue(altCost)
-		pp.altBar:Show()
+	if(element.altBar and hasAltManaBar) then
+		element.altBar:SetMinMaxValues(0, UnitPowerMax(unit, ADDITIONAL_POWER_BAR_INDEX))
+		element.altBar:SetValue(altCost)
+		element.altBar:Show()
 	end
 
-	if(pp.PostUpdate) then
-		return pp:PostUpdate(unit, mainCost, altCost, hasAltManaBar)
+	if(element.PostUpdate) then
+		return element:PostUpdate(unit, mainCost, altCost, hasAltManaBar)
 	end
 end
 
@@ -118,11 +116,10 @@ local function ForceUpdate(element)
 end
 
 local function Enable(self)
-	local pp = self.PowerPrediction
-
-	if(pp) then
-		pp.__owner = self
-		pp.ForceUpdate = ForceUpdate
+	local element = self.PowerPrediction
+	if(element) then
+		element.__owner = self
+		element.ForceUpdate = ForceUpdate
 
 		self:RegisterEvent('UNIT_SPELLCAST_START', Path)
 		self:RegisterEvent('UNIT_SPELLCAST_STOP', Path)
@@ -130,15 +127,15 @@ local function Enable(self)
 		self:RegisterEvent('UNIT_SPELLCAST_SUCCEEDED', Path)
 		self:RegisterEvent('UNIT_DISPLAYPOWER', Path)
 
-		if(pp.mainBar) then
-			if(pp.mainBar:IsObjectType('StatusBar') and not pp.mainBar:GetStatusBarTexture()) then
-				pp.mainBar:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+		if(element.mainBar) then
+			if(element.mainBar:IsObjectType('StatusBar') and not element.mainBar:GetStatusBarTexture()) then
+				element.mainBar:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 			end
 		end
 
-		if(pp.altBar) then
-			if(pp.altBar:IsObjectType('StatusBar') and not pp.altBar:GetStatusBarTexture()) then
-				pp.altBar:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+		if(element.altBar) then
+			if(element.altBar:IsObjectType('StatusBar') and not element.altBar:GetStatusBarTexture()) then
+				element.altBar:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 			end
 		end
 
@@ -147,15 +144,14 @@ local function Enable(self)
 end
 
 local function Disable(self)
-	local pp = self.PowerPrediction
-
-	if(pp) then
-		if(pp.mainBar) then
-			pp.mainBar:Hide()
+	local element = self.PowerPrediction
+	if(element) then
+		if(element.mainBar) then
+			element.mainBar:Hide()
 		end
 
-		if(pp.altBar) then
-			pp.altBar:Hide()
+		if(element.altBar) then
+			element.altBar:Hide()
 		end
 
 		self:UnregisterEvent('UNIT_SPELLCAST_START', Path)

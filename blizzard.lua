@@ -1,10 +1,10 @@
 local parent, ns = ...
 local oUF = ns.oUF
 
-local hiddenParent = CreateFrame("Frame")
+local hiddenParent = CreateFrame('Frame')
 hiddenParent:Hide()
 
-local HandleFrame = function(baseName)
+local function handleFrame(baseName)
 	local frame
 	if(type(baseName) == 'string') then
 		frame = _G[baseName]
@@ -45,7 +45,7 @@ function oUF:DisableBlizzard(unit)
 	if(not unit) then return end
 
 	if(unit == 'player') then
-		HandleFrame(PlayerFrame)
+		handleFrame(PlayerFrame)
 
 		-- For the damn vehicle support:
 		PlayerFrame:RegisterEvent('PLAYER_ENTERING_WORLD')
@@ -58,40 +58,40 @@ function oUF:DisableBlizzard(unit)
 		PlayerFrame:SetUserPlaced(true)
 		PlayerFrame:SetDontSavePosition(true)
 	elseif(unit == 'pet') then
-		HandleFrame(PetFrame)
+		handleFrame(PetFrame)
 	elseif(unit == 'target') then
-		HandleFrame(TargetFrame)
-		HandleFrame(ComboFrame)
+		handleFrame(TargetFrame)
+		handleFrame(ComboFrame)
 	elseif(unit == 'focus') then
-		HandleFrame(FocusFrame)
-		HandleFrame(TargetofFocusFrame)
+		handleFrame(FocusFrame)
+		handleFrame(TargetofFocusFrame)
 	elseif(unit == 'targettarget') then
-		HandleFrame(TargetFrameToT)
-	elseif(unit:match'(boss)%d?$' == 'boss') then
-		local id = unit:match'boss(%d)'
+		handleFrame(TargetFrameToT)
+	elseif(unit:match('(boss)%d?$') == 'boss') then
+		local id = unit:match('boss(%d)')
 		if(id) then
-			HandleFrame('Boss' .. id .. 'TargetFrame')
+			handleFrame('Boss' .. id .. 'TargetFrame')
 		else
-			for i=1, 5 do
-				HandleFrame(('Boss%dTargetFrame'):format(i))
+			for i = 1, 5 do
+				handleFrame(('Boss%dTargetFrame'):format(i))
 			end
 		end
-	elseif(unit:match'(party)%d?$' == 'party') then
-		local id = unit:match'party(%d)'
+	elseif(unit:match('(party)%d?$') == 'party') then
+		local id = unit:match('party(%d)')
 		if(id) then
-			HandleFrame('PartyMemberFrame' .. id)
+			handleFrame('PartyMemberFrame' .. id)
 		else
-			for i=1, 4 do
-				HandleFrame(('PartyMemberFrame%d'):format(i))
+			for i = 1, 4 do
+				handleFrame(('PartyMemberFrame%d'):format(i))
 			end
 		end
-	elseif(unit:match'(arena)%d?$' == 'arena') then
-		local id = unit:match'arena(%d)'
+	elseif(unit:match('(arena)%d?$') == 'arena') then
+		local id = unit:match('arena(%d)')
 		if(id) then
-			HandleFrame('ArenaEnemyFrame' .. id)
+			handleFrame('ArenaEnemyFrame' .. id)
 		else
-			for i=1, 5 do
-				HandleFrame(('ArenaEnemyFrame%d'):format(i))
+			for i = 1, 5 do
+				handleFrame(string.format('ArenaEnemyFrame%d', i))
 			end
 		end
 

@@ -51,14 +51,14 @@
 local parent, ns = ...
 local oUF = ns.oUF
 
-local _, PlayerClass = UnitClass'player'
+local _, PlayerClass = UnitClass('player')
 
 -- Holds the class specific stuff.
 local ClassPowerID, ClassPowerType
 local ClassPowerEnable, ClassPowerDisable
 local RequireSpec, RequireSpell
 
-local UpdateTexture = function(element)
+local function UpdateTexture(element)
 	local color = oUF.colors.power[ClassPowerType or 'COMBO_POINTS']
 	for i = 1, #element do
 		local icon = element[i]
@@ -70,7 +70,7 @@ local UpdateTexture = function(element)
 	end
 end
 
-local Update = function(self, event, unit, powerType)
+local function Update(self, event, unit, powerType)
 	if(not (unit == 'player' and powerType == ClassPowerType
 		or unit == 'vehicle' and powerType == 'COMBO_POINTS')) then
 		return
@@ -140,7 +140,7 @@ local Update = function(self, event, unit, powerType)
 	end
 end
 
-local Path = function(self, ...)
+local function Path(self, ...)
 	return (self.ClassIcons.Override or Update) (self, ...)
 end
 
@@ -172,16 +172,16 @@ local function Visibility(self, event, unit)
 	end
 end
 
-local VisibilityPath = function(self, ...)
+local function VisibilityPath(self, ...)
 	return (self.ClassIcons.OverrideVisibility or Visibility) (self, ...)
 end
 
-local ForceUpdate = function(element)
+local function ForceUpdate(element)
 	return VisibilityPath(element.__owner, 'ForceUpdate', element.__owner.unit)
 end
 
 do
-	ClassPowerEnable = function(self)
+	function ClassPowerEnable(self)
 		self:RegisterEvent('UNIT_DISPLAYPOWER', Path)
 		self:RegisterEvent('UNIT_POWER_FREQUENT', Path)
 		self:RegisterEvent('UNIT_MAXPOWER', Path)
@@ -194,7 +194,7 @@ do
 		self.ClassIcons.isEnabled = true
 	end
 
-	ClassPowerDisable = function(self)
+	function ClassPowerDisable(self)
 		self:UnregisterEvent('UNIT_DISPLAYPOWER', Path)
 		self:UnregisterEvent('UNIT_POWER_FREQUENT', Path)
 		self:UnregisterEvent('UNIT_MAXPOWER', Path)
@@ -210,15 +210,15 @@ do
 
 	if(PlayerClass == 'MONK') then
 		ClassPowerID = SPELL_POWER_CHI
-		ClassPowerType = "CHI"
+		ClassPowerType = 'CHI'
 		RequireSpec = SPEC_MONK_WINDWALKER
 	elseif(PlayerClass == 'PALADIN') then
 		ClassPowerID = SPELL_POWER_HOLY_POWER
-		ClassPowerType = "HOLY_POWER"
+		ClassPowerType = 'HOLY_POWER'
 		RequireSpec = SPEC_PALADIN_RETRIBUTION
 	elseif(PlayerClass == 'WARLOCK') then
 		ClassPowerID = SPELL_POWER_SOUL_SHARDS
-		ClassPowerType = "SOUL_SHARDS"
+		ClassPowerType = 'SOUL_SHARDS'
 	elseif(PlayerClass == 'ROGUE' or PlayerClass == 'DRUID') then
 		ClassPowerID = SPELL_POWER_COMBO_POINTS
 		ClassPowerType = 'COMBO_POINTS'
@@ -233,48 +233,47 @@ do
 	end
 end
 
-local Enable = function(self, unit)
+local function Enable(self, unit)
 	if(unit ~= 'player') then return end
 
 	local element = self.ClassIcons
-	if(not element) then return end
+	if(element) then
+		element.__owner = self
+		element.__max = #element
+		element.ForceUpdate = ForceUpdate
 
-	element.__owner = self
-	element.__max = #element
-	element.ForceUpdate = ForceUpdate
-
-	if(RequireSpec or RequireSpell) then
-		self:RegisterEvent('PLAYER_TALENT_UPDATE', VisibilityPath, true)
-	end
-
-	element.ClassPowerEnable = ClassPowerEnable
-	element.ClassPowerDisable = ClassPowerDisable
-
-	local isChildrenTextures
-	for i = 1, #element do
-		local icon = element[i]
-		if(icon:IsObjectType'Texture') then
-			if(not icon:GetTexture()) then
-				icon:SetTexCoord(0.45703125, 0.60546875, 0.44531250, 0.73437500)
-				icon:SetTexture([[Interface\PlayerFrame\Priest-ShadowUI]])
-			end
-
-			isChildrenTextures = true
+		if(RequireSpec or RequireSpell) then
+			self:RegisterEvent('PLAYER_TALENT_UPDATE', VisibilityPath, true)
 		end
-	end
 
-	if(isChildrenTextures) then
-		(element.UpdateTexture or UpdateTexture) (element)
-	end
+		element.ClassPowerEnable = ClassPowerEnable
+		element.ClassPowerDisable = ClassPowerDisable
 
-	return true
+		local isChildrenTextures
+		for i = 1, #element do
+			local icon = element[i]
+			if(icon:IsObjectType('Texture')) then
+				if(not icon:GetTexture()) then
+					icon:SetTexCoord(0.45703125, 0.60546875, 0.44531250, 0.73437500)
+					icon:SetTexture([[Interface\PlayerFrame\Priest-ShadowUI]])
+				end
+
+				isChildrenTextures = true
+			end
+		end
+
+		if(isChildrenTextures) then
+			(element.UpdateTexture or UpdateTexture) (element)
+		end
+
+		return true
+	end
 end
 
-local Disable = function(self)
-	local element = self.ClassIcons
-	if(not element) then return end
-
-	ClassPowerDisable(self)
+local function Disable(self)
+	if(self.ClassIcons) then
+		ClassPowerDisable(self)
+	end
 end
 
 oUF:AddElement('ClassIcons', VisibilityPath, Enable, Disable)

@@ -15,14 +15,14 @@
    local CPoints = {}
    for index = 1, MAX_COMBO_POINTS do
       local CPoint = self:CreateTexture(nil, 'BACKGROUND')
-   
+
       -- Position and size of the combo point.
       CPoint:SetSize(12, 16)
       CPoint:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', index * CPoint:GetWidth(), 0)
-   
+
       CPoints[index] = CPoint
    end
-   
+
    -- Register with oUF
    self.CPoints = CPoints
 
@@ -39,7 +39,7 @@ local oUF = ns.oUF
 local GetComboPoints = GetComboPoints
 local MAX_COMBO_POINTS = MAX_COMBO_POINTS
 
-local Update = function(self, event, unit)
+local function Update(self, event, unit)
 	if(unit == 'pet') then return end
 
 	local cpoints = self.CPoints
@@ -48,7 +48,7 @@ local Update = function(self, event, unit)
 	end
 
 	local cp
-	if(UnitHasVehicleUI'player') then
+	if(UnitHasVehicleUI('player')) then
 		cp = GetComboPoints('vehicle', 'target')
 	else
 		cp = GetComboPoints('player', 'target')
@@ -67,15 +67,15 @@ local Update = function(self, event, unit)
 	end
 end
 
-local Path = function(self, ...)
+local function Path(self, ...)
 	return (self.CPoints.Override or Update) (self, ...)
 end
 
-local ForceUpdate = function(element)
+local function ForceUpdate(element)
 	return Path(element.__owner, 'ForceUpdate', element.__owner.unit)
 end
 
-local Enable = function(self)
+local function Enable(self)
 	local cpoints = self.CPoints
 	if(cpoints) then
 		cpoints.__owner = self
@@ -86,8 +86,8 @@ local Enable = function(self)
 
 		for index = 1, MAX_COMBO_POINTS do
 			local cpoint = cpoints[index]
-			if(cpoint:IsObjectType'Texture' and not cpoint:GetTexture()) then
-				cpoint:SetTexture[[Interface\ComboFrame\ComboPoint]]
+			if(cpoint:IsObjectType('Texture') and not cpoint:GetTexture()) then
+				cpoint:SetTexture([[Interface\ComboFrame\ComboPoint]])
 				cpoint:SetTexCoord(0, 0.375, 0, 1)
 			end
 		end
@@ -96,7 +96,7 @@ local Enable = function(self)
 	end
 end
 
-local Disable = function(self)
+local function Disable(self)
 	local cpoints = self.CPoints
 	if(cpoints) then
 		for index = 1, MAX_COMBO_POINTS do

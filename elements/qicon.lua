@@ -18,7 +18,7 @@
    local QuestIcon = self:CreateTexture(nil, 'OVERLAY')
    QuestIcon:SetSize(16, 16)
    QuestIcon:SetPoint('TOPRIGHT', self)
-   
+
    -- Register it with oUF
    self.QuestIcon = QuestIcon
 
@@ -32,53 +32,55 @@
 local parent, ns = ...
 local oUF = ns.oUF
 
-local Update = function(self, event, unit)
+local function Update(self, event, unit)
 	if(unit ~= self.unit) then return end
 
-	local qicon = self.QuestIcon
-	if(qicon.PreUpdate) then
-		qicon:PreUpdate()
+	local element = self.QuestIcon
+	if(element.PreUpdate) then
+		element:PreUpdate()
 	end
 
 	local isQuestBoss = UnitIsQuestBoss(unit)
 	if(isQuestBoss) then
-		qicon:Show()
+		element:Show()
 	else
-		qicon:Hide()
+		element:Hide()
 	end
 
-	if(qicon.PostUpdate) then
-		return qicon:PostUpdate(isQuestBoss)
+	if(element.PostUpdate) then
+		return element:PostUpdate(isQuestBoss)
 	end
 end
 
-local Path = function(self, ...)
+local function Path(self, ...)
 	return (self.QuestIcon.Override or Update) (self, ...)
 end
 
-local ForceUpdate = function(element)
+local function ForceUpdate(element)
 	return Path(element.__owner, 'ForceUpdate', element.__owner.unit)
 end
 
-local Enable = function(self)
-	local qicon = self.QuestIcon
-	if(qicon) then
-		qicon.__owner = self
-		qicon.ForceUpdate = ForceUpdate
+local function Enable(self)
+	local element = self.QuestIcon
+	if(element) then
+		element.__owner = self
+		element.ForceUpdate = ForceUpdate
 
 		self:RegisterEvent('UNIT_CLASSIFICATION_CHANGED', Path)
 
-		if(qicon:IsObjectType'Texture' and not qicon:GetTexture()) then
-			qicon:SetTexture[[Interface\TargetingFrame\PortraitQuestBadge]]
+		if(element:IsObjectType('Texture') and not element:GetTexture()) then
+			element:SetTexture([[Interface\TargetingFrame\PortraitQuestBadge]])
 		end
 
 		return true
 	end
 end
 
-local Disable = function(self)
-	if(self.QuestIcon) then
-		self.QuestIcon:Hide()
+local function Disable(self)
+	local element = self.QuestIcon
+	if(element) then
+		element:Hide()
+
 		self:UnregisterEvent('UNIT_CLASSIFICATION_CHANGED', Path)
 	end
 end

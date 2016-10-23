@@ -33,17 +33,17 @@
  Examples
 
    -- Position and size
-   local AdditionalPower = CreateFrame("StatusBar", nil, self)
+   local AdditionalPower = CreateFrame('StatusBar', nil, self)
    AdditionalPower:SetSize(20, 20)
    AdditionalPower:SetPoint('TOP')
    AdditionalPower:SetPoint('LEFT')
    AdditionalPower:SetPoint('RIGHT')
-   
+
    -- Add a background
    local Background = AdditionalPower:CreateTexture(nil, 'BACKGROUND')
    Background:SetAllPoints(AdditionalPower)
    Background:SetTexture(1, 1, 1, .5)
-   
+
    -- Register it with oUF
    self.AdditionalPower = AdditionalPower
    self.AdditionalPower.bg = Background
@@ -88,7 +88,7 @@ local function Update(self, event, unit, powertype)
 		r, g, b = t[1], t[2], t[3]
 	end
 
-	if(b) then
+	if(r or g or b) then
 		element:SetStatusBarColor(r, g, b)
 
 		local bg = element.bg
@@ -146,7 +146,7 @@ local function Visibility(self, event, unit)
 	end
 end
 
-local VisibilityPath = function(self, ...)
+local function VisibilityPath(self, ...)
 	return (self.AdditionalPower.OverrideVisibility or Visibility) (self, ...)
 end
 
@@ -154,7 +154,7 @@ local function ForceUpdate(element)
 	return VisibilityPath(element.__owner, 'ForceUpdate', element.__owner.unit)
 end
 
-local Enable = function(self, unit)
+local function Enable(self, unit)
 	local element = self.AdditionalPower
 	if(element and unit == 'player') then
 		element.__owner = self
@@ -162,15 +162,15 @@ local Enable = function(self, unit)
 
 		self:RegisterEvent('UNIT_DISPLAYPOWER', VisibilityPath)
 
-		if(element:IsObjectType'StatusBar' and not element:GetStatusBarTexture()) then
-			element:SetStatusBarTexture[[Interface\TargetingFrame\UI-StatusBar]]
+		if(element:IsObjectType('StatusBar') and not element:GetStatusBarTexture()) then
+			element:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 		end
 
 		return true
 	end
 end
 
-local Disable = function(self)
+local function Disable(self)
 	local element = self.AdditionalPower
 	if(element) then
 		ElementDisable(self)

@@ -17,7 +17,7 @@
    local Resting = self:CreateTexture(nil, 'OVERLAY')
    Resting:SetSize(16, 16)
    Resting:SetPoint('TOPLEFT', self)
-   
+
    -- Register it with oUF
    self.Resting = Resting
 
@@ -31,54 +31,55 @@
 local parent, ns = ...
 local oUF = ns.oUF
 
-local Update = function(self, event)
-	local resting = self.Resting
-	if(resting.PreUpdate) then
-		resting:PreUpdate()
+local function Update(self, event)
+	local element = self.Resting
+	if(element.PreUpdate) then
+		element:PreUpdate()
 	end
 
 	local isResting = IsResting()
 	if(isResting) then
-		resting:Show()
+		element:Show()
 	else
-		resting:Hide()
+		element:Hide()
 	end
 
-	if(resting.PostUpdate) then
-		return resting:PostUpdate(isResting)
+	if(element.PostUpdate) then
+		return element:PostUpdate(isResting)
 	end
 end
 
-local Path = function(self, ...)
+local function Path(self, ...)
 	return (self.Resting.Override or Update) (self, ...)
 end
 
-local ForceUpdate = function(element)
+local function ForceUpdate(element)
 	return Path(element.__owner, 'ForceUpdate')
 end
 
-local Enable = function(self, unit)
-	local resting = self.Resting
-	if(resting and unit == 'player') then
-		resting.__owner = self
-		resting.ForceUpdate = ForceUpdate
+local function Enable(self, unit)
+	local element = self.Resting
+	if(element and unit == 'player') then
+		element.__owner = self
+		element.ForceUpdate = ForceUpdate
 
-		self:RegisterEvent("PLAYER_UPDATE_RESTING", Path, true)
+		self:RegisterEvent('PLAYER_UPDATE_RESTING', Path, true)
 
-		if(resting:IsObjectType"Texture" and not resting:GetTexture()) then
-			resting:SetTexture[[Interface\CharacterFrame\UI-StateIcon]]
-			resting:SetTexCoord(0, .5, 0, .421875)
+		if(element:IsObjectType('Texture') and not element:GetTexture()) then
+			element:SetTexture([[Interface\CharacterFrame\UI-StateIcon]])
+			element:SetTexCoord(0, 0.5, 0, 0.421875)
 		end
 
 		return true
 	end
 end
 
-local Disable = function(self)
-	local resting = self.Resting
-	if(resting) then
-		resting:Hide()
-		self:UnregisterEvent("PLAYER_UPDATE_RESTING", Path)
+local function Disable(self)
+	local element = self.Resting
+	if(element) then
+		element:Hide()
+
+		self:UnregisterEvent('PLAYER_UPDATE_RESTING', Path)
 	end
 end
 

@@ -4,45 +4,45 @@ local Private = oUF.Private
 
 local argcheck = Private.argcheck
 
-local _QUEUE = {}
-local _FACTORY = CreateFrame'Frame'
-_FACTORY:SetScript('OnEvent', function(self, event, ...)
+local queue = {}
+local factory = CreateFrame'Frame'
+factory:SetScript('OnEvent', function(self, event, ...)
 	return self[event](self, event, ...)
 end)
 
-_FACTORY:RegisterEvent'PLAYER_LOGIN'
-_FACTORY.active = true
+factory:RegisterEvent'PLAYER_LOGIN'
+factory.active = true
 
-function _FACTORY:PLAYER_LOGIN()
+function factory:PLAYER_LOGIN()
 	if(not self.active) then return end
 
-	for _, func in next, _QUEUE do
+	for _, func in next, queue do
 		func(oUF)
 	end
 
 	-- Avoid creating dupes.
-	wipe(_QUEUE)
+	wipe(queue)
 end
 
 function oUF:Factory(func)
 	argcheck(func, 2, 'function')
 
 	-- Call the function directly if we're active and logged in.
-	if(IsLoggedIn() and _FACTORY.active) then
+	if(IsLoggedIn() and factory.active) then
 		return func(self)
 	else
-		table.insert(_QUEUE, func)
+		table.insert(queue, func)
 	end
 end
 
 function oUF:EnableFactory()
-	_FACTORY.active = true
+	factory.active = true
 end
 
 function oUF:DisableFactory()
-	_FACTORY.active = nil
+	factory.active = nil
 end
 
 function oUF:RunFactoryQueue()
-	_FACTORY:PLAYER_LOGIN()
+	factory:PLAYER_LOGIN()
 end

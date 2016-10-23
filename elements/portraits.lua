@@ -18,7 +18,7 @@
    local Portrait = CreateFrame('PlayerModel', nil, self)
    Portrait:SetSize(32, 32)
    Portrait:SetPoint('RIGHT', self, 'LEFT')
-   
+
    -- Register it with oUF
    self.Portrait = Portrait
 
@@ -26,7 +26,7 @@
    local Portrait = self:CreateTexture(nil, 'OVERLAY')
    Portrait:SetSize(32, 32)
    Portrait:SetPoint('RIGHT', self, 'LEFT')
-   
+
    -- Register it with oUF
    self.Portrait = Portrait
 
@@ -40,55 +40,55 @@
 local parent, ns = ...
 local oUF = ns.oUF
 
-local Update = function(self, event, unit)
+local function Update(self, event, unit)
 	if(not unit or not UnitIsUnit(self.unit, unit)) then return end
 
-	local portrait = self.Portrait
-	if(portrait.PreUpdate) then portrait:PreUpdate(unit) end
+	local element = self.Portrait
+	if(element.PreUpdate) then element:PreUpdate(unit) end
 
-	if(portrait:IsObjectType'Model') then
+	if(element:IsObjectType('Model')) then
 		local guid = UnitGUID(unit)
 		if(not UnitExists(unit) or not UnitIsConnected(unit) or not UnitIsVisible(unit)) then
-			portrait:SetCamDistanceScale(0.25)
-			portrait:SetPortraitZoom(0)
-			portrait:SetPosition(0,0,0.5)
-			portrait:ClearModel()
-			portrait:SetModel('interface\\buttons\\talktomequestionmark.m2')
-			portrait.guid = nil
-		elseif(portrait.guid ~= guid or event == 'UNIT_MODEL_CHANGED') then
-			portrait:SetCamDistanceScale(1)
-			portrait:SetPortraitZoom(1)
-			portrait:SetPosition(0,0,0)
-			portrait:ClearModel()
-			portrait:SetUnit(unit)
-			portrait.guid = guid
+			element:SetCamDistanceScale(0.25)
+			element:SetPortraitZoom(0)
+			element:SetPosition(0,0,0.5)
+			element:ClearModel()
+			element:SetModel([[Interface\Buttons\\TalkToMeQuestionMark.m2]])
+			element.guid = nil
+		elseif(element.guid ~= guid or event == 'UNIT_MODEL_CHANGED') then
+			element:SetCamDistanceScale(1)
+			element:SetPortraitZoom(1)
+			element:SetPosition(0,0,0)
+			element:ClearModel()
+			element:SetUnit(unit)
+			element.guid = guid
 		end
 	else
-		SetPortraitTexture(portrait, unit)
+		SetPortraitTexture(element, unit)
 	end
 
-	if(portrait.PostUpdate) then
-		return portrait:PostUpdate(unit)
+	if(element.PostUpdate) then
+		return element:PostUpdate(unit)
 	end
 end
 
-local Path = function(self, ...)
+local function Path(self, ...)
 	return (self.Portrait.Override or Update) (self, ...)
 end
 
-local ForceUpdate = function(element)
+local function ForceUpdate(element)
 	return Path(element.__owner, 'ForceUpdate', element.__owner.unit)
 end
 
-local Enable = function(self, unit)
-	local portrait = self.Portrait
-	if(portrait) then
-		portrait:Show()
-		portrait.__owner = self
-		portrait.ForceUpdate = ForceUpdate
+local function Enable(self, unit)
+	local element = self.Portrait
+	if(element) then
+		element:Show()
+		element.__owner = self
+		element.ForceUpdate = ForceUpdate
 
-		self:RegisterEvent("UNIT_PORTRAIT_UPDATE", Path)
-		self:RegisterEvent("UNIT_MODEL_CHANGED", Path)
+		self:RegisterEvent('UNIT_PORTRAIT_UPDATE', Path)
+		self:RegisterEvent('UNIT_MODEL_CHANGED', Path)
 		self:RegisterEvent('UNIT_CONNECTION', Path)
 
 		-- The quest log uses PARTY_MEMBER_{ENABLE,DISABLE} to handle updating of
@@ -105,12 +105,13 @@ local Enable = function(self, unit)
 	end
 end
 
-local Disable = function(self)
-	local portrait = self.Portrait
-	if(portrait) then
-		portrait:Hide()
-		self:UnregisterEvent("UNIT_PORTRAIT_UPDATE", Path)
-		self:UnregisterEvent("UNIT_MODEL_CHANGED", Path)
+local function Disable(self)
+	local element = self.Portrait
+	if(element) then
+		element:Hide()
+
+		self:UnregisterEvent('UNIT_PORTRAIT_UPDATE', Path)
+		self:UnregisterEvent('UNIT_MODEL_CHANGED', Path)
 		self:UnregisterEvent('PARTY_MEMBER_ENABLE', Path)
 		self:UnregisterEvent('UNIT_CONNECTION', Path)
 	end

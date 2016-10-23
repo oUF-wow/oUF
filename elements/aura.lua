@@ -48,10 +48,10 @@
  Examples
 
    -- Position and size
-   local Buffs = CreateFrame("Frame", nil, self)
-   Buffs:SetPoint("RIGHT", self, "LEFT")
+   local Buffs = CreateFrame('Frame', nil, self)
+   Buffs:SetPoint('RIGHT', self, 'LEFT')
    Buffs:SetSize(16 * 2, 16 * 16)
-   
+
    -- Register with oUF
    self.Buffs = Buffs
 
@@ -65,52 +65,50 @@ local oUF = ns.oUF
 local VISIBLE = 1
 local HIDDEN = 0
 
-local UpdateTooltip = function(self)
+local function UpdateTooltip(self)
 	GameTooltip:SetUnitAura(self:GetParent().__owner.unit, self:GetID(), self.filter)
 end
 
-local OnEnter = function(self)
+local function onEnter(self)
 	if(not self:IsVisible()) then return end
 
-	GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
+	GameTooltip:SetOwner(self, 'ANCHOR_BOTTOMRIGHT')
 	self:UpdateTooltip()
 end
 
-local OnLeave = function()
+local function onLeave()
 	GameTooltip:Hide()
 end
 
-local createAuraIcon = function(icons, index)
-	local button = CreateFrame("Button", icons:GetDebugName().."Button"..index, icons)
-	button:RegisterForClicks'RightButtonUp'
+local function createAuraIcon(icons, index)
+	local button = CreateFrame('Button', icons:GetDebugName() .. 'Button' .. index, icons)
+	button:RegisterForClicks('RightButtonUp')
 
-	local cd = CreateFrame("Cooldown", "$parentCooldown", button, "CooldownFrameTemplate")
-	cd:SetAllPoints(button)
+	local cd = CreateFrame('Cooldown', '$parentCooldown', button, 'CooldownFrameTemplate')
+	cd:SetAllPoints()
 
-	local icon = button:CreateTexture(nil, "BORDER")
-	icon:SetAllPoints(button)
+	local icon = button:CreateTexture(nil, 'BORDER')
+	icon:SetAllPoints()
 
-	local count = button:CreateFontString(nil, "OVERLAY")
-	count:SetFontObject(NumberFontNormal)
-	count:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -1, 0)
+	local count = button:CreateFontString(nil, 'OVERLAY', 'NumberFontNormal')
+	count:SetPoint('BOTTOMRIGHT', button, 'BOTTOMRIGHT', -1, 0)
 
-	local overlay = button:CreateTexture(nil, "OVERLAY")
-	overlay:SetTexture"Interface\\Buttons\\UI-Debuff-Overlays"
-	overlay:SetAllPoints(button)
+	local overlay = button:CreateTexture(nil, 'OVERLAY')
+	overlay:SetTexture([[Interface\Buttons\UI-Debuff-Overlays]])
+	overlay:SetAllPoints()
 	overlay:SetTexCoord(.296875, .5703125, 0, .515625)
 	button.overlay = overlay
 
 	local stealable = button:CreateTexture(nil, 'OVERLAY')
-	stealable:SetTexture[[Interface\TargetingFrame\UI-TargetingFrame-Stealable]]
+	stealable:SetTexture([[Interface\TargetingFrame\UI-TargetingFrame-Stealable]])
 	stealable:SetPoint('TOPLEFT', -3, 3)
 	stealable:SetPoint('BOTTOMRIGHT', 3, -3)
-	stealable:SetBlendMode'ADD'
+	stealable:SetBlendMode('ADD')
 	button.stealable = stealable
 
 	button.UpdateTooltip = UpdateTooltip
-	button:SetScript("OnEnter", OnEnter)
-	button:SetScript("OnLeave", OnLeave)
-
+	button:SetScript('OnEnter', onEnter)
+	button:SetScript('OnLeave', onLeave)
 
 	button.icon = icon
 	button.count = count
@@ -129,20 +127,20 @@ local createAuraIcon = function(icons, index)
 	return button
 end
 
-local customFilter = function(icons, unit, icon, name)
+local function customFilter(icons, unit, icon, name)
 	if((icons.onlyShowPlayer and icon.isPlayer) or (not icons.onlyShowPlayer and name)) then
 		return true
 	end
 end
 
-local updateIcon = function(unit, icons, index, offset, filter, isDebuff, visible)
+local function updateIcon(unit, icons, index, offset, filter, isDebuff, visible)
 	local name, rank, texture, count, dispelType, duration, expiration, caster, isStealable,
 		nameplateShowSelf, spellID, canApply, isBossDebuff, casterIsPlayer, nameplateShowAll,
 		timeMod, effect1, effect2, effect3 = UnitAura(unit, index, filter)
 
 	if(name) then
-		local n = visible + offset + 1
-		local icon = icons[n]
+		local i = visible + offset + 1
+		local icon = icons[i]
 		if(not icon) then
 			--[[ :CreateIcon(index)
 
@@ -157,9 +155,9 @@ local updateIcon = function(unit, icons, index, offset, filter, isDebuff, visibl
 			 A button used to represent aura icons.
 			]]
 			local prev = icons.createdIcons
-			icon = (icons.CreateIcon or createAuraIcon) (icons, n)
+			icon = (icons.CreateIcon or createAuraIcon) (icons, i)
 
-			-- XXX: Update the counters if the layout doesn't.
+			-- Update the counters if the layout doesn't.
 			if(prev == icons.createdIcons) then
 				table.insert(icons, icon)
 				icons.createdIcons = icons.createdIcons + 1
@@ -175,7 +173,6 @@ local updateIcon = function(unit, icons, index, offset, filter, isDebuff, visibl
 		icon.filter = filter
 		icon.isDebuff = isDebuff
 		icon.isPlayer = isPlayer
-
 
 		--[[ :CustomFilter(unit, icon, ...)
 
@@ -273,13 +270,13 @@ end
  from - The aura icon before the new aura icon.
  to   - The current number of created icons.
 ]]
-local SetPosition = function(icons, from, to)
+local function SetPosition(icons, from, to)
 	local sizex = (icons.size or 16) + (icons['spacing-x'] or icons.spacing or 0)
 	local sizey = (icons.size or 16) + (icons['spacing-y'] or icons.spacing or 0)
-	local anchor = icons.initialAnchor or "BOTTOMLEFT"
-	local growthx = (icons["growth-x"] == "LEFT" and -1) or 1
-	local growthy = (icons["growth-y"] == "DOWN" and -1) or 1
-	local cols = math.floor(icons:GetWidth() / sizex + .5)
+	local anchor = icons.initialAnchor or 'BOTTOMLEFT'
+	local growthx = (icons['growth-x'] == 'LEFT' and -1) or 1
+	local growthy = (icons['growth-y'] == 'DOWN' and -1) or 1
+	local cols = math.floor(icons:GetWidth() / sizex + 0.5)
 
 	for i = from, to do
 		local button = icons[i]
@@ -294,7 +291,7 @@ local SetPosition = function(icons, from, to)
 	end
 end
 
-local filterIcons = function(unit, icons, filter, limit, isDebuff, offset, dontHide)
+local function filterIcons(unit, icons, filter, limit, isDebuff, offset, dontHide)
 	if(not offset) then offset = 0 end
 	local index = 1
 	local visible = 0
@@ -321,7 +318,7 @@ local filterIcons = function(unit, icons, filter, limit, isDebuff, offset, dontH
 	return visible, hidden
 end
 
-local UpdateAuras = function(self, event, unit)
+local function UpdateAuras(self, event, unit)
 	if(self.unit ~= unit) then return end
 
 	local auras = self.Auras
@@ -343,7 +340,7 @@ local UpdateAuras = function(self, event, unit)
 			if(not icon) then
 				local prev = auras.createdIcons
 				icon = (auras.CreateIcon or createAuraIcon) (auras, visibleBuffs)
-				-- XXX: Update the counters if the layout doesn't.
+				-- Update the counters if the layout doesn't.
 				if(prev == auras.createdIcons) then
 					table.insert(auras, icon)
 					auras.createdIcons = auras.createdIcons + 1
@@ -443,7 +440,7 @@ local UpdateAuras = function(self, event, unit)
 	end
 end
 
-local Update = function(self, event, unit)
+local function Update(self, event, unit)
 	if(self.unit ~= unit) then return end
 
 	UpdateAuras(self, event, unit)
@@ -468,13 +465,13 @@ local Update = function(self, event, unit)
 	end
 end
 
-local ForceUpdate = function(element)
+local function ForceUpdate(element)
 	return Update(element.__owner, 'ForceUpdate', element.__owner.unit)
 end
 
-local Enable = function(self)
+local function Enable(self)
 	if(self.Buffs or self.Debuffs or self.Auras) then
-		self:RegisterEvent("UNIT_AURA", UpdateAuras)
+		self:RegisterEvent('UNIT_AURA', UpdateAuras)
 
 		local buffs = self.Buffs
 		if(buffs) then
@@ -507,9 +504,9 @@ local Enable = function(self)
 	end
 end
 
-local Disable = function(self)
+local function Disable(self)
 	if(self.Buffs or self.Debuffs or self.Auras) then
-		self:UnregisterEvent("UNIT_AURA", UpdateAuras)
+		self:UnregisterEvent('UNIT_AURA', UpdateAuras)
 	end
 end
 
