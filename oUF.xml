@@ -10,7 +10,7 @@
 	<Script file="finalize.lua" />
 
 	<Script file="elements\power.lua" />
-	<Script file="elements\aura.lua" />
+	<Script file="elements\auras.lua" />
 	<Script file="elements\health.lua" />
 	<Script file="elements\cpoints.lua" />
 	<Script file="elements\ricons.lua" />
