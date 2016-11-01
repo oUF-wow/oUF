@@ -7,7 +7,7 @@
 
  Widget
 
- AltPowerBar - A StatusBar to represent alternative power.
+ AlternativePower - A StatusBar to represent alternative power.
 
  Options
 
@@ -22,14 +22,14 @@
  Examples
 
    -- Position and size
-   local AltPowerBar = CreateFrame('StatusBar', nil, self)
-   AltPowerBar:SetHeight(20)
-   AltPowerBar:SetPoint('BOTTOM')
-   AltPowerBar:SetPoint('LEFT')
-   AltPowerBar:SetPoint('RIGHT')
+   local AlternativePower = CreateFrame('StatusBar', nil, self)
+   AlternativePower:SetHeight(20)
+   AlternativePower:SetPoint('BOTTOM')
+   AlternativePower:SetPoint('LEFT')
+   AlternativePower:SetPoint('RIGHT')
 
    -- Register with oUF
-   self.AltPowerBar = AltPowerBar
+   self.AlternativePower = AlternativePower
 
  Callbacks
 ]]
@@ -45,7 +45,7 @@ local ALTERNATE_POWER_INDEX = ALTERNATE_POWER_INDEX
 
  Arguments
 
- self - The AltPowerBar element.
+ self - The AlternativePower element.
 ]]
 local function updateTooltip(self)
 	GameTooltip:SetText(self.powerName, 1, 1, 1)
@@ -67,7 +67,7 @@ end
 local function UpdatePower(self, event, unit, powerType)
 	if(self.unit ~= unit or powerType ~= 'ALTERNATE') then return end
 
-	local element = self.AltPowerBar
+	local element = self.AlternativePower
 
 	--[[ :PreUpdate()
 
@@ -75,7 +75,7 @@ local function UpdatePower(self, event, unit, powerType)
 
 	 Arguments
 
-	 self - The AltPowerBar element.
+	 self - The AlternativePower element.
 	 ]]
 	if(element.PreUpdate) then
 		element:PreUpdate()
@@ -106,7 +106,7 @@ local function UpdatePower(self, event, unit, powerType)
 
 	 Arguments
 
-	 self - The AltPowerBar element.
+	 self - The AlternativePower element.
 	 min  - The minimum possible power value for the active type.
 	 cur  - The current power value.
 	 max  - The maximum possible power value for the active type.
@@ -124,7 +124,7 @@ end
                   to its internal function again.
 ]]
 local function Path(self, ...)
-	return (self.AltPowerBar.Override or UpdatePower)(self, ...)
+	return (self.AlternativePower.Override or UpdatePower)(self, ...)
 end
 
 local function ForceUpdate(element)
@@ -133,7 +133,7 @@ end
 
 local function Toggler(self, event, unit)
 	if(unit ~= self.unit) then return end
-	local element = self.AltPowerBar
+	local element = self.AlternativePower
 
 	local barType, _, _, _, _, hideFromOthers, showOnRaid = UnitAlternatePowerInfo(unit)
 	if(barType and (showOnRaid and (UnitInParty(unit) or UnitInRaid(unit)) or not hideFromOthers or unit == 'player' or self.realUnit == 'player')) then
@@ -151,7 +151,7 @@ local function Toggler(self, event, unit)
 end
 
 local function Enable(self, unit)
-	local element = self.AltPowerBar
+	local element = self.AlternativePower
 	if(element) then
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
@@ -186,7 +186,7 @@ local function Enable(self, unit)
 end
 
 local function Disable(self, unit)
-	local element = self.AltPowerBar
+	local element = self.AlternativePower
 	if(element) then
 		element:Hide()
 
@@ -201,4 +201,4 @@ local function Disable(self, unit)
 	end
 end
 
-oUF:AddElement('AltPowerBar', Toggler, Enable, Disable)
+oUF:AddElement('AlternativePower', Toggler, Enable, Disable)
