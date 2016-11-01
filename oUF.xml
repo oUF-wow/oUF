@@ -38,6 +38,7 @@
 	<Script file="elements\additionalpower.lua" />
 	<Script file="elements\classpower.lua" />
 	<Script file="elements\stagger.lua" />
+	<Script file="elements\raidroleindicator.lua"/>
 
 	<!-- Clique support -->
 	<Button name="oUF_ClickCastUnitTemplate" virtual="true" inherits="SecureUnitButtonTemplate, SecureHandlerEnterLeaveTemplate">

@@ -1,11 +1,11 @@
---[[ Element: Raid Role Icon
+--[[ Element: Raid Role Indicator
 
- Handles visibility and updating of `self.RaidRole` based upon the units
+ Handles visibility and updating of `self.RaidRoleIndicator` based upon the units
  party assignment.
 
  Widget
 
- RaidRole - A Texture representing the units party assignment. This is can be
+ RaidRoleIndicator - A Texture representing the units party assignment. This is can be
             main tank, main assist or blank.
 
  Notes
@@ -15,12 +15,12 @@
  Examples
 
    -- Position and size
-   local RaidRole = self:CreateTexture(nil, 'OVERLAY')
-   RaidRole:SetSize(16, 16)
-   RaidRole:SetPoint('TOPLEFT')
+   local RaidRoleIndicator = self:CreateTexture(nil, 'OVERLAY')
+   RaidRoleIndicator:SetSize(16, 16)
+   RaidRoleIndicator:SetPoint('TOPLEFT')
 
    -- Register it with oUF
-   self.RaidRole = RaidRole
+   self.RaidRoleIndicator = RaidRoleIndicator
 
  Hooks
 
@@ -39,7 +39,7 @@ local function Update(self, event)
 	local unit = self.unit
 	if(not UnitInRaid(unit)) then return end
 
-	local element = self.RaidRole
+	local element = self.RaidRoleIndicator
 	if(element.PreUpdate) then
 		element:PreUpdate()
 	end
@@ -61,7 +61,7 @@ local function Update(self, event)
 end
 
 local function Path(self, ...)
-	return (self.RaidRole.Override or Update)(self, ...)
+	return (self.RaidRoleIndicator.Override or Update)(self, ...)
 end
 
 local function ForceUpdate(element)
@@ -69,7 +69,7 @@ local function ForceUpdate(element)
 end
 
 local function Enable(self)
-	local element = self.RaidRole
+	local element = self.RaidRoleIndicator
 	if(element) then
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
@@ -81,7 +81,7 @@ local function Enable(self)
 end
 
 local function Disable(self)
-	local element = self.RaidRole
+	local element = self.RaidRoleIndicator
 	if(element) then
 		element:Hide()
 
@@ -89,4 +89,4 @@ local function Disable(self)
 	end
 end
 
-oUF:AddElement('RaidRole', Path, Enable, Disable)
+oUF:AddElement('RaidRoleIndicator', Path, Enable, Disable)
