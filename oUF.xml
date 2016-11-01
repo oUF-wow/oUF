@@ -13,7 +13,7 @@
 	<Script file="elements\auras.lua" />
 	<Script file="elements\health.lua" />
 	<Script file="elements\cpoints.lua" />
-	<Script file="elements\ricons.lua" />
+	<Script file="elements\raidtargetindicator.lua" />
 	<Script file="elements\leaderindicator.lua" />
 	<Script file="elements\combatindicator.lua" />
 	<Script file="elements\restingindicator.lua" />

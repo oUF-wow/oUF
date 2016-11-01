@@ -1,10 +1,10 @@
---[[ Element: Raid Icon
+--[[ Element: Raid Target Indicator
 
  Handles updating and toggles visibility of raid target icons.
 
  Widget
 
- RaidIcon - A Texture used to display the raid target icon.
+ RaidTargetIndicator - A Texture used to display the raid target icon.
 
  Notes
 
@@ -16,12 +16,12 @@
  Examples
 
    -- Position and size
-   local RaidIcon = self:CreateTexture(nil, 'OVERLAY')
-   RaidIcon:SetSize(16, 16)
-   RaidIcon:SetPoint('TOPRIGHT', self)
+   local RaidTargetIndicator = self:CreateTexture(nil, 'OVERLAY')
+   RaidTargetIndicator:SetSize(16, 16)
+   RaidTargetIndicator:SetPoint('TOPRIGHT', self)
 
    -- Register it with oUF
-   self.RaidIcon = RaidIcon
+   self.RaidTargetIndicator = RaidTargetIndicator
 
  Hooks
 
@@ -37,7 +37,7 @@ local GetRaidTargetIndex = GetRaidTargetIndex
 local SetRaidTargetIconTexture = SetRaidTargetIconTexture
 
 local function Update(self, event)
-	local element = self.RaidIcon
+	local element = self.RaidTargetIndicator
 	if(element.PreUpdate) then
 		element:PreUpdate()
 	end
@@ -56,7 +56,7 @@ local function Update(self, event)
 end
 
 local function Path(self, ...)
-	return (self.RaidIcon.Override or Update) (self, ...)
+	return (self.RaidTargetIndicator.Override or Update) (self, ...)
 end
 
 local function ForceUpdate(element)
@@ -65,7 +65,7 @@ local function ForceUpdate(element)
 end
 
 local function Enable(self)
-	local element = self.RaidIcon
+	local element = self.RaidTargetIndicator
 	if(element) then
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
@@ -81,7 +81,7 @@ local function Enable(self)
 end
 
 local function Disable(self)
-	local element = self.RaidIcon
+	local element = self.RaidTargetIndicator
 	if(element) then
 		element:Hide()
 
@@ -89,4 +89,4 @@ local function Disable(self)
 	end
 end
 
-oUF:AddElement('RaidIcon', Path, Enable, Disable)
+oUF:AddElement('RaidTargetIndicator', Path, Enable, Disable)
