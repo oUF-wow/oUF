@@ -1,10 +1,10 @@
---[[ Element: Threat Icon
+--[[ Element: Threat Indicator
 
  Handles updating and toggles visibility of current threat level icon.
 
  Widget
 
- Threat - A Texture used to display the current threat level.
+ ThreatIndicator - A Texture used to display the current threat level.
 
  Notes
 
@@ -16,12 +16,12 @@
  Examples
 
    -- Position and size
-   local Threat = self:CreateTexture(nil, 'OVERLAY')
-   Threat:SetSize(16, 16)
-   Threat:SetPoint('TOPRIGHT', self)
+   local ThreatIndicator = self:CreateTexture(nil, 'OVERLAY')
+   ThreatIndicator:SetSize(16, 16)
+   ThreatIndicator:SetPoint('TOPRIGHT', self)
 
    -- Register it with oUF
-   self.Threat = Threat
+   self.ThreatIndicator = ThreatIndicator
 
  Hooks
 
@@ -36,7 +36,7 @@ local oUF = ns.oUF
 local function Update(self, event, unit)
 	if(unit ~= self.unit) then return end
 
-	local element = self.Threat
+	local element = self.ThreatIndicator
 	if(element.PreUpdate) then element:PreUpdate(unit) end
 
 	unit = unit or self.unit
@@ -57,7 +57,7 @@ local function Update(self, event, unit)
 end
 
 local function Path(self, ...)
-	return (self.Threat.Override or Update) (self, ...)
+	return (self.ThreatIndicator.Override or Update) (self, ...)
 end
 
 local function ForceUpdate(element)
@@ -65,7 +65,7 @@ local function ForceUpdate(element)
 end
 
 local function Enable(self)
-	local element = self.Threat
+	local element = self.ThreatIndicator
 	if(element) then
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
@@ -82,7 +82,7 @@ local function Enable(self)
 end
 
 local function Disable(self)
-	local element = self.Threat
+	local element = self.ThreatIndicator
 	if(element) then
 		element:Hide()
 
@@ -90,4 +90,4 @@ local function Disable(self)
 	end
 end
 
-oUF:AddElement('Threat', Path, Enable, Disable)
+oUF:AddElement('ThreatIndicator', Path, Enable, Disable)
