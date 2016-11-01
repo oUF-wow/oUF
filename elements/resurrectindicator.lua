@@ -1,10 +1,10 @@
---[[ Element: Resurrect Icon
+--[[ Element: Resurrect Indicator
 
  Handles updating and toggles visibility of incoming resurrect icon.
 
  Widget
 
- ResurrectIcon - A Texture used to display if the unit has an incoming
+ ResurrectIndicator - A Texture used to display if the unit has an incoming
  resurrect.
 
  Notes
@@ -15,12 +15,12 @@
  Examples
 
    -- Position and size
-   local ResurrectIcon = self:CreateTexture(nil, 'OVERLAY')
-   ResurrectIcon:SetSize(16, 16)
-   ResurrectIcon:SetPoint('TOPRIGHT', self)
+   local ResurrectIndicator = self:CreateTexture(nil, 'OVERLAY')
+   ResurrectIndicator:SetSize(16, 16)
+   ResurrectIndicator:SetPoint('TOPRIGHT', self)
 
    -- Register it with oUF
-   self.ResurrectIcon = ResurrectIcon
+   self.ResurrectIndicator = ResurrectIndicator
 
  Hooks
 
@@ -33,7 +33,7 @@ local parent, ns = ...
 local oUF = ns.oUF
 
 local function Update(self, event)
-	local element = self.ResurrectIcon
+	local element = self.ResurrectIndicator
 	if(element.PreUpdate) then
 		element:PreUpdate()
 	end
@@ -51,7 +51,7 @@ local function Update(self, event)
 end
 
 local function Path(self, ...)
-	return (self.ResurrectIcon.Override or Update) (self, ...)
+	return (self.ResurrectIndicator.Override or Update) (self, ...)
 end
 
 local function ForceUpdate(element)
@@ -59,7 +59,7 @@ local function ForceUpdate(element)
 end
 
 local function Enable(self)
-	local element = self.ResurrectIcon
+	local element = self.ResurrectIndicator
 	if(element) then
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
@@ -75,7 +75,7 @@ local function Enable(self)
 end
 
 local function Disable(self)
-	local element = self.ResurrectIcon
+	local element = self.ResurrectIndicator
 	if(element) then
 		element:Hide()
 
@@ -83,4 +83,4 @@ local function Disable(self)
 	end
 end
 
-oUF:AddElement('ResurrectIcon', Path, Enable, Disable)
+oUF:AddElement('ResurrectIndicator', Path, Enable, Disable)

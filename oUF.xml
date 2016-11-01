@@ -34,7 +34,7 @@
 	<Script file="elements\questindicator.lua" />
 	<Script file="elements\alternativepower.lua" />
 	<Script file="elements\totems.lua" />
-	<Script file="elements\resurrect.lua" />
+	<Script file="elements\resurrectindicator.lua" />
 	<Script file="elements\additionalpower.lua" />
 	<Script file="elements\classpower.lua" />
 	<Script file="elements\stagger.lua" />
