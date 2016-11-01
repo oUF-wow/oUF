@@ -1,10 +1,10 @@
---[[ Element: Resting Icon
+--[[ Element: Resting Indicator
 
  Toggles visibility of the resting icon.
 
  Widget
 
- Resting - Any UI widget.
+ RestingIndicator - Any UI widget.
 
  Notes
 
@@ -14,12 +14,12 @@
  Examples
 
    -- Position and size
-   local Resting = self:CreateTexture(nil, 'OVERLAY')
-   Resting:SetSize(16, 16)
-   Resting:SetPoint('TOPLEFT', self)
+   local RestingIndicator = self:CreateTexture(nil, 'OVERLAY')
+   RestingIndicator:SetSize(16, 16)
+   RestingIndicator:SetPoint('TOPLEFT', self)
 
    -- Register it with oUF
-   self.Resting = Resting
+   self.RestingIndicator = RestingIndicator
 
  Hooks
 
@@ -32,7 +32,7 @@ local parent, ns = ...
 local oUF = ns.oUF
 
 local function Update(self, event)
-	local element = self.Resting
+	local element = self.RestingIndicator
 	if(element.PreUpdate) then
 		element:PreUpdate()
 	end
@@ -50,7 +50,7 @@ local function Update(self, event)
 end
 
 local function Path(self, ...)
-	return (self.Resting.Override or Update) (self, ...)
+	return (self.RestingIndicator.Override or Update) (self, ...)
 end
 
 local function ForceUpdate(element)
@@ -58,7 +58,7 @@ local function ForceUpdate(element)
 end
 
 local function Enable(self, unit)
-	local element = self.Resting
+	local element = self.RestingIndicator
 	if(element and unit == 'player') then
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
@@ -75,7 +75,7 @@ local function Enable(self, unit)
 end
 
 local function Disable(self)
-	local element = self.Resting
+	local element = self.RestingIndicator
 	if(element) then
 		element:Hide()
 
@@ -83,4 +83,4 @@ local function Disable(self)
 	end
 end
 
-oUF:AddElement('Resting', Path, Enable, Disable)
+oUF:AddElement('RestingIndicator', Path, Enable, Disable)
