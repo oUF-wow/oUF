@@ -36,7 +36,7 @@
 	<Script file="elements\totems.lua" />
 	<Script file="elements\resurrect.lua" />
 	<Script file="elements\additionalpower.lua" />
-	<Script file="elements\classicons.lua" />
+	<Script file="elements\classpower.lua" />
 	<Script file="elements\stagger.lua" />
 
 	<!-- Clique support -->

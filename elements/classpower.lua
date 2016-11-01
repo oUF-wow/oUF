@@ -1,11 +1,11 @@
---[[ Element: Class Icons
+--[[ Element: ClassPower
 
  Toggles the visibility of icons depending on the player's class and
  specialization.
 
  Widget
 
- ClassIcons - An array consisting of as many UI Textures as the theoretical
+ ClassPower - An array consisting of as many UI Textures as the theoretical
  maximum return of `UnitPowerMax`.
 
  Notes
@@ -18,7 +18,7 @@
 
  Examples
 
-   local ClassIcons = {}
+   local ClassPower = {}
    for index = 1, 6 do
       local Icon = self:CreateTexture(nil, 'BACKGROUND')
 
@@ -26,11 +26,11 @@
       Icon:SetSize(16, 16)
       Icon:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', index * Icon:GetWidth(), 0)
 
-      ClassIcons[index] = Icon
+      ClassPower[index] = Icon
    end
 
    -- Register with oUF
-   self.ClassIcons = ClassIcons
+   self.ClassPower = ClassPower
 
  Hooks
 
@@ -76,7 +76,7 @@ local function Update(self, event, unit, powerType)
 		return
 	end
 
-	local element = self.ClassIcons
+	local element = self.ClassPower
 
 	--[[ :PreUpdate()
 
@@ -84,7 +84,7 @@ local function Update(self, event, unit, powerType)
 
 	 Arguments
 
-	 self  - The ClassIcons element
+	 self  - The ClassPower element
 	 event - The event, that the update is being triggered for
 	]]
 	if(element.PreUpdate) then
@@ -127,7 +127,7 @@ local function Update(self, event, unit, powerType)
 
 	 Arguments
 
-	 self          - The ClassIcons element
+	 self          - The ClassPower element
 	 cur           - The current amount of power
 	 max           - The maximum amount of power
 	 hasMaxChanged - Shows if the maximum amount has changed since the last
@@ -141,11 +141,11 @@ local function Update(self, event, unit, powerType)
 end
 
 local function Path(self, ...)
-	return (self.ClassIcons.Override or Update) (self, ...)
+	return (self.ClassPower.Override or Update) (self, ...)
 end
 
 local function Visibility(self, event, unit)
-	local element = self.ClassIcons
+	local element = self.ClassPower
 	local shouldEnable
 
 	if(UnitHasVehicleUI('player')) then
@@ -173,7 +173,7 @@ local function Visibility(self, event, unit)
 end
 
 local function VisibilityPath(self, ...)
-	return (self.ClassIcons.OverrideVisibility or Visibility) (self, ...)
+	return (self.ClassPower.OverrideVisibility or Visibility) (self, ...)
 end
 
 local function ForceUpdate(element)
@@ -191,7 +191,7 @@ do
 		else
 			Path(self, 'ClassPowerEnable', 'player', ClassPowerType)
 		end
-		self.ClassIcons.isEnabled = true
+		self.ClassPower.isEnabled = true
 	end
 
 	function ClassPowerDisable(self)
@@ -199,13 +199,13 @@ do
 		self:UnregisterEvent('UNIT_POWER_FREQUENT', Path)
 		self:UnregisterEvent('UNIT_MAXPOWER', Path)
 
-		local element = self.ClassIcons
+		local element = self.ClassPower
 		for i = 1, #element do
 			element[i]:Hide()
 		end
 
 		Path(self, 'ClassPowerDisable', 'player', ClassPowerType)
-		self.ClassIcons.isEnabled = false
+		self.ClassPower.isEnabled = false
 	end
 
 	if(PlayerClass == 'MONK') then
@@ -236,7 +236,7 @@ end
 local function Enable(self, unit)
 	if(unit ~= 'player') then return end
 
-	local element = self.ClassIcons
+	local element = self.ClassPower
 	if(element) then
 		element.__owner = self
 		element.__max = #element
@@ -271,9 +271,9 @@ local function Enable(self, unit)
 end
 
 local function Disable(self)
-	if(self.ClassIcons) then
+	if(self.ClassPower) then
 		ClassPowerDisable(self)
 	end
 end
 
-oUF:AddElement('ClassIcons', VisibilityPath, Enable, Disable)
+oUF:AddElement('ClassPower', VisibilityPath, Enable, Disable)
