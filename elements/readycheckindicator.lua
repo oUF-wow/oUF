@@ -1,11 +1,11 @@
---[[ Element: Ready Check Icon
+--[[ Element: Ready Check Indicator
 
- Handles updating and visibility of `self.ReadyCheck` based upon the units
+ Handles updating and visibility of `self.ReadyCheckIndicator` based upon the units
  ready check status.
 
  Widget
 
- ReadyCheck - A Texture representing ready check status.
+ ReadyCheckIndicator - A Texture representing ready check status.
 
  Notes
 
@@ -24,12 +24,12 @@
  Examples
 
    -- Position and size
-   local ReadyCheck = self:CreateTexture(nil, 'OVERLAY')
-   ReadyCheck:SetSize(16, 16)
-   ReadyCheck:SetPoint('TOP')
+   local ReadyCheckIndicator = self:CreateTexture(nil, 'OVERLAY')
+   ReadyCheckIndicator:SetSize(16, 16)
+   ReadyCheckIndicator:SetPoint('TOP')
 
    -- Register with oUF
-   self.ReadyCheck = ReadyCheck
+   self.ReadyCheckIndicator = ReadyCheckIndicator
 
  Hooks
 
@@ -51,7 +51,7 @@ local function OnFinished(self)
 
 	 Arguments
 
-	 self - The ReadyCheck element.
+	 self - The ReadyCheckIndicator element.
 	]]
 	if(element.PostUpdateFadeOut) then
 		element:PostUpdateFadeOut()
@@ -59,7 +59,7 @@ local function OnFinished(self)
 end
 
 local function Update(self, event)
-	local element = self.ReadyCheck
+	local element = self.ReadyCheckIndicator
 
 	--[[ :PreUpdate()
 
@@ -67,7 +67,7 @@ local function Update(self, event)
 
 	 Arguments
 
-	 self - The ReadyCheck element.
+	 self - The ReadyCheckIndicator element.
 	]]
 	if(element.PreUpdate) then
 		element:PreUpdate()
@@ -105,7 +105,7 @@ local function Update(self, event)
 
 	 Arguments
 
-	 self   - The ReadyCheck element.
+	 self   - The ReadyCheckIndicator element.
 	 status - The units ready check status, if any.
 	]]
 	if(element.PostUpdate) then
@@ -114,7 +114,7 @@ local function Update(self, event)
 end
 
 local function Path(self, ...)
-	return (self.ReadyCheck.Override or Update) (self, ...)
+	return (self.ReadyCheckIndicator.Override or Update) (self, ...)
 end
 
 local function ForceUpdate(element)
@@ -122,7 +122,7 @@ local function ForceUpdate(element)
 end
 
 local function Enable(self, unit)
-	local element = self.ReadyCheck
+	local element = self.ReadyCheckIndicator
 	if(element and (unit and (unit:sub(1, 5) == 'party' or unit:sub(1,4) == 'raid'))) then
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
@@ -146,7 +146,7 @@ local function Enable(self, unit)
 end
 
 local function Disable(self)
-	local element = self.ReadyCheck
+	local element = self.ReadyCheckIndicator
 	if(element) then
 		element:Hide()
 
@@ -156,4 +156,4 @@ local function Disable(self)
 	end
 end
 
-oUF:AddElement('ReadyCheck', Path, Enable, Disable)
+oUF:AddElement('ReadyCheckIndicator', Path, Enable, Disable)
