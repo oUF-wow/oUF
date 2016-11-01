@@ -1,9 +1,9 @@
---[[ Element: Combat Icon
- Toggles the visibility of `self.Combat` based on the player's combat status.
+--[[ Element: Combat Indicator
+ Toggles the visibility of `self.CombatIndicator` based on the player's combat status.
 
  Widget
 
- Combat - Any UI widget.
+ CombatIndicator - Any UI widget.
 
  Notes
 
@@ -13,12 +13,12 @@
  Examples
 
    -- Position and size
-   local Combat = self:CreateTexture(nil, 'OVERLAY')
-   Combat:SetSize(16, 16)
-   Combat:SetPoint('TOP', self)
+   local CombatIndicator = self:CreateTexture(nil, 'OVERLAY')
+   CombatIndicator:SetSize(16, 16)
+   CombatIndicator:SetPoint('TOP', self)
 
    -- Register it with oUF
-   self.Combat = Combat
+   self.CombatIndicator = CombatIndicator
 
  Hooks
 
@@ -32,7 +32,7 @@ local parent, ns = ...
 local oUF = ns.oUF
 
 local function Update(self, event)
-	local element = self.Combat
+	local element = self.CombatIndicator
 	if(element.PreUpdate) then
 		element:PreUpdate()
 	end
@@ -50,7 +50,7 @@ local function Update(self, event)
 end
 
 local function Path(self, ...)
-	return (self.Combat.Override or Update) (self, ...)
+	return (self.CombatIndicator.Override or Update) (self, ...)
 end
 
 local function ForceUpdate(element)
@@ -58,7 +58,7 @@ local function ForceUpdate(element)
 end
 
 local function Enable(self, unit)
-	local element = self.Combat
+	local element = self.CombatIndicator
 	if(element and unit == 'player') then
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
@@ -76,7 +76,7 @@ local function Enable(self, unit)
 end
 
 local function Disable(self)
-	local element = self.Combat
+	local element = self.CombatIndicator
 	if(element) then
 		element:Hide()
 
@@ -85,4 +85,4 @@ local function Disable(self)
 	end
 end
 
-oUF:AddElement('Combat', Path, Enable, Disable)
+oUF:AddElement('CombatIndicator', Path, Enable, Disable)

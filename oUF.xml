@@ -15,7 +15,7 @@
 	<Script file="elements\cpoints.lua" />
 	<Script file="elements\ricons.lua" />
 	<Script file="elements\leader.lua" />
-	<Script file="elements\combat.lua" />
+	<Script file="elements\combatindicator.lua" />
 	<Script file="elements\resting.lua" />
 	<Script file="elements\pvp.lua" />
 	<Script file="elements\portraits.lua" />
