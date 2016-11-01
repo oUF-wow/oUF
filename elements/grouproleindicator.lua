@@ -1,11 +1,11 @@
---[[ Element: LFD Role Icon
+--[[ Element: Group Role Indicator
 
- Toggles visibility of the LFD role icon based upon the units current dungeon
+ Toggles visibility of the assigned role icon based upon the units current dungeon
  role.
 
  Widget
 
- LFDRole - A Texture containing the LFD role icons at specific locations. Look
+ GroupRoleIndicator - A Texture containing the LFD role icons at specific locations. Look
            at the default LFD role icon texture for an example of this.
            Alternatively you can look at the return values of
            GetTexCoordsForRoleSmallCircle(role).
@@ -18,12 +18,12 @@
  Examples
 
    -- Position and size
-   local LFDRole = self:CreateTexture(nil, 'OVERLAY')
-   LFDRole:SetSize(16, 16)
-   LFDRole:SetPoint('LEFT', self)
+   local GroupRoleIndicator = self:CreateTexture(nil, 'OVERLAY')
+   GroupRoleIndicator:SetSize(16, 16)
+   GroupRoleIndicator:SetPoint('LEFT', self)
 
    -- Register it with oUF
-   self.LFDRole = LFDRole
+   self.GroupRoleIndicator = GroupRoleIndicator
 
  Hooks
 
@@ -36,7 +36,7 @@ local parent, ns = ...
 local oUF = ns.oUF
 
 local function Update(self, event)
-	local element = self.LFDRole
+	local element = self.GroupRoleIndicator
 	if(element.PreUpdate) then
 		element:PreUpdate()
 	end
@@ -55,7 +55,7 @@ local function Update(self, event)
 end
 
 local function Path(self, ...)
-	return (self.LFDRole.Override or Update) (self, ...)
+	return (self.GroupRoleIndicator.Override or Update) (self, ...)
 end
 
 local function ForceUpdate(element)
@@ -63,7 +63,7 @@ local function ForceUpdate(element)
 end
 
 local function Enable(self)
-	local element = self.LFDRole
+	local element = self.GroupRoleIndicator
 	if(element) then
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
@@ -83,7 +83,7 @@ local function Enable(self)
 end
 
 local function Disable(self)
-	local element = self.LFDRole
+	local element = self.GroupRoleIndicator
 	if(element) then
 		element:Hide()
 
@@ -92,4 +92,4 @@ local function Disable(self)
 	end
 end
 
-oUF:AddElement('LFDRole', Path, Enable, Disable)
+oUF:AddElement('GroupRoleIndicator', Path, Enable, Disable)

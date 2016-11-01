@@ -26,7 +26,7 @@
 	<Script file="elements\masterlooter.lua" />
 	<Script file="elements\assistantindicator.lua" />
 	<Script file="elements\runebar.lua" />
-	<Script file="elements\lfdrole.lua" />
+	<Script file="elements\grouproleindicator.lua" />
 	<Script file="elements\healthprediction.lua" />
 	<Script file="elements\powerprediction.lua" />
 	<Script file="elements\picon.lua" />
