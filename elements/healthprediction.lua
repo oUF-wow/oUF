@@ -1,9 +1,9 @@
---[[ Element: Heal Prediction Bar
+--[[ Element: Health Prediction Bars
  Handle updating and visibility of the heal prediction status bars.
 
  Widget
 
- HealPrediction - A table containing `myBar` and `otherBar`.
+ HealthPrediction - A table containing `myBar` and `otherBar`.
 
  Sub-Widgets
 
@@ -52,7 +52,7 @@
    healAbsorbBar:SetWidth(200)
 
    -- Register with oUF
-   self.HealPrediction = {
+   self.HealthPrediction = {
       myBar = myBar,
       otherBar = otherBar,
       absorbBar = absorbBar,
@@ -76,7 +76,7 @@ local math_max = math.max
 local function Update(self, event, unit)
 	if(self.unit ~= unit) then return end
 
-	local element = self.HealPrediction
+	local element = self.HealthPrediction
 	if(element.PreUpdate) then element:PreUpdate(unit) end
 
 	local myIncomingHeal = UnitGetIncomingHeals(unit, 'player') or 0
@@ -151,7 +151,7 @@ local function Update(self, event, unit)
 end
 
 local function Path(self, ...)
-	return (self.HealPrediction.Override or Update) (self, ...)
+	return (self.HealthPrediction.Override or Update) (self, ...)
 end
 
 local function ForceUpdate(element)
@@ -159,7 +159,7 @@ local function ForceUpdate(element)
 end
 
 local function Enable(self)
-	local element = self.HealPrediction
+	local element = self.HealthPrediction
 	if(element) then
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
@@ -213,7 +213,7 @@ local function Enable(self)
 end
 
 local function Disable(self)
-	local element = self.HealPrediction
+	local element = self.HealthPrediction
 	if(element) then
 		if(element.myBar) then
 			element.myBar:Hide()
@@ -237,4 +237,4 @@ local function Disable(self)
 	end
 end
 
-oUF:AddElement('HealPrediction', Path, Enable, Disable)
+oUF:AddElement('HealthPrediction', Path, Enable, Disable)
