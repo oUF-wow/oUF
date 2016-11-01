@@ -5,7 +5,7 @@
 
  Widget
 
- PvP - A Texture used to display faction, FFA PvP status or prestige icon.
+ PvPIndicator - A Texture used to display faction, FFA PvP status or prestige icon.
 
  Sub-Widgets
 
@@ -19,17 +19,17 @@
  Examples
 
    -- Position and size
-   local PvP = self:CreateTexture(nil, 'ARTWORK', nil, 1)
-   PvP:SetSize(30, 30)
-   PvP:SetPoint('RIGHT', self, 'LEFT')
+   local PvPIndicator = self:CreateTexture(nil, 'ARTWORK', nil, 1)
+   PvPIndicator:SetSize(30, 30)
+   PvPIndicator:SetPoint('RIGHT', self, 'LEFT')
 
    local Prestige = self:CreateTexture(nil, 'ARTWORK')
    Prestige:SetSize(50, 52)
-   Prestige:SetPoint('CENTER', PvP, 'CENTER')
+   Prestige:SetPoint('CENTER', PvPIndicator, 'CENTER')
 
    -- Register it with oUF
-   self.PvP = PvP
-   self.PvP.Prestige = Prestige
+   self.PvPIndicator = PvPIndicator
+   self.PvPIndicator.Prestige = Prestige
 
  Hooks
 
@@ -47,7 +47,7 @@ local FACTION_ICON = [[Interface\TargetingFrame\UI-PVP-]]
 local function Update(self, event, unit)
 	if(unit ~= self.unit) then return end
 
-	local element = self.PvP
+	local element = self.PvPIndicator
 	if(element.PreUpdate) then
 		element:PreUpdate(unit)
 	end
@@ -117,7 +117,7 @@ local function Update(self, event, unit)
 end
 
 local function Path(self, ...)
-	return (self.PvP.Override or Update) (self, ...)
+	return (self.PvPIndicator.Override or Update) (self, ...)
 end
 
 local function ForceUpdate(element)
@@ -125,7 +125,7 @@ local function ForceUpdate(element)
 end
 
 local function Enable(self)
-	local element = self.PvP
+	local element = self.PvPIndicator
 	if(element) then
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
@@ -141,7 +141,7 @@ local function Enable(self)
 end
 
 local function Disable(self)
-	local element = self.PvP
+	local element = self.PvPIndicator
 	if(element) then
 		element:Hide()
 
@@ -155,4 +155,4 @@ local function Disable(self)
 	end
 end
 
-oUF:AddElement('PvP', Path, Enable, Disable)
+oUF:AddElement('PvPIndicator', Path, Enable, Disable)
