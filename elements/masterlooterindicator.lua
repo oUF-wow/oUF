@@ -1,10 +1,10 @@
---[[ Element: Master Looter Icon
+--[[ Element: Master Looter Indicator
 
  Toggles visibility of the master looter icon.
 
  Widget
 
- MasterLooter - Any UI widget.
+ MasterLooterIndicator - Any UI widget.
 
  Notes
 
@@ -14,12 +14,12 @@
  Examples
 
    -- Position and size
-   local MasterLooter = self:CreateTexture(nil, 'OVERLAY')
-   MasterLooter:SetSize(16, 16)
-   MasterLooter:SetPoint('TOPRIGHT', self)
+   local MasterLooterIndicator = self:CreateTexture(nil, 'OVERLAY')
+   MasterLooterIndicator:SetSize(16, 16)
+   MasterLooterIndicator:SetPoint('TOPRIGHT', self)
 
    -- Register it with oUF
-   self.MasterLooter = MasterLooter
+   self.MasterLooterIndicator = MasterLooterIndicator
 
  Hooks
 
@@ -34,7 +34,7 @@ local oUF = ns.oUF
 
 local function Update(self, event)
 	local unit = self.unit
-	local element = self.MasterLooter
+	local element = self.MasterLooterIndicator
 	if(not (UnitInParty(unit) or UnitInRaid(unit))) then
 		return element:Hide()
 	end
@@ -71,7 +71,7 @@ local function Update(self, event)
 end
 
 local function Path(self, ...)
-	return (self.MasterLooter.Override or Update) (self, ...)
+	return (self.MasterLooterIndicator.Override or Update) (self, ...)
 end
 
 local function ForceUpdate(element)
@@ -79,7 +79,7 @@ local function ForceUpdate(element)
 end
 
 local function Enable(self, unit)
-	local element = self.MasterLooter
+	local element = self.MasterLooterIndicator
 	if(element) then
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
@@ -96,7 +96,7 @@ local function Enable(self, unit)
 end
 
 local function Disable(self)
-	local element = self.MasterLooter
+	local element = self.MasterLooterIndicator
 	if(element) then
 		element:Hide()
 
@@ -105,4 +105,4 @@ local function Disable(self)
 	end
 end
 
-oUF:AddElement('MasterLooter', Path, Enable, Disable)
+oUF:AddElement('MasterLooterIndicator', Path, Enable, Disable)
