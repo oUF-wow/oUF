@@ -1,10 +1,10 @@
---[[ Element: Leader Icon
+--[[ Element: Leader Indicator
 
  Toggles visibility based on the units leader status.
 
  Widget
 
- Leader - Any UI widget.
+ LeaderIndicator - Any UI widget.
 
  Notes
 
@@ -14,12 +14,12 @@
  Examples
 
    -- Position and size
-   local Leader = self:CreateTexture(nil, 'OVERLAY')
-   Leader:SetSize(16, 16)
-   Leader:SetPoint('BOTTOM', self, 'TOP')
+   local LeaderIndicator = self:CreateTexture(nil, 'OVERLAY')
+   LeaderIndicator:SetSize(16, 16)
+   LeaderIndicator:SetPoint('BOTTOM', self, 'TOP')
 
    -- Register it with oUF
-   self.Leader = Leadera
+   self.LeaderIndicator = Leadera
 
  Hooks
 
@@ -32,7 +32,7 @@ local parent, ns = ...
 local oUF = ns.oUF
 
 local function Update(self, event)
-	local element = self.Leader
+	local element = self.LeaderIndicator
 	if(element.PreUpdate) then
 		element:PreUpdate()
 	end
@@ -51,7 +51,7 @@ local function Update(self, event)
 end
 
 local function Path(self, ...)
-	return (self.Leader.Override or Update) (self, ...)
+	return (self.LeaderIndicator.Override or Update) (self, ...)
 end
 
 local function ForceUpdate(element)
@@ -59,7 +59,7 @@ local function ForceUpdate(element)
 end
 
 local function Enable(self)
-	local element = self.Leader
+	local element = self.LeaderIndicator
 	if(element) then
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
@@ -76,7 +76,7 @@ local function Enable(self)
 end
 
 local function Disable(self)
-	local element = self.Leader
+	local element = self.LeaderIndicator
 	if(element) then
 		element:Hide()
 
@@ -85,4 +85,4 @@ local function Disable(self)
 	end
 end
 
-oUF:AddElement('Leader', Path, Enable, Disable)
+oUF:AddElement('LeaderIndicator', Path, Enable, Disable)
