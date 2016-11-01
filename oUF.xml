@@ -29,7 +29,7 @@
 	<Script file="elements\grouproleindicator.lua" />
 	<Script file="elements\healthprediction.lua" />
 	<Script file="elements\powerprediction.lua" />
-	<Script file="elements\picon.lua" />
+	<Script file="elements\phaseindicator.lua" />
 	<Script file="elements\readycheck.lua" />
 	<Script file="elements\qicon.lua" />
 	<Script file="elements\alternativepower.lua" />

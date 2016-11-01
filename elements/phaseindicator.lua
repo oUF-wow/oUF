@@ -1,11 +1,11 @@
---[[ Element: Phasing Icon
+--[[ Element: Phasing Indicator
 
  Toggles visibility of the phase icon based on the units phasing compared to the
  player.
 
  Widget
 
- PhaseIcon - Any UI widget.
+ PhaseIndicator - Any UI widget.
 
  Notes
 
@@ -15,12 +15,12 @@
  Examples
 
    -- Position and size
-   local PhaseIcon = self:CreateTexture(nil, 'OVERLAY')
-   PhaseIcon:SetSize(16, 16)
-   PhaseIcon:SetPoint('TOPLEFT', self)
+   local PhaseIndicator = self:CreateTexture(nil, 'OVERLAY')
+   PhaseIndicator:SetSize(16, 16)
+   PhaseIndicator:SetPoint('TOPLEFT', self)
 
    -- Register it with oUF
-   self.PhaseIcon = PhaseIcon
+   self.PhaseIndicator = PhaseIndicator
 
  Hooks
 
@@ -33,7 +33,7 @@ local parent, ns = ...
 local oUF = ns.oUF
 
 local function Update(self, event)
-	local element = self.PhaseIcon
+	local element = self.PhaseIndicator
 	if(element.PreUpdate) then
 		element:PreUpdate()
 	end
@@ -51,7 +51,7 @@ local function Update(self, event)
 end
 
 local function Path(self, ...)
-	return (self.PhaseIcon.Override or Update) (self, ...)
+	return (self.PhaseIndicator.Override or Update) (self, ...)
 end
 
 local function ForceUpdate(element)
@@ -59,7 +59,7 @@ local function ForceUpdate(element)
 end
 
 local function Enable(self)
-	local element = self.PhaseIcon
+	local element = self.PhaseIndicator
 	if(element) then
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
@@ -75,7 +75,7 @@ local function Enable(self)
 end
 
 local function Disable(self)
-	local element = self.PhaseIcon
+	local element = self.PhaseIndicator
 	if(element) then
 		element:Hide()
 
@@ -83,4 +83,4 @@ local function Disable(self)
 	end
 end
 
-oUF:AddElement('PhaseIcon', Path, Enable, Disable)
+oUF:AddElement('PhaseIndicator', Path, Enable, Disable)
