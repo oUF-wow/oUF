@@ -1,9 +1,9 @@
---[[ Element: Assistant Icon
- Toggles visibility of `self.Assistant` based on the units raid officer status.
+--[[ Element: Assistant Indicator
+ Toggles visibility of `self.AssistantIndicator` based on the units raid officer status.
 
  Widget
 
- Assistant - Any UI widget.
+ AssistantIndicator - Any UI widget.
 
  Notes
 
@@ -13,12 +13,12 @@
  Examples
 
    -- Position and size
-   local Assistant = self:CreateTexture(nil, 'OVERLAY')
-   Assistant:SetSize(16, 16)
-   Assistant:SetPoint('TOP', self)
+   local AssistantIndicator = self:CreateTexture(nil, 'OVERLAY')
+   AssistantIndicator:SetSize(16, 16)
+   AssistantIndicator:SetPoint('TOP', self)
 
    -- Register it with oUF
-   self.Assistant = Assistant
+   self.AssistantIndicator = AssistantIndicator
 
  Hooks and Callbacks
 
@@ -28,7 +28,7 @@ local parent, ns = ...
 local oUF = ns.oUF
 
 local function Update(self, event)
-	local element = self.Assistant
+	local element = self.AssistantIndicator
 
 	--[[ :PreUpdate()
 
@@ -36,7 +36,7 @@ local function Update(self, event)
 
 	 Arguments
 
-	 self - The Assistant element.
+	 self - The AssistantIndicator element.
 	]]
 	if(element.PreUpdate) then
 		element:PreUpdate()
@@ -56,7 +56,7 @@ local function Update(self, event)
 
 	 Arguments
 
-	 self        - The Assistant element.
+	 self        - The AssistantIndicator element.
 	 isAssistant - A boolean holding whether the unit is a raid officer or not.
 	]]
 	if(element.PostUpdate) then
@@ -73,11 +73,11 @@ local function Path(self, ...)
 
 	 Arguments
 
-	 self  - The Assistant element.
+	 self  - The AssistantIndicator element.
 	 event - The UI event that fired.
 	 ...   - A vararg with the arguments that accompany the event.
 	]]
-	return (self.Assistant.Override or Update) (self, ...)
+	return (self.AssistantIndicator.Override or Update) (self, ...)
 end
 
 local function ForceUpdate(element)
@@ -85,7 +85,7 @@ local function ForceUpdate(element)
 end
 
 local function Enable(self)
-	local element = self.Assistant
+	local element = self.AssistantIndicator
 	if(element) then
 		self:RegisterEvent('GROUP_ROSTER_UPDATE', Path, true)
 
@@ -101,7 +101,7 @@ local function Enable(self)
 end
 
 local function Disable(self)
-	local element = self.Assistant
+	local element = self.AssistantIndicator
 	if(element) then
 		element:Hide()
 
@@ -109,4 +109,4 @@ local function Disable(self)
 	end
 end
 
-oUF:AddElement('Assistant', Path, Enable, Disable)
+oUF:AddElement('AssistantIndicator', Path, Enable, Disable)
