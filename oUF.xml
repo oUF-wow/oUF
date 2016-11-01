@@ -31,7 +31,7 @@
 	<Script file="elements\powerprediction.lua" />
 	<Script file="elements\phaseindicator.lua" />
 	<Script file="elements\readycheck.lua" />
-	<Script file="elements\qicon.lua" />
+	<Script file="elements\questindicator.lua" />
 	<Script file="elements\alternativepower.lua" />
 	<Script file="elements\totems.lua" />
 	<Script file="elements\resurrect.lua" />

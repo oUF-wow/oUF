@@ -1,11 +1,11 @@
---[[ Element: Quest Icon
+--[[ Element: Quest Indicator
 
  Handles updating and toggles visibility based upon the units connection to a
  quest.
 
  Widget
 
- QuestIcon - Any UI widget.
+ QuestIndicator - Any UI widget.
 
  Notes
 
@@ -15,12 +15,12 @@
  Examples
 
    -- Position and size
-   local QuestIcon = self:CreateTexture(nil, 'OVERLAY')
-   QuestIcon:SetSize(16, 16)
-   QuestIcon:SetPoint('TOPRIGHT', self)
+   local QuestIndicator = self:CreateTexture(nil, 'OVERLAY')
+   QuestIndicator:SetSize(16, 16)
+   QuestIndicator:SetPoint('TOPRIGHT', self)
 
    -- Register it with oUF
-   self.QuestIcon = QuestIcon
+   self.QuestIndicator = QuestIndicator
 
  Hooks
 
@@ -35,7 +35,7 @@ local oUF = ns.oUF
 local function Update(self, event, unit)
 	if(unit ~= self.unit) then return end
 
-	local element = self.QuestIcon
+	local element = self.QuestIndicator
 	if(element.PreUpdate) then
 		element:PreUpdate()
 	end
@@ -53,7 +53,7 @@ local function Update(self, event, unit)
 end
 
 local function Path(self, ...)
-	return (self.QuestIcon.Override or Update) (self, ...)
+	return (self.QuestIndicator.Override or Update) (self, ...)
 end
 
 local function ForceUpdate(element)
@@ -61,7 +61,7 @@ local function ForceUpdate(element)
 end
 
 local function Enable(self)
-	local element = self.QuestIcon
+	local element = self.QuestIndicator
 	if(element) then
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
@@ -77,7 +77,7 @@ local function Enable(self)
 end
 
 local function Disable(self)
-	local element = self.QuestIcon
+	local element = self.QuestIndicator
 	if(element) then
 		element:Hide()
 
@@ -85,4 +85,4 @@ local function Disable(self)
 	end
 end
 
-oUF:AddElement('QuestIcon', Path, Enable, Disable)
+oUF:AddElement('QuestIndicator', Path, Enable, Disable)
