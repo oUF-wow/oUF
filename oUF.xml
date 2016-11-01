@@ -25,7 +25,7 @@
 	<Script file="elements\tags.lua" />
 	<Script file="elements\masterlooterindicator.lua" />
 	<Script file="elements\assistantindicator.lua" />
-	<Script file="elements\runebar.lua" />
+	<Script file="elements\runes.lua" />
 	<Script file="elements\grouproleindicator.lua" />
 	<Script file="elements\healthprediction.lua" />
 	<Script file="elements\powerprediction.lua" />

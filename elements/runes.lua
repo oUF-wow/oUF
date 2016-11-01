@@ -1,4 +1,4 @@
---[[ Element: Runes Bar
+--[[ Element: Runes
 
  Handle updating and visibility of the Death Knight's Rune indicators.
 
