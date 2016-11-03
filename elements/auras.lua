@@ -139,8 +139,8 @@ local function updateIcon(unit, icons, index, offset, filter, isDebuff, visible)
 		timeMod, effect1, effect2, effect3 = UnitAura(unit, index, filter)
 
 	if(name) then
-		local i = visible + offset + 1
-		local icon = icons[i]
+		local position = visible + offset + 1
+		local icon = icons[position]
 		if(not icon) then
 			--[[ :CreateIcon(index)
 
@@ -155,7 +155,7 @@ local function updateIcon(unit, icons, index, offset, filter, isDebuff, visible)
 			 A button used to represent aura icons.
 			]]
 			local prev = icons.createdIcons
-			icon = (icons.CreateIcon or createAuraIcon) (icons, i)
+			icon = (icons.CreateIcon or createAuraIcon) (icons, position)
 
 			-- Update the counters if the layout doesn't.
 			if(prev == icons.createdIcons) then
@@ -249,7 +249,7 @@ local function updateIcon(unit, icons, index, offset, filter, isDebuff, visible)
 			 offset - The offset the button was created at.
 			 ]]
 			if(icons.PostUpdateIcon) then
-				icons:PostUpdateIcon(unit, icon, index, n)
+				icons:PostUpdateIcon(unit, icon, index, position)
 			end
 
 			return VISIBLE
