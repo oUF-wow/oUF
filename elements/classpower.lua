@@ -94,7 +94,7 @@ local function Update(self, event, unit, powerType)
 	local cur, max, oldMax
 	if(event ~= 'ClassPowerDisable') then
 		if(unit == 'vehicle') then
-			-- XXX: UnitPower is bugged for vehicles, always returns 0 combo points
+			-- BUG: UnitPower is bugged for vehicles, always returns 0 combo points
 			cur = GetComboPoints(unit)
 			max = MAX_COMBO_POINTS
 		else
