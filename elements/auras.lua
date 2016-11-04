@@ -154,14 +154,9 @@ local function updateIcon(unit, icons, index, offset, filter, isDebuff, visible)
 
 			 A button used to represent aura icons.
 			]]
-			local prev = icons.createdIcons
 			icon = (icons.CreateIcon or createAuraIcon) (icons, position)
-
-			-- Update the counters if the layout doesn't.
-			if(prev == icons.createdIcons) then
-				table.insert(icons, icon)
-				icons.createdIcons = icons.createdIcons + 1
-			end
+			table.insert(icons, icon)
+			icons.createdIcons = icons.createdIcons + 1
 		end
 
 		local isPlayer
@@ -338,13 +333,9 @@ local function UpdateAuras(self, event, unit)
 
 			local icon = auras[visibleBuffs]
 			if(not icon) then
-				local prev = auras.createdIcons
 				icon = (auras.CreateIcon or createAuraIcon) (auras, visibleBuffs)
-				-- Update the counters if the layout doesn't.
-				if(prev == auras.createdIcons) then
-					table.insert(auras, icon)
-					auras.createdIcons = auras.createdIcons + 1
-				end
+				table.insert(auras, icon)
+				auras.createdIcons = auras.createdIcons + 1
 			end
 
 			-- Prevent the icon from displaying anything.
