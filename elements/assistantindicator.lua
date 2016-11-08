@@ -57,7 +57,7 @@ local function Update(self, event)
 end
 
 local function Path(self, ...)
-	--[[ Override: AssistantIndicator:Override(self, event, ...)
+	--[[ Override: AssistantIndicator:Override(...)
 	Used to completely override the internal update function.
 
 	* self - the AssistantIndicator element

@@ -109,7 +109,7 @@ local function Update(self, event, unit, powertype)
 end
 
 local function Path(self, ...)
-	--[[ Override: AdditionalPower.Override(self, ...)
+	--[[ Override: AdditionalPower:Override(...)
 	Used to completely override the internal update function.
 
 	* self - the AdditionalPower element
@@ -158,7 +158,7 @@ local function Visibility(self, event, unit)
 end
 
 local function VisibilityPath(self, ...)
-	--[[ Hook: AdditionalPower.OverrideVisibility(self, ...)
+	--[[ Hook: AdditionalPower:OverrideVisibility(...)
 	Used to completely override the internal function that toggles the element's visibility.
 
 	* self - the AdditionalPower element

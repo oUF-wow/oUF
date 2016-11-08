@@ -63,7 +63,7 @@ local function Update(self, event, unit, powerType)
 	local element = self.ClassPower
 
 	--[[ Callback: ClassPower:PreUpdate(event)
-	Called before the element has been updated
+	Called before the element has been updated.
 
 	* self  - the ClassPower element
 	* event - the event that triggered the update
@@ -103,7 +103,7 @@ local function Update(self, event, unit, powerType)
 		end
 	end
 	--[[ Callback: ClassPower:PostUpdate(cur, max, hasMaxChanged, powerType, event)
-	Called after the element has been updated
+	Called after the element has been updated.
 
 	* self          - the ClassPower element
 	* cur           - the current amount of power
