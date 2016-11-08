@@ -1,25 +1,24 @@
---[[ Element: ClassPower
+--[[
+# Element: ClassPower
 
- Toggles the visibility of icons depending on the player's class and
- specialization.
+Toggles the visibility of icons depending on the player's class and specialization.
 
- Widget
+## Widget
 
- ClassPower - An array consisting of as many UI Textures as the theoretical
- maximum return of `UnitPowerMax`.
+ClassPower - An array consisting of as many UI Textures as the theoretical maximum return of `UnitPowerMax`.
 
- Notes
+## Notes
 
- All     - Combo Points
- Mage    - Arcane Charges
- Monk    - Chi Orbs
- Paladin - Holy Power
- Warlock - Soul Shards
+All     - Combo Points
+Mage    - Arcane Charges
+Monk    - Chi Orbs
+Paladin - Holy Power
+Warlock - Soul Shards
 
- Examples
+## Examples
 
-   local ClassPower = {}
-   for index = 1, 6 do
+    local ClassPower = {}
+    for index = 1, 6 do
       local Icon = self:CreateTexture(nil, 'BACKGROUND')
 
       -- Position and size.
@@ -27,26 +26,11 @@
       Icon:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', index * Icon:GetWidth(), 0)
 
       ClassPower[index] = Icon
-   end
+    end
 
-   -- Register with oUF
-   self.ClassPower = ClassPower
-
- Hooks
-
- OverrideVisibility(self) - Used to completely override the internal visibility
-                            function. Removing the table key entry will make
-                            the element fall-back to its internal function
-                            again.
- Override(self)           - Used to completely override the internal update
-                            function. Removing the table key entry will make the
-                            element fall-back to its internal function again.
- UpdateTexture(element)   - Used to completely override the internal function
-                            for updating the power icon textures. Removing the
-                            table key entry will make the element fall-back to
-                            its internal function again.
-
-]]
+    -- Register with oUF
+    self.ClassPower = ClassPower
+--]]
 
 local parent, ns = ...
 local oUF = ns.oUF
@@ -78,14 +62,11 @@ local function Update(self, event, unit, powerType)
 
 	local element = self.ClassPower
 
-	--[[ :PreUpdate()
+	--[[ Callback: ClassPower:PreUpdate(event)
+	Called before the element has been updated
 
-	 Called before the element has been updated
-
-	 Arguments
-
-	 self  - The ClassPower element
-	 event - The event, that the update is being triggered for
+	* self  - the ClassPower element
+	* event - the event that triggered the update
 	]]
 	if(element.PreUpdate) then
 		element:PreUpdate(event)
@@ -94,7 +75,7 @@ local function Update(self, event, unit, powerType)
 	local cur, max, oldMax
 	if(event ~= 'ClassPowerDisable') then
 		if(unit == 'vehicle') then
-			-- BUG: UnitPower is bugged for vehicles, always returns 0 combo points
+			-- BUG: UnitPower always returns 0 combo points for vehicles
 			cur = GetComboPoints(unit)
 			max = MAX_COMBO_POINTS
 		else
@@ -121,26 +102,28 @@ local function Update(self, event, unit, powerType)
 			element.__max = max
 		end
 	end
-	--[[ :PostUpdate(cur, max, hasMaxChanged, event)
+	--[[ Callback: ClassPower:PostUpdate(cur, max, hasMaxChanged, powerType, event)
+	Called after the element has been updated
 
-	 Called after the element has been updated
-
-	 Arguments
-
-	 self          - The ClassPower element
-	 cur           - The current amount of power
-	 max           - The maximum amount of power
-	 hasMaxChanged - Shows if the maximum amount has changed since the last
-	                 update
-	 powerType     - The type of power used
-	 event         - The event, which the update happened for
-	]]
+	* self          - the ClassPower element
+	* cur           - the current amount of power
+	* max           - the maximum amount of power
+	* hasMaxChanged - shows if the maximum amount has changed since the last update
+	* powerType     - the type of power used
+	* event         - the event that triggered the update
+	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(cur, max, oldMax ~= max, powerType, event)
 	end
 end
 
 local function Path(self, ...)
+	--[[ Override: ClassPower:Override(...)
+	Used to completely override the internal update function.
+
+	* self - the ClassPower element
+	* ...  - the event and the arguments that accompany it
+	--]]
 	return (self.ClassPower.Override or Update) (self, ...)
 end
 
@@ -173,6 +156,12 @@ local function Visibility(self, event, unit)
 end
 
 local function VisibilityPath(self, ...)
+	--[[ Override: ClassPower:OverrideVisibility(...)
+	Used to completely override the internal visibility function.
+
+	* self - the ClassPower element
+	* ...  - the event and the arguments that accompany it
+	--]]
 	return (self.ClassPower.OverrideVisibility or Visibility) (self, ...)
 end
 
@@ -263,6 +252,11 @@ local function Enable(self, unit)
 		end
 
 		if(isChildrenTextures) then
+			--[[ Override: ClassPower:UpdateTexture()
+			Used to completely override the internal function for updating the power icon textures.
+
+			* self - the ClassPower element
+			--]]
 			(element.UpdateTexture or UpdateTexture) (element)
 		end
 
