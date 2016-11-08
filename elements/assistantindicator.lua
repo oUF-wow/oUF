@@ -1,28 +1,26 @@
---[[ Element: Assistant Indicator
- Toggles visibility of `self.AssistantIndicator` based on the units raid officer status.
+--[[
+# Element: Assistant Indicator
 
- Widget
+Toggles visibility of an indicator based on the units raid officer status.
 
- AssistantIndicator - Any UI widget.
+## Widget
 
- Notes
+AssistantIndicator - Any UI widget.
 
- The default assistant icon will be applied if the UI widget is a texture and
- doesn't have a texture or color defined.
+## Notes
 
- Examples
+The default assistant icon will be applied if the UI widget is a texture and doesn't have a texture or color defined.
 
-   -- Position and size
-   local AssistantIndicator = self:CreateTexture(nil, 'OVERLAY')
-   AssistantIndicator:SetSize(16, 16)
-   AssistantIndicator:SetPoint('TOP', self)
+## Examples
 
-   -- Register it with oUF
-   self.AssistantIndicator = AssistantIndicator
+    -- Position and size
+    local AssistantIndicator = self:CreateTexture(nil, 'OVERLAY')
+    AssistantIndicator:SetSize(16, 16)
+    AssistantIndicator:SetPoint('TOP', self)
 
- Hooks and Callbacks
-
-]]
+    -- Register it with oUF
+    self.AssistantIndicator = AssistantIndicator
+--]]
 
 local parent, ns = ...
 local oUF = ns.oUF
@@ -30,14 +28,11 @@ local oUF = ns.oUF
 local function Update(self, event)
 	local element = self.AssistantIndicator
 
-	--[[ :PreUpdate()
+	--[[ Callback: AssistantIndicator:PreUpdate()
+	Called before the element has been updated.
 
-	 Called before the element has been updated.
-
-	 Arguments
-
-	 self - The AssistantIndicator element.
-	]]
+	* self - the AssistantIndicator element
+	--]]
 	if(element.PreUpdate) then
 		element:PreUpdate()
 	end
@@ -50,33 +45,24 @@ local function Update(self, event)
 		element:Hide()
 	end
 
-	--[[ :PostUpdate(isAssistant)
+	--[[ Callback: AssistantIndicator:PostUpdate(isAssistant)
+	Called after the element has been updated.
 
-	 Called after the element has been updated.
-
-	 Arguments
-
-	 self        - The AssistantIndicator element.
-	 isAssistant - A boolean holding whether the unit is a raid officer or not.
-	]]
+	* self        - the AssistantIndicator element
+	* isAssistant - a boolean indicating whether the unit is a raid officer or not
+	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(isAssistant)
 	end
 end
 
 local function Path(self, ...)
-	--[[ :Override(self, event, ...)
+	--[[ Override: AssistantIndicator:Override(self, event, ...)
+	Used to completely override the internal update function.
 
-	 Used to completely override the internal update function. Removing the
-	 table key entry will make the element fall-back to its internal function
-	 again.
-
-	 Arguments
-
-	 self  - The AssistantIndicator element.
-	 event - The UI event that fired.
-	 ...   - A vararg with the arguments that accompany the event.
-	]]
+	* self - the AssistantIndicator element
+	* ...  - the event and the arguments that accompany it
+	--]]
 	return (self.AssistantIndicator.Override or Update) (self, ...)
 end
 
