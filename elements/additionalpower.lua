@@ -1,60 +1,51 @@
---[[ Element: Additional Power Bar
- Handles updating and visibility of a status bar displaying the player's
- alternate/additional power, such as Mana for Balance druids.
+--[[
+# Element: Additional Power Bar
 
- Widget
+Handles updating and visibility of a status bar displaying the player's additional power, such as Mana for Balance
+druids.
 
- AdditionalPower - A StatusBar to represent current caster mana.
+## Widget
 
- Sub-Widgets
+AdditionalPower - A StatusBar to represent the player's current additional power.
 
- .bg - A Texture which functions as a background. It will inherit the color of
-       the main StatusBar.
+## Sub-Widgets
 
- Notes
+.bg - A Texture, which functions as a background. It will inherit the color of the main StatusBar.
 
- The default StatusBar texture will be applied if the UI widget doesn't have a
- status bar texture or color defined.
+## Notes
 
- Options
+The default StatusBar texture will be applied if the UI widget doesn't have a status bar texture or color defined.
 
- .colorClass  - Use `self.colors.class[class]` to color the bar.
- .colorSmooth - Use `self.colors.smooth` to color the bar with a smooth
-                gradient based on the players current mana percentage.
- .colorPower  - Use `self.colors.power[token]` to color the bar. This will
-                always use MANA as token.
+## Options
 
- Sub-Widget Options
+.colorClass  - Use `self.colors.class[class]` to color the bar.
+.colorSmooth - Use `self.colors.smooth` to color the bar with a smooth gradient based on the players current additional
+               power percentage.
+.colorPower  - Use `self.colors.power[token]` to color the bar. This will always use MANA as token.
 
- .multiplier - Defines a multiplier, which is used to tint the background based
-               on the main widgets R, G and B values. Defaults to 1 if not
-               present.
+## Sub-Widget Options
 
- Examples
+.multiplier - Defines a multiplier that is used to tint the background based on the main widgets R, G and B values.
+              Defaults to 1 if not present.
 
-   -- Position and size
-   local AdditionalPower = CreateFrame('StatusBar', nil, self)
-   AdditionalPower:SetSize(20, 20)
-   AdditionalPower:SetPoint('TOP')
-   AdditionalPower:SetPoint('LEFT')
-   AdditionalPower:SetPoint('RIGHT')
+## Examples
 
-   -- Add a background
-   local Background = AdditionalPower:CreateTexture(nil, 'BACKGROUND')
-   Background:SetAllPoints(AdditionalPower)
-   Background:SetTexture(1, 1, 1, .5)
+    -- Position and size
+    local AdditionalPower = CreateFrame('StatusBar', nil, self)
+    AdditionalPower:SetSize(20, 20)
+    AdditionalPower:SetPoint('TOP')
+    AdditionalPower:SetPoint('LEFT')
+    AdditionalPower:SetPoint('RIGHT')
 
-   -- Register it with oUF
-   self.AdditionalPower = AdditionalPower
-   self.AdditionalPower.bg = Background
+    -- Add a background
+    local Background = AdditionalPower:CreateTexture(nil, 'BACKGROUND')
+    Background:SetAllPoints(AdditionalPower)
+    Background:SetTexture(1, 1, 1, .5)
 
- Hooks
-
- Override(self) - Used to completely override the internal update function.
-                  Removing the table key entry will make the element fall-back
-                  to its internal function again.
-
-]]
+    -- Register it with oUF
+	AdditionalPower.bg = Background
+    self.AdditionalPower = AdditionalPower
+--]]
 
 local _, ns = ...
 local oUF = ns.oUF
@@ -68,6 +59,12 @@ local function Update(self, event, unit, powertype)
 	if(unit ~= 'player' or (powertype and powertype ~= ADDITIONAL_POWER_BAR_NAME)) then return end
 
 	local element = self.AdditionalPower
+	--[[ Callback: AdditionalPower:PreUpdate(unit)
+	Called before the element has been updated.
+
+	* self - the AdditionalPower element
+	* unit - the event unit that the update has been triggered for
+	--]]
 	if(element.PreUpdate) then element:PreUpdate(unit) end
 
 	local cur = UnitPower('player', ADDITIONAL_POWER_BAR_INDEX)
@@ -98,12 +95,26 @@ local function Update(self, event, unit, powertype)
 		end
 	end
 
+	--[[ Callback: AdditionalPower:PostUpdate(unit, cur, max)
+	Called after the element has been updated.
+
+	* self - the AdditionalPower element
+	* unit - the event unit that the update has been triggered for
+	* cur  - the current value of the player's additional power
+	* max  - the maximum possible value of the player's additional power
+	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(unit, cur, max)
 	end
 end
 
 local function Path(self, ...)
+	--[[ Override: AdditionalPower.Override(self, ...)
+	Used to completely override the internal update function.
+
+	* self - the AdditionalPower element
+	* ...  - the event and the arguments that accompany it
+	--]]
 	return (self.AdditionalPower.Override or Update) (self, ...)
 end
 
@@ -147,6 +158,12 @@ local function Visibility(self, event, unit)
 end
 
 local function VisibilityPath(self, ...)
+	--[[ Hook: AdditionalPower.OverrideVisibility(self, ...)
+	Used to completely override the internal function that toggles the element's visibility.
+
+	* self - the AdditionalPower element
+	* ...  - the event that has triggered the element's visibility change and the unit that the event has been fired for
+	--]]
 	return (self.AdditionalPower.OverrideVisibility or Visibility) (self, ...)
 end
 
