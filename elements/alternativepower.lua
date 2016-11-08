@@ -1,52 +1,40 @@
---[[ Element: Alternative Power Bar
+--[[
+# Element: Alternative Power Bar
 
- Handles visibility and updating of the alternative power bar.
+Handles visibility and updating of the alternative power bar.
+This bar is used to display encounter/quest related power information, such as the number of hour glass uses left on the
+end boss in End Time.
 
- This bar is used to display encounter/quest related power information, such as
- the number of hour glass uses left on the end boss in End Time.
+## Widget
 
- Widget
+AlternativePower - A StatusBar to represent alternative power.
 
- AlternativePower - A StatusBar to represent alternative power.
+## Options
 
- Options
+.colorTexture - Use the vertex color values returned by UnitAlternatePowerTextureInfo to color the bar.
 
- .colorTexture     - Use the vertex color values returned by
-                     UnitAlternatePowerTextureInfo to color the bar.
+## Notes
 
- Notes
+`OnEnter` and `OnLeave` handlers to display a tooltip will be set on the widget if it is mouse enabled.
 
- OnEnter and OnLeave handlers to display a tooltip will be set on the widget if
- it is mouse enabled.
+## Examples
 
- Examples
+    -- Position and size
+    local AlternativePower = CreateFrame('StatusBar', nil, self)
+    AlternativePower:SetHeight(20)
+    AlternativePower:SetPoint('BOTTOM')
+    AlternativePower:SetPoint('LEFT')
+    AlternativePower:SetPoint('RIGHT')
 
-   -- Position and size
-   local AlternativePower = CreateFrame('StatusBar', nil, self)
-   AlternativePower:SetHeight(20)
-   AlternativePower:SetPoint('BOTTOM')
-   AlternativePower:SetPoint('LEFT')
-   AlternativePower:SetPoint('RIGHT')
-
-   -- Register with oUF
-   self.AlternativePower = AlternativePower
-
- Callbacks
-]]
+    -- Register with oUF
+    self.AlternativePower = AlternativePower
+--]]
 
 local parent, ns = ...
 local oUF = ns.oUF
 
 local ALTERNATE_POWER_INDEX = ALTERNATE_POWER_INDEX
 
---[[ :UpdateTooltip()
-
- The function called when the widget is hovered. Used to populate the tooltip.
-
- Arguments
-
- self - The AlternativePower element.
-]]
 local function updateTooltip(self)
 	GameTooltip:SetText(self.powerName, 1, 1, 1)
 	GameTooltip:AddLine(self.powerTooltip, nil, nil, nil, 1)
@@ -69,14 +57,11 @@ local function UpdatePower(self, event, unit, powerType)
 
 	local element = self.AlternativePower
 
-	--[[ :PreUpdate()
+	--[[ Callback: AlternativePower:PreUpdate()
+	Called before the element has been updated.
 
-	 Called before the element has been updated.
-
-	 Arguments
-
-	 self - The AlternativePower element.
-	 ]]
+	* self - the AlternativePower element
+	--]]
 	if(element.PreUpdate) then
 		element:PreUpdate()
 	end
@@ -100,30 +85,26 @@ local function UpdatePower(self, event, unit, powerType)
 		element:SetStatusBarColor(r, g, b)
 	end
 
-	--[[ :PostUpdate(min, cur, max)
+	--[[ Callback: AlternativePower:PostUpdate(min, cur, max)
+	Called after the element has been updated.
 
-	 Called after the element has been updated.
-
-	 Arguments
-
-	 self - The AlternativePower element.
-	 min  - The minimum possible power value for the active type.
-	 cur  - The current power value.
-	 max  - The maximum possible power value for the active type.
-	]]
+	* self - the AlternativePower element
+	* min  - the minimum possible power value for the active type
+	* cur  - the current power value
+	* max  - the maximum possible power value for the active type
+	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(min, cur, max)
 	end
 end
 
-
---[[ Hooks
-
- Override(self) - Used to completely override the internal update function.
-                  Removing the table key entry will make the element fall-back
-                  to its internal function again.
-]]
 local function Path(self, ...)
+	--[[ Override: AlternativePower.Override(self, ...)
+	Used to completely override the internal update function.
+
+	* self - the AlternativePower element
+	* ...  - the event and the arguments that accompany it
+	--]]
 	return (self.AlternativePower.Override or UpdatePower)(self, ...)
 end
 
@@ -170,6 +151,11 @@ local function Enable(self, unit)
 				element:SetScript('OnLeave', onLeave)
 			end
 
+			--[[ Override: AlternativePower:UpdateTooltip()
+			Called when the widget is hovered. Used to populate the tooltip.
+
+			* self - the AlternativePower element
+			--]]
 			if(not element.UpdateTooltip) then
 				element.UpdateTooltip = updateTooltip
 			end
