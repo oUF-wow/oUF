@@ -1,39 +1,38 @@
---[[ Element: Phasing Indicator
+--[[
+# Element: Phasing Indicator
 
- Toggles visibility of the phase icon based on the units phasing compared to the
- player.
+Toggles visibility of the phase icon based on the units phasing compared to the player.
 
- Widget
+## Widget
 
- PhaseIndicator - Any UI widget.
+PhaseIndicator - Any UI widget.
 
- Notes
+## Notes
 
- The default phasing icon will be used if the UI widget is a texture and doesn't
- have a texture or color defined.
+The default phasing icon will be used if the UI widget is a texture and doesn't have a texture or color defined.
 
- Examples
+## Examples
 
-   -- Position and size
-   local PhaseIndicator = self:CreateTexture(nil, 'OVERLAY')
-   PhaseIndicator:SetSize(16, 16)
-   PhaseIndicator:SetPoint('TOPLEFT', self)
+    -- Position and size
+    local PhaseIndicator = self:CreateTexture(nil, 'OVERLAY')
+    PhaseIndicator:SetSize(16, 16)
+    PhaseIndicator:SetPoint('TOPLEFT', self)
 
-   -- Register it with oUF
-   self.PhaseIndicator = PhaseIndicator
-
- Hooks
-
- Override(self) - Used to completely override the internal update function.
-                  Removing the table key entry will make the element fall-back
-                  to its internal function again.
-]]
+    -- Register it with oUF
+    self.PhaseIndicator = PhaseIndicator
+--]]
 
 local parent, ns = ...
 local oUF = ns.oUF
 
 local function Update(self, event)
 	local element = self.PhaseIndicator
+
+	--[[ Callback: PhaseIndicator:PreUpdate()
+	Called before the element has been updated.
+
+	* self - the PhaseIndicator element
+	--]]
 	if(element.PreUpdate) then
 		element:PreUpdate()
 	end
@@ -45,12 +44,24 @@ local function Update(self, event)
 		element:Show()
 	end
 
+	--[[ Callback: PhaseIndicator:PostUpdate(inPhase)
+	Called after the element has been updated.
+
+	* self    - the PhaseIndicator element
+	* inPhase - a Boolean indicating whether the element is shown
+	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(inPhase)
 	end
 end
 
 local function Path(self, ...)
+	--[[ Override: PhaseIndicator:Override(...)
+	Used to completely override the internal update function.
+
+	* self - the PhaseIndicator element
+	* ...  - the event and the arguments that accompany it
+	--]]
 	return (self.PhaseIndicator.Override or Update) (self, ...)
 end
 
