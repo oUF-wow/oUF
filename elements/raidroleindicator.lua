@@ -1,33 +1,26 @@
---[[ Element: Raid Role Indicator
+--[[
+# Element: Raid Role Indicator
 
- Handles visibility and updating of `self.RaidRoleIndicator` based upon the units
- party assignment.
+Handles visibility and updating of `self.RaidRoleIndicator` based upon the unit's party assignment.
 
- Widget
+## Widget
 
- RaidRoleIndicator - A Texture representing the units party assignment. This is can be
-            main tank, main assist or blank.
+RaidRoleIndicator - A Texture representing the unit's party assignment (main tank, main assist or blank).
 
- Notes
+## Notes
 
- This element updates by changing the texture.
+This element updates by changing the texture.
 
- Examples
+## Examples
 
-   -- Position and size
-   local RaidRoleIndicator = self:CreateTexture(nil, 'OVERLAY')
-   RaidRoleIndicator:SetSize(16, 16)
-   RaidRoleIndicator:SetPoint('TOPLEFT')
+    -- Position and size
+    local RaidRoleIndicator = self:CreateTexture(nil, 'OVERLAY')
+    RaidRoleIndicator:SetSize(16, 16)
+    RaidRoleIndicator:SetPoint('TOPLEFT')
 
-   -- Register it with oUF
-   self.RaidRoleIndicator = RaidRoleIndicator
-
- Hooks
-
- Override(self) - Used to completely override the internal update function.
-                  Removing the table key entry will make the element fall-back
-                  to its internal function again.
-]]
+    -- Register it with oUF
+    self.RaidRoleIndicator = RaidRoleIndicator
+--]]
 
 local parent, ns = ...
 local oUF = ns.oUF
@@ -40,27 +33,48 @@ local function Update(self, event)
 	if(not UnitInRaid(unit)) then return end
 
 	local element = self.RaidRoleIndicator
+
+	--[[ Callback: RaidRoleIndicator:PreUpdate()
+	Called before the element has been updated.
+
+	* self - the RaidRoleIndicator element
+	--]]
 	if(element.PreUpdate) then
 		element:PreUpdate()
 	end
 
 	local inVehicle = UnitHasVehicleUI(unit)
+	local role
 	if(GetPartyAssignment('MAINTANK', unit) and not inVehicle) then
 		element:Show()
 		element:SetTexture(MAINTANK_ICON)
+		role = 'MAINTANK'
 	elseif(GetPartyAssignment('MAINASSIST', unit) and not inVehicle) then
 		element:Show()
 		element:SetTexture(MAINASSIST_ICON)
+		role = 'MAINASSIST'
 	else
 		element:Hide()
 	end
 
+	--[[ Callback: RaidRoleIndicator:PostUpdate(role)
+	Called after the element has been updated.
+
+	* self - the RaidRoleIndicator element
+	* role - a String representing the unit's party assignment ('MAINTANK', 'MAINASSIST' or nil)
+	--]]
 	if(element.PostUpdate) then
-		return element:PostUpdate(rinfo)
+		return element:PostUpdate(role)
 	end
 end
 
 local function Path(self, ...)
+	--[[Override: RaidRoleIndicator:Override(...)
+	Used to completely override the internal update function.
+
+	* self - the RaidRoleIndicator element
+	* ...  - the event and the arguments that accompany it
+	--]]
 	return (self.RaidRoleIndicator.Override or Update)(self, ...)
 end
 
