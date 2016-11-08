@@ -1,34 +1,26 @@
---[[ Element: Raid Target Indicator
+--[[
+# Element: Raid Target Indicator
 
- Handles updating and toggles visibility of raid target icons.
+Handles updating and toggles visibility of raid target icons.
 
- Widget
+## Widget
 
- RaidTargetIndicator - A Texture used to display the raid target icon.
+RaidTargetIndicator - A Texture used to display the raid target icon.
 
- Notes
+## Notes
 
- This element updates by changing the texture.
+The default raid icons will be used if the UI widget is a texture and doesn't have a texture or color defined.
 
- The default raid icons will be used if the UI widget is a texture and doesn't
- have a texture or color defined.
+## Examples
 
- Examples
+    -- Position and size
+    local RaidTargetIndicator = self:CreateTexture(nil, 'OVERLAY')
+    RaidTargetIndicator:SetSize(16, 16)
+    RaidTargetIndicator:SetPoint('TOPRIGHT', self)
 
-   -- Position and size
-   local RaidTargetIndicator = self:CreateTexture(nil, 'OVERLAY')
-   RaidTargetIndicator:SetSize(16, 16)
-   RaidTargetIndicator:SetPoint('TOPRIGHT', self)
-
-   -- Register it with oUF
-   self.RaidTargetIndicator = RaidTargetIndicator
-
- Hooks
-
- Override(self) - Used to completely override the internal update function.
-                  Removing the table key entry will make the element fall-back
-                  to its internal function again.
-]]
+    -- Register it with oUF
+    self.RaidTargetIndicator = RaidTargetIndicator
+--]]
 
 local parent, ns = ...
 local oUF = ns.oUF
@@ -38,6 +30,12 @@ local SetRaidTargetIconTexture = SetRaidTargetIconTexture
 
 local function Update(self, event)
 	local element = self.RaidTargetIndicator
+
+	--[[ Callback: RaidTargetIndicator:PreUpdate()
+	Called before the element has been updated.
+
+	* self - the PowerPrediction element
+	--]]
 	if(element.PreUpdate) then
 		element:PreUpdate()
 	end
@@ -50,12 +48,24 @@ local function Update(self, event)
 		element:Hide()
 	end
 
+	--[[ Callback:RaidTargetIndicator:PostUpdate(index)
+	Called after the element has been updated.
+
+	* self  - the RaidTargetIndicator element
+	* index - a Number representing the index of the raid target marker
+	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(index)
 	end
 end
 
 local function Path(self, ...)
+	--[[ Override: RaidTargetIndicator:Override(...)
+	Used to completely override the internal update function.
+
+	* self - the RaidTargetIndicator element
+	* ...  - the event and the arguments that accompany it
+	--]]
 	return (self.RaidTargetIndicator.Override or Update) (self, ...)
 end
 
