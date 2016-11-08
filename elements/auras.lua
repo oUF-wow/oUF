@@ -1,63 +1,58 @@
---[[ Element: Auras
+--[[
+# Element: Auras
 
- Handles creation and updating of aura icons.
+Handles creation and updating of aura icons.
 
- Widget
+## Widget
 
- Auras   - A Frame to hold icons representing both buffs and debuffs.
- Buffs   - A Frame to hold icons representing buffs.
- Debuffs - A Frame to hold icons representing debuffs.
+Auras   - A Frame to hold icons representing both buffs and debuffs.
+Buffs   - A Frame to hold icons representing buffs.
+Debuffs - A Frame to hold icons representing debuffs.
 
- Options
+## Notes
 
- .disableCooldown    - Disables the cooldown spiral. Defaults to false.
- .size               - Aura icon size. Defaults to 16.
- .onlyShowPlayer     - Only show auras created by player/vehicle.
- .showStealableBuffs - Display the stealable texture on buffs that can be
-                       stolen.
- .spacing            - Spacing between each icon. Defaults to 0.
- .['spacing-x']      - Horizontal spacing between each icon. Takes priority over
-                       `spacing`.
- .['spacing-y']      - Vertical spacing between each icon. Takes priority over
-                       `spacing`.
- .['growth-x']       - Horizontal growth direction. Defaults to RIGHT.
- .['growth-y']       - Vertical growth direction. Defaults to UP.
- .initialAnchor      - Anchor point for the icons. Defaults to BOTTOMLEFT.
- .filter             - Custom filter list for auras to display. Defaults to
-                       HELPFUL on buffs and HARMFUL on debuffs.
+At least one of the above widgets must be present for the element to work.
 
- Options Auras
+## Options
 
- .numBuffs     - The maximum number of buffs to display. Defaults to 32.
- .numDebuffs   - The maximum number of debuffs to display. Defaults to 40.
- .gap          - Controls the creation of an invisible icon between buffs and
-                 debuffs. Defaults to false.
- .buffFilter   - Custom filter list for buffs to display. Takes priority over
-                 `filter`.
- .debuffFilter - Custom filter list for debuffs to display. Takes priority over
-                 `filter`.
+.disableCooldown    - Disables the cooldown spiral. Defaults to false.
+.size               - Aura icon size. Defaults to 16.
+.onlyShowPlayer     - Only show auras created by player/vehicle.
+.showStealableBuffs - Display the stealable texture on buffs that can be stolen.
+.spacing            - Spacing between each icon. Defaults to 0.
+.['spacing-x']      - Horizontal spacing between each icon. Takes priority over `spacing`.
+.['spacing-y']      - Vertical spacing between each icon. Takes priority over `spacing`.
+.['growth-x']       - Horizontal growth direction. Defaults to 'RIGHT'.
+.['growth-y']       - Vertical growth direction. Defaults to 'UP'.
+.initialAnchor      - Anchor point for the icons. Defaults to 'BOTTOMLEFT'.
+.filter             - Custom filter list for auras to display. Defaults to 'HELPFUL' on buffs and 'HARMFUL' on debuffs.
 
- Options Buffs
+## Options Auras
 
- .num - Number of buffs to display. Defaults to 32.
+.numBuffs     - The maximum number of buffs to display. Defaults to 32.
+.numDebuffs   - The maximum number of debuffs to display. Defaults to 40.
+.gap          - Controls the creation of an invisible icon between buffs and debuffs. Defaults to false.
+.buffFilter   - Custom filter list for buffs to display. Takes priority over `filter`.
+.debuffFilter - Custom filter list for debuffs to display. Takes priority over `filter`.
 
- Options Debuffs
+## Options Buffs
 
- .num - Number of debuffs to display. Defaults to 40.
+.num - Number of buffs to display. Defaults to 32.
 
- Examples
+## Options Debuffs
 
-   -- Position and size
-   local Buffs = CreateFrame('Frame', nil, self)
-   Buffs:SetPoint('RIGHT', self, 'LEFT')
-   Buffs:SetSize(16 * 2, 16 * 16)
+.num - Number of debuffs to display. Defaults to 40.
 
-   -- Register with oUF
-   self.Buffs = Buffs
+## Examples
 
- Hooks and Callbacks
+    -- Position and size
+    local Buffs = CreateFrame('Frame', nil, self)
+    Buffs:SetPoint('RIGHT', self, 'LEFT')
+    Buffs:SetSize(16 * 2, 16 * 16)
 
-]]
+    -- Register with oUF
+    self.Buffs = Buffs
+--]]
 
 local parent, ns = ...
 local oUF = ns.oUF
@@ -114,14 +109,12 @@ local function createAuraIcon(icons, index)
 	button.count = count
 	button.cd = cd
 
-	--[[ :PostCreateIcon(button)
+	--[[ Callback: Auras:PostCreateIcon(button)
+	Called after a new aura button has been created.
 
-	 Callback which is called after a new aura icon button has been created.
-
-	 Arguments
-
-	 button - The newly created aura icon button.
-	 ]]
+	* self   - the widget that holds the aura button
+	* button - the newly created aura button
+	--]]
 	if(icons.PostCreateIcon) then icons:PostCreateIcon(button) end
 
 	return button
@@ -142,19 +135,16 @@ local function updateIcon(unit, icons, index, offset, filter, isDebuff, visible)
 		local position = visible + offset + 1
 		local icon = icons[position]
 		if(not icon) then
-			--[[ :CreateIcon(index)
+			--[[ Override: Auras:CreateIcon(index)
+			Used to create the aura button at a given position.
 
-			 A function which creates the aura icon for a given index.
+			* self  - the widget that holds the aura buttons
+			* index - the offset the icon should be created at
 
-			 Arguments
-
-			 index - The offset the icon should be created at.
-
-			 Returns
-
-			 A button used to represent aura icons.
-			]]
+			Returns the button used to represent aura.
+			--]]
 			icon = (icons.CreateIcon or createAuraIcon) (icons, position)
+
 			table.insert(icons, icon)
 			icons.createdIcons = icons.createdIcons + 1
 		end
@@ -169,24 +159,16 @@ local function updateIcon(unit, icons, index, offset, filter, isDebuff, visible)
 		icon.isDebuff = isDebuff
 		icon.isPlayer = isPlayer
 
-		--[[ :CustomFilter(unit, icon, ...)
+		--[[ Override: Auras:CustomFilter(unit, icon, ...)
+		Defines a custom filter that controls if the aura button should be shown.
 
-		 Defines a custom filter which controls if the aura icon should be shown
-		 or not.
+		* self - the widget that holds the aura buttons
+		* unit - the unit that has the aura
+		* icon - the button displaying the aura
+		* ...  - the return values from [UnitAura](http://wowprogramming.com/docs/api/UnitAura)
 
-		 Arguments
-
-		 self - The widget that holds the aura icon.
-		 unit - The unit that has the aura.
-		 icon - The button displaying the aura.
-		 ...  - The return values from
-		 [UnitAura](http://wowprogramming.com/docs/api/UnitAura).
-
-		 Returns
-
-		 A boolean value telling the aura element if it should be show the icon
-		 or not.
-		]]
+		Returns a boolean value indicating whether the aura button should be shown.
+		--]]
 		local show = (icons.CustomFilter or customFilter) (icons, unit, icon, name, rank, texture,
 			count, dispelType, duration, expiration, caster, isStealable, nameplateShowSelf, spellID,
 			canApply, isBossDebuff, casterIsPlayer, nameplateShowAll,timeMod, effect1, effect2, effect3)
@@ -231,18 +213,15 @@ local function updateIcon(unit, icons, index, offset, filter, isDebuff, visible)
 			icon:SetID(index)
 			icon:Show()
 
-			--[[ :PostUpdateIcon(unit, icon, index, offest)
+			--[[ Callback: Auras:PostUpdateIcon(unit, icon, index, offest)
+			Called after the aura button has been updated.
 
-			 Callback which is called after the aura icon was updated.
-
-			 Arguments
-
-			 self   - The widget that holds the aura icon.
-			 unit   - The unit that has the aura.
-			 icon   - The button that was updated.
-			 index  - The index of the aura.
-			 offset - The offset the button was created at.
-			 ]]
+			* self   - the widget that holds the aura button
+			* unit   - the unit that has the aura
+			* icon   - the button that has been updated
+			* index  - the index of the aura
+			* offset - the offset the button has been created at
+			--]]
 			if(icons.PostUpdateIcon) then
 				icons:PostUpdateIcon(unit, icon, index, position)
 			end
@@ -254,17 +233,6 @@ local function updateIcon(unit, icons, index, offset, filter, isDebuff, visible)
 	end
 end
 
---[[ :SetPosition(from, to)
-
- Function used to (re-)anchor aura icons. This function is only called when
- new aura icons have been created or if :PreSetPosition is defined.
-
- Arguments
-
- self - The widget that holds the aura icons.
- from - The aura icon before the new aura icon.
- to   - The current number of created icons.
-]]
 local function SetPosition(icons, from, to)
 	local sizex = (icons.size or 16) + (icons['spacing-x'] or icons.spacing or 0)
 	local sizey = (icons.size or 16) + (icons['spacing-y'] or icons.spacing or 0)
@@ -318,6 +286,12 @@ local function UpdateAuras(self, event, unit)
 
 	local auras = self.Auras
 	if(auras) then
+		--[[ Callback: Auras:PreUpdate(unit)
+		Called before the element has been updated.
+
+		* self - the widget that holds the aura buttons
+		* unit - the event unit that the update has been triggered for
+		--]]
 		if(auras.PreUpdate) then auras:PreUpdate(unit) end
 
 		local numBuffs = auras.numBuffs or 32
@@ -347,18 +321,14 @@ local function UpdateAuras(self, event, unit)
 			icon.count:SetText()
 			icon:Show()
 
-			--[[ :PostUpdateGapIcon(unit, icon, visibleBuffs)
+			--[[ Callback: Auras:PostUpdateGapIcon(unit, icon, visibleBuffs)
+			Called after an invisible aura button has been created. Only used by Auras when the `gap` option is enabled.
 
-			 Callback which is called after an invisible aura icon has been
-			 created. This is only used by Auras when the `gap` option is enabled.
-
-			 Arguments
-
-			 self         - The widget that holds the aura icon.
-			 unit         - The unit that has the aura icon.
-			 icon         - The invisible aura icon / gap.
-			 visibleBuffs - The number of currently visible buffs.
-			]]
+			* self         - the widget that holds the aura button
+			* unit         - the unit that has the aura button
+			* icon         - the invisible aura button (gap)
+			* visibleBuffs - the number of currently visible buttons
+			--]]
 			if(auras.PostUpdateGapIcon) then
 				auras:PostUpdateGapIcon(unit, icon, visibleBuffs)
 			end
@@ -376,15 +346,37 @@ local function UpdateAuras(self, event, unit)
 		auras.visibleAuras = auras.visibleBuffs + auras.visibleDebuffs
 
 		local fromRange, toRange
+		--[[ Callback: Auras:PreSetPosition(max)
+		Called before the aura buttons have been (re-)anchored.
+
+		* self - the widget that holds the aura buttons
+		* max  - the maximum possible number of aura buttons
+
+		Returns the starting offset and the number of buttons to be (re-)anchored.
+		--]]
 		if(auras.PreSetPosition) then
 			fromRange, toRange = auras:PreSetPosition(max)
 		end
 
 		if(fromRange or auras.createdIcons > auras.anchoredIcons) then
+			--[[ Override: Auras:SetPosition(from, to)
+			Used to (re-)anchor the aura buttons.
+			Called when new aura buttons have been created or if :PreSetPosition is defined.
+
+			* self - the widget that holds the aura buttons
+			* from - the aura button before the new aura button
+			* to   - the current number of created buttons
+			--]]
 			(auras.SetPosition or SetPosition) (auras, fromRange or auras.anchoredIcons + 1, toRange or auras.createdIcons)
 			auras.anchoredIcons = auras.createdIcons
 		end
 
+		--[[ Callback: Auras:PostUpdate(unit)
+		Called after the element has been updated.
+
+		* self - the widget that holds the aura buttons
+		* unit - the event unit that the update has been triggered for
+		--]]
 		if(auras.PostUpdate) then auras:PostUpdate(unit) end
 	end
 
