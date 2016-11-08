@@ -1,72 +1,66 @@
---[[ Element: Health Prediction Bars
- Handle updating and visibility of the heal prediction status bars.
+--[[
+# Element: Health Prediction Bars
 
- Widget
+Handle updating and visibility of the heal prediction status bars.
 
- HealthPrediction - A table containing `myBar` and `otherBar`.
+## Widget
 
- Sub-Widgets
+HealthPrediction - A table containing `myBar` and `otherBar`.
 
- myBar    - A StatusBar used to represent your incoming heals.
- otherBar - A StatusBar used to represent other peoples incoming heals.
- absorbBar - A StatusBar used to represent total absorbs.
- healAbsorbBar - A StatusBar used to represent heal absorbs.
+## Sub-Widgets
 
- Notes
+myBar         - A StatusBar used to represent your incoming heals.
+otherBar      - A StatusBar used to represent other peoples incoming heals.
+absorbBar     - A StatusBar used to represent total absorbs.
+healAbsorbBar - A StatusBar used to represent heal absorbs.
 
- The default StatusBar texture will be applied if the UI widget doesn't have a
- status bar texture or color defined.
+## Notes
 
- Options
+The default StatusBar texture will be applied if the UI widget doesn't have a status bar texture or color defined.
 
- .maxOverflow     - Defines the maximum amount of overflow past the end of the
-                    health bar.
- .frequentUpdates - Update on UNIT_HEALTH_FREQUENT instead of UNIT_HEALTH. Use
-                    this if .frequentUpdates is also set on the Health element.
+## Options
 
- Examples
+.maxOverflow     - Defines the maximum amount of overflow past the end of the health bar.
+.frequentUpdates - Update on UNIT_HEALTH_FREQUENT instead of UNIT_HEALTH. Use this if .frequentUpdates is also set on
+                   the Health element.
 
-   -- Position and size
-   local myBar = CreateFrame('StatusBar', nil, self.Health)
-   myBar:SetPoint('TOP')
-   myBar:SetPoint('BOTTOM')
-   myBar:SetPoint('LEFT', self.Health:GetStatusBarTexture(), 'RIGHT')
-   myBar:SetWidth(200)
+## Examples
 
-   local otherBar = CreateFrame('StatusBar', nil, self.Health)
-   otherBar:SetPoint('TOP')
-   otherBar:SetPoint('BOTTOM')
-   otherBar:SetPoint('LEFT', self.Health:GetStatusBarTexture(), 'RIGHT')
-   otherBar:SetWidth(200)
+    -- Position and size
+    local myBar = CreateFrame('StatusBar', nil, self.Health)
+    myBar:SetPoint('TOP')
+    myBar:SetPoint('BOTTOM')
+    myBar:SetPoint('LEFT', self.Health:GetStatusBarTexture(), 'RIGHT')
+    myBar:SetWidth(200)
 
-   local absorbBar = CreateFrame('StatusBar', nil, self.Health)
-   absorbBar:SetPoint('TOP')
-   absorbBar:SetPoint('BOTTOM')
-   absorbBar:SetPoint('LEFT', self.Health:GetStatusBarTexture(), 'RIGHT')
-   absorbBar:SetWidth(200)
+    local otherBar = CreateFrame('StatusBar', nil, self.Health)
+    otherBar:SetPoint('TOP')
+    otherBar:SetPoint('BOTTOM')
+    otherBar:SetPoint('LEFT', self.Health:GetStatusBarTexture(), 'RIGHT')
+    otherBar:SetWidth(200)
 
-   local healAbsorbBar = CreateFrame('StatusBar', nil, self.Health)
-   healAbsorbBar:SetPoint('TOP')
-   healAbsorbBar:SetPoint('BOTTOM')
-   healAbsorbBar:SetPoint('LEFT', self.Health:GetStatusBarTexture(), 'RIGHT')
-   healAbsorbBar:SetWidth(200)
+    local absorbBar = CreateFrame('StatusBar', nil, self.Health)
+    absorbBar:SetPoint('TOP')
+    absorbBar:SetPoint('BOTTOM')
+    absorbBar:SetPoint('LEFT', self.Health:GetStatusBarTexture(), 'RIGHT')
+    absorbBar:SetWidth(200)
 
-   -- Register with oUF
-   self.HealthPrediction = {
-      myBar = myBar,
-      otherBar = otherBar,
-      absorbBar = absorbBar,
-      healAbsorbBar = healAbsorbBar,
-      maxOverflow = 1.05,
-      frequentUpdates = true,
-   }
+    local healAbsorbBar = CreateFrame('StatusBar', nil, self.Health)
+    healAbsorbBar:SetPoint('TOP')
+    healAbsorbBar:SetPoint('BOTTOM')
+    healAbsorbBar:SetPoint('LEFT', self.Health:GetStatusBarTexture(), 'RIGHT')
+    healAbsorbBar:SetWidth(200)
 
- Hooks
-
- Override(self) - Used to completely override the internal update function.
-                  Removing the table key entry will make the element fall-back
-                  to its internal function again.
-]]
+    -- Register with oUF
+    self.HealthPrediction = {
+        myBar = myBar,
+        otherBar = otherBar,
+        absorbBar = absorbBar,
+        healAbsorbBar = healAbsorbBar,
+        maxOverflow = 1.05,
+        frequentUpdates = true,
+    }
+--]]
 
 local _, ns = ...
 local oUF = ns.oUF
@@ -77,6 +71,12 @@ local function Update(self, event, unit)
 	if(self.unit ~= unit) then return end
 
 	local element = self.HealthPrediction
+	--[[ Callback: HealthPrediction:PreUpdate(unit)
+	Called before the element has been updated.
+
+	* self - the HealthPrediction element
+	* unit - the event unit that the update has been triggered for
+	--]]
 	if(element.PreUpdate) then element:PreUpdate(unit) end
 
 	local myIncomingHeal = UnitGetIncomingHeals(unit, 'player') or 0
@@ -145,12 +145,26 @@ local function Update(self, event, unit)
 		element.healAbsorbBar:Show()
 	end
 
+	--[[ Callback: HealthPrediction:PostUpdate(unit, overAbsorb, overHealAbsorb)
+	Called after the element has been updated.
+
+	* self           - the HealthPrediction element
+	* unit           - the event unit that the updated has been triggered for
+	* overAbsorb     - a Boolean indicating if the amount of damage absorb is higher than the unit's missing health
+	* overHealAbsorb - a Boolean indicating if the amount of heal absorb is bigger than the unit's current health
+	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(unit, overAbsorb, overHealAbsorb)
 	end
 end
 
 local function Path(self, ...)
+	--[[ Override: HealthPrediction:Override(...)
+	Used to completely override the internal update function.
+
+	* self - the HealthPrediction element
+	* ...  - the event and the arguments that accompany it
+	--]]
 	return (self.HealthPrediction.Override or Update) (self, ...)
 end
 
