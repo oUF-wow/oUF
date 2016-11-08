@@ -1,42 +1,35 @@
---[[ Element: PvP and Prestige Icons
+--[[
+# Element: PvP and Prestige Icons
 
- Handles updating and visibility of PvP and prestige icons based on unit's PvP
- status and prestige level.
+Handles updating and visibility of PvP and prestige icons based on unit's PvP status and prestige level.
 
- Widget
+## Widget
 
- PvPIndicator - A Texture used to display faction, FFA PvP status or prestige icon.
+PvPIndicator - A Texture used to display faction, FFA PvP status or prestige icon.
 
- Sub-Widgets
+## Sub-Widgets
 
- Prestige - A Texture used to display prestige background image.
+Prestige - A Texture used to display the prestige background image.
 
- Notes
+## Notes
 
- This element updates by changing the texture;
- `Prestige` texture has to be on a lower sub-layer than `PvP` texture.
+The `Prestige` texture has to be on a lower sub-layer than the `PvP` texture.
 
  Examples
 
-   -- Position and size
-   local PvPIndicator = self:CreateTexture(nil, 'ARTWORK', nil, 1)
-   PvPIndicator:SetSize(30, 30)
-   PvPIndicator:SetPoint('RIGHT', self, 'LEFT')
+    -- Position and size
+    local PvPIndicator = self:CreateTexture(nil, 'ARTWORK', nil, 1)
+    PvPIndicator:SetSize(30, 30)
+    PvPIndicator:SetPoint('RIGHT', self, 'LEFT')
 
-   local Prestige = self:CreateTexture(nil, 'ARTWORK')
-   Prestige:SetSize(50, 52)
-   Prestige:SetPoint('CENTER', PvPIndicator, 'CENTER')
+    local Prestige = self:CreateTexture(nil, 'ARTWORK')
+    Prestige:SetSize(50, 52)
+    Prestige:SetPoint('CENTER', PvPIndicator, 'CENTER')
 
-   -- Register it with oUF
-   self.PvPIndicator = PvPIndicator
-   self.PvPIndicator.Prestige = Prestige
-
- Hooks
-
- Override(self) - Used to completely override the internal update function.
-                  Removing the table key entry will make the element fall-back
-                  to its internal function again.
-]]
+    -- Register it with oUF
+	PvPIndicator.Prestige = Prestige
+    self.PvPIndicator = PvPIndicator
+--]]
 
 local parent, ns = ...
 local oUF = ns.oUF
@@ -48,6 +41,13 @@ local function Update(self, event, unit)
 	if(unit ~= self.unit) then return end
 
 	local element = self.PvPIndicator
+
+	--[[ Callback: PvPIndicator:PreUpdate(unit)
+	Called before the element has been updated.
+
+	* self - the PvPIndicator element
+	* unit - the event unit that the update has been triggered for
+	--]]
 	if(element.PreUpdate) then
 		element:PreUpdate(unit)
 	end
@@ -111,12 +111,28 @@ local function Update(self, event, unit)
 		end
 	end
 
+	--[[ Callback: PvPIndicator:PostUpdate(unit, status, hasPrestige, prestigeLevel)
+	Called after the element has been updated.
+
+	* self          - the PvPIndicator element
+	* unit          - the event unit that the update has been triggered for
+	* status        - a String representing the unit's current PvP status or faction accounting for mercenary mode
+	                  ('ffa', 'Alliance' or 'Horde')
+	* hasPrestige   - a Boolean indicating if the unit has a prestige rank higher then 0
+	* prestigeLevel - a Number representing the unit's current prestige rank
+	--]]
 	if(element.PostUpdate) then
-		return element:PostUpdate(unit, status, hasPrestige, level)
+		return element:PostUpdate(unit, status, hasPrestige, prestigeLevel)
 	end
 end
 
 local function Path(self, ...)
+	--[[Override: PvPIndicator:Override(...)
+	Used to completely override the internal update function.
+
+	* self - the PvPIndicator element
+	* ...  - the event and the arguments that accompany it
+	--]]
 	return (self.PvPIndicator.Override or Update) (self, ...)
 end
 
