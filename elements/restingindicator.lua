@@ -1,38 +1,38 @@
---[[ Element: Resting Indicator
+--[[
+# Element: Resting Indicator
 
- Toggles visibility of the resting icon.
+Toggles visibility of the resting icon.
 
- Widget
+## Widget
 
- RestingIndicator - Any UI widget.
+RestingIndicator - Any UI widget.
 
- Notes
+## Notes
 
- The default resting icon will be used if the UI widget is a texture and doesn't
- have a texture or color defined.
+The default resting icon will be used if the UI widget is a texture and doesn't have a texture or color defined.
 
- Examples
+## Examples
 
-   -- Position and size
-   local RestingIndicator = self:CreateTexture(nil, 'OVERLAY')
-   RestingIndicator:SetSize(16, 16)
-   RestingIndicator:SetPoint('TOPLEFT', self)
+    -- Position and size
+    local RestingIndicator = self:CreateTexture(nil, 'OVERLAY')
+    RestingIndicator:SetSize(16, 16)
+    RestingIndicator:SetPoint('TOPLEFT', self)
 
-   -- Register it with oUF
-   self.RestingIndicator = RestingIndicator
-
- Hooks
-
- Override(self) - Used to completely override the internal update function.
-                  Removing the table key entry will make the element fall-back
-                  to its internal function again.
-]]
+    -- Register it with oUF
+    self.RestingIndicator = RestingIndicator
+--]]
 
 local parent, ns = ...
 local oUF = ns.oUF
 
 local function Update(self, event)
 	local element = self.RestingIndicator
+
+	--[[ Callback: RestingIndicator:PreUpdate()
+	Called before the element has been updated.
+
+	* self - the RestingIndicator element
+	--]]
 	if(element.PreUpdate) then
 		element:PreUpdate()
 	end
@@ -44,12 +44,24 @@ local function Update(self, event)
 		element:Hide()
 	end
 
+	--[[ Callback: RestingIndicator:PostUpdate(isResting)
+	Called after the element has been updated.
+
+	* self      - the RestingIndicator element
+	* isResting - a Boolean indicating if the player is resting
+	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(isResting)
 	end
 end
 
 local function Path(self, ...)
+	--[[ Override: RestingIndicator:Override(...)
+	Used to completely override the internal update function.
+
+	* self - the RestingIndicator element
+	* ...  - the event and the argument that accompany it
+	--]]
 	return (self.RestingIndicator.Override or Update) (self, ...)
 end
 
