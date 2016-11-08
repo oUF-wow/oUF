@@ -1,27 +1,23 @@
---[[ Element: Range Fader
+--[[
+# Element: Range Fader
 
- Widget
+## Widget
 
- Range - A table containing opacity values.
+Range - A table containing opacity values.
 
- Options
+## Options
 
- .outsideAlpha - Opacity when the unit is out of range. Values 0 (fully
-                 transparent) - 1 (fully opaque).
- .insideAlpha  - Opacity when the unit is within range. Values 0 (fully
-                 transparent) - 1 (fully opaque).
+.outsideAlpha - Opacity when the unit is out of range. Values 0 (fully transparent) - 1 (fully opaque).
+.insideAlpha  - Opacity when the unit is within range. Values 0 (fully transparent) - 1 (fully opaque).
 
- Examples
+## Examples
 
-   -- Register with oUF
-   self.Range = {
-      insideAlpha = 1,
-      outsideAlpha = 1/2,
-   }
-
- Hooks
-
-]]
+    -- Register with oUF
+    self.Range = {
+        insideAlpha = 1,
+        outsideAlpha = 1/2,
+    }
+--]]
 
 local parent, ns = ...
 local oUF = ns.oUF
@@ -43,17 +39,13 @@ local function OnRangeUpdate(self, elapsed)
 				if(UnitIsConnected(object.unit)) then
 					local inRange, checkedRange = UnitInRange(object.unit)
 					if(checkedRange and not inRange) then
+						--[[ Override: Range:Override(status)
+						Used to override the calls to :SetAlpha().
+
+						* self   - the Range element
+						* status - a String representing the unit's range status ('inside', 'outside' or 'offline')
+						--]]
 						if(element.Override) then
-							--[[ .Override(self, status)
-
-							 A function used to override the calls to :SetAlpha().
-
-							 Arguments
-
-							 self   - The unit object.
-							 status - The range status of the unit. Either `inside` or
-							          `outside`.
-							]]
 							element.Override(object, 'outside')
 						else
 							object:SetAlpha(element.outsideAlpha)
