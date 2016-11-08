@@ -1,41 +1,36 @@
---[[ Element: Portraits
+--[[
+# Element: Portraits
 
- Handles updating of the unit's portrait.
+Handles updating of the unit's portrait.
 
- Widget
+## Widget
 
- Portrait - A PlayerModel or Texture used to represent the unit's portrait.
+Portrait - A PlayerModel or Texture used to represent the unit's portrait.
 
- Notes
+## Notes
 
- The quest delivery question mark will be used instead of the unit's model when
- the client doesn't have the model information for the unit.
+The quest delivery question mark will be used instead of the unit's model when the client doesn't have the model
+information for the unit.
 
- Examples
+## Examples
 
-   -- 3D Portrait
-   -- Position and size
-   local Portrait = CreateFrame('PlayerModel', nil, self)
-   Portrait:SetSize(32, 32)
-   Portrait:SetPoint('RIGHT', self, 'LEFT')
+    -- 3D Portrait
+    -- Position and size
+    local Portrait = CreateFrame('PlayerModel', nil, self)
+    Portrait:SetSize(32, 32)
+    Portrait:SetPoint('RIGHT', self, 'LEFT')
 
-   -- Register it with oUF
-   self.Portrait = Portrait
+    -- Register it with oUF
+    self.Portrait = Portrait
 
-   -- 2D Portrait
-   local Portrait = self:CreateTexture(nil, 'OVERLAY')
-   Portrait:SetSize(32, 32)
-   Portrait:SetPoint('RIGHT', self, 'LEFT')
+    -- 2D Portrait
+    local Portrait = self:CreateTexture(nil, 'OVERLAY')
+    Portrait:SetSize(32, 32)
+    Portrait:SetPoint('RIGHT', self, 'LEFT')
 
-   -- Register it with oUF
-   self.Portrait = Portrait
-
- Hooks
-
- Override(self) - Used to completely override the internal update function.
-                  Removing the table key entry will make the element fall-back
-                  to its internal function again.
-]]
+    -- Register it with oUF
+    self.Portrait = Portrait
+--]]
 
 local parent, ns = ...
 local oUF = ns.oUF
@@ -44,6 +39,13 @@ local function Update(self, event, unit)
 	if(not unit or not UnitIsUnit(self.unit, unit)) then return end
 
 	local element = self.Portrait
+
+	--[[ Callback: Portrait:PreUpdate(unit)
+	Called before the element has been updated.
+
+	* self - the Portrait element
+	* unit - the event unit that the update has been triggered for
+	--]]
 	if(element.PreUpdate) then element:PreUpdate(unit) end
 
 	if(element:IsObjectType('Model')) then
@@ -67,12 +69,24 @@ local function Update(self, event, unit)
 		SetPortraitTexture(element, unit)
 	end
 
+	--[[ Callback: Portrait:PostUpdate(unit)
+	Called after the element has been updated.
+
+	* self - the Portrait element
+	* unit - the event unit that the update has been triggered for
+	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(unit)
 	end
 end
 
 local function Path(self, ...)
+	--[[ Override: Portrait:Override(...)
+	Used to completely override the internal update function.
+
+	* self - the Portrait element
+	* ...  - the event and the arguments that accompany it
+	--]]
 	return (self.Portrait.Override or Update) (self, ...)
 end
 
