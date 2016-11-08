@@ -1,51 +1,45 @@
---[[ Element: Power Prediction Bar
- Handles updating and visibility of the power prediction status bars.
+--[[
+# Element: Power Prediction Bar
 
- Widget
+Handles updating and visibility of the power prediction status bars.
 
- PowerPrediction - A table containing `mainBar` and `altBar`.
+## Widget
 
- Sub-Widgets
+PowerPrediction - A table containing `mainBar` and `altBar`.
 
- mainBar - A StatusBar used to represent power cost of spells, that consume
-           your main power, e.g. mana for mages;
- altBar  - A StatusBar used to represent power cost of spells, that consume
-           your additional power, e.g. mana for balance druids.
+## Sub-Widgets
 
- Notes
+mainBar - A StatusBar used to represent power cost of abilities, that consume the unit's main power, e.g. mana for mages.
+altBar  - A StatusBar used to represent power cost of spells, that consume the unit's additional power, e.g. mana for
+          balance druids.
 
- The default StatusBar texture will be applied if the UI widget doesn't have a
- status bar texture.
+## Notes
 
- Examples
+The default StatusBar texture will be applied if the UI widget doesn't have a status bar texture.
 
-   -- Position and size
-   local mainBar = CreateFrame('StatusBar', nil, self.Power)
-   mainBar:SetReverseFill(true)
-   mainBar:SetPoint('TOP')
-   mainBar:SetPoint('BOTTOM')
-   mainBar:SetPoint('RIGHT', self.Power:GetStatusBarTexture(), 'RIGHT')
-   mainBar:SetWidth(200)
+## Examples
 
-   local altBar = CreateFrame('StatusBar', nil, self.DruidMana)
-   altBar:SetReverseFill(true)
-   altBar:SetPoint('TOP')
-   altBar:SetPoint('BOTTOM')
-   altBar:SetPoint('RIGHT', self.DruidMana:GetStatusBarTexture(), 'RIGHT')
-   altBar:SetWidth(200)
+    -- Position and size
+    local mainBar = CreateFrame('StatusBar', nil, self.Power)
+    mainBar:SetReverseFill(true)
+    mainBar:SetPoint('TOP')
+    mainBar:SetPoint('BOTTOM')
+    mainBar:SetPoint('RIGHT', self.Power:GetStatusBarTexture(), 'RIGHT')
+    mainBar:SetWidth(200)
 
-   -- Register with oUF
-   self.PowerPrediction = {
-      mainBar = mainBar,
-      altBar = altBar
-   }
+    local altBar = CreateFrame('StatusBar', nil, self.DruidMana)
+    altBar:SetReverseFill(true)
+    altBar:SetPoint('TOP')
+    altBar:SetPoint('BOTTOM')
+    altBar:SetPoint('RIGHT', self.DruidMana:GetStatusBarTexture(), 'RIGHT')
+    altBar:SetWidth(200)
 
- Hooks
-
- Override(self) - Used to completely override the internal update function.
-                  Removing the table key entry will make the element fall-back
-                  to its internal function again.
-]]
+    -- Register with oUF
+    self.PowerPrediction = {
+        mainBar = mainBar,
+        altBar = altBar
+    }
+--]]
 
 local _, ns = ...
 local oUF = ns.oUF
@@ -56,6 +50,13 @@ local function Update(self, event, unit)
 	if(self.unit ~= unit) then return end
 
 	local element = self.PowerPrediction
+
+	--[[ Callback: PowerPrediction:PreUpdate(unit)
+	Called before the element has been updated.
+
+	* self - the PowerPrediction element
+	* unit - the event unit that the update has been triggered for
+	--]]
 	if(element.PreUpdate) then
 		element:PreUpdate(unit)
 	end
@@ -102,12 +103,27 @@ local function Update(self, event, unit)
 		element.altBar:Show()
 	end
 
+	--[[ Callback: PowerPrediction:PostUpdate(unit, mainCost, altCost, hasAltManaBar)
+	Called after the element has been updated.
+
+	* self          - the PowerPrediction element
+	* unit          - the event unit that the update has been triggered for
+	* mainCost      - a Number representing the main power type cost of the cast ability
+	* altCost       - a Number representing the secondary power type cost of the cast ability
+	* hasAltManaBar - a Boolean indicating if the unit has a secondary power bar
+	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(unit, mainCost, altCost, hasAltManaBar)
 	end
 end
 
 local function Path(self, ...)
+	--[[ Override: PowerPrediction:Override(...)
+	Used to completely override the internal update function.
+
+	* self - the PowerPrediction element
+	* ...  - the event and the arguments that accompany it
+	--]]
 	return (self.PowerPrediction.Override or Update) (self, ...)
 end
 
