@@ -1,59 +1,49 @@
---[[ Element: Totem Indicator
+--[[
+# Element: Totem Indicator
 
- Handles updating and visibility of Shaman totems, Druid mushrooms and Death
- Knight ghouls.
+Handles updating and visibility of totems.
 
- Widget
+## Widget
 
- Totems - A table to hold sub-widgets.
+Totems - A table to hold sub-widgets.
 
- Sub-Widgets
+## Sub-Widgets
 
- Totem     - Any UI widget.
- .Icon     - A Texture representing the totem icon.
- .Cooldown - A Cooldown representing the duration of the totem.
+Totem - Any UI widget.
 
- Notes
+## Sub-Widget Options
 
- OnEnter and OnLeave will be set to display the default Tooltip, if the
- `Totem` widget is mouse enabled.
+.Icon     - A Texture representing the totem icon.
+.Cooldown - A Cooldown representing the duration of the totem.
 
- Options
+## Notes
 
- :UpdateTooltip - The function that should populate the tooltip, when the
-                  `Totem` widget is hovered. A default function, which calls
-                  `:SetTotem(id)`, will be used if none is defined.
+OnEnter and OnLeave will be set to display a Tooltip if the `Totem` widget is mouse enabled.
 
- Examples
+## Examples
 
-   local Totems = {}
-   for index = 1, MAX_TOTEMS do
-      -- Position and size of the totem indicator
-      local Totem = CreateFrame('Button', nil, self)
-      Totem:SetSize(40, 40)
-      Totem:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', index * Totem:GetWidth(), 0)
+    local Totems = {}
+    for index = 1, MAX_TOTEMS do
+        -- Position and size of the totem indicator
+        local Totem = CreateFrame('Button', nil, self)
+        Totem:SetSize(40, 40)
+        Totem:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', index * Totem:GetWidth(), 0)
 
-      local Icon = Totem:CreateTexture(nil, 'OVERLAY')
-      Icon:SetAllPoints()
+        local Icon = Totem:CreateTexture(nil, 'OVERLAY')
+        Icon:SetAllPoints()
 
-      local Cooldown = CreateFrame('Cooldown', nil, Totem, 'CooldownFrameTemplate')
-      Cooldown:SetAllPoints()
+        local Cooldown = CreateFrame('Cooldown', nil, Totem, 'CooldownFrameTemplate')
+        Cooldown:SetAllPoints()
 
-      Totem.Icon = Icon
-      Totem.Cooldown = Cooldown
+        Totem.Icon = Icon
+        Totem.Cooldown = Cooldown
 
-      Totems[index] = Totem
-   end
+        Totems[index] = Totem
+    end
 
-   -- Register with oUF
-   self.Totems = Totems
-
- Hooks
-
- Override(self) - Used to completely override the internal update function.
-                  Removing the table key entry will make the element fall-back
-                  to its internal function again.
-]]
+    -- Register with oUF
+    self.Totems = Totems
+--]]
 
 local parent, ns = ...
 local oUF = ns.oUF
@@ -77,6 +67,12 @@ local function UpdateTotem(self, event, slot)
 	local element = self.Totems
 	if(slot > #element) then return end
 
+	--[[ Callback: Totems:PreUpdate(slot)
+	Called before the element has been updated.
+
+	* self - the Totems element
+	* slot - a Number representing the slot of the totem to be updated
+	--]]
 	if(element.PreUpdate) then element:PreUpdate(slot) end
 
 	local totem = element[slot]
@@ -95,12 +91,29 @@ local function UpdateTotem(self, event, slot)
 		totem:Hide()
 	end
 
+	--[[ Callback: Totems:PostUpdate(slot, haveTotem, name, start, duration, icon)
+	Called after the element has been updated.
+
+	* self      - the Totems element
+	* slot      - a Number representing the slot of the updated totem
+	* haveTotem - a Boolean indicating if a totem is present in the given slot
+	* name      - the name of the totem
+	* start     - the value of `GetTime()` when the totem was created
+	* duration  - the total duration that the totem should last
+	* icon      - a Texture used as the totem's icon
+	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(slot, haveTotem, name, start, duration, icon)
 	end
 end
 
 local function Path(self, ...)
+	--[[ Override: Totem:Override(...)
+	Used to completely override the internal update function.
+
+	* self - the Totems element
+	* ...  - the event and the arguments that accompany it
+	--]]
 	return (self.Totems.Override or UpdateTotem) (self, ...)
 end
 
@@ -129,6 +142,11 @@ local function Enable(self)
 				totem:SetScript('OnEnter', OnEnter)
 				totem:SetScript('OnLeave', OnLeave)
 
+				--[[ Override: Totems[slot]:UpdateTooltip()
+				Used to populate the tooltip when the totem is hovered.
+
+				* self - the widget at the given slot (index)
+				--]]
 				if(not totem.UpdateTooltip) then
 					totem.UpdateTooltip = UpdateTooltip
 				end
