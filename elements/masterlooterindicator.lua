@@ -1,33 +1,26 @@
---[[ Element: Master Looter Indicator
+--[[
+# Element: Master Looter Indicator
 
- Toggles visibility of the master looter icon.
+Toggles visibility of the master looter icon.
 
- Widget
+## Widget
 
- MasterLooterIndicator - Any UI widget.
+MasterLooterIndicator - Any UI widget.
 
- Notes
+## Notes
 
- The default master looter icon will be applied if the UI widget is a texture
- and doesn't have a texture or color defined.
+The default master looter icon will be applied if the UI widget is a texture and doesn't have a texture or color defined.
 
- Examples
+## Examples
 
-   -- Position and size
-   local MasterLooterIndicator = self:CreateTexture(nil, 'OVERLAY')
-   MasterLooterIndicator:SetSize(16, 16)
-   MasterLooterIndicator:SetPoint('TOPRIGHT', self)
+    -- Position and size
+    local MasterLooterIndicator = self:CreateTexture(nil, 'OVERLAY')
+    MasterLooterIndicator:SetSize(16, 16)
+    MasterLooterIndicator:SetPoint('TOPRIGHT', self)
 
-   -- Register it with oUF
-   self.MasterLooterIndicator = MasterLooterIndicator
-
- Hooks
-
- Override(self) - Used to completely override the internal update function.
-                  Removing the table key entry will make the element fall-back
-                  to its internal function again.
-
-]]
+    -- Register it with oUF
+    self.MasterLooterIndicator = MasterLooterIndicator
+--]]
 
 local parent, ns = ...
 local oUF = ns.oUF
@@ -39,6 +32,11 @@ local function Update(self, event)
 		return element:Hide()
 	end
 
+	--[[ Callback: MasterLooterIndicator:PreUpdate()
+	Called before the element has been updated.
+
+	* self - the MasterLooterIndicator element
+	--]]
 	if(element.PreUpdate) then
 		element:PreUpdate()
 	end
@@ -65,12 +63,24 @@ local function Update(self, event)
 		element:Hide()
 	end
 
+	--[[ Callback: MasterLooterIndicator:PostUpdate(isShown)
+	Called after the element has been updated.
+
+	* self - the MasterLooterIndicator element
+	* isShown - a Boolean indicating whether the element is shown
+	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(element:IsShown())
 	end
 end
 
 local function Path(self, ...)
+	--[[ Override: MasterLooterIndicator:Override(...)
+	Used to completely override the internal update function.
+
+	* self - the MasterLooterIndicator element
+	* ...  - the event and the arguments that accompany it
+	--]]
 	return (self.MasterLooterIndicator.Override or Update) (self, ...)
 end
 
