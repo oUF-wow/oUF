@@ -1,42 +1,35 @@
---[[ Element: Ready Check Indicator
+--[[
+# Element: Ready Check Indicator
 
- Handles updating and visibility of `self.ReadyCheckIndicator` based upon the units
- ready check status.
+Handles updating and visibility of `self.ReadyCheckIndicator` based upon the units ready check status.
 
- Widget
+## Widget
 
- ReadyCheckIndicator - A Texture representing ready check status.
+ReadyCheckIndicator - A Texture representing ready check status.
 
- Notes
+## Notes
 
- This element updates by changing the texture.
+This element updates by changing the texture.
 
- Options
+## Options
 
- .finishedTime    - The number of seconds the icon should stick after a check has
-                    completed. Defaults to 10 seconds.
- .fadeTime        - The number of seconds the icon should used to fade away after
-                    the stick duration has completed. Defaults to 1.5 seconds.
- .readyTexture    - Path to alternate texture for the ready check 'ready' status.
- .notReadyTexture - Path to alternate texture for the ready check 'notready' status.
- .waitingTexture  - Path to alternate texture for the ready check 'waiting' status.
+.finishedTime    - The number of seconds the icon should stick after a check has completed. Defaults to 10 seconds.
+.fadeTime        - The number of seconds the icon should use to fade away after the stick duration has completed.
+                   Defaults to 1.5 seconds.
+.readyTexture    - Path to alternate texture for the ready check 'ready' status.
+.notReadyTexture - Path to alternate texture for the ready check 'notready' status.
+.waitingTexture  - Path to alternate texture for the ready check 'waiting' status.
 
- Examples
+## Examples
 
-   -- Position and size
-   local ReadyCheckIndicator = self:CreateTexture(nil, 'OVERLAY')
-   ReadyCheckIndicator:SetSize(16, 16)
-   ReadyCheckIndicator:SetPoint('TOP')
+    -- Position and size
+    local ReadyCheckIndicator = self:CreateTexture(nil, 'OVERLAY')
+    ReadyCheckIndicator:SetSize(16, 16)
+    ReadyCheckIndicator:SetPoint('TOP')
 
-   -- Register with oUF
-   self.ReadyCheckIndicator = ReadyCheckIndicator
-
- Hooks
-
- Override(self) - Used to completely override the internal update function.
-                  Removing the table key entry will make the element fall-back
-                  to its internal function again.
-]]
+    -- Register with oUF
+    self.ReadyCheckIndicator = ReadyCheckIndicator
+--]]
 
 local parent, ns = ...
 local oUF = ns.oUF
@@ -45,14 +38,11 @@ local function OnFinished(self)
 	local element = self:GetParent()
 	element:Hide()
 
-	--[[ :PostUpdateFadeOut()
+	--[[ Callback: ReadyCheckIndicator:PostUpdateFadeOut()
+	Called after the element has been faded out.
 
-	 Called after the element has been faded out.
-
-	 Arguments
-
-	 self - The ReadyCheckIndicator element.
-	]]
+	* self - the ReadyCheckIndicator element
+	--]]
 	if(element.PostUpdateFadeOut) then
 		element:PostUpdateFadeOut()
 	end
@@ -61,14 +51,11 @@ end
 local function Update(self, event)
 	local element = self.ReadyCheckIndicator
 
-	--[[ :PreUpdate()
+	--[[ Callback: ReadyCheckIndicator:PreUpdate()
+	Called before the element has been updated.
 
-	 Called before the element has been updated.
-
-	 Arguments
-
-	 self - The ReadyCheckIndicator element.
-	]]
+	* self - the ReadyCheckIndicator element
+	--]]
 	if(element.PreUpdate) then
 		element:PreUpdate()
 	end
@@ -99,21 +86,24 @@ local function Update(self, event)
 		element.Animation:Play()
 	end
 
-	--[[ :PostUpdate(status)
+	--[[ Callback: ReadyCheckIndicator:PostUpdate(status)
+	Called after the element has been updated.
 
-	 Called after the element has been updated.
-
-	 Arguments
-
-	 self   - The ReadyCheckIndicator element.
-	 status - The units ready check status, if any.
-	]]
+	* self   - the ReadyCheckIndicator element
+	* status - a String representing the unit's ready check status ('ready', 'notready', 'waiting' or nil)
+	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(status)
 	end
 end
 
 local function Path(self, ...)
+	--[[ Override: ReadyCheckIndicator:Override(...)
+	Used to completely override the internal update function.
+
+	* self - the ReadyCheckIndicator element
+	* ...  - the event and the argument that accompany it
+	--]]
 	return (self.ReadyCheckIndicator.Override or Update) (self, ...)
 end
 
