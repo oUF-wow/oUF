@@ -1,34 +1,26 @@
---[[ Element: Threat Indicator
+--[[
+# Element: Threat Indicator
 
- Handles updating and toggles visibility of current threat level icon.
+Handles updating and toggles visibility of current threat level icon.
 
- Widget
+## Widget
 
- ThreatIndicator - A Texture used to display the current threat level.
+ThreatIndicator - A Texture used to display the current threat level.
 
- Notes
+## Notes
 
- This element updates by changing colors of the texture.
+The default threat icon will be used if the UI widget is a texture and doesn't have a texture or color defined.
 
- The default threat icon will be used if the UI widget is a texture and doesn't
- have a texture or color defined.
+## Examples
 
- Examples
+    -- Position and size
+    local ThreatIndicator = self:CreateTexture(nil, 'OVERLAY')
+    ThreatIndicator:SetSize(16, 16)
+    ThreatIndicator:SetPoint('TOPRIGHT', self)
 
-   -- Position and size
-   local ThreatIndicator = self:CreateTexture(nil, 'OVERLAY')
-   ThreatIndicator:SetSize(16, 16)
-   ThreatIndicator:SetPoint('TOPRIGHT', self)
-
-   -- Register it with oUF
-   self.ThreatIndicator = ThreatIndicator
-
- Hooks
-
- Override(self) - Used to completely override the internal update function.
-                  Removing the table key entry will make the element fall-back
-                  to its internal function again.
-]]
+    -- Register it with oUF
+    self.ThreatIndicator = ThreatIndicator
+--]]
 
 local parent, ns = ...
 local oUF = ns.oUF
@@ -37,6 +29,12 @@ local function Update(self, event, unit)
 	if(unit ~= self.unit) then return end
 
 	local element = self.ThreatIndicator
+	--[[ Callback: ThreatIndicator:PreUpdate(unit)
+	Called before the element has been updated.
+
+	* self - the ThreatIndicator element
+	* unit - the event unit that the update has been triggered for
+	--]]
 	if(element.PreUpdate) then element:PreUpdate(unit) end
 
 	unit = unit or self.unit
@@ -51,12 +49,29 @@ local function Update(self, event, unit)
 		element:Hide()
 	end
 
+	--[[ Callback: ThreatIndicator:PostUpdate(unit, status, r, g, b)
+	Called after the element has been updated.
+
+	* self   - the ThreatIndicator element
+	* unit   - the event unit that the update has been triggered for
+	* status - a Number representing the unit's threat status
+	           (see [UnitThreatSituation](http://wowprogramming.com/docs/api/UnitThreatSituation))
+	* r      - the red color component of the StatusBar color based on the unit's threat status
+	* g      - the green color component of the StatusBar color based on the unit's threat status
+	* b      - the green color component of the StatusBar color based on the unit's threat status
+	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(unit, status, r, g, b)
 	end
 end
 
 local function Path(self, ...)
+	--[[ Override: ThreatIndicator:Override(...)
+	Used to completely override the internal update function.
+
+	* self - the ThreatIndicator element
+	* ...  - the event and the arguments that accompany it
+	--]]
 	return (self.ThreatIndicator.Override or Update) (self, ...)
 end
 
