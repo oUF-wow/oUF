@@ -1,50 +1,34 @@
---[[ Element: Monk Stagger Bar
+--[[
+# Element: Monk Stagger Bar
 
- Handles updating and visibility of the monk's stagger bar.
+Handles updating and visibility of the monk's stagger bar.
 
- Widget
+## Widget
 
- Stagger - A StatusBar
+Stagger - A StatusBar
 
- Sub-Widgets
+## Sub-Widgets
 
- .bg - A Texture that functions as a background. It will inherit the color
-       of the main StatusBar.
+.bg - A Texture that functions as a background. It will inherit the color of the main StatusBar.
 
- Notes
+## Notes
 
- The default StatusBar texture will be applied if the UI widget doesn't have a
- status bar texture or color defined.
+The default StatusBar texture will be applied if the UI widget doesn't have a status bar texture or color defined.
 
- In order to override the internal update define the 'OnUpdate' script on the
- widget in the layout
+## Sub-Widgets Options
 
- Sub-Widgets Options
+.multiplier - A Number used to tint the background based on the main widgets R, G and B values.
+              Defaults to 1 if not present.
 
- .multiplier - Defines a multiplier, which is used to tint the background based
-               on the main widgets R, G and B values. Defaults to 1 if not
-               present.
+## Examples
 
- Examples
+    local Stagger = CreateFrame('StatusBar', nil, self)
+    Stagger:SetSize(120, 20)
+    Stagger:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', 0, 0)
 
-   local Stagger = CreateFrame('StatusBar', nil, self)
-   Stagger:SetSize(120, 20)
-   Stagger:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', 0, 0)
-
-   -- Register with oUF
-   self.Stagger = Stagger
-
- Hooks
-
- OverrideVisibility(self) - Used to completely override the internal visibility
-                            function. Removing the table key entry will make
-                            the element fall-back to its internal function
-                            again.
- Override(self)           - Used to completely override the internal
-                            update function. Removing the table key entry will
-                            make the element fall-back to its internal function
-                            again.
-]]
+    -- Register with oUF
+    self.Stagger = Stagger
+--]]
 
 local parent, ns = ...
 local oUF = ns.oUF
@@ -67,6 +51,12 @@ local function Update(self, event, unit)
 	if(unit and unit ~= self.unit) then return end
 
 	local element = self.Stagger
+
+	--[[ Callback: Stagger:PreUpdate()
+	Called before the element has been updated.
+
+	* self - the Stagger element
+	--]]
 	if(element.PreUpdate) then
 		element:PreUpdate()
 	end
@@ -97,12 +87,29 @@ local function Update(self, event, unit)
 		bg:SetVertexColor(r * mu, g * mu, b * mu)
 	end
 
+	--[[ Callback: Stagger:PostUpdate(maxHealth, stagger, staggerPercent, r, g, b)
+	Called after the element has been updated.
+
+	* self           - the Stagger element
+	* maxHealth      - the player's maximum possible health value
+	* stagger        - the amount of staggered damage
+	* staggerPercent - the amount of staggered damage relative to the player's maximum health
+	* r              - the red component of the StatusBar color (depends on staggerPercent)
+	* g              - the green component of the StatusBar color (depends on staggerPercent)
+	* b              - the blue component of the StatusBar color (depends on staggerPercent)
+	--]]
 	if(element.PostUpdate) then
 		element:PostUpdate(maxHealth, stagger, staggerPercent, r, g, b)
 	end
 end
 
 local function Path(self, ...)
+	--[[ Override: Stagger:Override(...)
+	Used to completely override the internal update function.
+
+	* self - the Stagger element
+	* ...  - the event and the arguments that accompany it
+	--]]
 	return (self.Stagger.Override or Update)(self, ...)
 end
 
@@ -123,6 +130,12 @@ local function Visibility(self, event, unit)
 end
 
 local function VisibilityPath(self, ...)
+	--[[ Override: Stagger:OverrideVisibility(...)
+	Used to completely override the internal visibility toggling function.
+
+	* self - the Stagger element
+	* ...  - the event and the arguments that accompany it
+	--]]
 	return (self.Stagger.OverrideVisibility or Visibility)(self, ...)
 end
 
