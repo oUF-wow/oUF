@@ -36,20 +36,21 @@ The default StatusBar texture will be applied if the UI widget doesn't have a st
     local otherBar = CreateFrame('StatusBar', nil, self.Health)
     otherBar:SetPoint('TOP')
     otherBar:SetPoint('BOTTOM')
-    otherBar:SetPoint('LEFT', self.Health:GetStatusBarTexture(), 'RIGHT')
+    otherBar:SetPoint('LEFT', myBar:GetStatusBarTexture(), 'RIGHT')
     otherBar:SetWidth(200)
 
     local absorbBar = CreateFrame('StatusBar', nil, self.Health)
     absorbBar:SetPoint('TOP')
     absorbBar:SetPoint('BOTTOM')
-    absorbBar:SetPoint('LEFT', self.Health:GetStatusBarTexture(), 'RIGHT')
+    absorbBar:SetPoint('LEFT', otherBar:GetStatusBarTexture(), 'RIGHT')
     absorbBar:SetWidth(200)
 
     local healAbsorbBar = CreateFrame('StatusBar', nil, self.Health)
     healAbsorbBar:SetPoint('TOP')
     healAbsorbBar:SetPoint('BOTTOM')
-    healAbsorbBar:SetPoint('LEFT', self.Health:GetStatusBarTexture(), 'RIGHT')
+    healAbsorbBar:SetPoint('RIGHT', self.Health:GetStatusBarTexture())
     healAbsorbBar:SetWidth(200)
+    healAbsorbBar:SetReverseFill(true)
 
     -- Register with oUF
     self.HealthPrediction = {
