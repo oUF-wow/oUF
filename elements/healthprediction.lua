@@ -108,8 +108,11 @@ local function Update(self, event, unit)
 		myCurrentHealAbsorb = health
 	end
 
+	local overHealAmount = 0
 	if(health - myCurrentHealAbsorb + allIncomingHeal > maxHealth * element.maxOverflow) then
-		allIncomingHeal = maxHealth * element.maxOverflow - health + myCurrentHealAbsorb
+		local newAllIncomingHeal = maxHealth * element.maxOverflow - health + myCurrentHealAbsorb
+		overHealAmount = allIncomingHeal - newAllIncomingHeal
+		allIncomingHeal = newAllIncomingHeal
 	end
 
 	local otherIncomingHeal = 0
@@ -185,9 +188,11 @@ local function Update(self, event, unit)
 	* unit           - the event unit that the updated has been triggered for
 	* overAbsorb     - a Boolean indicating if the amount of damage absorb is higher than the unit's missing health
 	* overHealAbsorb - a Boolean indicating if the amount of heal absorb is bigger than the unit's current health
+	* overHealAmount - a Number representing the amount of overheal after the widget's .maxOverflow option and
+	                   healabsorb effect have been taken into account
 	--]]
 	if(element.PostUpdate) then
-		return element:PostUpdate(unit, overAbsorb, overHealAbsorb)
+		return element:PostUpdate(unit, overAbsorb, overHealAbsorb, overHealAmount)
 	end
 end
 
