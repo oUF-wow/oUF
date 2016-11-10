@@ -52,7 +52,7 @@ local function onLeave()
 	GameTooltip:Hide()
 end
 
-local function UpdatePower(self, event, unit, powerType)
+local function Update(self, event, unit, powerType)
 	if(self.unit ~= unit or powerType ~= 'ALTERNATE') then return end
 
 	local element = self.AlternativePower
@@ -105,14 +105,10 @@ local function Path(self, ...)
 	* self - the AlternativePower element
 	* ...  - the event and the arguments that accompany it
 	--]]
-	return (self.AlternativePower.Override or UpdatePower)(self, ...)
+	return (self.AlternativePower.Override or Update)(self, ...)
 end
 
-local function ForceUpdate(element)
-	return Path(element.__owner, 'ForceUpdate', element.__owner.unit, 'ALTERNATE')
-end
-
-local function Toggler(self, event, unit)
+local function Visibility(self, event, unit)
 	if(unit ~= self.unit) then return end
 	local element = self.AlternativePower
 
@@ -121,8 +117,8 @@ local function Toggler(self, event, unit)
 		self:RegisterEvent('UNIT_POWER', Path)
 		self:RegisterEvent('UNIT_MAXPOWER', Path)
 
-		ForceUpdate(element)
 		element:Show()
+		Path(self, event, unit, 'ALTERNATE')
 	else
 		self:UnregisterEvent('UNIT_POWER', Path)
 		self:UnregisterEvent('UNIT_MAXPOWER', Path)
@@ -131,14 +127,28 @@ local function Toggler(self, event, unit)
 	end
 end
 
+local function VisibilityPath(self, ...)
+	--[[ Override: AlternativePower:OverrideVisibility(...)
+	Used to completely override the internal visibility function.
+
+	* self - the AlternativePower element
+	* ...  - the event and the arguments that accompany it
+	--]]
+	return (self.AlternativePower.OverrideVisibility or Visibility)(self, ...)
+end
+
+local function ForceUpdate(element)
+	return VisibilityPath(element.__owner, 'ForceUpdate', element.__owner.unit)
+end
+
 local function Enable(self, unit)
 	local element = self.AlternativePower
 	if(element) then
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
 
-		self:RegisterEvent('UNIT_POWER_BAR_SHOW', Toggler)
-		self:RegisterEvent('UNIT_POWER_BAR_HIDE', Toggler)
+		self:RegisterEvent('UNIT_POWER_BAR_SHOW', VisibilityPath)
+		self:RegisterEvent('UNIT_POWER_BAR_HIDE', VisibilityPath)
 
 		element:Hide()
 
@@ -176,8 +186,8 @@ local function Disable(self, unit)
 	if(element) then
 		element:Hide()
 
-		self:UnregisterEvent('UNIT_POWER_BAR_SHOW', Toggler)
-		self:UnregisterEvent('UNIT_POWER_BAR_HIDE', Toggler)
+		self:UnregisterEvent('UNIT_POWER_BAR_SHOW', VisibilityPath)
+		self:UnregisterEvent('UNIT_POWER_BAR_HIDE', VisibilityPath)
 
 		if(unit == 'player') then
 			PlayerPowerBarAlt:RegisterEvent('UNIT_POWER_BAR_SHOW')
@@ -187,4 +197,4 @@ local function Disable(self, unit)
 	end
 end
 
-oUF:AddElement('AlternativePower', Toggler, Enable, Disable)
+oUF:AddElement('AlternativePower', VisibilityPath, Enable, Disable)
