@@ -291,6 +291,12 @@ local function Disable(self)
 		if(element.healAbsorbBar) then
 			element.healAbsorbBar:Hide()
 		end
+		if(element.overAbsorb) then
+			element.overAbsorb:Hide()
+		end
+		if(element.overHealAbsorb) then
+			element.overHealAbsorb:Hide()
+		end
 
 		self:UnregisterEvent('UNIT_HEAL_PREDICTION', Path)
 		self:UnregisterEvent('UNIT_MAXHEALTH', Path)
