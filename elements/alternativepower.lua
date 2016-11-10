@@ -12,6 +12,7 @@ AlternativePower - A StatusBar to represent alternative power.
 ## Notes
 
 `OnEnter` and `OnLeave` handlers to display a tooltip will be set on the widget if it is mouse enabled.
+The default StatusBar texture will be applied if the UI widget doesn't have a status bar texture or color defined.
 
 ## Examples
 
@@ -138,6 +139,10 @@ local function Enable(self, unit)
 		self:RegisterEvent('UNIT_POWER_BAR_HIDE', VisibilityPath)
 
 		element:Hide()
+
+		if(element:IsObjectType('StatusBar') and not element:GetStatusBarTexture()) then
+			element:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+		end
 
 		if(element:IsMouseEnabled()) then
 			if(not element:GetScript('OnEnter')) then
