@@ -342,7 +342,6 @@ local function UNIT_SPELLCAST_CHANNEL_START(self, event, unit, _, _, _, spellID)
 	element.max = max
 	element.delay = 0
 	element.channeling = true
-	element.interrupt = notInterruptible -- FIXME: deprecated; to be removed
 	element.notInterruptible = notInterruptible
 	element.holdTime = 0
 
@@ -426,7 +425,6 @@ local function UNIT_SPELLCAST_CHANNEL_STOP(self, event, unit, spellname, _, _, s
 	local element = self.Castbar
 	if(element:IsShown()) then
 		element.channeling = nil
-		element.interrupt = nil -- FIXME: deprecated; to be removed
 		element.notInterruptible = nil
 
 		--[[ Callback: Castbar:PostChannelUpdate(unit, name, spellID)
