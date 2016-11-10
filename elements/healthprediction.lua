@@ -22,7 +22,8 @@ The default texture will be applied if the UI widget doesn't have a texture or c
 
 ## Options
 
-.maxOverflow     - Defines the maximum amount of overflow past the end of the health bar.
+.maxOverflow     - Defines the maximum amount of overflow past the end of the health bar. Set this to 1 to disable the
+                   overflow. Defaults to 1.05.
 .frequentUpdates - Update on UNIT_HEALTH_FREQUENT instead of UNIT_HEALTH. Use this if .frequentUpdates is also set on
                    the Health element.
 
