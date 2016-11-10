@@ -9,10 +9,6 @@ end boss in End Time.
 
 AlternativePower - A StatusBar to represent alternative power.
 
-## Options
-
-.colorTexture - Use the vertex color values returned by UnitAlternatePowerTextureInfo to color the bar.
-
 ## Notes
 
 `OnEnter` and `OnLeave` handlers to display a tooltip will be set on the widget if it is mouse enabled.
@@ -66,11 +62,6 @@ local function Update(self, event, unit, powerType)
 		element:PreUpdate()
 	end
 
-	local _, r, g, b
-	if(element.colorTexture) then
-		_, r, g, b = UnitAlternatePowerTextureInfo(unit, 2)
-	end
-
 	local cur = UnitPower(unit, ALTERNATE_POWER_INDEX)
 	local max = UnitPowerMax(unit, ALTERNATE_POWER_INDEX)
 
@@ -80,10 +71,6 @@ local function Update(self, event, unit, powerType)
 	element.powerTooltip = powerTooltip
 	element:SetMinMaxValues(min, max)
 	element:SetValue(math.min(math.max(cur, min), max))
-
-	if(r or g or b) then
-		element:SetStatusBarColor(r, g, b)
-	end
 
 	--[[ Callback: AlternativePower:PostUpdate(min, cur, max)
 	Called after the element has been updated.
