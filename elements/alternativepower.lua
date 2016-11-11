@@ -9,13 +9,10 @@ end boss in End Time.
 
 AlternativePower - A StatusBar to represent alternative power.
 
-## Options
-
-.colorTexture - Use the vertex color values returned by UnitAlternatePowerTextureInfo to color the bar.
-
 ## Notes
 
 `OnEnter` and `OnLeave` handlers to display a tooltip will be set on the widget if it is mouse enabled.
+The default StatusBar texture will be applied if the UI widget doesn't have a status bar texture or color defined.
 
 ## Examples
 
@@ -52,7 +49,7 @@ local function onLeave()
 	GameTooltip:Hide()
 end
 
-local function UpdatePower(self, event, unit, powerType)
+local function Update(self, event, unit, powerType)
 	if(self.unit ~= unit or powerType ~= 'ALTERNATE') then return end
 
 	local element = self.AlternativePower
@@ -66,11 +63,6 @@ local function UpdatePower(self, event, unit, powerType)
 		element:PreUpdate()
 	end
 
-	local _, r, g, b
-	if(element.colorTexture) then
-		_, r, g, b = UnitAlternatePowerTextureInfo(unit, 2)
-	end
-
 	local cur = UnitPower(unit, ALTERNATE_POWER_INDEX)
 	local max = UnitPowerMax(unit, ALTERNATE_POWER_INDEX)
 
@@ -80,10 +72,6 @@ local function UpdatePower(self, event, unit, powerType)
 	element.powerTooltip = powerTooltip
 	element:SetMinMaxValues(min, max)
 	element:SetValue(math.min(math.max(cur, min), max))
-
-	if(r or g or b) then
-		element:SetStatusBarColor(r, g, b)
-	end
 
 	--[[ Callback: AlternativePower:PostUpdate(min, cur, max)
 	Called after the element has been updated.
@@ -105,14 +93,10 @@ local function Path(self, ...)
 	* self - the AlternativePower element
 	* ...  - the event and the arguments that accompany it
 	--]]
-	return (self.AlternativePower.Override or UpdatePower)(self, ...)
+	return (self.AlternativePower.Override or Update)(self, ...)
 end
 
-local function ForceUpdate(element)
-	return Path(element.__owner, 'ForceUpdate', element.__owner.unit, 'ALTERNATE')
-end
-
-local function Toggler(self, event, unit)
+local function Visibility(self, event, unit)
 	if(unit ~= self.unit) then return end
 	local element = self.AlternativePower
 
@@ -121,14 +105,29 @@ local function Toggler(self, event, unit)
 		self:RegisterEvent('UNIT_POWER', Path)
 		self:RegisterEvent('UNIT_MAXPOWER', Path)
 
-		ForceUpdate(element)
 		element:Show()
+		Path(self, event, unit, 'ALTERNATE')
 	else
 		self:UnregisterEvent('UNIT_POWER', Path)
 		self:UnregisterEvent('UNIT_MAXPOWER', Path)
 
 		element:Hide()
+		Path(self, event, unit, 'ALTERNATE')
 	end
+end
+
+local function VisibilityPath(self, ...)
+	--[[ Override: AlternativePower:OverrideVisibility(...)
+	Used to completely override the internal visibility function.
+
+	* self - the AlternativePower element
+	* ...  - the event and the arguments that accompany it
+	--]]
+	return (self.AlternativePower.OverrideVisibility or Visibility)(self, ...)
+end
+
+local function ForceUpdate(element)
+	return VisibilityPath(element.__owner, 'ForceUpdate', element.__owner.unit)
 end
 
 local function Enable(self, unit)
@@ -137,10 +136,14 @@ local function Enable(self, unit)
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
 
-		self:RegisterEvent('UNIT_POWER_BAR_SHOW', Toggler)
-		self:RegisterEvent('UNIT_POWER_BAR_HIDE', Toggler)
+		self:RegisterEvent('UNIT_POWER_BAR_SHOW', VisibilityPath)
+		self:RegisterEvent('UNIT_POWER_BAR_HIDE', VisibilityPath)
 
 		element:Hide()
+
+		if(element:IsObjectType('StatusBar') and not element:GetStatusBarTexture()) then
+			element:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+		end
 
 		if(element:IsMouseEnabled()) then
 			if(not element:GetScript('OnEnter')) then
@@ -176,8 +179,8 @@ local function Disable(self, unit)
 	if(element) then
 		element:Hide()
 
-		self:UnregisterEvent('UNIT_POWER_BAR_SHOW', Toggler)
-		self:UnregisterEvent('UNIT_POWER_BAR_HIDE', Toggler)
+		self:UnregisterEvent('UNIT_POWER_BAR_SHOW', VisibilityPath)
+		self:UnregisterEvent('UNIT_POWER_BAR_HIDE', VisibilityPath)
 
 		if(unit == 'player') then
 			PlayerPowerBarAlt:RegisterEvent('UNIT_POWER_BAR_SHOW')
@@ -187,4 +190,4 @@ local function Disable(self, unit)
 	end
 end
 
-oUF:AddElement('AlternativePower', Toggler, Enable, Disable)
+oUF:AddElement('AlternativePower', VisibilityPath, Enable, Disable)
