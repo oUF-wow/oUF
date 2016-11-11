@@ -112,6 +112,7 @@ local function Visibility(self, event, unit)
 		self:UnregisterEvent('UNIT_MAXPOWER', Path)
 
 		element:Hide()
+		Path(self, event, unit, 'ALTERNATE')
 	end
 end
 
