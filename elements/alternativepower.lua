@@ -63,15 +63,17 @@ local function Update(self, event, unit, powerType)
 		element:PreUpdate()
 	end
 
-	local cur = UnitPower(unit, ALTERNATE_POWER_INDEX)
-	local max = UnitPowerMax(unit, ALTERNATE_POWER_INDEX)
-
+	local cur, max
 	local barType, min, _, _, _, _, _, _, _, _, powerName, powerTooltip = UnitAlternatePowerInfo(unit)
 	element.barType = barType
 	element.powerName = powerName
 	element.powerTooltip = powerTooltip
-	element:SetMinMaxValues(min, max)
-	element:SetValue(math.min(math.max(cur, min), max))
+	if(barType) then
+		cur = UnitPower(unit, ALTERNATE_POWER_INDEX)
+		max = UnitPowerMax(unit, ALTERNATE_POWER_INDEX)
+		element:SetMinMaxValues(min, max)
+		element:SetValue(math.min(math.max(cur, min), max))
+	end
 
 	--[[ Callback: AlternativePower:PostUpdate(min, cur, max)
 	Called after the element has been updated.
