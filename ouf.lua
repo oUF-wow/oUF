@@ -532,9 +532,11 @@ do
 			local type, list = string.split(' ', visibility, 2)
 			if(list and type == 'custom') then
 				RegisterAttributeDriver(header, 'state-visibility', list)
+				header.visibility = list
 			else
 				local condition = getCondition(string.split(',', visibility))
 				RegisterAttributeDriver(header, 'state-visibility', condition)
+				header.visibility = condition
 			end
 		end
 
