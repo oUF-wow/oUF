@@ -431,7 +431,7 @@ frame:SetScript('OnEvent', function(self, event, unit)
 	local strings = events[event]
 	if(strings) then
 		for k, fontstring in next, strings do
-			if(fontstring:IsVisible() and (unitlessEvents[event] or fontstring.parent.unit == unit)) then
+			if(fontstring:IsVisible() and (unitlessEvents[event] or fontstring.parent.unit == unit or (fontstring.extraUnits and fontstring.extraUnits[unit]))) then
 				fontstring:UpdateTag()
 			end
 		end
@@ -518,7 +518,7 @@ local tagPool = {}
 local funcPool = {}
 local tmp = {}
 
-local Tag = function(self, fs, tagstr)
+local Tag = function(self, fs, tagstr, ...)
 	if(not fs or not tagstr) then return end
 
 	if(not self.__tags) then
@@ -679,6 +679,17 @@ local Tag = function(self, fs, tagstr)
 		createOnUpdate(timer)
 	else
 		RegisterEvents(fs, tagstr)
+
+		if(...) then
+			if(not fs.extraUnits) then
+				fs.extraUnits = {}
+			end
+
+			for index = 1, select('#', ...) do
+				local unit = select(index, ...)
+				fs.extraUnits[unit] = true
+			end
+		end
 	end
 
 	table.insert(self.__tags, fs)
