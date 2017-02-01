@@ -5,13 +5,7 @@ local hiddenParent = CreateFrame("Frame")
 hiddenParent:Hide()
 
 local HandleFrame = function(baseName)
-	local frame
-	if(type(baseName) == 'string') then
-		frame = _G[baseName]
-	else
-		frame = baseName
-	end
-
+	local frame = _G[baseName]
 	if(frame) then
 		frame:UnregisterAllEvents()
 		frame:Hide()
@@ -19,17 +13,17 @@ local HandleFrame = function(baseName)
 		-- Keep frame hidden without causing taint
 		frame:SetParent(hiddenParent)
 
-		local health = frame.healthbar
+		local health = frame.healthbar or _G[baseName .. 'HealthBar']
 		if(health) then
 			health:UnregisterAllEvents()
 		end
 
-		local power = frame.manabar
+		local power = frame.manabar or _G[baseName .. 'ManaBar']
 		if(power) then
 			power:UnregisterAllEvents()
 		end
 
-		local spell = frame.spellbar
+		local spell = frame.spellbar or _G[baseName .. 'CastingBar']
 		if(spell) then
 			spell:UnregisterAllEvents()
 		end
@@ -45,7 +39,7 @@ function oUF:DisableBlizzard(unit)
 	if(not unit) then return end
 
 	if(unit == 'player') then
-		HandleFrame(PlayerFrame)
+		HandleFrame('PlayerFrame')
 
 		-- For the damn vehicle support:
 		PlayerFrame:RegisterEvent('PLAYER_ENTERING_WORLD')
@@ -58,15 +52,15 @@ function oUF:DisableBlizzard(unit)
 		PlayerFrame:SetUserPlaced(true)
 		PlayerFrame:SetDontSavePosition(true)
 	elseif(unit == 'pet') then
-		HandleFrame(PetFrame)
+		HandleFrame('PetFrame')
 	elseif(unit == 'target') then
-		HandleFrame(TargetFrame)
-		HandleFrame(ComboFrame)
+		HandleFrame('TargetFrame')
+		HandleFrame('ComboFrame')
 	elseif(unit == 'focus') then
-		HandleFrame(FocusFrame)
-		HandleFrame(TargetofFocusFrame)
+		HandleFrame('FocusFrame')
+		HandleFrame('TargetofFocusFrame')
 	elseif(unit == 'targettarget') then
-		HandleFrame(TargetFrameToT)
+		HandleFrame('TargetFrameToT')
 	elseif(unit:match'(boss)%d?$' == 'boss') then
 		local id = unit:match'boss(%d)'
 		if(id) then
