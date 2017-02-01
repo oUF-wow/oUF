@@ -38,6 +38,7 @@
 	<Script file='elements\additionalpower.lua' />
 	<Script file='elements\classicons.lua' />
 	<Script file='elements\stagger.lua' />
+	<Script file='elements\tempname.lua' />
 
 	<!-- Clique support -->
 	<Button name="oUF_ClickCastUnitTemplate" virtual="true" inherits="SecureUnitButtonTemplate,SecureHandlerEnterLeaveTemplate">
