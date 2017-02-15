@@ -1,8 +1,6 @@
 local _, ns = ...
 local oUF = ns.oUF or oUF
 
-local timers = {}
-
 local function OnUpdate(self)
 	local timeLeft = self.expiration - GetTime()
 
@@ -27,6 +25,7 @@ local function CreateTimer(self, duration, expiration, auraID)
 end
 
 local function GetTimer(self, duration, expiration, auraID)
+	local timers = self.PlayerBuffTimers.timers
 	for id, bar in next, timers do
 		if(not bar:IsShown()) then
 			timers[id] = nil
@@ -39,6 +38,7 @@ end
 
 local function Update(self, event, unit)
 	local element = self.PlayerBuffTimers
+	local timers = element.timers
 
 	if(element.PreUpdate) then element:PreUpdate() end
 
@@ -91,6 +91,7 @@ local function Enable(self, unit)
 
 	element.__owner = self
 	element.ForceUpdate = ForceUpdate
+	element.timers = {}
 
 	self:RegisterEvent('UNIT_POWER_BAR_TIMER_UPDATE', Path)
 
@@ -98,10 +99,11 @@ local function Enable(self, unit)
 end
 
 local function Disable(self)
-	if(self.PlayerBuffTimers) then
+	local element = self.PlayerBuffTimers
+	if(element) then
 		self:UnregisterEvent('UNIT_POWER_BAR_TIMER_UPDATE')
 
-		for _, timer in next, timers do
+		for _, timer in next, element.timers do
 			timer:Hide()
 		end
 	end
