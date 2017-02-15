@@ -12,6 +12,7 @@ local function OnUpdate(self)
 end
 
 local function CreateTimer(self, duration, expiration, auraID)
+	local element = self.PlayerBuffTimers
 	local timer = CreateFrame('StatusBar', nil, self)
 	timer:SetMinMaxValues(0, duration)
 	-- TODO: let the layout deside?
@@ -20,6 +21,10 @@ local function CreateTimer(self, duration, expiration, auraID)
 	timer:SetPoint('LEFT')
 	timer:SetPoint('RIGHT')
 	timer:SetScript('OnUpdate', OnUpdate)
+
+	if(element.PostCreateTimer) then
+		element:PostCreateTimer(timer, duration, expiration, auraID)
+	end
 
 	return timer
 end
