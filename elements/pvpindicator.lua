@@ -71,7 +71,7 @@ local function Update(self, event, unit)
 
 		status = 'ffa'
 	elseif(factionGroup and factionGroup ~= 'Neutral' and UnitIsPVP(unit)) then
-		if(UnitIsMercenary(unit)) then
+		if(unit == 'player' and UnitIsMercenary(unit)) then
 			if(factionGroup == 'Horde') then
 				factionGroup = 'Alliance'
 			elseif(factionGroup == 'Alliance') then
