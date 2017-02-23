@@ -58,7 +58,7 @@ local function Update(self, event, unit)
 	local factionGroup = UnitFactionGroup(unit)
 
 	if(UnitIsPVPFreeForAll(unit)) then
-		if(prestigeLevel > 0 and element.Prestige) then
+		if(element.Prestige and prestigeLevel > 0) then
 			element:SetTexture(GetPrestigeInfo(prestigeLevel))
 			element:SetTexCoord(0, 1, 0, 1)
 			element.Prestige:SetAtlas('honorsystem-portrait-neutral', false)
@@ -79,7 +79,7 @@ local function Update(self, event, unit)
 			end
 		end
 
-		if(prestigeLevel > 0 and element.Prestige) then
+		if(element.Prestige and prestigeLevel > 0) then
 			element:SetTexture(GetPrestigeInfo(prestigeLevel))
 			element:SetTexCoord(0, 1, 0, 1)
 			element.Prestige:SetAtlas('honorsystem-portrait-' .. factionGroup, false)
