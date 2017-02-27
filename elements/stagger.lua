@@ -33,19 +33,7 @@ The default StatusBar texture will be applied if the UI widget doesn't have a st
 local parent, ns = ...
 local oUF = ns.oUF
 
--- percentages at which the bar should change color
-local STAGGER_YELLOW_TRANSITION = STAGGER_YELLOW_TRANSITION
-local STAGGER_RED_TRANSITION = STAGGER_RED_TRANSITION
-
--- table indices of bar colors
-local STAGGER_GREEN_INDEX = STAGGER_GREEN_INDEX or 1
-local STAGGER_YELLOW_INDEX = STAGGER_YELLOW_INDEX or 2
-local STAGGER_RED_INDEX = STAGGER_RED_INDEX or 3
-
-local UnitHealthMax = UnitHealthMax
-local UnitStagger = UnitStagger
-
-local playerClass = select(2, UnitClass('player'))
+local _, playerClass = UnitClass("player")
 
 local function Update(self, event, unit)
 	if(unit and unit ~= self.unit) then return end
@@ -61,45 +49,52 @@ local function Update(self, event, unit)
 		element:PreUpdate()
 	end
 
-	local maxHealth = UnitHealthMax('player')
-	local stagger = UnitStagger('player')
-	local staggerPercent = stagger / maxHealth
+	local cur = UnitStagger("player")
+	local max = UnitHealthMax("player")
+	local perc = cur / max
 
-	element:SetMinMaxValues(0, maxHealth)
-	element:SetValue(stagger)
+	element:SetMinMaxValues(0, max)
+	element:SetValue(cur)
 
+	local colors = self.colors.power[BREWMASTER_POWER_BAR_NAME]
 	local t
-	local color = self.colors.power[BREWMASTER_POWER_BAR_NAME]
-	if(staggerPercent >= STAGGER_RED_TRANSITION) then
-		t = color[STAGGER_RED_INDEX]
-	elseif(staggerPercent > STAGGER_YELLOW_TRANSITION) then
-		t = color[STAGGER_YELLOW_INDEX]
+
+	if(perc >= STAGGER_RED_TRANSITION) then
+		t = colors and colors[STAGGER_RED_INDEX]
+	elseif(perc > STAGGER_YELLOW_TRANSITION) then
+		t = colors and colors[STAGGER_YELLOW_INDEX]
 	else
-		t = color[STAGGER_GREEN_INDEX]
+		t = colors and colors[STAGGER_GREEN_INDEX]
 	end
 
-	local r, g, b = unpack(t)
-	element:SetStatusBarColor(r, g, b)
+	local r, g, b
+	if(t) then
+		r, g, b = t[1], t[2], t[3]
+	end
+
+	if(b) then
+		element:SetStatusBarColor(r, g, b)
+	end
 
 	local bg = element.bg
-	if(bg) then
+	if(bg and b) then
 		local mu = bg.multiplier or 1
 		bg:SetVertexColor(r * mu, g * mu, b * mu)
 	end
 
-	--[[ Callback: Stagger:PostUpdate(maxHealth, stagger, staggerPercent, r, g, b)
+	--[[ Callback: Stagger:PostUpdate(cur, max, perc, r, g, b)
 	Called after the element has been updated.
 
 	* self           - the Stagger element
-	* maxHealth      - the player's maximum possible health value
-	* stagger        - the amount of staggered damage
-	* staggerPercent - the amount of staggered damage relative to the player's maximum health
-	* r              - the red component of the StatusBar color (depends on staggerPercent)
-	* g              - the green component of the StatusBar color (depends on staggerPercent)
-	* b              - the blue component of the StatusBar color (depends on staggerPercent)
+	* cur            - the amount of staggered damage
+	* max            - the player's maximum possible health value
+	* perc           - the amount of staggered damage relative to the player's maximum health
+	* r              - the red component of the StatusBar color (depends on perc)
+	* g              - the green component of the StatusBar color (depends on perc)
+	* b              - the blue component of the StatusBar color (depends on perc)
 	--]]
 	if(element.PostUpdate) then
-		element:PostUpdate(maxHealth, stagger, staggerPercent, r, g, b)
+		element:PostUpdate(cur, max, perc, r, g, b)
 	end
 end
 
