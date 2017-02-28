@@ -82,16 +82,15 @@ local function Update(self, event, unit)
 	local r, g, b
 	if(t) then
 		r, g, b = t[1], t[2], t[3]
-	end
+		if(b) then
+			element:SetStatusBarColor(r, g, b)
 
-	if(b) then
-		element:SetStatusBarColor(r, g, b)
-	end
-
-	local bg = element.bg
-	if(bg and b) then
-		local mu = bg.multiplier or 1
-		bg:SetVertexColor(r * mu, g * mu, b * mu)
+			local bg = element.bg
+			if(bg and b) then
+				local mu = bg.multiplier or 1
+				bg:SetVertexColor(r * mu, g * mu, b * mu)
+			end
+		end
 	end
 
 	--[[ Callback: Stagger:PostUpdate(cur, max, perc, r, g, b)
