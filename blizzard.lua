@@ -74,7 +74,7 @@ function oUF:DisableBlizzard(unit)
 			handleFrame('Boss' .. id .. 'TargetFrame')
 		else
 			for i = 1, 5 do
-				handleFrame(('Boss%dTargetFrame'):format(i))
+				handleFrame(string.format('Boss%dTargetFrame', i))
 			end
 		end
 	elseif(unit:match('(party)%d?$') == 'party') then
@@ -83,7 +83,7 @@ function oUF:DisableBlizzard(unit)
 			handleFrame('PartyMemberFrame' .. id)
 		else
 			for i = 1, 4 do
-				handleFrame(('PartyMemberFrame%d'):format(i))
+				handleFrame(string.format('PartyMemberFrame%d', i))
 			end
 		end
 	elseif(unit:match('(arena)%d?$') == 'arena') then
