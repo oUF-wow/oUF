@@ -573,13 +573,24 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 
 	local prefix = namePrefix or generateName()
 
-	NamePlateDriverFrame:UnregisterAllEvents()
+	local hiddenParent = CreateFrame('Frame', nil, UIParent)
+	hiddenParent:SetAllPoints()
+	hiddenParent:Hide()
+
 	NamePlateDriverFrame:Hide()
-	NamePlateDriverFrame.UpdateNamePlateOptions = function()
-		if(nameplateCallback) then
-			nameplateCallback('UpdateNamePlateOptions')
+	NamePlateDriverFrame:UnregisterAllEvents()
+	NamePlateDriverFrame:RegisterEvent("NAME_PLATE_CREATED")
+	NamePlateDriverFrame:RegisterEvent("NAME_PLATE_UNIT_ADDED")
+	NamePlateDriverFrame:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
+	NamePlateDriverFrame:HookScript("OnEvent", function(self, event, unit)
+		if(event == "NAME_PLATE_UNIT_ADDED") then
+			local nameplate = C_NamePlate.GetNamePlateForUnit(unit)
+
+			if nameplate.UnitFrame then
+				nameplate.UnitFrame:SetParent(hiddenParent)
+			end
 		end
-	end
+	end)
 
 	local eventHandler = CreateFrame('Frame')
 	eventHandler:RegisterEvent('NAME_PLATE_UNIT_ADDED')
