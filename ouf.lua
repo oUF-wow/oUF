@@ -614,9 +614,7 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 			if(nameplateCallback) then
 				nameplateCallback(event, nameplate)
 			end
-		elseif(event == 'NAME_PLATE_UNIT_ADDED') then
-			if(not unit) then return end
-
+		elseif(event == 'NAME_PLATE_UNIT_ADDED' and unit) then
 			local nameplate = C_NamePlate.GetNamePlateForUnit(unit)
 			if(not nameplate) then return end
 
@@ -637,9 +635,7 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 			if(nameplateCallback) then
 				nameplateCallback(event, nameplate, unit)
 			end
-		elseif(event == 'NAME_PLATE_UNIT_REMOVED') then
-			if(not unit) then return end
-
+		elseif(event == 'NAME_PLATE_UNIT_REMOVED' and unit) then
 			local nameplate = C_NamePlate.GetNamePlateForUnit(unit)
 			if(not nameplate) then return end
 
