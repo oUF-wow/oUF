@@ -584,6 +584,8 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 	NamePlateDriverFrame:RegisterEvent('NAME_PLATE_UNIT_REMOVED')
 	NamePlateDriverFrame:HookScript('OnEvent', function(_, event, unit)
 		if(event == 'NAME_PLATE_UNIT_ADDED') then
+			if(not unit) then return end
+
 			local nameplate = C_NamePlate.GetNamePlateForUnit(unit)
 
 			if(nameplate.UnitFrame) then
