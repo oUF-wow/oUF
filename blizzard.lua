@@ -1,7 +1,8 @@
 local parent, ns = ...
 local oUF = ns.oUF
 
-local hiddenParent = CreateFrame('Frame')
+local hiddenParent = CreateFrame('Frame', nil, UIParent)
+hiddenParent:SetAllPoints()
 hiddenParent:Hide()
 
 local function handleFrame(baseName)
@@ -19,7 +20,7 @@ local function handleFrame(baseName)
 		-- Keep frame hidden without causing taint
 		frame:SetParent(hiddenParent)
 
-		local health = frame.healthbar
+		local health = frame.healthBar or frame.healthbar
 		if(health) then
 			health:UnregisterAllEvents()
 		end
@@ -29,7 +30,7 @@ local function handleFrame(baseName)
 			power:UnregisterAllEvents()
 		end
 
-		local spell = frame.spellbar
+		local spell = frame.castBar or frame.spellbar
 		if(spell) then
 			spell:UnregisterAllEvents()
 		end
@@ -98,5 +99,10 @@ function oUF:DisableBlizzard(unit)
 		-- Blizzard_ArenaUI should not be loaded
 		Arena_LoadUI = function() end
 		SetCVar('showArenaEnemyFrames', '0', 'SHOW_ARENA_ENEMY_FRAMES_TEXT')
+	elseif(unit:match('(nameplate)%d*$') == 'nameplate') then
+		local frame = C_NamePlate.GetNamePlateForUnit(unit)
+		if(frame and frame.UnitFrame) then
+			handleFrame(frame.UnitFrame)
+		end
 	end
 end

@@ -572,24 +572,14 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 	local style = style
 	local prefix = namePrefix or generateName()
 
-	local hiddenParent = CreateFrame('Frame', nil, UIParent)
-	hiddenParent:SetAllPoints()
-	hiddenParent:Hide()
-
 	NamePlateDriverFrame:Hide()
 	NamePlateDriverFrame:UnregisterAllEvents()
 	NamePlateDriverFrame:RegisterEvent('NAME_PLATE_CREATED')
 	NamePlateDriverFrame:RegisterEvent('NAME_PLATE_UNIT_ADDED')
 	NamePlateDriverFrame:RegisterEvent('NAME_PLATE_UNIT_REMOVED')
 	NamePlateDriverFrame:HookScript('OnEvent', function(_, event, unit)
-		if(event == 'NAME_PLATE_UNIT_ADDED') then
-			if(not unit) then return end
-
-			local nameplate = C_NamePlate.GetNamePlateForUnit(unit)
-
-			if(nameplate.UnitFrame) then
-				nameplate.UnitFrame:SetParent(hiddenParent)
-			end
+		if(event == 'NAME_PLATE_UNIT_ADDED' and unit) then
+			self:DisableBlizzard(unit)
 		end
 	end)
 
