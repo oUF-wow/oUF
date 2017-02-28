@@ -579,14 +579,14 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 
 	NamePlateDriverFrame:Hide()
 	NamePlateDriverFrame:UnregisterAllEvents()
-	NamePlateDriverFrame:RegisterEvent("NAME_PLATE_CREATED")
-	NamePlateDriverFrame:RegisterEvent("NAME_PLATE_UNIT_ADDED")
-	NamePlateDriverFrame:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
-	NamePlateDriverFrame:HookScript("OnEvent", function(self, event, unit)
-		if(event == "NAME_PLATE_UNIT_ADDED") then
+	NamePlateDriverFrame:RegisterEvent('NAME_PLATE_CREATED')
+	NamePlateDriverFrame:RegisterEvent('NAME_PLATE_UNIT_ADDED')
+	NamePlateDriverFrame:RegisterEvent('NAME_PLATE_UNIT_REMOVED')
+	NamePlateDriverFrame:HookScript('OnEvent', function(_, event, unit)
+		if(event == 'NAME_PLATE_UNIT_ADDED') then
 			local nameplate = C_NamePlate.GetNamePlateForUnit(unit)
 
-			if nameplate.UnitFrame then
+			if(nameplate.UnitFrame) then
 				nameplate.UnitFrame:SetParent(hiddenParent)
 			end
 		end
