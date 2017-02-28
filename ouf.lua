@@ -565,6 +565,9 @@ function oUF:Spawn(unit, overrideName)
 end
 
 function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
+	argcheck(nameplateCallback, 3, 'function', 'nil')
+	argcheck(nameplateCVars, 4, 'table', 'nil')
+
 	-- disable blizzard nameplates
 	NamePlateDriverFrame:UnregisterAllEvents()
 	NamePlateDriverFrame:Hide()
@@ -586,7 +589,7 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 	eventHandler:RegisterEvent('PLAYER_LOGIN')
 	eventHandler:SetScript('OnEvent', function(_, event, unit)
 		if(event == 'PLAYER_LOGIN') then
-			if(not nameplateCVars or type(nameplateCVars) ~= 'table') then return end
+			if(not nameplateCVars) then return end
 
 			for cvar, value in next, nameplateCVars do
 				SetCVar(cvar, value)
