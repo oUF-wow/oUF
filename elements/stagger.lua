@@ -93,19 +93,18 @@ local function Update(self, event, unit)
 		end
 	end
 
-	--[[ Callback: Stagger:PostUpdate(cur, max, perc, r, g, b)
+	--[[ Callback: Stagger:PostUpdate(cur, max, r, g, b)
 	Called after the element has been updated.
 
 	* self           - the Stagger element
 	* cur            - the amount of staggered damage
 	* max            - the player's maximum possible health value
-	* perc           - the amount of staggered damage relative to the player's maximum health
 	* r              - the red component of the StatusBar color (depends on perc)
 	* g              - the green component of the StatusBar color (depends on perc)
 	* b              - the blue component of the StatusBar color (depends on perc)
 	--]]
 	if(element.PostUpdate) then
-		element:PostUpdate(cur, max, perc, r, g, b)
+		element:PostUpdate(cur, max, r, g, b)
 	end
 end
 
