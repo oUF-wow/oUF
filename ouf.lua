@@ -617,8 +617,6 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 		elseif(event == 'NAME_PLATE_UNIT_ADDED') then
 			if(not unit) then return end
 
-			unit = unit:lower()
-
 			local nameplate = C_NamePlate.GetNamePlateForUnit(unit)
 			if(not nameplate) then return end
 
