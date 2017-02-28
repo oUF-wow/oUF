@@ -50,8 +50,8 @@ local function Update(self, event, unit)
 		element:PreUpdate()
 	end
 
-	local cur = UnitStagger("player")
-	local max = UnitHealthMax("player")
+	local cur = UnitStagger('player')
+	local max = UnitHealthMax('player')
 	local perc = cur / max
 
 	element:SetMinMaxValues(0, max)
