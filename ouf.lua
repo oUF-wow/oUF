@@ -368,7 +368,7 @@ do
 end
 
 local function generateName(unit, ...)
-	local name = 'oUF_' .. style:gsub('[^%a%d_]+', '')
+	local name = 'oUF_' .. style:gsub('^oUF_?', ''):gsub('[^%a%d_]+', '')
 
 	local raid, party, groupFilter
 	for i = 1, select('#', ...), 2 do
