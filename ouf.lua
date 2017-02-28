@@ -567,10 +567,9 @@ end
 function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 	argcheck(nameplateCallback, 3, 'function', 'nil')
 	argcheck(nameplateCVars, 4, 'table', 'nil')
-
-	local style = style
 	if(not style) then return error('Unable to create frame. No styles have been registered.') end
 
+	local style = style
 	local prefix = namePrefix or generateName()
 
 	local hiddenParent = CreateFrame('Frame', nil, UIParent)
