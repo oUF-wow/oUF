@@ -569,86 +569,76 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 	NamePlateDriverFrame:UnregisterAllEvents()
 	NamePlateDriverFrame:Hide()
 	NamePlateDriverFrame.UpdateNamePlateOptions = function()
-		if nameplateCallback then
+		if(nameplateCallback) then
 			nameplateCallback('UpdateNamePlateOptions')
 		end
 	end
 
-	-- cache it
 	local style = style
+	if(not style) then return error('Unable to create frame. No styles have been registered.') end
+
 	local prefix = namePrefix or generateName()
 
-	--nameplate event handler
-	local NPEH = CreateFrame('Frame')
+	local eventHandler = CreateFrame('Frame')
+	eventHandler:RegisterEvent('NAME_PLATE_UNIT_ADDED')
+	eventHandler:RegisterEvent('NAME_PLATE_UNIT_REMOVED')
+	eventHandler:RegisterEvent('PLAYER_TARGET_CHANGED')
+	eventHandler:RegisterEvent('PLAYER_LOGIN')
+	eventHandler:SetScript('OnEvent', function(_, event, unit)
+		if(event == 'PLAYER_LOGIN') then
+			if(not nameplateCVars or type(nameplateCVars) ~= 'table') then return end
 
-	function NPEH:NAME_PLATE_UNIT_ADDED(event, unit)
-		argcheck(unit, 3, 'string')
-		if(not style) then return error('Unable to create frame. No styles have been registered.') end
+			for cvar, value in next, nameplateCVars do
+				SetCVar(cvar, value)
+			end
+		elseif(event == 'PLAYER_TARGET_CHANGED') then
+			local nameplate = C_NamePlate.GetNamePlateForUnit('target')
+			if(not nameplate) then return end
 
-		unit = unit:lower()
+			nameplate.unitFrame:UpdateAllElements(event)
 
-		local nameplate = C_NamePlate.GetNamePlateForUnit(unit)
-		if not nameplate then return end
+			if(nameplateCallback) then
+				nameplateCallback(event, nameplate)
+			end
+		elseif(event == 'NAME_PLATE_UNIT_ADDED') then
+			if(not unit) then return end
 
-		nameplate.style = style
+			unit = unit:lower()
 
-		if not nameplate.unitFrame then
-			nameplate.unitFrame = CreateFrame('Button', prefix..nameplate:GetName(), nameplate)
-			nameplate.unitFrame:EnableMouse(false)
+			local nameplate = C_NamePlate.GetNamePlateForUnit(unit)
+			if(not nameplate) then return end
 
-			Private.UpdateUnits(nameplate.unitFrame, unit)
+			nameplate.style = style
 
-			walkObject(nameplate.unitFrame, unit)
+			if(not nameplate.unitFrame) then
+				nameplate.unitFrame = CreateFrame('Button', prefix..nameplate:GetName(), nameplate)
+				nameplate.unitFrame:EnableMouse(false)
+
+				Private.UpdateUnits(nameplate.unitFrame, unit)
+
+				walkObject(nameplate.unitFrame, unit)
+			end
+
+			nameplate.unitFrame:SetAttribute('unit', unit)
+			nameplate.unitFrame:UpdateAllElements(event)
+
+			if(nameplateCallback) then
+				nameplateCallback(event, nameplate, unit)
+			end
+		elseif(event == 'NAME_PLATE_UNIT_REMOVED') then
+			if(not unit) then return end
+
+			local nameplate = C_NamePlate.GetNamePlateForUnit(unit)
+			if(not nameplate) then return end
+
+			nameplate.unitFrame:SetAttribute('unit', nil)
+			nameplate.unitFrame:UpdateAllElements(event)
+
+			if(nameplateCallback) then
+				nameplateCallback(event, nameplate, unit)
+			end
 		end
-
-		nameplate.unitFrame:SetAttribute('unit', unit)
-		nameplate.unitFrame:UpdateAllElements(event)
-
-		if nameplateCallback then
-			nameplateCallback(event, nameplate, unit)
-		end
-	end
-
-	function NPEH:NAME_PLATE_UNIT_REMOVED(event, unit)
-		local nameplate = C_NamePlate.GetNamePlateForUnit(unit)
-		if not nameplate then return end
-
-		nameplate.unitFrame:SetAttribute('unit', nil)
-		nameplate.unitFrame:UpdateAllElements(event)
-
-		if nameplateCallback then
-			nameplateCallback(event, nameplate, unit)
-		end
-	end
-
-	function NPEH:PLAYER_TARGET_CHANGED(event)
-		local nameplate = C_NamePlate.GetNamePlateForUnit('target')
-		if not nameplate then return end
-
-		nameplate.unitFrame:UpdateAllElements(event)
-
-		if nameplateCallback then
-			nameplateCallback(event, nameplate)
-		end
-	end
-
-	function NPEH:PLAYER_LOGIN(event)
-		if not nameplateCVars or type(nameplateCVars) ~= 'table' then return end
-
-		for key, value in next, nameplateCVars do
-			SetCVar(key,value)
-		end
-	end
-
-	function NPEH:OnEvent(event, ...)
-		self[event](self, event, ...)
-	end
-
-	NPEH:SetScript('OnEvent', NPEH.OnEvent)
-	NPEH:RegisterEvent('NAME_PLATE_UNIT_ADDED')
-	NPEH:RegisterEvent('NAME_PLATE_UNIT_REMOVED')
-	NPEH:RegisterEvent('PLAYER_TARGET_CHANGED')
-	NPEH:RegisterEvent('PLAYER_LOGIN')
+	end)
 end
 
 function oUF:AddElement(name, update, enable, disable)
