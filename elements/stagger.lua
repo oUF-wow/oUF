@@ -30,10 +30,11 @@ The default StatusBar texture will be applied if the UI widget doesn't have a st
     self.Stagger = Stagger
 --]]
 
+if select(2, UnitClass('player')) ~= 'MONK' then return end
+
 local parent, ns = ...
 local oUF = ns.oUF
 
-local _, playerClass = UnitClass("player")
 
 local function Update(self, event, unit)
 	if(unit and unit ~= self.unit) then return end
@@ -139,8 +140,6 @@ local function ForceUpdate(element)
 end
 
 local function Enable(self, unit)
-	if(playerClass ~= 'MONK') then return end
-
 	local element = self.Stagger
 	if(element) then
 		element.__owner = self
