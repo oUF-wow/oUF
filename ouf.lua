@@ -568,7 +568,11 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 	argcheck(nameplateCallback, 3, 'function', 'nil')
 	argcheck(nameplateCVars, 4, 'table', 'nil')
 
-	-- disable blizzard nameplates
+	local style = style
+	if(not style) then return error('Unable to create frame. No styles have been registered.') end
+
+	local prefix = namePrefix or generateName()
+
 	NamePlateDriverFrame:UnregisterAllEvents()
 	NamePlateDriverFrame:Hide()
 	NamePlateDriverFrame.UpdateNamePlateOptions = function()
@@ -576,11 +580,6 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 			nameplateCallback('UpdateNamePlateOptions')
 		end
 	end
-
-	local style = style
-	if(not style) then return error('Unable to create frame. No styles have been registered.') end
-
-	local prefix = namePrefix or generateName()
 
 	local eventHandler = CreateFrame('Frame')
 	eventHandler:RegisterEvent('NAME_PLATE_UNIT_ADDED')
