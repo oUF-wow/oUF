@@ -574,6 +574,10 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 	local style = style
 	local prefix = namePrefix or generateName()
 
+	-- There's no way to prevent nameplate settings updates without tainting UI,
+	-- thus we should allow default nameplate driver to create, update, and remove
+	-- Blizz nameplates. "Disabling" them via oUF:DisableBlizzard is a bit ugly,
+	-- but taint-free solution.
 	NamePlateDriverFrame:Hide()
 	NamePlateDriverFrame:UnregisterAllEvents()
 	NamePlateDriverFrame:RegisterEvent('NAME_PLATE_CREATED')
