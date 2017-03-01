@@ -595,10 +595,22 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 	eventHandler:RegisterEvent('PLAYER_TARGET_CHANGED')
 	eventHandler:RegisterEvent('PLAYER_LOGIN')
 	eventHandler:SetScript('OnEvent', function(_, event, unit)
-		if(event == 'PLAYER_LOGIN' and nameplateCVars) then
-			for cvar, value in next, nameplateCVars do
-				SetCVar(cvar, value)
+		if(event == 'PLAYER_LOGIN') then
+			if(nameplateCVars) then
+				for cvar, value in next, nameplateCVars do
+					SetCVar(cvar, value)
+				end
 			end
+
+			-- Disable power and classpower bars.
+			ClassNameplateManaBarFrame:UnregisterAllEvents()
+			DeathKnightResourceOverlayFrame:UnregisterAllEvents()
+			ClassNameplateBarMageFrame:UnregisterAllEvents()
+			ClassNameplateBarWindwalkerMonkFrame:UnregisterAllEvents()
+			ClassNameplateBrewmasterBarFrame:UnregisterAllEvents()
+			ClassNameplateBarPaladinFrame:UnregisterAllEvents()
+			ClassNameplateBarRogueDruidFrame:UnregisterAllEvents()
+			ClassNameplateBarWarlockFrame:UnregisterAllEvents()
 		elseif(event == 'PLAYER_TARGET_CHANGED') then
 			local nameplate = C_NamePlate.GetNamePlateForUnit('target')
 			if(not nameplate) then return end
