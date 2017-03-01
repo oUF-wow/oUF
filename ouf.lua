@@ -274,9 +274,11 @@ local function initObject(unit, style, styleFunc, header, ...)
 			func(object)
 		end
 
-		-- Make Clique happy
-		_G.ClickCastFrames = ClickCastFrames or {}
-		ClickCastFrames[object] = true
+		-- Make Clique kinda happy
+		if not object.isNamePlate then
+			_G.ClickCastFrames = ClickCastFrames or {}
+			ClickCastFrames[object] = true
+		end
 	end
 end
 
@@ -611,6 +613,7 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 			if(not nameplate.unitFrame) then
 				nameplate.unitFrame = CreateFrame('Button', prefix..nameplate:GetName(), nameplate)
 				nameplate.unitFrame:EnableMouse(false)
+				nameplate.unitFrame.isNamePlate = true
 
 				Private.UpdateUnits(nameplate.unitFrame, unit)
 
