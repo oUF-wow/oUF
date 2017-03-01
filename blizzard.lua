@@ -39,6 +39,11 @@ local function handleFrame(baseName)
 		if(altpowerbar) then
 			altpowerbar:UnregisterAllEvents()
 		end
+
+		local buffFrame = frame.BuffFrame
+		if(buffFrame) then
+			buffFrame:UnregisterAllEvents()
+		end
 	end
 end
 
