@@ -566,8 +566,9 @@ function oUF:Spawn(unit, overrideName)
 	return object
 end
 
-function oUF:SpawnNamePlates(namePrefix, nameplateCVars)
-	argcheck(nameplateCVars, 3, 'table', 'nil')
+function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
+	argcheck(nameplateCallback, 3, 'function', 'nil')
+	argcheck(nameplateCVars, 4, 'table', 'nil')
 	if(not style) then return error('Unable to create frame. No styles have been registered.') end
 
 	local style = style
@@ -615,6 +616,10 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCVars)
 			if(not nameplate) then return end
 
 			nameplate.unitFrame:UpdateAllElements(event)
+
+			if(nameplateCallback) then
+				nameplateCallback(event, nameplate.unitFrame, 'target')
+			end
 		elseif(event == 'NAME_PLATE_UNIT_ADDED' and unit) then
 			local nameplate = C_NamePlate.GetNamePlateForUnit(unit)
 			if(not nameplate) then return end
@@ -633,12 +638,20 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCVars)
 
 			nameplate.unitFrame:SetAttribute('unit', unit)
 			nameplate.unitFrame:UpdateAllElements(event)
+
+			if(nameplateCallback) then
+				nameplateCallback(event, nameplate.unitFrame, unit)
+			end
 		elseif(event == 'NAME_PLATE_UNIT_REMOVED' and unit) then
 			local nameplate = C_NamePlate.GetNamePlateForUnit(unit)
 			if(not nameplate) then return end
 
 			nameplate.unitFrame:SetAttribute('unit', nil)
 			nameplate.unitFrame:UpdateAllElements(event)
+
+			if(nameplateCallback) then
+				nameplateCallback(event, nameplate.unitFrame, unit)
+			end
 		end
 	end)
 end
