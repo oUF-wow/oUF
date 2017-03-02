@@ -578,11 +578,6 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 	-- thus we should allow default nameplate driver to create, update, and remove
 	-- Blizz nameplates. "Disabling" them via oUF:DisableBlizzard is a bit ugly,
 	-- but taint-free solution.
-	NamePlateDriverFrame:Hide()
-	NamePlateDriverFrame:UnregisterAllEvents()
-	NamePlateDriverFrame:RegisterEvent('NAME_PLATE_CREATED')
-	NamePlateDriverFrame:RegisterEvent('NAME_PLATE_UNIT_ADDED')
-	NamePlateDriverFrame:RegisterEvent('NAME_PLATE_UNIT_REMOVED')
 	NamePlateDriverFrame:HookScript('OnEvent', function(_, event, unit)
 		if(event == 'NAME_PLATE_UNIT_ADDED' and unit) then
 			self:DisableBlizzard(unit)
@@ -601,16 +596,6 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 					SetCVar(cvar, value)
 				end
 			end
-
-			-- Disable power and classpower bars.
-			ClassNameplateManaBarFrame:UnregisterAllEvents()
-			DeathKnightResourceOverlayFrame:UnregisterAllEvents()
-			ClassNameplateBarMageFrame:UnregisterAllEvents()
-			ClassNameplateBarWindwalkerMonkFrame:UnregisterAllEvents()
-			ClassNameplateBrewmasterBarFrame:UnregisterAllEvents()
-			ClassNameplateBarPaladinFrame:UnregisterAllEvents()
-			ClassNameplateBarRogueDruidFrame:UnregisterAllEvents()
-			ClassNameplateBarWarlockFrame:UnregisterAllEvents()
 		elseif(event == 'PLAYER_TARGET_CHANGED') then
 			local nameplate = C_NamePlate.GetNamePlateForUnit('target')
 			if(not nameplate) then return end
