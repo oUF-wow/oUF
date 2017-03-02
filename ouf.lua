@@ -574,10 +574,10 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 	local style = style
 	local prefix = namePrefix or generateName()
 
-	-- There's no way to prevent nameplate settings updates without tainting UI,
-	-- thus we should allow default nameplate driver to create, update, and remove
-	-- Blizz nameplates. "Disabling" them via oUF:DisableBlizzard is a bit ugly,
-	-- but taint-free solution.
+	-- Because there's no way to prevent nameplate settings updates without tainting UI,
+	-- and because forbidden nameplates exist, we have to allow default nameplate
+	-- driver to create, update, and remove Blizz nameplates.
+	-- Disable only not forbidden nameplates.
 	NamePlateDriverFrame:HookScript('OnEvent', function(_, event, unit)
 		if(event == 'NAME_PLATE_UNIT_ADDED' and unit) then
 			self:DisableBlizzard(unit)
