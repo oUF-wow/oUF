@@ -15,11 +15,8 @@ local function CreateTimer(self, duration, expiration, auraID)
 	local element = self.PlayerBuffTimers
 	local timer = CreateFrame('StatusBar', nil, self)
 	timer:SetMinMaxValues(0, duration)
-	-- TODO: let the layout deside?
-	timer:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
-	timer:SetHeight(10)
-	timer:SetPoint('LEFT')
-	timer:SetPoint('RIGHT')
+	timer:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]]) -- TODO: let the layout deside
+	timer:SetSize(element.width or element:GetWidth(), element.height or 10)
 	timer:SetScript('OnUpdate', OnUpdate)
 
 	if(element.PostCreateTimer) then
@@ -41,6 +38,40 @@ local function GetTimer(self, duration, expiration, auraID)
 	return (self.PlayerBuffTimers.CreateTimer or CreateTimer)(self, duration, expiration, auraID)
 end
 
+local growthDirection = {
+	TOPLEFT     = { 1, -1},
+	TOPRIGHT    = {-1, -1},
+	BOTTOMLEFT  = { 1,  1},
+	BOTTOMRIGHT = {-1,  1},
+}
+
+local function SetPosition(element)
+	local timers = element.timers
+
+	local width = (element.width or element:GetWidth()) + (element['spacing-x'] or element.spacing or 0)
+	local height = (element.height or 10) + (element['spacing-y'] or element.spacing or 0)
+	local anchor = element.anchor or 'TOPLEFT'
+	local direction = growthDirection[anchor] -- TODO: error on invalid anchor
+	local x = direction[1]
+	local y = direction[2]
+	local cols = math.floor(element:GetWidth() / width + .5)
+	local rows = math.floor(element:GetHeight() / height + .5)
+
+	for _, timer in next, timers do
+		local i = timer.index
+		local col, row
+		if(element.primaryAxis == 'x') then
+			col = (i - 1) % cols
+			row = math.floor((i - 1) / cols)
+		else
+			col = math.floor((i - 1) / rows)
+			row = (i - 1) % rows
+		end
+		timer:ClearAllPoints()
+		timer:SetPoint(anchor, element, anchor, col * width * x, row * height * y)
+	end
+end
+
 local function Update(self, event, unit)
 	local element = self.PlayerBuffTimers
 	local timers = element.timers
@@ -48,7 +79,6 @@ local function Update(self, event, unit)
 	if(element.PreUpdate) then element:PreUpdate() end
 
 	local index = 1
-	local anchorFrame = self -- TODO: let the layout deside
 	local duration, expiration, barID, auraID = UnitPowerBarTimerInfo(unit, index)
 	while(barID) do
 		if(not timers[auraID]) then
@@ -58,10 +88,9 @@ local function Update(self, event, unit)
 		end
 
 		local timer = timers[auraID]
+		timer.index = index
 		timer.expiration = expiration
 		timer.show = true
-		timer:SetPoint('BOTTOM', anchorFrame, 'TOP', 0, 10) -- TODO: let the layout deside
-		anchorFrame = timer
 
 		index = index + 1
 		duration, expiration, barID, auraID = UnitPowerBarTimerInfo(unit, index)
@@ -75,6 +104,8 @@ local function Update(self, event, unit)
 			timer:Hide()
 		end
 	end
+
+	(element.SetPosition or SetPosition)(element)
 
 	if(element.PostUpdate) then
 		element:PostUpdate()
@@ -97,6 +128,7 @@ local function Enable(self, unit)
 	element.__owner = self
 	element.ForceUpdate = ForceUpdate
 	element.timers = {}
+	element.primaryAxis = element.primaryAxis or 'x'
 
 	self:RegisterEvent('UNIT_POWER_BAR_TIMER_UPDATE', Path)
 
