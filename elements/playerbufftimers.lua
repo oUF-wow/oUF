@@ -38,6 +38,19 @@ local function SetPosition(element)
 	end
 end
 
+local function OnEnter(timer)
+	if(not timer:IsVisible()) then return end
+
+	GameTooltip:SetOwner(timer, 'ANCHOR_BOTTOMRIGHT')
+	GameTooltip:SetText(timer.powerName, 1, 1, 1)
+	GameTooltip:AddLine(timer.powerTooltip, nil, nil, nil, true)
+	GameTooltip:Show()
+end
+
+local function OnLeave(timer)
+	GameTooltip:Hide()
+end
+
 local function OnUpdate(timer)
 	local timeLeft = timer.expiration - GetTime()
 
@@ -60,6 +73,8 @@ local function CreateTimer(element, duration, expiration, auraID)
 	timer:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]]) -- TODO: let the layout deside
 	timer:SetSize(element.width or element:GetWidth(), element.height or 10)
 	timer:SetScript('OnUpdate', OnUpdate)
+	timer:SetScript('OnEnter', OnEnter)
+	timer:SetScript('OnLeave', OnLeave)
 	timer.UpdateTimer = UpdateTimer
 
 	if(element.PostCreateTimer) then
@@ -72,7 +87,7 @@ end
 local function UnitPowerBarTimerInfo(unit, index)
 	if(index > 5) then return end
 	local duration = math.random(20, 60)
-	return duration, GetTime() + duration, 83, 25
+	return duration, GetTime() + duration, 84, 101871
 end
 
 local function Update(self, event, unit)
@@ -88,6 +103,8 @@ local function Update(self, event, unit)
 			timer = (element.CreateTimer or CreateTimer)(element, index)
 			element[#element + 1] = timer
 		end
+
+		timer.powerName, timer.powerTooltip = select(11, GetAlternatePowerInfoByID(barID))
 
 		timer:UpdateTimer(duration, expiration, barID, auraID)
 		timer.show = true
