@@ -18,18 +18,23 @@ local function SetPosition(element)
 	local cols = math.floor(element:GetWidth() / width + .5)
 	local rows = math.floor(element:GetHeight() / height + .5)
 
+	local hidden = 0
 	for i = 1, #element do
 		local timer = element[i]
-		local col, row
-		if(element.primaryAxis == 'x') then
-			col = (i - 1) % cols
-			row = math.floor((i - 1) / cols)
+		if(timer:IsShown()) then
+			local col, row
+			if(element.primaryAxis == 'x') then
+				col = (i - 1 - hidden) % cols
+				row = math.floor((i - 1 - hidden) / cols)
+			else
+				col = math.floor((i - 1 - hidden) / rows)
+				row = (i - 1 - hidden) % rows
+			end
+			timer:ClearAllPoints()
+			timer:SetPoint(anchor, element, anchor, col * width * x, row * height * y)
 		else
-			col = math.floor((i - 1) / rows)
-			row = (i - 1) % rows
+			hidden = hidden + 1
 		end
-		timer:ClearAllPoints()
-		timer:SetPoint(anchor, element, anchor, col * width * x, row * height * y)
 	end
 end
 
@@ -66,7 +71,6 @@ end
 
 local function UnitPowerBarTimerInfo(unit, index)
 	if(index > 5) then return end
-	print(type(element), unit, index)
 	local duration = math.random(20, 60)
 	return duration, GetTime() + duration, 83, 25
 end
