@@ -1,36 +1,6 @@
 local _, ns = ...
 local oUF = ns.oUF or oUF
 
-local function OnUpdate(timer)
-	local timeLeft = timer.expiration - GetTime()
-
-	if(timeLeft > 0) then
-		timer:SetValue(timeLeft)
-	else
-		timer:Hide()
-	end
-end
-
-local function UpdateTimer(timer, duration, expiration, barID, auraID)
-	timer:SetMinMaxValues(0, duration)
-	timer.expiration = expiration
-	timer.auraID = auraID
-end
-
-local function CreateTimer(element, duration, expiration, auraID)
-	local timer = CreateFrame('StatusBar', nil, element)
-	timer:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]]) -- TODO: let the layout deside
-	timer:SetSize(element.width or element:GetWidth(), element.height or 10)
-	timer:SetScript('OnUpdate', OnUpdate)
-	timer.UpdateTimer = UpdateTimer
-
-	if(element.PostCreateTimer) then
-		element:PostCreateTimer(timer, duration, expiration, auraID)
-	end
-
-	return timer
-end
-
 local growthDirection = {
 	TOPLEFT     = { 1, -1},
 	TOPRIGHT    = {-1, -1},
@@ -61,6 +31,44 @@ local function SetPosition(element)
 		timer:ClearAllPoints()
 		timer:SetPoint(anchor, element, anchor, col * width * x, row * height * y)
 	end
+end
+
+local function OnUpdate(timer)
+	local timeLeft = timer.expiration - GetTime()
+
+	if(timeLeft > 0) then
+		timer:SetValue(timeLeft)
+	else
+		timer:Hide()
+		SetPosition(timer:GetParent()) -- TODO: remove after testing
+	end
+end
+
+local function UpdateTimer(timer, duration, expiration, barID, auraID)
+	timer:SetMinMaxValues(0, duration)
+	timer.expiration = expiration
+	timer.auraID = auraID
+end
+
+local function CreateTimer(element, duration, expiration, auraID)
+	local timer = CreateFrame('StatusBar', nil, element)
+	timer:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]]) -- TODO: let the layout deside
+	timer:SetSize(element.width or element:GetWidth(), element.height or 10)
+	timer:SetScript('OnUpdate', OnUpdate)
+	timer.UpdateTimer = UpdateTimer
+
+	if(element.PostCreateTimer) then
+		element:PostCreateTimer(timer, duration, expiration, auraID)
+	end
+
+	return timer
+end
+
+local function UnitPowerBarTimerInfo(unit, index)
+	if(index > 5) then return end
+	print(type(element), unit, index)
+	local duration = math.random(20, 60)
+	return duration, GetTime() + duration, 83, 25
 end
 
 local function Update(self, event, unit)
