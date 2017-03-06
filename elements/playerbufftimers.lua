@@ -69,7 +69,7 @@ local function OnUpdate(timer)
 		timer:SetValue(timeLeft)
 	else
 		timer:Hide()
-		SetPosition(timer:GetParent()) -- TODO: remove after testing
+		--SetPosition(timer:GetParent()) -- TODO: remove after testing
 	end
 end
 
@@ -95,11 +95,11 @@ local function CreateTimer(element, duration, expiration, auraID)
 	return timer
 end
 
-local function UnitPowerBarTimerInfo(unit, index)
-	if(index > 5) then return end
-	local duration = math.random(20, 60)
-	return duration, GetTime() + duration, 84, 101871
-end
+-- local function UnitPowerBarTimerInfo(unit, index)
+-- 	if(index > 5) then return end
+-- 	local duration = math.random(20, 60)
+-- 	return duration, GetTime() + duration, 84, 101871
+-- end
 
 local function Update(self, event, unit)
 	local element = self.PlayerBuffTimers
