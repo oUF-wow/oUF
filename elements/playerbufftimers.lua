@@ -12,7 +12,18 @@ local function SetPosition(element)
 	local width = (element.width or element:GetWidth()) + (element['spacing-x'] or element.spacing or 0)
 	local height = (element.height or 10) + (element['spacing-y'] or element.spacing or 0)
 	local anchor = element.anchor or 'TOPLEFT'
-	local direction = growthDirection[anchor] -- TODO: error on invalid anchor
+	local direction = growthDirection[anchor]
+	if(not direction) then
+		local anchors
+		for key in next, growthDirection do
+			if(not anchors) then
+				anchors = key
+			else
+				anchors = string.format('%s, %s', anchors, key)
+			end
+		end
+		error(string.format('Invalid anchor %s. Should be one of %s', anchor, anchors))
+	end
 	local x = direction[1]
 	local y = direction[2]
 	local cols = math.floor(element:GetWidth() / width + .5)
