@@ -1,3 +1,51 @@
+--[[
+# Element: PlayerBuffTimers
+
+Handles creation and updating of player buff timers.
+
+## Widget
+
+PlayerBuffTimers - A frame to hold player buff timers.
+
+## Options
+
+.width         - Timer width. Defaults to the width of the PlayerBuffTimers widget.
+.height        - Timer height. Defaults to 16.
+.anchor        - Anchor point for the timers. Must be one of 'BOTTOMLEFT', 'BOTTOMRIGHT', 'TOPLEFT' or 'TOPRIGHT'.
+                 Timer growth direction will be then choosen so that timers grow away from the anchor point and into the
+                 PlayerBuffTimers widget. Defaults to `'TOPLEFT'`.
+.primaryAxis   - Axis for the primary growth direction. Defaults to `'x'`.
+.spacing       - Spacing between timers. Defaults to 0.
+.['spacing-x'] - Horizontal spacing between timers. Takes priority over `.spacing`.
+.['spacing-y'] - Vertical spacing between timers. Takes priority over `.spacing`.
+
+## Sub-Widget
+
+Timers are created on demand and could be represented by any UI widget. They can be accessed through the array part of
+the PlayerBuffTimers widget. StatusBar is used by default, but the layout could alter this by overriding
+`CreateTimer`.
+
+## Notes
+
+If the layout provides its own `CreateTimer`, it also has to specify `timer.UpdateTimer`, which is then used to update
+the timer.
+
+## Attributes
+
+.powerName    - Name of the timer buff. Applied to the timer widget before it has been updated.
+.powerTooltip - Description of the timer buff. Applied to the timer widget before it has been updated.
+
+## Examples
+
+    -- Position and size
+    local pbt = CreateFrame('Frame', nil, self)
+    pbt:SetPoint('BOTTOM', self, 'TOP')
+    pbt:SetSize(230, 20 * 4)
+
+    -- Register with oUF
+    self.PlayerBuffTimers = pbt
+--]]
+
 local _, ns = ...
 local oUF = ns.oUF or oUF
 
@@ -10,7 +58,7 @@ local growthDirection = {
 
 local function SetPosition(element)
 	local width = (element.width or element:GetWidth()) + (element['spacing-x'] or element.spacing or 0)
-	local height = (element.height or 10) + (element['spacing-y'] or element.spacing or 0)
+	local height = (element.height or 16) + (element['spacing-y'] or element.spacing or 0)
 	local anchor = element.anchor or 'TOPLEFT'
 	local direction = growthDirection[anchor]
 	if(not direction) then
@@ -79,7 +127,7 @@ local function UpdateTimer(timer, duration, expiration, barID, auraID)
 	timer.auraID = auraID
 end
 
-local function CreateTimer(element, duration, expiration, auraID)
+local function CreateTimer(element, index)
 	local timer = CreateFrame('StatusBar', nil, element)
 	timer:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]]) -- TODO: let the layout deside
 	timer:SetSize(element.width or element:GetWidth(), element.height or 10)
@@ -88,8 +136,15 @@ local function CreateTimer(element, duration, expiration, auraID)
 	timer:SetScript('OnLeave', OnLeave)
 	timer.UpdateTimer = UpdateTimer
 
+	--[[ Callback: PlayerBuffTimers:PostCreateTimer(timer, index)
+	Called after a timer has been created.
+
+	* self  - the PlayerBuffTimers widget
+	* timer - the created timer widget
+	* index - index at which the timer was created
+	--]]
 	if(element.PostCreateTimer) then
-		element:PostCreateTimer(timer, duration, expiration, auraID)
+		element:PostCreateTimer(timer, index)
 	end
 
 	return timer
@@ -104,6 +159,11 @@ end
 local function Update(self, event, unit)
 	local element = self.PlayerBuffTimers
 
+	--[[ Callback: PlayerBuffTimers:PreUpdate()
+	Called before the element has been updated.
+
+	* self  - the PlayerBuffTimers widget
+	--]]
 	if(element.PreUpdate) then element:PreUpdate() end
 
 	local index = 1
@@ -111,12 +171,27 @@ local function Update(self, event, unit)
 	while(barID) do
 		local timer = element[index]
 		if(not timer) then
+			--[[ Override: PlayerBuffTimers:CreateTimer(index)
+			Used to create and return a new timer widget.
+
+			* self  - the PlayerBuffTimers widget
+			* index - index at which the timer should be created
+			--]]
 			timer = (element.CreateTimer or CreateTimer)(element, index)
 			element[#element + 1] = timer
 		end
 
 		timer.powerName, timer.powerTooltip = select(11, GetAlternatePowerInfoByID(barID))
 
+		--[[ Override: timer:UpdateTimer(duration, expiration, barID, auraID)
+		Used to update the timer attributes.
+
+		* self       - widget holding the timer to be updated
+		* duration   - total timer duration
+		* expiration - time at which the timer expires. Can be compared to `GetTime()`
+		* barID      - alternate power id of the timer
+		* auraID     - spellid of the timer aura
+		--]]
 		timer:UpdateTimer(duration, expiration, barID, auraID)
 		timer.show = true
 
@@ -134,14 +209,31 @@ local function Update(self, event, unit)
 		end
 	end
 
+	--[[ Override: PlayerBuffTimers:SetPosition()
+	Used to (re-)anchor the timers.
+	Called every time a new timer is shown or an old one expires.
+
+	* self - the PlayerBuffTimers widget
+	--]]
 	(element.SetPosition or SetPosition)(element)
 
+	--[[ Callback: PlayerBuffTimers:PostUpdate()
+	Called after all timers have been updated.
+
+	* self - the PlayerBuffTimers widget
+	--]]
 	if(element.PostUpdate) then
 		element:PostUpdate()
 	end
 end
 
 local function Path(self, ...)
+	--[[ Override: PlayerBuffTimers:Override(...)
+	Used to completely override the internal update function.
+
+	* self - the PlayerBuffTimers widget
+	* ...  - the event and the arguments that accompany it
+	--]]
 	return (self.PlayerBuffTimers.Override or Update)(self, ...)
 end
 
