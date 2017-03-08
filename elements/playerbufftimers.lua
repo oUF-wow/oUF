@@ -49,7 +49,7 @@ the timer.
 local _, ns = ...
 local oUF = ns.oUF or oUF
 
-local growthDirection = {
+local growth_direction = {
 	TOPLEFT     = { 1, -1},
 	TOPRIGHT    = {-1, -1},
 	BOTTOMLEFT  = { 1,  1},
@@ -60,10 +60,10 @@ local function SetPosition(element)
 	local width = (element.width or element:GetWidth()) + (element['spacing-x'] or element.spacing or 0)
 	local height = (element.height or 16) + (element['spacing-y'] or element.spacing or 0)
 	local anchor = element.anchor or 'TOPLEFT'
-	local direction = growthDirection[anchor]
+	local direction = growth_direction[anchor]
 	if(not direction) then
 		local anchors
-		for key in next, growthDirection do
+		for key in next, growth_direction do
 			if(not anchors) then
 				anchors = key
 			else
@@ -97,7 +97,7 @@ local function SetPosition(element)
 	end
 end
 
-local function OnEnter(timer)
+local function onEnter(timer)
 	if(not timer:IsVisible()) then return end
 
 	GameTooltip:SetOwner(timer, 'ANCHOR_BOTTOMRIGHT')
@@ -106,11 +106,11 @@ local function OnEnter(timer)
 	GameTooltip:Show()
 end
 
-local function OnLeave(timer)
+local function onLeave(timer)
 	GameTooltip:Hide()
 end
 
-local function OnUpdate(timer)
+local function onUpdate(timer)
 	local timeLeft = timer.expiration - GetTime()
 
 	if(timeLeft > 0) then
@@ -131,9 +131,9 @@ local function CreateTimer(element, index)
 	local timer = CreateFrame('StatusBar', nil, element)
 	timer:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]]) -- TODO: let the layout deside
 	timer:SetSize(element.width or element:GetWidth(), element.height or 10)
-	timer:SetScript('OnUpdate', OnUpdate)
-	timer:SetScript('OnEnter', OnEnter)
-	timer:SetScript('OnLeave', OnLeave)
+	timer:SetScript('OnUpdate', onUpdate)
+	timer:SetScript('OnEnter', onEnter)
+	timer:SetScript('OnLeave', onLeave)
 	timer.UpdateTimer = UpdateTimer
 
 	--[[ Callback: PlayerBuffTimers:PostCreateTimer(timer, index)
