@@ -156,7 +156,7 @@ end
 -- 	return duration, GetTime() + duration, 84, 101871
 -- end
 
-local function Update(self, event, unit)
+local function Update(self, event)
 	local element = self.PlayerBuffTimers
 
 	--[[ Callback: PlayerBuffTimers:PreUpdate()
@@ -167,7 +167,7 @@ local function Update(self, event, unit)
 	if(element.PreUpdate) then element:PreUpdate() end
 
 	local index = 1
-	local duration, expiration, barID, auraID = UnitPowerBarTimerInfo(unit, index)
+	local duration, expiration, barID, auraID = UnitPowerBarTimerInfo('player', index)
 	while(barID) do
 		local timer = element[index]
 		if(not timer) then
@@ -196,7 +196,7 @@ local function Update(self, event, unit)
 		timer.show = true
 
 		index = index + 1
-		duration, expiration, barID, auraID = UnitPowerBarTimerInfo(unit, index)
+		duration, expiration, barID, auraID = UnitPowerBarTimerInfo('player', index)
 	end
 
 	for i = 1, #element do
