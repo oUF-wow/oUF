@@ -274,9 +274,11 @@ local function initObject(unit, style, styleFunc, header, ...)
 			func(object)
 		end
 
-		-- Make Clique happy
-		_G.ClickCastFrames = ClickCastFrames or {}
-		ClickCastFrames[object] = true
+		-- Make Clique kinda happy
+		if not object.isNamePlate then
+			_G.ClickCastFrames = ClickCastFrames or {}
+			ClickCastFrames[object] = true
+		end
 	end
 end
 
@@ -368,7 +370,7 @@ do
 end
 
 local function generateName(unit, ...)
-	local name = 'oUF_' .. style:gsub('[^%a%d_]+', '')
+	local name = 'oUF_' .. style:gsub('^oUF_?', ''):gsub('[^%a%d_]+', '')
 
 	local raid, party, groupFilter
 	for i = 1, select('#', ...), 2 do
@@ -562,6 +564,81 @@ function oUF:Spawn(unit, overrideName)
 	RegisterUnitWatch(object)
 
 	return object
+end
+
+function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
+	argcheck(nameplateCallback, 3, 'function', 'nil')
+	argcheck(nameplateCVars, 4, 'table', 'nil')
+	if(not style) then return error('Unable to create frame. No styles have been registered.') end
+
+	local style = style
+	local prefix = namePrefix or generateName()
+
+	-- Because there's no way to prevent nameplate settings updates without tainting UI,
+	-- and because forbidden nameplates exist, we have to allow default nameplate
+	-- driver to create, update, and remove Blizz nameplates.
+	-- Disable only not forbidden nameplates.
+	NamePlateDriverFrame:HookScript('OnEvent', function(_, event, unit)
+		if(event == 'NAME_PLATE_UNIT_ADDED' and unit) then
+			self:DisableBlizzard(unit)
+		end
+	end)
+
+	local eventHandler = CreateFrame('Frame')
+	eventHandler:RegisterEvent('NAME_PLATE_UNIT_ADDED')
+	eventHandler:RegisterEvent('NAME_PLATE_UNIT_REMOVED')
+	eventHandler:RegisterEvent('PLAYER_TARGET_CHANGED')
+	eventHandler:RegisterEvent('PLAYER_LOGIN')
+	eventHandler:SetScript('OnEvent', function(_, event, unit)
+		if(event == 'PLAYER_LOGIN') then
+			if(nameplateCVars) then
+				for cvar, value in next, nameplateCVars do
+					SetCVar(cvar, value)
+				end
+			end
+		elseif(event == 'PLAYER_TARGET_CHANGED') then
+			local nameplate = C_NamePlate.GetNamePlateForUnit('target')
+			if(not nameplate) then return end
+
+			nameplate.unitFrame:UpdateAllElements(event)
+
+			if(nameplateCallback) then
+				nameplateCallback(nameplate.unitFrame, event, 'target')
+			end
+		elseif(event == 'NAME_PLATE_UNIT_ADDED' and unit) then
+			local nameplate = C_NamePlate.GetNamePlateForUnit(unit)
+			if(not nameplate) then return end
+
+			if(not nameplate.unitFrame) then
+				nameplate.style = style
+
+				nameplate.unitFrame = CreateFrame('Button', prefix..nameplate:GetName(), nameplate)
+				nameplate.unitFrame:EnableMouse(false)
+				nameplate.unitFrame.isNamePlate = true
+
+				Private.UpdateUnits(nameplate.unitFrame, unit)
+
+				walkObject(nameplate.unitFrame, unit)
+			end
+
+			nameplate.unitFrame:SetAttribute('unit', unit)
+			nameplate.unitFrame:UpdateAllElements(event)
+
+			if(nameplateCallback) then
+				nameplateCallback(nameplate.unitFrame, event, unit)
+			end
+		elseif(event == 'NAME_PLATE_UNIT_REMOVED' and unit) then
+			local nameplate = C_NamePlate.GetNamePlateForUnit(unit)
+			if(not nameplate) then return end
+
+			nameplate.unitFrame:SetAttribute('unit', nil)
+			nameplate.unitFrame:UpdateAllElements(event)
+
+			if(nameplateCallback) then
+				nameplateCallback(nameplate.unitFrame, event, unit)
+			end
+		end
+	end)
 end
 
 function oUF:AddElement(name, update, enable, disable)

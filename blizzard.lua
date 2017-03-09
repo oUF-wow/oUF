@@ -1,7 +1,8 @@
 local parent, ns = ...
 local oUF = ns.oUF
 
-local hiddenParent = CreateFrame('Frame')
+local hiddenParent = CreateFrame('Frame', nil, UIParent)
+hiddenParent:SetAllPoints()
 hiddenParent:Hide()
 
 local function handleFrame(baseName)
@@ -19,7 +20,7 @@ local function handleFrame(baseName)
 		-- Keep frame hidden without causing taint
 		frame:SetParent(hiddenParent)
 
-		local health = frame.healthbar
+		local health = frame.healthBar or frame.healthbar
 		if(health) then
 			health:UnregisterAllEvents()
 		end
@@ -29,7 +30,7 @@ local function handleFrame(baseName)
 			power:UnregisterAllEvents()
 		end
 
-		local spell = frame.spellbar
+		local spell = frame.castBar or frame.spellbar
 		if(spell) then
 			spell:UnregisterAllEvents()
 		end
@@ -37,6 +38,11 @@ local function handleFrame(baseName)
 		local altpowerbar = frame.powerBarAlt
 		if(altpowerbar) then
 			altpowerbar:UnregisterAllEvents()
+		end
+
+		local buffFrame = frame.BuffFrame
+		if(buffFrame) then
+			buffFrame:UnregisterAllEvents()
 		end
 	end
 end
@@ -67,25 +73,25 @@ function oUF:DisableBlizzard(unit)
 		handleFrame(TargetofFocusFrame)
 	elseif(unit == 'targettarget') then
 		handleFrame(TargetFrameToT)
-	elseif(unit:match('(boss)%d?$') == 'boss') then
+	elseif(unit:match('boss%d?$')) then
 		local id = unit:match('boss(%d)')
 		if(id) then
 			handleFrame('Boss' .. id .. 'TargetFrame')
 		else
 			for i = 1, 5 do
-				handleFrame(('Boss%dTargetFrame'):format(i))
+				handleFrame(string.format('Boss%dTargetFrame', i))
 			end
 		end
-	elseif(unit:match('(party)%d?$') == 'party') then
+	elseif(unit:match('party%d?$')) then
 		local id = unit:match('party(%d)')
 		if(id) then
 			handleFrame('PartyMemberFrame' .. id)
 		else
 			for i = 1, 4 do
-				handleFrame(('PartyMemberFrame%d'):format(i))
+				handleFrame(string.format('PartyMemberFrame%d', i))
 			end
 		end
-	elseif(unit:match('(arena)%d?$') == 'arena') then
+	elseif(unit:match('arena%d?$')) then
 		local id = unit:match('arena(%d)')
 		if(id) then
 			handleFrame('ArenaEnemyFrame' .. id)
@@ -98,5 +104,10 @@ function oUF:DisableBlizzard(unit)
 		-- Blizzard_ArenaUI should not be loaded
 		Arena_LoadUI = function() end
 		SetCVar('showArenaEnemyFrames', '0', 'SHOW_ARENA_ENEMY_FRAMES_TEXT')
+	elseif(unit:match('nameplate%d+$')) then
+		local frame = C_NamePlate.GetNamePlateForUnit(unit)
+		if(frame and frame.UnitFrame) then
+			handleFrame(frame.UnitFrame)
+		end
 	end
 end
