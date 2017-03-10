@@ -86,6 +86,7 @@ local function Enable(self)
 		element.ForceUpdate = ForceUpdate
 
 		self:RegisterEvent('UNIT_THREAT_SITUATION_UPDATE', Path)
+		self:RegisterEvent('UNIT_THREAT_LIST_UPDATE', Path)
 
 		if(element:IsObjectType('Texture') and not element:GetTexture()) then
 			element:SetTexture([[Interface\Minimap\ObjectIcons]])
@@ -102,6 +103,7 @@ local function Disable(self)
 		element:Hide()
 
 		self:UnregisterEvent('UNIT_THREAT_SITUATION_UPDATE', Path)
+		self:UnregisterEvent('UNIT_THREAT_LIST_UPDATE', Path)
 	end
 end
 
