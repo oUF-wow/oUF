@@ -171,9 +171,7 @@ local function Enable(self, unit)
 
 		self:RegisterEvent('UNIT_MAXHEALTH', Path)
 		self:RegisterEvent('UNIT_CONNECTION', Path)
-
-		-- For tapping.
-		self:RegisterEvent('UNIT_FACTION', Path)
+		self:RegisterEvent('UNIT_FACTION', Path) -- For tapping
 
 		if(element:IsObjectType('StatusBar') and not element:GetStatusBarTexture()) then
 			element:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
