@@ -461,8 +461,10 @@ local function Enable(self)
 			buffs.__owner = self
 			buffs.ForceUpdate = ForceUpdate
 
-			buffs.createdIcons = 0
+			buffs.createdIcons = buffs.createdIcons or 0
 			buffs.anchoredIcons = 0
+
+			buffs:Show()
 		end
 
 		local debuffs = self.Debuffs
@@ -470,8 +472,10 @@ local function Enable(self)
 			debuffs.__owner = self
 			debuffs.ForceUpdate = ForceUpdate
 
-			debuffs.createdIcons = 0
+			debuffs.createdIcons = debuffs.createdIcons or 0
 			debuffs.anchoredIcons = 0
+
+			debuffs:Show()
 		end
 
 		local auras = self.Auras
@@ -479,8 +483,10 @@ local function Enable(self)
 			auras.__owner = self
 			auras.ForceUpdate = ForceUpdate
 
-			auras.createdIcons = 0
+			auras.createdIcons = auras.createdIcons or 0
 			auras.anchoredIcons = 0
+
+			auras:Show()
 		end
 
 		return true
@@ -497,4 +503,4 @@ local function Disable(self)
 	end
 end
 
-oUF:AddElement('Aura', Update, Enable, Disable)
+oUF:AddElement('Auras', Update, Enable, Disable)
