@@ -270,7 +270,6 @@ local function Enable(self, unit)
 		self:RegisterEvent('UNIT_DISPLAYPOWER', Path)
 		self:RegisterEvent('UNIT_CONNECTION', Path)
 		self:RegisterEvent('UNIT_MAXPOWER', Path)
-
 		self:RegisterEvent('UNIT_FACTION', Path) -- For tapping
 
 		if(element:IsObjectType('StatusBar')) then
