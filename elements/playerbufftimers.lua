@@ -274,6 +274,8 @@ local function Enable(self, unit)
 
 	self:RegisterEvent('UNIT_POWER_BAR_TIMER_UPDATE', Path)
 
+	element:Show()
+
 	return true
 end
 
