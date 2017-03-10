@@ -30,7 +30,8 @@ The default StatusBar texture will be applied if the UI widget doesn't have a st
 local parent, ns = ...
 local oUF = ns.oUF
 
-local ALTERNATE_POWER_INDEX = ALTERNATE_POWER_INDEX
+-- sourced from FrameXML/UnitPowerBarAlt.lua
+local ALTERNATE_POWER_INDEX = ALTERNATE_POWER_INDEX or 10
 
 local function updateTooltip(self)
 	GameTooltip:SetText(self.powerName, 1, 1, 1)
@@ -72,19 +73,20 @@ local function Update(self, event, unit, powerType)
 		cur = UnitPower(unit, ALTERNATE_POWER_INDEX)
 		max = UnitPowerMax(unit, ALTERNATE_POWER_INDEX)
 		element:SetMinMaxValues(min, max)
-		element:SetValue(math.min(math.max(cur, min), max))
+		element:SetValue(cur)
 	end
 
-	--[[ Callback: AlternativePower:PostUpdate(min, cur, max)
+	--[[ Callback: AlternativePower:PostUpdate(unit, cur, min, max)
 	Called after the element has been updated.
 
 	* self - the AlternativePower element
-	* min  - the minimum possible power value for the active type
+	* unit - the event unit that the update has been triggered for
 	* cur  - the current power value
+	* min  - the minimum possible power value for the active type
 	* max  - the maximum possible power value for the active type
 	--]]
 	if(element.PostUpdate) then
-		return element:PostUpdate(min, cur, max)
+		return element:PostUpdate(unit, cur, min, max)
 	end
 end
 
