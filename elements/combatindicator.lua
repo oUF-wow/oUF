@@ -9,7 +9,7 @@ CombatIndicator - Any UI widget.
 
 ## Notes
 
-The default assistant icon will be applied if the UI widget is a texture and doesn't have a texture or color defined.
+The default combat icon will be applied if the UI widget is a texture and doesn't have a texture or color defined.
 
 ## Examples
 
