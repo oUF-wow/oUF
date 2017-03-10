@@ -72,7 +72,7 @@ local function Update(self, event, unit, powerType)
 		cur = UnitPower(unit, ALTERNATE_POWER_INDEX)
 		max = UnitPowerMax(unit, ALTERNATE_POWER_INDEX)
 		element:SetMinMaxValues(min, max)
-		element:SetValue(math.min(math.max(cur, min), max))
+		element:SetValue(cur)
 	end
 
 	--[[ Callback: AlternativePower:PostUpdate(min, cur, max)
