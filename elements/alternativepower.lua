@@ -30,7 +30,8 @@ The default StatusBar texture will be applied if the UI widget doesn't have a st
 local parent, ns = ...
 local oUF = ns.oUF
 
-local ALTERNATE_POWER_INDEX = ALTERNATE_POWER_INDEX
+-- sourced from FrameXML/UnitPowerBarAlt.lua
+local ALTERNATE_POWER_INDEX = ALTERNATE_POWER_INDEX or 10
 
 local function updateTooltip(self)
 	GameTooltip:SetText(self.powerName, 1, 1, 1)
