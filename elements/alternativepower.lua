@@ -76,7 +76,7 @@ local function Update(self, event, unit, powerType)
 		element:SetValue(cur)
 	end
 
-	--[[ Callback: AlternativePower:PostUpdate(min, cur, max)
+	--[[ Callback: AlternativePower:PostUpdate(unit, cur, min, max)
 	Called after the element has been updated.
 
 	* self - the AlternativePower element
