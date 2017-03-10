@@ -82,11 +82,11 @@ local function Update(self, event, unit, powerType)
 	* self - the AlternativePower element
 	* unit - the event unit that the update has been triggered for
 	* cur  - the current power value
-	* max  - the maximum possible power value for the active type
 	* min  - the minimum possible power value for the active type
+	* max  - the maximum possible power value for the active type
 	--]]
 	if(element.PostUpdate) then
-		return element:PostUpdate(unit, cur, max, min)
+		return element:PostUpdate(unit, cur, min, max)
 	end
 end
 
