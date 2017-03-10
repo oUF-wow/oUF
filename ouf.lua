@@ -127,7 +127,7 @@ for k, v in next, {
 		-- The main reason we do this is to make sure the full update is completed
 		-- if an element for some reason removes itself _during_ the update
 		-- progress.
-		self:UpdateAllElements('DisableElement', name)
+		self:UpdateAllElements('DisableElement')
 
 		return elements[name].disable(self)
 	end,
