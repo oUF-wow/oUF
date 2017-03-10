@@ -22,18 +22,18 @@ PlayerBuffTimers - A frame to hold player buff timers.
 ## Sub-Widget
 
 Timers are created on demand and could be represented by any UI widget. They can be accessed through the array part of
-the PlayerBuffTimers widget. StatusBar is used by default, but the layout could alter this by overriding
-`CreateTimer`.
+the PlayerBuffTimers widget. StatusBar is used by default, but the layout could alter this by overriding `CreateTimer`.
 
 ## Notes
 
-If the layout provides its own `CreateTimer`, it also has to specify `timer.UpdateTimer`, which is then used to update
+If the layout provides its own `CreateTimer`, it also has to specify `timer.UpdateTimer`, which will be used to update
 the timer.
 
-## Attributes
+## Sub-Widget Attributes
 
 .powerName    - Name of the timer buff. Applied to the timer widget before it has been updated.
 .powerTooltip - Description of the timer buff. Applied to the timer widget before it has been updated.
+.Time         - A FontString to represent the remaining timer duration.
 
 ## Examples
 
@@ -100,6 +100,10 @@ end
 local function onEnter(timer)
 	if(not timer:IsVisible()) then return end
 
+	if(timer.Time) then
+		timer.Time:Show()
+	end
+
 	GameTooltip:SetOwner(timer, 'ANCHOR_BOTTOMRIGHT')
 	GameTooltip:SetText(timer.powerName, 1, 1, 1)
 	GameTooltip:AddLine(timer.powerTooltip, nil, nil, nil, true)
@@ -107,6 +111,9 @@ local function onEnter(timer)
 end
 
 local function onLeave(timer)
+	if(timer.Time) then
+		timer.Time:Hide()
+	end
 	GameTooltip:Hide()
 end
 
@@ -115,6 +122,20 @@ local function onUpdate(timer)
 
 	if(timeLeft > 0) then
 		timer:SetValue(timeLeft)
+
+		if(timer.Time and timer.Time:IsVisible()) then
+			--[[ Callback: timer:CustomTime(timeLeft)
+			Called after the timer's remaining time changed.
+
+			* self     - the timer widget
+			* timeLeft - the remaining timer duration in seconds
+			--]]
+			if(timer.CustomTime) then
+				timer:CustomTime(timeLeft)
+			else
+				timer.Time:SetFormattedText('%d / %d', timeLeft, timer.duration)
+			end
+		end
 	else
 		timer:Hide()
 		--SetPosition(timer:GetParent()) -- TODO: remove after testing
@@ -123,6 +144,7 @@ end
 
 local function UpdateTimer(timer, duration, expiration, barID, auraID)
 	timer:SetMinMaxValues(0, duration)
+	timer.duration = duration
 	timer.expiration = expiration
 	timer.auraID = auraID
 end
