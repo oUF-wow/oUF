@@ -18,7 +18,7 @@
 	<Script file="elements\combatindicator.lua" />
 	<Script file="elements\restingindicator.lua" />
 	<Script file="elements\pvpindicator.lua" />
-	<Script file="elements\portraits.lua" />
+	<Script file="elements\portrait.lua" />
 	<Script file="elements\range.lua" />
 	<Script file="elements\castbar.lua" />
 	<Script file="elements\threatindicator.lua" />
