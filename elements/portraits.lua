@@ -53,14 +53,14 @@ local function Update(self, event, unit)
 		if(not UnitExists(unit) or not UnitIsConnected(unit) or not UnitIsVisible(unit)) then
 			element:SetCamDistanceScale(0.25)
 			element:SetPortraitZoom(0)
-			element:SetPosition(0,0,0.5)
+			element:SetPosition(0, 0, 0.5)
 			element:ClearModel()
 			element:SetModel([[Interface\Buttons\TalkToMeQuestionMark.m2]])
 			element.guid = nil
 		elseif(element.guid ~= guid or event == 'UNIT_MODEL_CHANGED') then
 			element:SetCamDistanceScale(1)
 			element:SetPortraitZoom(1)
-			element:SetPosition(0,0,0)
+			element:SetPosition(0, 0, 0)
 			element:ClearModel()
 			element:SetUnit(unit)
 			element.guid = guid
