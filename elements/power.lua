@@ -223,19 +223,19 @@ local function Update(self, event, unit)
 		bg:SetVertexColor(r * mu, g * mu, b * mu)
 	end
 
-	--[[ Callback: Power:PostUpdate(unit, cur, max, min, powerToken, powerType)
+	--[[ Callback: Power:PostUpdate(unit, cur, min, max, powerToken, powerType)
 	Called after the element has been updated.
 
 	* self       - the Power element
 	* unit       - the event unit that the update has been triggered for
 	* cur        - the unit's current power value
-	* max        - the unit's maximum possible power value
 	* min        - the unit's minimum possible power value
+	* max        - the unit's maximum possible power value
 	* powerToken - a locale independent String representing the unit's power type (like 'MANA')
 	* powerType  - a Number representing the unit's power type
 	--]]
 	if(element.PostUpdate) then
-		return element:PostUpdate(unit, cur, max, min, ptoken, ptype)
+		return element:PostUpdate(unit, cur, min, max, ptoken, ptype)
 	end
 end
 
