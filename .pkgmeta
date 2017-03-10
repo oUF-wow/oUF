@@ -1,0 +1,7 @@
+package-as: oUF
+
+optional-dependencies:
+  - clique
+
+ignore:
+  - utils

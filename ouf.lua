@@ -1,6 +1,9 @@
 local parent, ns = ...
 local global = GetAddOnMetadata(parent, 'X-oUF')
 local _VERSION = GetAddOnMetadata(parent, 'version')
+if(_VERSION:find('project%-version')) then
+	_VERSION = 'devel'
+end
 
 local oUF = ns.oUF
 local Private = oUF.Private
