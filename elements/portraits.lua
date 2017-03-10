@@ -55,7 +55,7 @@ local function Update(self, event, unit)
 			element:SetPortraitZoom(0)
 			element:SetPosition(0,0,0.5)
 			element:ClearModel()
-			element:SetModel([[Interface\Buttons\\TalkToMeQuestionMark.m2]])
+			element:SetModel([[Interface\Buttons\TalkToMeQuestionMark.m2]])
 			element.guid = nil
 		elseif(element.guid ~= guid or event == 'UNIT_MODEL_CHANGED') then
 			element:SetCamDistanceScale(1)
