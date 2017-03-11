@@ -64,7 +64,7 @@ local function Update(self, event, unit, powertype)
 	--[[ Callback: AdditionalPower:PreUpdate(unit)
 	Called before the element has been updated.
 
-	* self - AdditionalPower element
+	* self - the AdditionalPower element
 	* unit - the unit for which the update has been triggered
 	--]]
 	if(element.PreUpdate) then element:PreUpdate(unit) end
@@ -100,7 +100,7 @@ local function Update(self, event, unit, powertype)
 	--[[ Callback: AdditionalPower:PostUpdate(unit, cur, max)
 	Called after the element has been updated.
 
-	* self - AdditionalPower element
+	* self - the AdditionalPower element
 	* unit - the unit for which the update has been triggered
 	* cur  - current value of player's additional power
 	* max  - maximum value of player's additional power
@@ -114,7 +114,7 @@ local function Path(self, ...)
 	--[[ Override: AdditionalPower:Override(...)
 	Used to completely override the element's update process.
 
-	* self - AdditionalPower element
+	* self - the AdditionalPower element
 	* ...  - the event and its arguments, if any
 	--]]
 	return (self.AdditionalPower.Override or Update) (self, ...)
@@ -163,7 +163,7 @@ local function VisibilityPath(self, ...)
 	--[[ Hook: AdditionalPower:OverrideVisibility(...)
 	Used to completely override the element's visibility update process.
 
-	* self - AdditionalPower element
+	* self - the AdditionalPower element
 	* ...  - the event that has triggered the element's visibility change and the unit for which the event has been fired
 	--]]
 	return (self.AdditionalPower.OverrideVisibility or Visibility) (self, ...)
