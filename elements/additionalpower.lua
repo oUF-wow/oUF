@@ -6,22 +6,22 @@ druids.
 
 ## Widget
 
-AdditionalPower - A StatusBar that is used to represent player's additional power.
+AdditionalPower - A `StatusBar` that is used to display player's additional power.
 
 ## Sub-Widgets
 
-.bg - A Texture that is used as a background. Inherits the widget's color.
+.bg - A `Texture` that is used as a background. Inherits the widget's color.
 
 ## Notes
 
-Default status bar texture will be applied if the widget doesn't have a texture or a color set.
+The default status bar texture will be applied if the widget doesn't have a texture or a color set.
 
 ## Options
 
-.colorClass  - Uses `self.colors.class[class]` to color the bar based on player's class.
-.colorSmooth - Uses `self.colors.smooth` to color the bar with a smooth gradient based on player's current additional
-               power percentage.
-.colorPower  - Uses `self.colors.power[token]` to color the bar based on player's power type. This will always use
+.colorClass  - If enabled, `self.colors.class[class]` will be used to color the bar based on the player's class.
+.colorSmooth - If enabled, `self.colors.smooth` will be used to color the bar with a smooth gradient based on the player's current
+               additional power percentage.
+.colorPower  - If enabled, `self.colors.power[token]` will be used to color the bar based on the player's power type. This will always use
                'MANA' as the token.
 
 ## Sub-Widget Options
@@ -44,7 +44,7 @@ Default status bar texture will be applied if the widget doesn't have a texture 
     Background:SetTexture(1, 1, 1, .5)
 
     -- Register it with oUF
-	AdditionalPower.bg = Background
+    AdditionalPower.bg = Background
     self.AdditionalPower = AdditionalPower
 --]]
 
