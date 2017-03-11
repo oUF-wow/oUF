@@ -53,8 +53,9 @@ local oUF = ns.oUF
 
 local playerClass = select(2, UnitClass('player'))
 
-local ADDITIONAL_POWER_BAR_NAME = ADDITIONAL_POWER_BAR_NAME
-local ADDITIONAL_POWER_BAR_INDEX = ADDITIONAL_POWER_BAR_INDEX
+-- sourced from FrameXML/AlternatePowerBar.lua
+local ADDITIONAL_POWER_BAR_NAME = ADDITIONAL_POWER_BAR_NAME or 'MANA'
+local ADDITIONAL_POWER_BAR_INDEX = ADDITIONAL_POWER_BAR_INDEX or 0
 
 local function Update(self, event, unit, powertype)
 	if(unit ~= 'player' or (powertype and powertype ~= ADDITIONAL_POWER_BAR_NAME)) then return end
