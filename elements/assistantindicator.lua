@@ -73,14 +73,14 @@ end
 local function Enable(self)
 	local element = self.AssistantIndicator
 	if(element) then
+		element.__owner = self
+		element.ForceUpdate = ForceUpdate
+
 		self:RegisterEvent('GROUP_ROSTER_UPDATE', Path, true)
 
 		if(element:IsObjectType('Texture') and not element:GetTexture()) then
 			element:SetTexture([[Interface\GroupFrame\UI-Group-AssistantIcon]])
 		end
-
-		element.__owner = self
-		element.ForceUpdate = ForceUpdate
 
 		return true
 	end
