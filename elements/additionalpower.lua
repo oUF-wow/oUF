@@ -1,31 +1,32 @@
 --[[
 # Element: Additional Power Bar
 
-Handles updating and visibility of a status bar displaying the player's additional power, such as Mana for Balance
+Handles updating and visibility of a status bar that displays player's additional power, such as Mana for Balance
 druids.
 
 ## Widget
 
-AdditionalPower - A StatusBar to represent the player's current additional power.
+AdditionalPower - A StatusBar that is used to represent player's additional power.
 
 ## Sub-Widgets
 
-.bg - A Texture, which functions as a background. It will inherit the color of the main StatusBar.
+.bg - A Texture that is used as a background. Inherits the widget's color.
 
 ## Notes
 
-The default StatusBar texture will be applied if the UI widget doesn't have a status bar texture or color defined.
+Default status bar texture will be applied if the widget doesn't have a texture or a color set.
 
 ## Options
 
-.colorClass  - Use `self.colors.class[class]` to color the bar.
-.colorSmooth - Use `self.colors.smooth` to color the bar with a smooth gradient based on the players current additional
+.colorClass  - Uses `self.colors.class[class]` to color the bar based on player's class.
+.colorSmooth - Uses `self.colors.smooth` to color the bar with a smooth gradient based on player's current additional
                power percentage.
-.colorPower  - Use `self.colors.power[token]` to color the bar. This will always use MANA as token.
+.colorPower  - Uses `self.colors.power[token]` to color the bar based on player's power type. This will always use
+               'MANA' as the token.
 
 ## Sub-Widget Options
 
-.multiplier - Defines a multiplier that is used to tint the background based on the main widgets R, G and B values.
+.multiplier - Defines a multiplier that is used to tint the background based on the widget's R, G and B values.
               Defaults to 1 if not present.
 
 ## Examples
@@ -62,8 +63,8 @@ local function Update(self, event, unit, powertype)
 	--[[ Callback: AdditionalPower:PreUpdate(unit)
 	Called before the element has been updated.
 
-	* self - the AdditionalPower element
-	* unit - the event unit that the update has been triggered for
+	* self - AdditionalPower element
+	* unit - the unit for which the update has been triggered
 	--]]
 	if(element.PreUpdate) then element:PreUpdate(unit) end
 
@@ -98,10 +99,10 @@ local function Update(self, event, unit, powertype)
 	--[[ Callback: AdditionalPower:PostUpdate(unit, cur, max)
 	Called after the element has been updated.
 
-	* self - the AdditionalPower element
-	* unit - the event unit that the update has been triggered for
-	* cur  - the current value of the player's additional power
-	* max  - the maximum possible value of the player's additional power
+	* self - AdditionalPower element
+	* unit - the unit for which the update has been triggered
+	* cur  - current value of player's additional power
+	* max  - maximum value of player's additional power
 	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(unit, cur, max)
@@ -110,10 +111,10 @@ end
 
 local function Path(self, ...)
 	--[[ Override: AdditionalPower:Override(...)
-	Used to completely override the internal update function.
+	Used to completely override the element's update process.
 
-	* self - the AdditionalPower element
-	* ...  - the event and the arguments that accompany it
+	* self - AdditionalPower element
+	* ...  - the event and its arguments, if any
 	--]]
 	return (self.AdditionalPower.Override or Update) (self, ...)
 end
@@ -159,10 +160,10 @@ end
 
 local function VisibilityPath(self, ...)
 	--[[ Hook: AdditionalPower:OverrideVisibility(...)
-	Used to completely override the internal function that toggles the element's visibility.
+	Used to completely override the element's visibility update process.
 
-	* self - the AdditionalPower element
-	* ...  - the event that has triggered the element's visibility change and the unit that the event has been fired for
+	* self - AdditionalPower element
+	* ...  - the event that has triggered the element's visibility change and the unit for which the event has been fired
 	--]]
 	return (self.AdditionalPower.OverrideVisibility or Visibility) (self, ...)
 end
