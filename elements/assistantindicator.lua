@@ -1,7 +1,7 @@
 --[[
 # Element: Assistant Indicator
 
-Toggles visibility of an indicator based on the units raid officer status.
+Toggles visibility of an indicator based on the unit's raid assistant status.
 
 ## Widget
 
@@ -9,7 +9,7 @@ AssistantIndicator - Any UI widget.
 
 ## Notes
 
-The default assistant icon will be applied if the UI widget is a texture and doesn't have a texture or color defined.
+Default assistant icon will be applied if the widget is a Texture and doesn't have a texture or a color set.
 
 ## Examples
 
@@ -49,7 +49,7 @@ local function Update(self, event)
 	Called after the element has been updated.
 
 	* self        - the AssistantIndicator element
-	* isAssistant - a boolean indicating whether the unit is a raid officer or not
+	* isAssistant - boolean value that indicates whether or not the unit is a raid assistant
 	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(isAssistant)
@@ -58,10 +58,10 @@ end
 
 local function Path(self, ...)
 	--[[ Override: AssistantIndicator:Override(...)
-	Used to completely override the internal update function.
+	Used to completely override the element's update process.
 
 	* self - the AssistantIndicator element
-	* ...  - the event and the arguments that accompany it
+	* ...  - the event and its arguments, if any
 	--]]
 	return (self.AssistantIndicator.Override or Update) (self, ...)
 end
