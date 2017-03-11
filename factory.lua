@@ -5,12 +5,12 @@ local Private = oUF.Private
 local argcheck = Private.argcheck
 
 local queue = {}
-local factory = CreateFrame'Frame'
+local factory = CreateFrame('Frame')
 factory:SetScript('OnEvent', function(self, event, ...)
 	return self[event](self, event, ...)
 end)
 
-factory:RegisterEvent'PLAYER_LOGIN'
+factory:RegisterEvent('PLAYER_LOGIN')
 factory.active = true
 
 function factory:PLAYER_LOGIN()
