@@ -1,12 +1,12 @@
 --[[
 # Element: Additional Power Bar
 
-Handles updating and visibility of a status bar that displays player's additional power, such as Mana for Balance
+Handles updating and visibility of a status bar that displays the player's additional power, such as Mana for Balance
 druids.
 
 ## Widget
 
-AdditionalPower - A `StatusBar` that is used to display player's additional power.
+AdditionalPower - A `StatusBar` that is used to display the player's additional power.
 
 ## Sub-Widgets
 
@@ -19,10 +19,10 @@ The default status bar texture will be applied if the widget doesn't have a text
 ## Options
 
 .colorClass  - If enabled, `self.colors.class[class]` will be used to color the bar based on the player's class.
-.colorSmooth - If enabled, `self.colors.smooth` will be used to color the bar with a smooth gradient based on the player's current
-               additional power percentage.
-.colorPower  - If enabled, `self.colors.power[token]` will be used to color the bar based on the player's power type. This will always use
-               'MANA' as the token.
+.colorSmooth - If enabled, `self.colors.smooth` will be used to color the bar with a smooth gradient based on the
+               player's current additional power percentage.
+.colorPower  - If enabled, `self.colors.power[token]` will be used to color the bar based on the player's power type.
+               This will always use 'MANA' as the token.
 
 ## Sub-Widget Options
 
@@ -165,7 +165,8 @@ local function VisibilityPath(self, ...)
 	Used to completely override the element's visibility update process.
 
 	* self - the AdditionalPower element
-	* ...  - the event that has triggered the element's visibility change and the unit for which the event has been fired
+	* ...  - the event that has triggered the element's visibility change,
+	         the unit for which the event has been fired
 	--]]
 	return (self.AdditionalPower.OverrideVisibility or Visibility) (self, ...)
 end
