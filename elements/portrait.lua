@@ -9,8 +9,7 @@ Portrait - A PlayerModel or Texture used to represent the unit's portrait.
 
 ## Notes
 
-The quest delivery question mark will be used instead of the unit's model when the client doesn't have the model
-information for the unit.
+A question mark model will be used if the widget is a Model and the client doesn't have the model information for the unit.
 
 ## Examples
 
