@@ -1,19 +1,21 @@
 --[[
 # Element: ClassPower
 
-Toggles the visibility of icons depending on the player's class and specialization.
+Toggles the visibility of sub-widgets depending on the player's class and specialization.
 
 ## Widget
 
-ClassPower - An array consisting of as many UI Textures as the theoretical maximum return of `UnitPowerMax`.
+ClassPower - An array consisting of as many UI sub-widgets as the theoretical maximum return of [UnitPowerMax](http://wowprogramming.com/docs/api/UnitPowerMax).
 
 ## Notes
 
-All     - Combo Points
-Mage    - Arcane Charges
-Monk    - Chi Orbs
-Paladin - Holy Power
-Warlock - Soul Shards
+A default texture will be applied if the icons are Textures and doesn't have a texture or a color set.
+Supported class powers:
+- All     - Combo Points
+- Mage    - Arcane Charges
+- Monk    - Chi Orbs
+- Paladin - Holy Power
+- Warlock - Soul Shards
 
 ## Examples
 
