@@ -59,11 +59,12 @@ local function Update(self, event)
 end
 
 local function Path(self, ...)
-	--[[ Override: GroupRoleIndicator:Override(self, ...)
+	--[[ Override: GroupRoleIndicator:Override(event, ...)
 	Used to completely override the internal update function.
 
-	* self - the GroupRoleIndicator element
-	* ...  - the event and the arguments that accompany it
+	* self  - the GroupRoleIndicator element
+	* event - the event triggering the update
+	* ...   - the arguments accompanying the event
 	--]]
 	return (self.GroupRoleIndicator.Override or Update) (self, ...)
 end
