@@ -1,7 +1,7 @@
 --[[
 # Element: Power Prediction Bar
 
-Handles updating and visibility of the power prediction status bars.
+Handles updating and visibility of power prediction status bars.
 
 ## Widget
 
@@ -9,13 +9,12 @@ PowerPrediction - A table containing `mainBar` and `altBar`.
 
 ## Sub-Widgets
 
-mainBar - A StatusBar used to represent power cost of abilities, that consume the unit's main power, e.g. mana for mages.
-altBar  - A StatusBar used to represent power cost of spells, that consume the unit's additional power, e.g. mana for
-          balance druids.
+mainBar - A StatusBar used to represent power cost of spells for the Power element.
+altBar  - A StatusBar used to represent power cost of spells for the AdditionalPower element.
 
 ## Notes
 
-The default StatusBar texture will be applied if the UI widget doesn't have a status bar texture.
+A default texture will be applied if the widget is a StatusBar and doesn't have a texture or color set.
 
 ## Examples
 
@@ -27,11 +26,11 @@ The default StatusBar texture will be applied if the UI widget doesn't have a st
     mainBar:SetPoint('RIGHT', self.Power:GetStatusBarTexture(), 'RIGHT')
     mainBar:SetWidth(200)
 
-    local altBar = CreateFrame('StatusBar', nil, self.DruidMana)
+    local altBar = CreateFrame('StatusBar', nil, self.AdditionalPower)
     altBar:SetReverseFill(true)
     altBar:SetPoint('TOP')
     altBar:SetPoint('BOTTOM')
-    altBar:SetPoint('RIGHT', self.DruidMana:GetStatusBarTexture(), 'RIGHT')
+    altBar:SetPoint('RIGHT', self.AdditionalPower:GetStatusBarTexture(), 'RIGHT')
     altBar:SetWidth(200)
 
     -- Register with oUF
