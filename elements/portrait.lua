@@ -81,11 +81,12 @@ local function Update(self, event, unit)
 end
 
 local function Path(self, ...)
-	--[[ Override: Portrait:Override(...)
+	--[[ Override: Portrait:Override(event, unit)
 	Used to completely override the internal update function.
 
-	* self - the Portrait element
-	* ...  - the event and the arguments that accompany it
+	* self  - the Portrait element
+	* event - the event triggering the update
+	* unit  - the unit accompanying the event
 	--]]
 	return (self.Portrait.Override or Update) (self, ...)
 end
