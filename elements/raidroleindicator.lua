@@ -69,11 +69,12 @@ local function Update(self, event)
 end
 
 local function Path(self, ...)
-	--[[Override: RaidRoleIndicator:Override(...)
+	--[[ Override: RaidRoleIndicator:Override(event, ...)
 	Used to completely override the internal update function.
 
-	* self - the RaidRoleIndicator element
-	* ...  - the event and the arguments that accompany it
+	* self  - the RaidRoleIndicator element
+	* event - the event triggering the update
+	* ...   - the arguments accompanying the event
 	--]]
 	return (self.RaidRoleIndicator.Override or Update)(self, ...)
 end
