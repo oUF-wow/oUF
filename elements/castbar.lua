@@ -26,7 +26,7 @@ Based upon oUF_Castbar by starlon.
 
 ## Notes
 
-The default texture will be applied if the UI widget doesn't have a texture or color defined.
+A default texture will be applied if the widget is a StatusBar and doesn't have a texture or color set.
 
 ## Examples
 
@@ -74,6 +74,7 @@ The default texture will be applied if the UI widget doesn't have a texture or c
     Castbar.Time = Time
     Castbar.Text = Text
     Castbar.Icon = Icon
+    Castbar.Shield = Shield
     Castbar.SafeZone = SafeZone
     self.Castbar = Castbar
 --]]
