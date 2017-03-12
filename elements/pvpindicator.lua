@@ -127,11 +127,12 @@ local function Update(self, event, unit)
 end
 
 local function Path(self, ...)
-	--[[Override: PvPIndicator:Override(...)
+	--[[Override: PvPIndicator:Override(event, unit)
 	Used to completely override the internal update function.
 
-	* self - the PvPIndicator element
-	* ...  - the event and the arguments that accompany it
+	* self  - the PvPIndicator element
+	* event - the event triggering the update
+	* unit  - the unit accompanying the event
 	--]]
 	return (self.PvPIndicator.Override or Update) (self, ...)
 end
