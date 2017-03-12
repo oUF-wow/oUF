@@ -96,12 +96,12 @@ local function Update(self, event, unit)
 	--[[ Callback: Stagger:PostUpdate(cur, max, r, g, b)
 	Called after the element has been updated.
 
-	* self           - the Stagger element
-	* cur            - the amount of staggered damage
-	* max            - the player's maximum possible health value
-	* r              - the red component of the StatusBar color (depends on perc)
-	* g              - the green component of the StatusBar color (depends on perc)
-	* b              - the blue component of the StatusBar color (depends on perc)
+	* self - the Stagger element
+	* cur  - the amount of staggered damage
+	* max  - the player's maximum possible health value
+	* r    - the red component of the StatusBar color (depends on perc)
+	* g    - the green component of the StatusBar color (depends on perc)
+	* b    - the blue component of the StatusBar color (depends on perc)
 	--]]
 	if(element.PostUpdate) then
 		element:PostUpdate(cur, max, r, g, b)
@@ -109,11 +109,12 @@ local function Update(self, event, unit)
 end
 
 local function Path(self, ...)
-	--[[ Override: Stagger:Override(...)
+	--[[ Override: Stagger:Override(event, unit)
 	Used to completely override the internal update function.
 
-	* self - the Stagger element
-	* ...  - the event and the arguments that accompany it
+	* self  - the Stagger element
+	* event - the event triggering the update
+	* unit  - the unit accompanying the event
 	--]]
 	return (self.Stagger.Override or Update)(self, ...)
 end
@@ -135,11 +136,12 @@ local function Visibility(self, event, unit)
 end
 
 local function VisibilityPath(self, ...)
-	--[[ Override: Stagger:OverrideVisibility(...)
+	--[[ Override: Stagger:OverrideVisibility(event, unit)
 	Used to completely override the internal visibility toggling function.
 
-	* self - the Stagger element
-	* ...  - the event and the arguments that accompany it
+	* self  - the Stagger element
+	* event - the event triggering the update
+	* unit  - the unit accompanying the event
 	--]]
 	return (self.Stagger.OverrideVisibility or Visibility)(self, ...)
 end
