@@ -66,11 +66,12 @@ local function Update(self, event, unit)
 end
 
 local function Path(self, ...)
-	--[[ Override: ThreatIndicator:Override(...)
+	--[[ Override: ThreatIndicator:Override(event, unit)
 	Used to completely override the internal update function.
 
-	* self - the ThreatIndicator element
-	* ...  - the event and the arguments that accompany it
+	* self  - the ThreatIndicator element
+	* event - the event triggering the update
+	* unit  - the unit accompanying the event
 	--]]
 	return (self.ThreatIndicator.Override or Update) (self, ...)
 end
