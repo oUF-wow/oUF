@@ -240,11 +240,13 @@ local function Update(self, event, unit)
 end
 
 local function Path(self, ...)
-	--[[ Override: Power:Override(...)
+	--[[ Override: Power:Override(event, unit, ...)
 	Used to completely override the internal update function.
 
-	* self - the Power element
-	* ...  - then event and the arguments that accompany it
+	* self  - the Power element
+	* event - the event triggering the update
+	* unit  - the unit accompanying the event
+	* ...   - the arguments accompanying the event
 	--]]
 	return (self.Power.Override or Update) (self, ...)
 end
