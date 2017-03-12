@@ -1,7 +1,7 @@
 --[[
 # Element: PvP and Prestige Icons
 
-Handles updating and visibility of PvP and prestige icons based on unit's PvP status and prestige level.
+Handles visibility and updating of an indicator based on the unit's PvP status and prestige level.
 
 ## Widget
 
@@ -13,7 +13,8 @@ Prestige - A Texture used to display the prestige background image.
 
 ## Notes
 
-The `Prestige` texture has to be on a lower sub-layer than the `PvP` texture.
+This element updates by changing the texture.
+The `Prestige` sub-widget has to be on a lower sub-layer than the `PvP` texture.
 
  Examples
 
