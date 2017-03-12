@@ -1,7 +1,7 @@
 --[[
 # Element: Combat Indicator
 
-Toggles the visibility of `self.CombatIndicator` based on the player's combat status.
+Toggles visibility of an indicator based on the player's combat status.
 
 ## Widget
 
@@ -9,7 +9,7 @@ CombatIndicator - Any UI widget.
 
 ## Notes
 
-The default combat icon will be applied if the UI widget is a texture and doesn't have a texture or color defined.
+A default texture will be applied if the widget is a Texture and doesn't have a texture or a color set.
 
 ## Examples
 
@@ -48,7 +48,7 @@ local function Update(self, event)
 	Called after the element has been updated.
 
 	* self     - the CombatIndicator element
-	* inCombat - a boolean indicating if the player is affectiong combat
+	* inCombat - a Boolean indicating if the player is affecting combat
 	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(inCombat)
