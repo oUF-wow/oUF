@@ -1,7 +1,7 @@
 --[[
 # Element: Master Looter Indicator
 
-Toggles visibility of the master looter icon.
+Toggles visibility of an indicator based on the units master looter status.
 
 ## Widget
 
@@ -9,7 +9,7 @@ MasterLooterIndicator - Any UI widget.
 
 ## Notes
 
-The default master looter icon will be applied if the UI widget is a texture and doesn't have a texture or color defined.
+A default texture will be applied if the widget is a Texture and doesn't have a texture or a color set.
 
 ## Examples
 
