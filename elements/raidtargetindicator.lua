@@ -1,7 +1,7 @@
 --[[
 # Element: Raid Target Indicator
 
-Handles updating and toggles visibility of raid target icons.
+Handles visibility and updating of an indicator based on the unit's raid target assignation.
 
 ## Widget
 
@@ -9,7 +9,7 @@ RaidTargetIndicator - A Texture used to display the raid target icon.
 
 ## Notes
 
-The default raid icons will be used if the UI widget is a texture and doesn't have a texture or color defined.
+Default textures will be applied if the widget is a Texture and doesn't have a texture set.
 
 ## Examples
 
