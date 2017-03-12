@@ -167,7 +167,7 @@ local function updateIcon(unit, icons, index, offset, filter, isDebuff, visible)
 		* icon - the button displaying the aura
 		* ...  - the return values from [UnitAura](http://wowprogramming.com/docs/api/UnitAura)
 
-		Returns a boolean value indicating whether the aura button should be shown.
+		Returns a Boolean indicating whether the aura button should be shown.
 		--]]
 		local show = (icons.CustomFilter or customFilter) (icons, unit, icon, name, rank, texture,
 			count, dispelType, duration, expiration, caster, isStealable, nameplateShowSelf, spellID,
