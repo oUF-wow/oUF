@@ -144,11 +144,12 @@ local function Update(self, event, unit)
 end
 
 local function Path(self, ...)
-	--[[ Override: Health:Override(...)
+	--[[ Override: Health:Override(event, unit)
 	Used to completely override the internal update function.
 
-	* self - the Health element
-	* ...  - the event and the arguments that accompany it
+	* self  - the Health element
+	* event - the event triggering the update
+	* unit  - the unit accompanying the event
 	--]]
 	return (self.Health.Override or Update) (self, ...)
 end
