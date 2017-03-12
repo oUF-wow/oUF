@@ -14,7 +14,7 @@ AdditionalPower - A `StatusBar` that is used to display the player's additional 
 
 ## Notes
 
-The default status bar texture will be applied if the widget doesn't have a texture or a color set.
+A default texture will be applied if the widget is a StatusBar and doesn't have a texture or color set.
 
 ## Options
 
