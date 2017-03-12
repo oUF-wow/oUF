@@ -58,11 +58,12 @@ local function Update(self, event, unit)
 end
 
 local function Path(self, ...)
-	--[[ Override: QuestIndicator:Override(...)
+	--[[ Override: QuestIndicator:Override(event, unit)
 	Used to completely override the internal update function.
 
-	* self - the QuestIndicator element
-	* ...  - the event and the arguments that accompany it
+	* self  - the QuestIndicator element
+	* event - the event triggering the update
+	* unit  - the unit accompanying the event
 	--]]
 	return (self.QuestIndicator.Override or Update) (self, ...)
 end
