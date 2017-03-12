@@ -39,10 +39,10 @@ local function OnRangeUpdate(self, elapsed)
 				if(UnitIsConnected(object.unit)) then
 					local inRange, checkedRange = UnitInRange(object.unit)
 					if(checkedRange and not inRange) then
-						--[[ Override: Range.Override(frame, status)
+						--[[ Override: Range:Override(status)
 						Used to override the calls to :SetAlpha().
 
-						* frame  - the unit frame holding the Range element
+						* self   - the unit frame holding the Range element
 						* status - a String representing the unit's range status ('inside', 'outside' or 'offline')
 						--]]
 						if(element.Override) then
