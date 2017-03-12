@@ -57,11 +57,12 @@ local function Update(self, event)
 end
 
 local function Path(self, ...)
-	--[[ Override: LeaderIndicator:Override(...)
+	--[[ Override: LeaderIndicator:Override(event, ...)
 	Used to completely override the internal update function.
 
-	* self - the LeaderIndicator element
-	* ...  - the event and the arguments that accompany it
+	* self  - the LeaderIndicator element
+	* event - the event triggering the update
+	* ...   - the arguments accompanying the event
 	--]]
 	return (self.LeaderIndicator.Override or Update) (self, ...)
 end
