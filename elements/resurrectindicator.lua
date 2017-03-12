@@ -76,7 +76,7 @@ local function Enable(self)
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
 
-		self:RegisterEvent('INCOMING_RESURRECT_CHANGED', Path, true)
+		self:RegisterEvent('INCOMING_RESURRECT_CHANGED', Path)
 
 		if(element:IsObjectType('Texture') and not element:GetTexture()) then
 			element:SetTexture([[Interface\RaidFrame\Raid-Icon-Rez]])
