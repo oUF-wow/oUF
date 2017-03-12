@@ -94,7 +94,7 @@ for k, v in next, {
 	--[[ frame:EnableElement(name, unit)
 	Used to activate an element for the given unit frame.
 
-	* self - unit frame for whom the element should be enabled
+	* self - unit frame for that the element should be enabled
 	* name - name of the element to be enabled
 	* unit - unit to be passed to the element's Enable function. Defaults to the frame's unit
 	--]]
@@ -117,7 +117,7 @@ for k, v in next, {
 	--[[ frame:DisableElement(name)
 	Used to deactivate an element for the given unit frame.
 
-	* self - unit frame for whom the element should be disabled
+	* self - unit frame for that the element should be disabled
 	* name - name of the element to be disabled
 	--]]
 	DisableElement = function(self, name)
@@ -161,12 +161,20 @@ for k, v in next, {
 		return active and active[name]
 	end,
 
-	--[[ frame:Enable()
-	A reference to `RegisterUnitWatch`.
+	--[[ frame:Enable(asState)
+	Used to toggle the visibility of a unit frame based on the existence of its unit. This is a reference to
+	`RegisterUnitWatch`.
 
-	* self - frame to call RegisterUnitWatch for
+	* self    - unit frame
+	* asState - if true, the frame's "state-unitexists" attribute will be set to a boolean value denoting whether the
+	            unit exists; if false, the frame will be shown if its unit exists, and hidden if it does not
 	--]]
 	Enable = RegisterUnitWatch,
+	--[[ frame:Disable()
+	Used to UnregisterUnitWatch for the given frame and hide it.
+
+	* self - unit frame
+	--]]
 	Disable = function(self)
 		UnregisterUnitWatch(self)
 		self:Hide()
@@ -333,21 +341,21 @@ local function walkObject(object, unit)
 end
 
 --[[ oUF:RegisterInitCallback(func)
-Used to add a function to a set to be executed upon unit frames/header initialization.
+Used to add a function to a table to be executed upon unit frame/header initialization.
 
 * self - the global oUF object
-* func -
+* func - function to be added
 --]]
 function oUF:RegisterInitCallback(func)
 	table.insert(callback, func)
 end
 
 --[[ oUF:RegisterMetaFunction(name, func)
-Used to make a (set of) function(s) available to all unit frames.
+Used to make a (table of) function(s) available to all unit frames.
 
 * self - the global oUF object
-* name - name of the function. If a function by that name is already present
-* func - a function or a table of functions
+* name - unique name of the function
+* func - function or a table of functions
 --]]
 function oUF:RegisterMetaFunction(name, func)
 	argcheck(name, 2, 'string')
@@ -365,7 +373,7 @@ Used to register a style with oUF. This will also set the active style if it has
 
 * self - the global oUF object
 * name - name of the style
-* func - (set of) function(s) defining the style
+* func - (table of) function(s) defining the style
 --]]
 function oUF:RegisterStyle(name, func)
 	argcheck(name, 2, 'string')
@@ -729,7 +737,7 @@ Used to register an element with oUF.
 
 * self    - the global oUF object
 * name    - unique name of the element
-* update  - function used to start and element's update process
+* update  - function used to update the element
 * enable  - function used to enable the element for a given unit frame and unit
 * disable - function used to disable the element for a given unit frame
 --]]
@@ -749,11 +757,11 @@ end
 
 oUF.version = _VERSION
 --[[ oUF.objects
-Array containing all singly spawned unit frames.
+Array containing all unit frames created by `oUF:Spawn`.
 --]]
 oUF.objects = objects
 --[[ oUF.headers
-Array containing all spawned group headers.
+Array containing all group headers created by `oUF:SpawnHeader`.
 --]]
 oUF.headers = headers
 
