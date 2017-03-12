@@ -1,7 +1,7 @@
 --[[
 # Element: Group Role Indicator
 
-Toggles visibility of the assigned role icon based upon the units current dungeon role.
+Toggles visibility of an indicator based on the units current dungeon role.
 
 ## Widget
 
@@ -11,7 +11,7 @@ GroupRoleIndicator - A Texture containing the LFD role icons at specific locatio
 
 ## Notes
 
-The default LFD role texture will be applied if the UI widget is a texture and doesn't have a texture or color defined.
+A default texture will be applied if the widget is a Texture and doesn't have a texture or a color set.
 
 ## Examples
 
@@ -51,7 +51,7 @@ local function Update(self, event)
 	Called after the element has been updated.
 
 	* self - the GroupRoleIndicator element
-	* role - the role as returned by `UnitGroupRolesAssigned`
+	* role - the role as returned by [UnitGroupRolesAssigned](http://wowprogramming.com/docs/api/UnitGroupRolesAssigned)
 	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(role)
