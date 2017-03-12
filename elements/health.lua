@@ -1,11 +1,11 @@
 --[[
 # Element: Health Bar
 
-Handles updating of `self.Health` based on the units health.
+Handles updating of a status bar that displays the units health.
 
 ## Widget
 
-Health - A StatusBar used to represent current unit health.
+Health - A StatusBar used to represent unit health.
 
 ## Sub-Widgets
 
@@ -13,7 +13,7 @@ Health - A StatusBar used to represent current unit health.
 
 ## Notes
 
-The default StatusBar texture will be applied if the UI widget doesn't have a status bar texture or color defined.
+A default texture will be applied if the widget is a StatusBar and doesn't have a texture or color set.
 
 ## Options
 
