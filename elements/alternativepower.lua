@@ -11,7 +11,7 @@ AlternativePower - A StatusBar that is used to represent the unit's alternative 
 ## Notes
 
 If mouse interactivity is enabled for the widget, `OnEnter` and/or `OnLeave` handlers will be set to display a tooltip.
-Default status bar texture will be applied if the widget doesn't have a texture or a color set.
+A default texture will be applied if the widget is a StatusBar and doesn't have a texture or color set.
 
 ## Examples
 
