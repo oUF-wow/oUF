@@ -38,12 +38,12 @@ the timer.
 ## Examples
 
     -- Position and size
-    local pbt = CreateFrame('Frame', nil, self)
-    pbt:SetPoint('BOTTOM', self, 'TOP')
-    pbt:SetSize(230, 20 * 4)
+    local timers = CreateFrame('Frame', nil, self)
+    timers:SetPoint('BOTTOM', self, 'TOP')
+    timers:SetSize(230, 20 * 4)
 
     -- Register with oUF
-    self.PlayerBuffTimers = pbt
+    self.PlayerBuffTimers = timers
 --]]
 
 local _, ns = ...
@@ -127,8 +127,8 @@ local function onUpdate(timer)
 			--[[ Callback: timer:CustomTime(timeLeft)
 			Called after the timer's remaining time changed.
 
-			* self     - the timer widget
-			* timeLeft - the remaining timer duration in seconds
+			* self     - the timer widget (could be of any widget type)
+			* timeLeft - the remaining timer duration in seconds (number)
 			--]]
 			if(timer.CustomTime) then
 				timer:CustomTime(timeLeft)
@@ -161,9 +161,9 @@ local function CreateTimer(element, index)
 	--[[ Callback: PlayerBuffTimers:PostCreateTimer(timer, index)
 	Called after a timer has been created.
 
-	* self  - the PlayerBuffTimers widget
-	* timer - the created timer widget
-	* index - index at which the timer was created
+	* self  - the PlayerBuffTimers widget (Frame)
+	* timer - the created timer widget (StatusBar)
+	* index - index at which the timer was created (number)
 	--]]
 	if(element.PostCreateTimer) then
 		element:PostCreateTimer(timer, index)
@@ -184,7 +184,7 @@ local function Update(self, event)
 	--[[ Callback: PlayerBuffTimers:PreUpdate()
 	Called before the element has been updated.
 
-	* self  - the PlayerBuffTimers widget
+	* self  - the PlayerBuffTimers widget (Frame)
 	--]]
 	if(element.PreUpdate) then element:PreUpdate() end
 
@@ -196,8 +196,8 @@ local function Update(self, event)
 			--[[ Override: PlayerBuffTimers:CreateTimer(index)
 			Used to create and return a new timer widget.
 
-			* self  - the PlayerBuffTimers widget
-			* index - index at which the timer should be created
+			* self  - the PlayerBuffTimers widget (Frame)
+			* index - index at which the timer should be created (number)
 			--]]
 			timer = (element.CreateTimer or CreateTimer)(element, index)
 			element[#element + 1] = timer
@@ -208,11 +208,11 @@ local function Update(self, event)
 		--[[ Override: timer:UpdateTimer(duration, expiration, barID, auraID)
 		Used to update the timer attributes.
 
-		* self       - widget holding the timer to be updated
-		* duration   - total timer duration
-		* expiration - time at which the timer expires. Can be compared to `GetTime()`
-		* barID      - alternate power id of the timer
-		* auraID     - spellid of the timer aura
+		* self       - widget holding the timer to be updated (could be of any widget type)
+		* duration   - total timer duration in seconds (number)
+		* expiration - time at which the timer expires. Can be compared to `GetTime()` (number)
+		* barID      - alternate power id of the timer (number)
+		* auraID     - spellid of the timer aura (number)
 		--]]
 		timer:UpdateTimer(duration, expiration, barID, auraID)
 		timer.show = true
@@ -235,14 +235,14 @@ local function Update(self, event)
 	Used to (re-)anchor the timers.
 	Called every time a new timer is shown or an old one expires.
 
-	* self - the PlayerBuffTimers widget
+	* self - the PlayerBuffTimers widget (Frame)
 	--]]
 	(element.SetPosition or SetPosition)(element)
 
 	--[[ Callback: PlayerBuffTimers:PostUpdate()
 	Called after all timers have been updated.
 
-	* self - the PlayerBuffTimers widget
+	* self - the PlayerBuffTimers widget (Frame)
 	--]]
 	if(element.PostUpdate) then
 		element:PostUpdate()
@@ -250,11 +250,12 @@ local function Update(self, event)
 end
 
 local function Path(self, ...)
-	--[[ Override: PlayerBuffTimers:Override(...)
-	Used to completely override the internal update function.
+	--[[ Override: PlayerBuffTimers:Override(event, unit)
+	Used to completely override the element's update function.
 
-	* self - the PlayerBuffTimers widget
-	* ...  - the event and the arguments that accompany it
+	* self   - the PlayerBuffTimers widget (Frame)
+	* event  - the event that triggered the update (string)
+	* unit   - the event unit (string)
 	--]]
 	return (self.PlayerBuffTimers.Override or Update)(self, ...)
 end
@@ -264,26 +265,31 @@ local function ForceUpdate(element)
 end
 
 local function Enable(self, unit)
-	if(unit ~= 'player') then return end
 	local element = self.PlayerBuffTimers
-	if(not element) then return end
+	if(element and unit == 'player') then
+		element.__owner = self
+		element.ForceUpdate = ForceUpdate
+		element.primaryAxis = element.primaryAxis or 'x'
 
-	element.__owner = self
-	element.ForceUpdate = ForceUpdate
-	element.primaryAxis = element.primaryAxis or 'x'
+		self:RegisterEvent('UNIT_POWER_BAR_TIMER_UPDATE', Path)
 
-	self:RegisterEvent('UNIT_POWER_BAR_TIMER_UPDATE', Path)
+		PlayerBuffTimerManager:UnregisterEvent('UNIT_POWER_BAR_TIMER_UPDATE')
+		PlayerBuffTimerManager:UnregisterEvent('PLAYER_ENTERING_WORLD')
 
-	element:Show()
+		element:Show()
 
-	return true
+		return true
+	end
 end
 
 local function Disable(self)
 	local element = self.PlayerBuffTimers
 	if(element) then
-		self:UnregisterEvent('UNIT_POWER_BAR_TIMER_UPDATE')
+		self:UnregisterEvent('UNIT_POWER_BAR_TIMER_UPDATE', Path)
 		self:Hide()
+
+		PlayerBuffTimerManager:RegisterEvent('UNIT_POWER_BAR_TIMER_UPDATE')
+		PlayerBuffTimerManager:RegisterEvent('PLAYER_ENTERING_WORLD')
 	end
 end
 
