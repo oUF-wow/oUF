@@ -1,7 +1,7 @@
 --[[
 # Element: Resurrect Indicator
 
-Handles updating and toggles visibility of incoming resurrect icon.
+Handles visibility and updating of an indicator based on the unit's incoming resurrect status.
 
 ## Widget
 
@@ -9,7 +9,7 @@ ResurrectIndicator - A Texture used to display if the unit has an incoming resur
 
 ## Notes
 
-The default resurrect icon will be used if the UI widget is a texture and doesn't have a texture or color defined.
+A default texture will be applied if the widget is a Texture and doesn't have a texture or a color set.
 
 ## Examples
 
