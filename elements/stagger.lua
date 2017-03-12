@@ -1,11 +1,11 @@
 --[[
 # Element: Monk Stagger Bar
 
-Handles updating and visibility of the monk's stagger bar.
+Handles updating and visibility of Monks' stagger bar.
 
 ## Widget
 
-Stagger - A StatusBar
+Stagger - A StatusBar used to represent the current stagger level.
 
 ## Sub-Widgets
 
@@ -13,7 +13,7 @@ Stagger - A StatusBar
 
 ## Notes
 
-The default StatusBar texture will be applied if the UI widget doesn't have a status bar texture or color defined.
+A default texture will be applied if the widget is a StatusBar and doesn't have a texture or color set.
 
 ## Sub-Widgets Options
 
