@@ -569,7 +569,7 @@ do
 	]]
 
 	--[[ oUF:SpawnHeader(overrideName, template, visibility, ...)
-	Used to create a group header.
+	Used to create a group header and apply the currently active style to it.
 
 	* self         - the global oUF object
 	* overrideName - unique global name to be used for the header. Defaults to an auto-generated name based on the name
@@ -632,7 +632,7 @@ do
 end
 
 --[[ oUF:Spawn(unit, overrideName)
-Used to create a single unit frame.
+Used to create a single unit frame and apply the currently active style to it.
 
 * self         - the global oUF object
 * unit         - the frame's unit
@@ -657,6 +657,16 @@ function oUF:Spawn(unit, overrideName)
 	return object
 end
 
+--[[ oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
+Used to create nameplates and apply the currently active style to them.
+
+* self              - the global oUF object
+* namePrefix        - an prefix for the global name nameplate name. Defaults to an auto-generated name.
+* nameplateCallback - a function to be called after a nameplate has been updated (when a nameplate unit or the player's
+                      target has changed). The arguments passed to the callback are the updated nameplate, the event
+                      that triggered the update and the new nameplate unit
+* nameplateCVars    - a table of console variable-value pairs to be set when the player logs in
+--]]
 function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 	argcheck(nameplateCallback, 3, 'function', 'nil')
 	argcheck(nameplateCVars, 4, 'table', 'nil')
