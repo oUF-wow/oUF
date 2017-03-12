@@ -1,7 +1,7 @@
 --[[
 # Element: Runes
 
-Handle updating and visibility of the Death Knight's Rune indicators.
+Handles visibility and updating of Death Knight's runes.
 
 ## Widget
 
@@ -13,7 +13,7 @@ Runes - An array holding StatusBar's.
 
 ## Notes
 
-The default StatusBar texture will be applied if the UI widget doesn't have a status bar texture or color defined.
+A default texture will be applied if the sub-widgets are StatusBars and doesn't have a texture or color set.
 
 ## Sub-Widgets Options
 
