@@ -1,7 +1,7 @@
 --[[
 # Element: Phasing Indicator
 
-Toggles visibility of the phase icon based on the units phasing compared to the player.
+Toggles visibility of an indicator based on the units phasing compared to the player.
 
 ## Widget
 
@@ -9,7 +9,7 @@ PhaseIndicator - Any UI widget.
 
 ## Notes
 
-The default phasing icon will be used if the UI widget is a texture and doesn't have a texture or color defined.
+A default texture will be applied if the widget is a Texture and doesn't have a texture or a color set.
 
 ## Examples
 
