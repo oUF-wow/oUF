@@ -118,11 +118,13 @@ local function Update(self, event, unit, powerType)
 end
 
 local function Path(self, ...)
-	--[[ Override: ClassPower:Override(...)
+	--[[ Override: ClassPower:Override(event, unit, ...)
 	Used to completely override the internal update function.
 
-	* self - the ClassPower element
-	* ...  - the event and the arguments that accompany it
+	* self  - the ClassPower element
+	* event - the event triggering the update
+	* unit  - the unit accompanying the event
+	* ...   - the arguments accompanying the event
 	--]]
 	return (self.ClassPower.Override or Update) (self, ...)
 end
@@ -156,11 +158,12 @@ local function Visibility(self, event, unit)
 end
 
 local function VisibilityPath(self, ...)
-	--[[ Override: ClassPower:OverrideVisibility(...)
+	--[[ Override: ClassPower:OverrideVisibility(event, unit)
 	Used to completely override the internal visibility function.
 
-	* self - the ClassPower element
-	* ...  - the event and the arguments that accompany it
+	* self  - the ClassPower element
+	* event - the event triggering the update
+	* unit  - the unit accompanying the event
 	--]]
 	return (self.ClassPower.OverrideVisibility or Visibility) (self, ...)
 end
