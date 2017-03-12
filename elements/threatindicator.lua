@@ -1,7 +1,7 @@
 --[[
 # Element: Threat Indicator
 
-Handles updating and toggles visibility of current threat level icon.
+Handles visibility and updating of an indicator based on the unit's current threat level.
 
 ## Widget
 
@@ -9,7 +9,7 @@ ThreatIndicator - A Texture used to display the current threat level.
 
 ## Notes
 
-The default threat icon will be used if the UI widget is a texture and doesn't have a texture or color defined.
+A default texture will be applied if the widget is a Texture and doesn't have a texture or a color set.
 
 ## Examples
 
