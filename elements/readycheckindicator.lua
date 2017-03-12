@@ -98,11 +98,12 @@ local function Update(self, event)
 end
 
 local function Path(self, ...)
-	--[[ Override: ReadyCheckIndicator:Override(...)
+	--[[ Override: ReadyCheckIndicator:Override(event, ...)
 	Used to completely override the internal update function.
 
-	* self - the ReadyCheckIndicator element
-	* ...  - the event and the argument that accompany it
+	* self  - the ReadyCheckIndicator element
+	* event - the event triggering the update
+	* ...   - the arguments accompanying the event
 	--]]
 	return (self.ReadyCheckIndicator.Override or Update) (self, ...)
 end
