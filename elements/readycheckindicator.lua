@@ -1,7 +1,7 @@
 --[[
 # Element: Ready Check Indicator
 
-Handles updating and visibility of `self.ReadyCheckIndicator` based upon the units ready check status.
+Handles visibility and updating of an indicator based on the unit's ready check status.
 
 ## Widget
 
