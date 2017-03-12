@@ -1,11 +1,11 @@
 --[[
 # Element: Power Bar
 
-Handles updating of `self.Power` based upon the units power.
+Handles updating of a status bar that displays the units power.
 
 ## Widget
 
-Power - A StatusBar used to represent mana.
+Power - A StatusBar used to represent unit power.
 
 ## Sub-Widgets
 
@@ -13,7 +13,7 @@ Power - A StatusBar used to represent mana.
 
 ## Notes
 
-The default StatusBar texture will be applied if the UI widget doesn't have a status bar texture or color defined.
+A default texture will be applied if the widget is a StatusBar and doesn't have a texture or color set.
 
 ## Options
 
