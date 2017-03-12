@@ -1,7 +1,7 @@
 --[[
 # Element: Leader Indicator
 
-Toggles visibility based on the units leader status.
+Toggles visibility of an indicator based on the units leader status.
 
 ## Widget
 
@@ -9,7 +9,7 @@ LeaderIndicator - Any UI widget.
 
 ## Notes
 
-The default leader icon will be applied if the UI widget is a texture and doesn't have a texture or color defined.
+A default texture will be applied if the widget is a Texture and doesn't have a texture or a color set.
 
 ## Examples
 
@@ -19,7 +19,7 @@ The default leader icon will be applied if the UI widget is a texture and doesn'
     LeaderIndicator:SetPoint('BOTTOM', self, 'TOP')
 
     -- Register it with oUF
-    self.LeaderIndicator = Leadera
+    self.LeaderIndicator = LeaderIndicator
 --]]
 
 local parent, ns = ...
@@ -49,7 +49,7 @@ local function Update(self, event)
 	Called after the element has been updated.
 
 	* self     - the LeaderIndicator element
-	* isLeader - a Boolean indicating whether the element is shown
+	* isLeader - a Boolean indicating whether the element is shown or not
 	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(isLeader)
