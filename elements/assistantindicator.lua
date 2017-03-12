@@ -9,7 +9,7 @@ AssistantIndicator - Any UI widget.
 
 ## Notes
 
-Default assistant icon will be applied if the widget is a Texture and doesn't have a texture or a color set.
+A default texture will be applied if the widget is a Texture and doesn't have a texture or a color set.
 
 ## Examples
 
@@ -49,7 +49,7 @@ local function Update(self, event)
 	Called after the element has been updated.
 
 	* self        - the AssistantIndicator element
-	* isAssistant - boolean value that indicates whether or not the unit is a raid assistant
+	* isAssistant - a Boolean that indicates whether or not the unit is a raid assistant
 	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(isAssistant)
