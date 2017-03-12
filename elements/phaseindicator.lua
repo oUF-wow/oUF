@@ -56,11 +56,12 @@ local function Update(self, event)
 end
 
 local function Path(self, ...)
-	--[[ Override: PhaseIndicator:Override(...)
+	--[[ Override: PhaseIndicator:Override(event, ...)
 	Used to completely override the internal update function.
 
-	* self - the PhaseIndicator element
-	* ...  - the event and the arguments that accompany it
+	* self  - the PhaseIndicator element
+	* event - the event triggering the update
+	* ...   - the arguments accompanying the event
 	--]]
 	return (self.PhaseIndicator.Override or Update) (self, ...)
 end
