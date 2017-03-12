@@ -1,7 +1,7 @@
 --[[
 # Element: Raid Role Indicator
 
-Handles visibility and updating of `self.RaidRoleIndicator` based upon the unit's party assignment.
+Handles visibility and updating of an indicator based on the unit's party assignment.
 
 ## Widget
 
