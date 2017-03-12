@@ -5,7 +5,7 @@ Handle updating and visibility of the heal prediction status bars.
 
 ## Widget
 
-HealthPrediction - A table containing `myBar` and `otherBar`.
+HealthPrediction - A table containing references to sub-widgets and options.
 
 ## Sub-Widgets
 
@@ -18,7 +18,7 @@ overHealAbsorb - A Texture used to signify that the amount of heal absorb is gre
 
 ## Notes
 
-The default texture will be applied if the UI widget doesn't have a texture or color defined.
+A default texture will be applied if the widget is a StatusBar and doesn't have a texture or color set.
 
 ## Options
 
