@@ -1,7 +1,7 @@
 --[[
 # Element: Quest Indicator
 
-Handles updating and toggles visibility based upon the units connection to a quest.
+Handles visibility and updating of an indicator based on the units connection to a quest.
 
 ## Widget
 
@@ -9,7 +9,7 @@ QuestIndicator - Any UI widget.
 
 ## Notes
 
-The default quest icon will be used if the UI widget is a texture and doesn't have a texture or color defined.
+A default texture will be applied if the widget is a Texture and doesn't have a texture or a color set.
 
 ## Examples
 
