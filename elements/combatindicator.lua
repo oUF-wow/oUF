@@ -56,11 +56,11 @@ local function Update(self, event)
 end
 
 local function Path(self, ...)
-	--[[ Override: CombatIndicator:Override(...)
+	--[[ Override: CombatIndicator:Override(event)
 	Used to completely override the internal update function.
 
-	* self - the CombatIndicator element
-	* ...  - the event and the arguments that accompany it
+	* self  - the CombatIndicator element
+	* event - the event triggering the update
 	--]]
 	return (self.CombatIndicator.Override or Update) (self, ...)
 end
