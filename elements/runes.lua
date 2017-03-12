@@ -90,11 +90,12 @@ end
 
 local function Path(self, event, ...)
 	local element = self.Runes
-	--[[ Override: Runes:Override(...)
+	--[[ Override: Runes:Override(event, ...)
 	Used to completely override the internal update function.
 
-	* self - the Runes element
-	* ...  - the event and the arguments that accompany it
+	* self  - the Runes element
+	* event - the event triggering the update
+	* ...   - the arguments accompanying the event
 	--]]
 	local UpdateMethod = element.Override or Update
 	if(event == 'RUNE_POWER_UPDATE') then
