@@ -91,6 +91,13 @@ local frame_metatable = {
 Private.frame_metatable = frame_metatable
 
 for k, v in next, {
+	--[[ frame:EnableElement(name, unit)
+	Used to activate an element for the given unit frame.
+
+	* self - unit frame for whom the element should be enabled
+	* name - name of the element to be enabled
+	* unit - unit to be passed to the element's Enable function. Defaults to the frame's unit
+	--]]
 	EnableElement = function(self, name, unit)
 		argcheck(name, 2, 'string')
 		argcheck(unit, 3, 'string', 'nil')
@@ -107,6 +114,12 @@ for k, v in next, {
 		end
 	end,
 
+	--[[ frame:DisableElement(name)
+	Used to deactivate an element for the given unit frame.
+
+	* self - unit frame for whom the element should be disabled
+	* name - name of the element to be disabled
+	--]]
 	DisableElement = function(self, name)
 		argcheck(name, 2, 'string')
 
@@ -132,6 +145,12 @@ for k, v in next, {
 		return elements[name].disable(self)
 	end,
 
+	--[[ frame:IsElementEnabled(name)
+	Used to check if an element is enabled on the given frame.
+
+	* self - unit frame
+	* name - name of the element
+	--]]
 	IsElementEnabled = function(self, name)
 		argcheck(name, 2, 'string')
 
@@ -142,12 +161,23 @@ for k, v in next, {
 		return active and active[name]
 	end,
 
+	--[[ frame:Enable()
+	A reference to `RegisterUnitWatch`.
+
+	* self - frame to call RegisterUnitWatch for
+	--]]
 	Enable = RegisterUnitWatch,
 	Disable = function(self)
 		UnregisterUnitWatch(self)
 		self:Hide()
 	end,
 
+	--[[ frame:UpdateAllElements(event)
+	Used to update all enabled elements on the given frame.
+
+	* self  - unit frame
+	* event - event name to pass to the elements' update functions
+	--]]
 	UpdateAllElements = function(self, event)
 		local unit = self.unit
 		if(not UnitExists(unit)) then return end
@@ -302,10 +332,23 @@ local function walkObject(object, unit)
 	return initObject(unit, style, styleFunc, header, object, object:GetChildren())
 end
 
+--[[ oUF:RegisterInitCallback(func)
+Used to add a function to a set to be executed upon unit frames/header initialization.
+
+* self - the global oUF object
+* func -
+--]]
 function oUF:RegisterInitCallback(func)
 	table.insert(callback, func)
 end
 
+--[[ oUF:RegisterMetaFunction(name, func)
+Used to make a (set of) function(s) available to all unit frames.
+
+* self - the global oUF object
+* name - name of the function. If a function by that name is already present
+* func - a function or a table of functions
+--]]
 function oUF:RegisterMetaFunction(name, func)
 	argcheck(name, 2, 'string')
 	argcheck(func, 3, 'function', 'table')
@@ -317,6 +360,13 @@ function oUF:RegisterMetaFunction(name, func)
 	frame_metatable.__index[name] = func
 end
 
+--[[ oUF:RegisterStyle(name, func)
+Used to register a style with oUF. This will also set the active style if it hasn't been set yet.
+
+* self - the global oUF object
+* name - name of the style
+* func - (set of) function(s) defining the style
+--]]
 function oUF:RegisterStyle(name, func)
 	argcheck(name, 2, 'string')
 	argcheck(func, 3, 'function', 'table')
@@ -327,6 +377,12 @@ function oUF:RegisterStyle(name, func)
 	styles[name] = func
 end
 
+--[[ oUF:SetActiveStyle(name)
+Used to set the active style.
+
+* self - the global oUF object
+* name - name of the style
+--]]
 function oUF:SetActiveStyle(name)
 	argcheck(name, 2, 'string')
 	if(not styles[name]) then return error('Style [%s] does not exist.', name) end
@@ -340,6 +396,11 @@ do
 		return (next(styles, n))
 	end
 
+	--[[ oUF:IterateStyles()
+	Returns an iterator over all registered styles.
+
+	* self - the global oUF object
+	--]]
 	function oUF.IterateStyles()
 		return iter, nil, nil
 	end
@@ -499,6 +560,18 @@ do
 		end
 	]]
 
+	--[[ oUF:SpawnHeader(overrideName, template, visibility, ...)
+	Used to create a group header.
+
+	* self         - the global oUF object
+	* overrideName - unique global name to be used for the header. Defaults to an auto-generated name based on the name
+	                 of the active style and other arguments passed to `:SpawnHeader`
+	* template     - name of a template to be used for creating the header. Defaults to `'SecureGroupHeaderTemplate'`
+	* visibility   - (list of) macro conditional(s) which define when to display the header -- TODO: expand
+	* ...          - further argument pairs. Consult [Group Headers](http://wowprogramming.com/docs/secure_template/Group_Headers)
+	                 for possible values -- TODO: oUF-initialConfigFunction, oUF-headerType, oUF-onlyProcessChildren,
+	                 oUF-guessUnit
+	--]]
 	function oUF:SpawnHeader(overrideName, template, visibility, ...)
 		if(not style) then return error('Unable to create frame. No styles have been registered.') end
 
@@ -550,6 +623,13 @@ do
 	end
 end
 
+--[[ oUF:Spawn(unit, overrideName)
+Used to create a single unit frame.
+
+* self         - the global oUF object
+* unit         - the frame's unit
+* overrideName - unique global name to use for the unit frame. Defaults to an auto-generated name based on the unit
+--]]
 function oUF:Spawn(unit, overrideName)
 	argcheck(unit, 2, 'string')
 	if(not style) then return error('Unable to create frame. No styles have been registered.') end
@@ -644,6 +724,15 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 	end)
 end
 
+--[[ oUF:AddElement(name, update, enable, disable)
+Used to register an element with oUF.
+
+* self    - the global oUF object
+* name    - unique name of the element
+* update  - function used to start and element's update process
+* enable  - function used to enable the element for a given unit frame and unit
+* disable - function used to disable the element for a given unit frame
+--]]
 function oUF:AddElement(name, update, enable, disable)
 	argcheck(name, 2, 'string')
 	argcheck(update, 3, 'function', 'nil')
@@ -659,7 +748,13 @@ function oUF:AddElement(name, update, enable, disable)
 end
 
 oUF.version = _VERSION
+--[[ oUF.objects
+Array containing all singly spawned unit frames.
+--]]
 oUF.objects = objects
+--[[ oUF.headers
+Array containing all spawned group headers.
+--]]
 oUF.headers = headers
 
 if(global) then
