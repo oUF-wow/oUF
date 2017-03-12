@@ -112,11 +112,13 @@ local function Update(self, event, unit, powertype)
 end
 
 local function Path(self, ...)
-	--[[ Override: AdditionalPower:Override(...)
+	--[[ Override: AdditionalPower:Override(event, unit, ...)
 	Used to completely override the element's update process.
 
-	* self - the AdditionalPower element
-	* ...  - the event and its arguments, if any
+	* self  - the AdditionalPower element
+	* event - the event triggering the update
+	* unit  - the unit accompanying the event
+	* ...   - the arguments accompanying the event
 	--]]
 	return (self.AdditionalPower.Override or Update) (self, ...)
 end
@@ -161,12 +163,12 @@ local function Visibility(self, event, unit)
 end
 
 local function VisibilityPath(self, ...)
-	--[[ Hook: AdditionalPower:OverrideVisibility(...)
+	--[[ Override: AdditionalPower:OverrideVisibility(event, unit)
 	Used to completely override the element's visibility update process.
 
 	* self - the AdditionalPower element
-	* ...  - the event that has triggered the element's visibility change,
-	         the unit for which the event has been fired
+	* event - the event triggering the update
+	* unit  - the unit accompanying the event
 	--]]
 	return (self.AdditionalPower.OverrideVisibility or Visibility) (self, ...)
 end
