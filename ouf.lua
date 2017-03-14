@@ -661,10 +661,10 @@ end
 Used to create nameplates and apply the currently active style to them.
 
 * self              - the global oUF object
-* namePrefix        - prefix for the global name of the nameplate. Defaults to an auto-generated name.
-* nameplateCallback - function to be called after a nameplate has been updated (when a nameplate unit or the player's
-                      target has changed). The arguments passed to the callback are the updated nameplate, the event
-                      that triggered the update and the new nameplate unit
+* namePrefix        - prefix for the global name of the nameplate. Defaults to an auto-generated prefix
+* nameplateCallback - function to be called after a nameplate unit or the player's target has changed. The arguments
+                      passed to the callback are the updated nameplate, the event that triggered the update and the new
+					  unit
 * nameplateCVars    - table of console variable-value pairs to be set when the player logs in
 --]]
 function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
