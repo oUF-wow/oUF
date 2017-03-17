@@ -1,6 +1,74 @@
---[[
 -- Credits: Vika, Cladhaire, Tekkub
-]]
+--[[
+# Element: Tags
+
+Provides a system for text-based display of information by binding a tag string to a font string widget which in turn is
+tied to a unit frame.
+
+## Tag
+
+A Lua string consisting of a function name surrounded by square brackets. The tag will be replaced by the
+output of the function and displayed as text on the font string widget with that the tag has been registered. Literals
+can be pre- or appended by separating them with a `>` before or `<` after the function name. The literals will be only
+displayed when the function returns a non-nil value. I.e. `"[perhp<%]"` will display the current health as a percentage
+of the maximum health followed by the % sign.
+
+## Tag string
+
+A Lua string consisting of one or multiple tags with optional literals between them. Each tag will be updated
+individually and the output will follow the tags order. Literals will be displayed in the output string regardless of
+whether the surrounding tag functions return a value. I.e. `"[curhp]/[maxhp]"` will resolve to something like
+`2453/5000`.
+
+## Tag function
+
+Used to replace a single tag in a tag string by its output. A tag function receives only two arguments - the unit and
+the realUnit of the unit frame used to register the tag (see Options for further details). The tag function is called
+when the unit frame is shown or when a specified event has fired. It the tag is registered on an eventless frame (i.e.
+one holding the unit "targettarget"), then the tag function is called in a set time interval.
+
+A number of built-in tag functions exist. The layout can also define its own tag functions by adding them to the
+`oUF.Tags.Methods` table. The events upon which the function will be called are specified in a white-space separated
+list added to the `oUF.Tags.Events` table. Should an event fire without unit information, then it should also be listed
+in the `oUF.Tags.SharedEvents` table as follows: `oUF.Tags.SharedEvents.EVENT_NAME = true`.
+
+## Widget
+
+A FontString to hold a tag string. Unlike other elements, this widget must not have a preset name.
+
+## Options
+
+.overrideUnit    - if specified on the font string widget, the frame's realUnit will be passed as the second argument to
+                   every tag function whose name is contained in the relevant tag string. Otherwise the second argument
+                   is always nil (boolean)
+.frequentUpdates - defines how often the correspondig tag function(s) should be called. If the value is a number, it is
+                   taken as a time interval in seconds. If the value is a boolean, the time interval is set to 0.5
+                   seconds (number or boolean)
+
+## Attributes
+
+.parent - the unit frame on which the tag has been registered
+
+## Examples
+
+    -- define the tag function
+    oUF.Tags.Methods['mylayout:threatname'] = function(unit, realUnit)
+        local color = _TAGS['threatcolor'](unit)
+        local name = _TAGS['name'](unit, realUnit)
+        return string.format('%s%s|r', color, name)
+    end
+
+    -- add the events
+    oUF.Tags.Events['mylayout:threatname'] = 'UNIT_NAME_UPDATE UNIT_THREAT_SITUATION_UPDATE'
+
+    -- create the FontString
+    local info = self.Health:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
+    info:SetPoint('LEFT')
+    info.overrideUnit = true
+
+    -- register the tag with oUF
+    self:Tag(info, '[mylayout:threatname]')
+--]]
 
 local parent, ns = ...
 local oUF = ns.oUF
@@ -519,6 +587,13 @@ local tagPool = {}
 local funcPool = {}
 local tmp = {}
 
+--[[ frame:Tag(fs, tagstr)
+Used to register a tag on a unit frame.
+
+* self   - the unit frame to register the tag on
+* fs     - the font string to display the tag (FontString)
+* tagstr - the tag string
+--]]
 local function Tag(self, fs, tagstr)
 	if(not fs or not tagstr) then return end
 
@@ -685,6 +760,12 @@ local function Tag(self, fs, tagstr)
 	table.insert(self.__tags, fs)
 end
 
+--[[ frame:Untag(fs)
+Used to unregister a tag from a unit frame.
+
+* self - the unit frame from that to unregister the tag
+* fs   - the font string holding the tag (FontString)
+--]]
 local function Untag(self, fs)
 	if(not fs) then return end
 
