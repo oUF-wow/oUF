@@ -164,7 +164,7 @@ local tagStrings = {
 		if(m == 0) then
 			return 0
 		else
-			return math.floor(UnitHealth(u)/m*100+.5)
+			return math.floor(UnitHealth(u) / m * 100 + .5)
 		end
 	end]],
 
@@ -173,7 +173,7 @@ local tagStrings = {
 		if(m == 0) then
 			return 0
 		else
-			return math.floor(UnitPower(u)/m*100+.5)
+			return math.floor(UnitPower(u) / m * 100 + .5)
 		end
 	end]],
 
@@ -256,7 +256,7 @@ local tagStrings = {
 
 	['cpoints'] = [[function(u)
 		local cp
-		if(UnitHasVehicleUI'player') then
+		if(UnitHasVehicleUI('player')) then
 			cp = GetComboPoints('vehicle', 'target')
 		else
 			cp = GetComboPoints('player', 'target')
