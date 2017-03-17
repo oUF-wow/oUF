@@ -86,7 +86,7 @@ local function onAttributeChanged(self, name, value)
 end
 
 local frame_metatable = {
-	__index = CreateFrame'Button'
+	__index = CreateFrame('Button')
 }
 Private.frame_metatable = frame_metatable
 
@@ -585,7 +585,7 @@ do
 
 		template = (template or 'SecureGroupHeaderTemplate')
 
-		local isPetHeader = template:match'PetHeader'
+		local isPetHeader = template:match('PetHeader')
 		local name = overrideName or generateName(nil, ...)
 		local header = CreateFrame('Frame', name, oUF_PetBattleFrameHider, template)
 
