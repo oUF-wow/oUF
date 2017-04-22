@@ -39,6 +39,12 @@ local oUF = ns.oUF
 
 local _, PlayerClass = UnitClass('player')
 
+local SPELL_POWER_COMBO_POINTS = Enum.PowerType.ComboPoints or Enum.PowerTypeEnum.PowerTypeComboPoints
+local SPELL_POWER_SOUL_SHARDS = Enum.PowerType.SoulShards or Enum.PowerTypeEnum.PowerTypeSoulShards
+local SPELL_POWER_HOLY_POWER = Enum.PowerType.HolyPower or Enum.PowerTypeEnum.PowerTypeHolyPower
+local SPELL_POWER_CHI = Enum.PowerType.Chi or Enum.PowerTypeEnum.PowerTypeChi
+local SPELL_POWER_ARCANE_CHARGES = Enum.PowerType.ArcaneCharges or Enum.PowerTypeEnum.PowerTypeArcaneCharges
+
 -- Holds the class specific stuff.
 local ClassPowerID, ClassPowerType
 local ClassPowerEnable, ClassPowerDisable
@@ -53,6 +59,32 @@ local function UpdateTexture(element)
 		end
 
 		icon:SetVertexColor(color[1], color[2], color[3])
+	end
+end
+
+local function UpdateStatusBar(element, full, partial, max)
+	for i = 1, max do
+		element[i]:Show()
+
+		if(i <= math.ceil(full + partial)) then
+			if(i <= full) then
+				element[i]:SetValue(1)
+			else
+				element[i]:SetValue(partial)
+			end
+		else
+			element[i]:SetValue(0)
+		end
+	end
+end
+
+local function UpdateOther(element, full, _, max)
+	for i = 1, max do
+		if(i <= full) then
+			element[i]:Show()
+		else
+			element[i]:Hide()
+		end
 	end
 end
 
@@ -74,24 +106,25 @@ local function Update(self, event, unit, powerType)
 		element:PreUpdate(event)
 	end
 
-	local cur, max, oldMax
+	local full, partial, max, oldMax
 	if(event ~= 'ClassPowerDisable') then
 		if(unit == 'vehicle') then
 			-- BUG: UnitPower always returns 0 combo points for vehicles
-			cur = GetComboPoints(unit)
+			full = GetComboPoints(unit)
+			partial = 0
 			max = MAX_COMBO_POINTS
 		else
-			cur = UnitPower('player', ClassPowerID)
+			local mod = UnitPowerDisplayMod(ClassPowerID)
+			if(mod ~= 0) then
+				full, partial = math.modf(UnitPower("player", ClassPowerID, true) / mod)
+			else
+				full, partial = 0, 0
+			end
+
 			max = UnitPowerMax('player', ClassPowerID)
 		end
 
-		for i = 1, max do
-			if(i <= cur) then
-				element[i]:Show()
-			else
-				element[i]:Hide()
-			end
-		end
+		element:ClassPowerUpdate(full, partial, max)
 
 		oldMax = element.__max
 		if(max ~= oldMax) then
@@ -115,7 +148,7 @@ local function Update(self, event, unit, powerType)
 	* event         - the event that triggered the update
 	--]]
 	if(element.PostUpdate) then
-		return element:PostUpdate(cur, max, oldMax ~= max, powerType, event)
+		return element:PostUpdate(full, partial, max, oldMax ~= max, powerType, event)
 	end
 end
 
@@ -243,26 +276,42 @@ local function Enable(self, unit)
 		element.ClassPowerEnable = ClassPowerEnable
 		element.ClassPowerDisable = ClassPowerDisable
 
-		local isChildrenTextures
+		local areChildrenTextures, areChildrenStatusBars
 		for i = 1, #element do
 			local icon = element[i]
-			if(icon:IsObjectType('Texture')) then
-				if(not icon:GetTexture()) then
-					icon:SetTexCoord(0.45703125, 0.60546875, 0.44531250, 0.73437500)
-					icon:SetTexture([[Interface\PlayerFrame\Priest-ShadowUI]])
+			if(icon:IsObjectType('StatusBar')) then
+				if(not icon:GetStatusBarTexture()) then
+					icon:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 				end
 
-				isChildrenTextures = true
+				icon:SetMinMaxValues(0, 1)
+
+				areChildrenStatusBars = true
+			else
+				if(icon:IsObjectType('Texture')) then
+					if(not icon:GetTexture()) then
+						icon:SetTexCoord(0.45703125, 0.60546875, 0.44531250, 0.73437500)
+						icon:SetTexture([[Interface\PlayerFrame\Priest-ShadowUI]])
+					end
+
+					areChildrenTextures = true
+				end
 			end
 		end
 
-		if(isChildrenTextures) then
+		if(areChildrenTextures) then
 			--[[ Override: ClassPower:UpdateTexture()
 			Used to completely override the internal function for updating the power icon textures.
 
 			* self - the ClassPower element
 			--]]
 			(element.UpdateTexture or UpdateTexture) (element)
+		end
+
+		if(areChildrenStatusBars) then
+			element.ClassPowerUpdate = UpdateStatusBar
+		else
+			element.ClassPowerUpdate = UpdateOther
 		end
 
 		return true
