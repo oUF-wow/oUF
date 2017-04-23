@@ -39,11 +39,11 @@ local oUF = ns.oUF
 
 local _, PlayerClass = UnitClass('player')
 
-local SPELL_POWER_COMBO_POINTS = Enum.PowerType.ComboPoints or Enum.PowerTypeEnum.PowerTypeComboPoints
-local SPELL_POWER_SOUL_SHARDS = Enum.PowerType.SoulShards or Enum.PowerTypeEnum.PowerTypeSoulShards
-local SPELL_POWER_HOLY_POWER = Enum.PowerType.HolyPower or Enum.PowerTypeEnum.PowerTypeHolyPower
-local SPELL_POWER_CHI = Enum.PowerType.Chi or Enum.PowerTypeEnum.PowerTypeChi
-local SPELL_POWER_ARCANE_CHARGES = Enum.PowerType.ArcaneCharges or Enum.PowerTypeEnum.PowerTypeArcaneCharges
+local SPELL_POWER_ARCANE_CHARGES = SPELL_POWER_ARCANE_CHARGES or 16
+local SPELL_POWER_CHI = SPELL_POWER_CHI or 12
+local SPELL_POWER_COMBO_POINTS = SPELL_POWER_COMBO_POINTS or 4
+local SPELL_POWER_HOLY_POWER = SPELL_POWER_HOLY_POWER or 9
+local SPELL_POWER_SOUL_SHARDS = SPELL_POWER_SOUL_SHARDS or 7
 
 -- Holds the class specific stuff.
 local ClassPowerID, ClassPowerType
