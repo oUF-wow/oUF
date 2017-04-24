@@ -196,24 +196,26 @@ local function Update(self, event, unit)
 
 	t = self.colors.power[ptoken or ptype]
 
-	local atlas = element.atlas or (t and t.atlas)
-	if(element.useAtlas and atlas and displayType ~= ALTERNATE_POWER_INDEX) then
-		element:SetStatusBarAtlas(atlas)
-		element:SetStatusBarColor(1, 1, 1)
+	if(element.isStatusBar) then
+		local atlas = element.atlas or (t and t.atlas)
+		if(element.useAtlas and atlas and displayType ~= ALTERNATE_POWER_INDEX) then
+			element:SetStatusBarAtlas(atlas)
+			element:SetStatusBarColor(1, 1, 1)
 
-		if(element.colorTapping or element.colorDisconnected) then
-			t = disconnected and self.colors.disconnected or self.colors.tapped
-			element:GetStatusBarTexture():SetDesaturated(disconnected or tapped)
-		end
+			if(element.colorTapping or element.colorDisconnected) then
+				t = disconnected and self.colors.disconnected or self.colors.tapped
+				element:GetStatusBarTexture():SetDesaturated(disconnected or tapped)
+			end
 
-		if(t and (r or g or b)) then
-			r, g, b = t[1], t[2], t[3]
-		end
-	else
-		element:SetStatusBarTexture(element.texture)
+			if(t and (r or g or b)) then
+				r, g, b = t[1], t[2], t[3]
+			end
+		else
+			element:SetStatusBarTexture(element.texture)
 
-		if(r or g or b) then
-			element:SetStatusBarColor(r, g, b)
+			if(r or g or b) then
+				element:SetStatusBarColor(r, g, b)
+			end
 		end
 	end
 
@@ -277,6 +279,7 @@ local function Enable(self, unit)
 		if(element:IsObjectType('StatusBar')) then
 			element.texture = element:GetStatusBarTexture() and element:GetStatusBarTexture():GetTexture() or [[Interface\TargetingFrame\UI-StatusBar]]
 			element:SetStatusBarTexture(element.texture)
+			element.isStatusBar = true
 		end
 
 		return true
