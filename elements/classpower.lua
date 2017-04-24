@@ -1,7 +1,7 @@
 --[[
 # Element: ClassPower
 
-Toggles the visibility of sub-widgets depending on the player's class and specialization.
+Handles updating and visibility of the player's class resources (like Chi Orbs or Holy Power) and combo points.
 
 ## Widget
 
@@ -9,25 +9,27 @@ ClassPower - An array consisting of as many UI sub-widgets as the theoretical ma
 
 ## Notes
 
-A default texture will be applied if the icons are Textures and doesn't have a texture or a color set.
+A default texture will be applied if the sub-widgets are StatusBars and don't have a texture or color set.
+If the sub-widgets are StatusBars, their minimum and maximum values will be set to 0 and 1 respectively.
+
 Supported class powers:
-- All     - Combo Points
-- Mage    - Arcane Charges
-- Monk    - Chi Orbs
-- Paladin - Holy Power
-- Warlock - Soul Shards
+  - All     - Combo Points
+  - Mage    - Arcane Charges
+  - Monk    - Chi Orbs
+  - Paladin - Holy Power
+  - Warlock - Soul Shards
 
 ## Examples
 
     local ClassPower = {}
-    for index = 1, 6 do
-      local Icon = self:CreateTexture(nil, 'BACKGROUND')
+    for index = 1, 10 do
+        local Bar = CreateFrame('StatusBar', nil, self)
 
-      -- Position and size.
-      Icon:SetSize(16, 16)
-      Icon:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', index * Icon:GetWidth(), 0)
+        -- Position and size.
+        Bar:SetSize(16, 16)
+        Bar:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', (index - 1) * Bar:GetWidth(), 0)
 
-      ClassPower[index] = Icon
+        ClassPower[index] = Bar
     end
 
     -- Register with oUF
@@ -76,7 +78,7 @@ local function Update(self, event, unit, powerType)
 	Called before the element has been updated.
 
 	* self  - the ClassPower element
-	* event - the event that triggered the update
+	* event - the event that triggered the update (string)
 	]]
 	if(element.PreUpdate) then
 		element:PreUpdate(event)
@@ -114,11 +116,11 @@ local function Update(self, event, unit, powerType)
 	Called after the element has been updated.
 
 	* self          - the ClassPower element
-	* cur           - the current unmodified amount of power
-	* max           - the maximum amount of power
-	* mod           - the power modifier
-	* hasMaxChanged - shows if the maximum amount has changed since the last update
-	* powerType     - the type of power used
+	* cur           - the current modified amount of power (number)
+	* max           - the maximum unmodified amount of power (number)
+	* mod           - the power modifier (number)
+	* hasMaxChanged - an indicator whether the maximum amount has changed since the last update (boolean)
+	* powerType     - the active power type (string)
 	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(cur, max, ClassPowerMod, oldMax ~= max, powerType)
@@ -130,8 +132,8 @@ local function Path(self, ...)
 	Used to completely override the internal update function.
 
 	* self  - the ClassPower element
-	* event - the event triggering the update
-	* unit  - the unit accompanying the event
+	* event - the event triggering the update (string)
+	* unit  - the unit accompanying the event (string)
 	* ...   - the arguments accompanying the event
 	--]]
 	return (self.ClassPower.Override or Update) (self, ...)
@@ -183,8 +185,8 @@ local function VisibilityPath(self, ...)
 	Used to completely override the internal visibility function.
 
 	* self  - the ClassPower element
-	* event - the event triggering the update
-	* unit  - the unit accompanying the event
+	* event - the event triggering the update (string)
+	* unit  - the unit accompanying the event (string)
 	--]]
 	return (self.ClassPower.OverrideVisibility or Visibility) (self, ...)
 end
