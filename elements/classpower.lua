@@ -99,7 +99,7 @@ local function Update(self, event, unit, powerType)
 			max = MAX_COMBO_POINTS
 			mod = 1
 		else
-			cur = UnitPower("player", ClassPowerID, true)
+			cur = UnitPower('player', ClassPowerID, true)
 			max = UnitPowerMax('player', ClassPowerID)
 			mod = UnitPowerDisplayMod(ClassPowerID)
 		end
