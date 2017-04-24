@@ -263,7 +263,6 @@ local function Enable(self, unit)
 		element.ClassPowerEnable = ClassPowerEnable
 		element.ClassPowerDisable = ClassPowerDisable
 
-		local isStatusBar
 		for i = 1, #element do
 			local bar = element[i]
 			if(bar:IsObjectType('StatusBar')) then
@@ -272,8 +271,6 @@ local function Enable(self, unit)
 				end
 
 				bar:SetMinMaxValues(0, 1)
-
-				isStatusBar = true
 			end
 		end
 
