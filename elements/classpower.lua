@@ -158,12 +158,24 @@ local function Visibility(self, event, unit)
 	end
 
 	local isEnabled = element.isEnabled
+	local powerType = unit == 'vehicle' and 'COMBO_POINTS' or ClassPowerType
+
+	if(shouldEnable) then
+		--[[ Override: ClassPower:UpdateColor(powerType)
+		Used to completely override the internal function for updating the Widgets' colors.
+
+		* self      - the ClassPower element
+		* powerType - the active power type (string)
+		--]]
+		(element.UpdateColor or UpdateColor) (element, powerType)
+	end
+
 	if(shouldEnable and not isEnabled) then
 		ClassPowerEnable(self)
 	elseif(not shouldEnable and (isEnabled or isEnabled == nil)) then
 		ClassPowerDisable(self)
 	elseif(shouldEnable and isEnabled) then
-		Path(self, event, unit, unit == 'vehicle' and 'COMBO_POINTS' or ClassPowerType)
+		Path(self, event, unit, powerType)
 	end
 end
 
@@ -264,15 +276,6 @@ local function Enable(self, unit)
 
 				isStatusBar = true
 			end
-		end
-
-		if(isStatusBar) then
-			--[[ Override: ClassPower:UpdateColor()
-			Used to completely override the internal function for updating the power bars' colors.
-
-			* self - the ClassPower element
-			--]]
-			(element.UpdateColor or UpdateColor) (element)
 		end
 
 		return true
