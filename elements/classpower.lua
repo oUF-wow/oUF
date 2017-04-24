@@ -39,51 +39,36 @@ local oUF = ns.oUF
 
 local _, PlayerClass = UnitClass('player')
 
-local SPELL_POWER_ARCANE_CHARGES = SPELL_POWER_ARCANE_CHARGES or 16
-local SPELL_POWER_CHI = SPELL_POWER_CHI or 12
+-- sourced from FrameXML/Constants.lua
+local SPEC_MAGE_ARCANE = SPEC_MAGE_ARCANE or 1
+local SPEC_MONK_WINDWALKER = SPEC_MONK_WINDWALKER or 3
+local SPEC_PALADIN_RETRIBUTION = SPEC_PALADIN_RETRIBUTION or 3
 local SPELL_POWER_COMBO_POINTS = SPELL_POWER_COMBO_POINTS or 4
-local SPELL_POWER_HOLY_POWER = SPELL_POWER_HOLY_POWER or 9
 local SPELL_POWER_SOUL_SHARDS = SPELL_POWER_SOUL_SHARDS or 7
+local SPELL_POWER_HOLY_POWER = SPELL_POWER_HOLY_POWER or 9
+local SPELL_POWER_CHI = SPELL_POWER_CHI or 12
+local SPELL_POWER_ARCANE_CHARGES = SPELL_POWER_ARCANE_CHARGES or 16
+
+-- sourced from FrameXML/TargetFrame.lua
+local MAX_COMBO_POINTS = MAX_COMBO_POINTS or 5
 
 -- Holds the class specific stuff.
 local ClassPowerID, ClassPowerType
 local ClassPowerEnable, ClassPowerDisable
 local RequireSpec, RequireSpell
 
-local function UpdateTexture(element)
+local function UpdateColor(element)
 	local color = oUF.colors.power[ClassPowerType or 'COMBO_POINTS']
 	for i = 1, #element do
 		local icon = element[i]
-		if(icon.SetDesaturated) then
-			icon:SetDesaturated(PlayerClass ~= 'PRIEST')
-		end
-
-		icon:SetVertexColor(color[1], color[2], color[3])
-	end
-end
-
-local function UpdateStatusBar(element, full, partial, max)
-	for i = 1, max do
-		element[i]:Show()
-
-		if(i <= math.ceil(full + partial)) then
-			if(i <= full) then
-				element[i]:SetValue(1)
-			else
-				element[i]:SetValue(partial)
+		if(element.isTexture) then
+			if(icon.SetDesaturated) then
+				icon:SetDesaturated(PlayerClass ~= 'PRIEST')
 			end
-		else
-			element[i]:SetValue(0)
-		end
-	end
-end
 
-local function UpdateOther(element, full, _, max)
-	for i = 1, max do
-		if(i <= full) then
-			element[i]:Show()
-		else
-			element[i]:Hide()
+			icon:SetVertexColor(color[1], color[2], color[3])
+		elseif(element.isStatusBar) then
+			icon:SetStatusBarColor(color[1], color[2], color[3])
 		end
 	end
 end
@@ -106,25 +91,30 @@ local function Update(self, event, unit, powerType)
 		element:PreUpdate(event)
 	end
 
-	local full, partial, max, oldMax
+	local cur, max, mod, oldMax
 	if(event ~= 'ClassPowerDisable') then
 		if(unit == 'vehicle') then
 			-- BUG: UnitPower always returns 0 combo points for vehicles
-			full = GetComboPoints(unit)
-			partial = 0
+			cur = GetComboPoints(unit)
 			max = MAX_COMBO_POINTS
+			mod = 1
 		else
-			local mod = UnitPowerDisplayMod(ClassPowerID)
-			if(mod ~= 0) then
-				full, partial = math.modf(UnitPower("player", ClassPowerID, true) / mod)
-			else
-				full, partial = 0, 0
-			end
-
+			cur = UnitPower("player", ClassPowerID, true)
 			max = UnitPowerMax('player', ClassPowerID)
+			mod = UnitPowerDisplayMod(ClassPowerID)
 		end
 
-		element:ClassPowerUpdate(full, partial, max)
+		if(element.isStatusBar) then
+			for i = 1, max do
+				element[i]:Show()
+				-- mod should never be 0, but according to Blizz code it can actually happen
+				element[i]:SetValue(mod == 0 and 0 or (cur / mod - i + 1))
+			end
+		else
+			for i = 1, max do
+				element[i]:SetShown(i <= cur)
+			end
+		end
 
 		oldMax = element.__max
 		if(max ~= oldMax) then
@@ -141,14 +131,14 @@ local function Update(self, event, unit, powerType)
 	Called after the element has been updated.
 
 	* self          - the ClassPower element
-	* cur           - the current amount of power
+	* cur           - the current unmodified amount of power
 	* max           - the maximum amount of power
+	* mod           - the power modifier
 	* hasMaxChanged - shows if the maximum amount has changed since the last update
 	* powerType     - the type of power used
-	* event         - the event that triggered the update
 	--]]
 	if(element.PostUpdate) then
-		return element:PostUpdate(full, partial, max, oldMax ~= max, powerType, event)
+		return element:PostUpdate(cur, max, mod, oldMax ~= max, powerType)
 	end
 end
 
@@ -213,12 +203,13 @@ do
 		self:RegisterEvent('UNIT_POWER_FREQUENT', Path)
 		self:RegisterEvent('UNIT_MAXPOWER', Path)
 
+		self.ClassPower.isEnabled = true
+
 		if(UnitHasVehicleUI('player')) then
 			Path(self, 'ClassPowerEnable', 'vehicle', 'COMBO_POINTS')
 		else
 			Path(self, 'ClassPowerEnable', 'player', ClassPowerType)
 		end
-		self.ClassPower.isEnabled = true
 	end
 
 	function ClassPowerDisable(self)
@@ -231,8 +222,8 @@ do
 			element[i]:Hide()
 		end
 
-		Path(self, 'ClassPowerDisable', 'player', ClassPowerType)
 		self.ClassPower.isEnabled = false
+		Path(self, 'ClassPowerDisable', 'player', ClassPowerType)
 	end
 
 	if(PlayerClass == 'MONK') then
@@ -276,42 +267,33 @@ local function Enable(self, unit)
 		element.ClassPowerEnable = ClassPowerEnable
 		element.ClassPowerDisable = ClassPowerDisable
 
-		local areChildrenTextures, areChildrenStatusBars
 		for i = 1, #element do
 			local icon = element[i]
-			if(icon:IsObjectType('StatusBar')) then
+			if(icon:IsObjectType('Texture')) then
+				if(not icon:GetTexture()) then
+					icon:SetTexCoord(0.45703125, 0.60546875, 0.44531250, 0.73437500)
+					icon:SetTexture([[Interface\PlayerFrame\Priest-ShadowUI]])
+				end
+
+				element.isTexture = true
+			elseif(icon:IsObjectType('StatusBar')) then
 				if(not icon:GetStatusBarTexture()) then
 					icon:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 				end
 
 				icon:SetMinMaxValues(0, 1)
 
-				areChildrenStatusBars = true
-			else
-				if(icon:IsObjectType('Texture')) then
-					if(not icon:GetTexture()) then
-						icon:SetTexCoord(0.45703125, 0.60546875, 0.44531250, 0.73437500)
-						icon:SetTexture([[Interface\PlayerFrame\Priest-ShadowUI]])
-					end
-
-					areChildrenTextures = true
-				end
+				element.isStatusBar = true
 			end
 		end
 
-		if(areChildrenTextures) then
-			--[[ Override: ClassPower:UpdateTexture()
-			Used to completely override the internal function for updating the power icon textures.
+		if(element.isTexture or element.isStatusBar) then
+			--[[ Override: ClassPower:UpdateColor()
+			Used to completely override the internal function for updating the power icon colors.
 
 			* self - the ClassPower element
 			--]]
-			(element.UpdateTexture or UpdateTexture) (element)
-		end
-
-		if(areChildrenStatusBars) then
-			element.ClassPowerUpdate = UpdateStatusBar
-		else
-			element.ClassPowerUpdate = UpdateOther
+			(element.UpdateColor or UpdateColor) (element)
 		end
 
 		return true
