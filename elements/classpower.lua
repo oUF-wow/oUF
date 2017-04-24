@@ -254,13 +254,13 @@ local function Enable(self, unit)
 
 		local isStatusBar
 		for i = 1, #element do
-			local icon = element[i]
-			if(icon:IsObjectType('StatusBar')) then
-				if(not icon:GetStatusBarTexture()) then
-					icon:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+			local bar = element[i]
+			if(bar:IsObjectType('StatusBar')) then
+				if(not bar:GetStatusBarTexture()) then
+					bar:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 				end
 
-				icon:SetMinMaxValues(0, 1)
+				bar:SetMinMaxValues(0, 1)
 
 				isStatusBar = true
 			end
@@ -268,7 +268,7 @@ local function Enable(self, unit)
 
 		if(isStatusBar) then
 			--[[ Override: ClassPower:UpdateColor()
-			Used to completely override the internal function for updating the power icon colors.
+			Used to completely override the internal function for updating the power bars' colors.
 
 			* self - the ClassPower element
 			--]]
