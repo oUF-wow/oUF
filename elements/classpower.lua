@@ -78,10 +78,9 @@ local function Update(self, event, unit, powerType)
 	Called before the element has been updated.
 
 	* self  - the ClassPower element
-	* event - the event that triggered the update (string)
 	]]
 	if(element.PreUpdate) then
-		element:PreUpdate(event)
+		element:PreUpdate()
 	end
 
 	local cur, max, oldMax
