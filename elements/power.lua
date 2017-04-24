@@ -122,6 +122,46 @@ local function getDisplayPower(unit)
 	end
 end
 
+local function UpdateColor(element, r, g, b, t)
+	local atlas = element.atlas or (t and t.atlas)
+	if(element.useAtlas and atlas and displayType ~= ALTERNATE_POWER_INDEX) then
+		element:SetStatusBarAtlas(atlas)
+		element:SetStatusBarColor(1, 1, 1)
+
+		if(element.colorTapping or element.colorDisconnected) then
+			t = disconnected and self.colors.disconnected or self.colors.tapped
+			element:GetStatusBarTexture():SetDesaturated(disconnected or tapped)
+		end
+
+		if(t and (r or g or b)) then
+			r, g, b = t[1], t[2], t[3]
+		end
+	else
+		element:SetStatusBarTexture(element.texture)
+
+		if(r or g or b) then
+			element:SetStatusBarColor(r, g, b)
+		end
+	end
+
+	local bg = element.bg
+	if(bg and b) then
+		local mu = bg.multiplier or 1
+		bg:SetVertexColor(r * mu, g * mu, b * mu)
+	end
+end
+
+local function ColorPath(self, ...)
+	--[[ Override: Power:UpdateColor()
+	Used to completely override the internal function for updating the power bars' colors.
+
+	* self    - the Power element
+	* r, g, b - the color values to set on the bar
+	* t       - the color table for the current power type
+	--]]
+	return (self.UpdateColor or UpdateColor) (self, ...)
+end
+
 local function Update(self, event, unit)
 	if(self.unit ~= unit) then return end
 	local element = self.Power
@@ -195,35 +235,7 @@ local function Update(self, event, unit)
 	end
 
 	t = self.colors.power[ptoken or ptype]
-
-	if(element.isStatusBar) then
-		local atlas = element.atlas or (t and t.atlas)
-		if(element.useAtlas and atlas and displayType ~= ALTERNATE_POWER_INDEX) then
-			element:SetStatusBarAtlas(atlas)
-			element:SetStatusBarColor(1, 1, 1)
-
-			if(element.colorTapping or element.colorDisconnected) then
-				t = disconnected and self.colors.disconnected or self.colors.tapped
-				element:GetStatusBarTexture():SetDesaturated(disconnected or tapped)
-			end
-
-			if(t and (r or g or b)) then
-				r, g, b = t[1], t[2], t[3]
-			end
-		else
-			element:SetStatusBarTexture(element.texture)
-
-			if(r or g or b) then
-				element:SetStatusBarColor(r, g, b)
-			end
-		end
-	end
-
-	local bg = element.bg
-	if(bg and b) then
-		local mu = bg.multiplier or 1
-		bg:SetVertexColor(r * mu, g * mu, b * mu)
-	end
+	ColorPath(element, r, g, b, t)
 
 	--[[ Callback: Power:PostUpdate(unit, cur, min, max, powerToken, powerType)
 	Called after the element has been updated.
@@ -279,7 +291,6 @@ local function Enable(self, unit)
 		if(element:IsObjectType('StatusBar')) then
 			element.texture = element:GetStatusBarTexture() and element:GetStatusBarTexture():GetTexture() or [[Interface\TargetingFrame\UI-StatusBar]]
 			element:SetStatusBarTexture(element.texture)
-			element.isStatusBar = true
 		end
 
 		return true
