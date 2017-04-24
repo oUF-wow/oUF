@@ -149,15 +149,10 @@ local function updateIcon(unit, icons, index, offset, filter, isDebuff, visible)
 			icons.createdIcons = icons.createdIcons + 1
 		end
 
-		local isPlayer
-		if(caster == 'player' or caster == 'vehicle') then
-			isPlayer = true
-		end
-
 		icon.owner = caster
 		icon.filter = filter
 		icon.isDebuff = isDebuff
-		icon.isPlayer = isPlayer
+		icon.isPlayer = caster == 'player' or caster == 'vehicle'
 
 		--[[ Override: Auras:CustomFilter(unit, icon, ...)
 		Defines a custom filter that controls if the aura button should be shown.
@@ -177,34 +172,36 @@ local function updateIcon(unit, icons, index, offset, filter, isDebuff, visible)
 			-- We might want to consider delaying the creation of an actual cooldown
 			-- object to this point, but I think that will just make things needlessly
 			-- complicated.
-			local cd = icon.cd
-			if(cd and not icons.disableCooldown) then
+			if(icon.cd and not icons.disableCooldown) then
 				if(duration and duration > 0) then
-					cd:SetCooldown(expiration - duration, duration)
-					cd:Show()
+					icon.cd:SetCooldown(expiration - duration, duration)
+					icon.cd:Show()
 				else
-					cd:Hide()
+					icon.cd:Hide()
 				end
 			end
 
-			if((isDebuff and icons.showDebuffType) or (not isDebuff and icons.showBuffType) or icons.showType) then
-				local color = DebuffTypeColor[dispelType] or DebuffTypeColor.none
+			if(icon.overlay) then
+				if((isDebuff and icons.showDebuffType) or (not isDebuff and icons.showBuffType) or icons.showType) then
+					local color = DebuffTypeColor[dispelType] or DebuffTypeColor.none
 
-				icon.overlay:SetVertexColor(color.r, color.g, color.b)
-				icon.overlay:Show()
-			else
-				icon.overlay:Hide()
+					icon.overlay:SetVertexColor(color.r, color.g, color.b)
+					icon.overlay:Show()
+				else
+					icon.overlay:Hide()
+				end
 			end
 
-			local stealable = not isDebuff and isStealable
-			if(stealable and icons.showStealableBuffs and not UnitIsUnit('player', unit)) then
-				icon.stealable:Show()
-			else
-				icon.stealable:Hide()
+			if(icon.stealable) then
+				if(not isDebuff and isStealable and icons.showStealableBuffs and not UnitIsUnit('player', unit)) then
+					icon.stealable:Show()
+				else
+					icon.stealable:Hide()
+				end
 			end
 
-			icon.icon:SetTexture(texture)
-			icon.count:SetText((count > 1 and count))
+			if(icon.icon) then icon.icon:SetTexture(texture) end
+			if(icon.count) then icon.count:SetText(count > 1 and count) end
 
 			local size = icons.size or 16
 			icon:SetSize(size, size)
@@ -314,11 +311,12 @@ local function UpdateAuras(self, event, unit)
 
 			-- Prevent the icon from displaying anything.
 			if(icon.cd) then icon.cd:Hide() end
+			if(icon.icon) then icon.icon:SetTexture() end
+			if(icon.overlay) then icon.overlay:Hide() end
+			if(icon.stealable) then icon.stealable:Hide() end
+			if(icon.count) then icon.count:SetText() end
+
 			icon:EnableMouse(false)
-			icon.icon:SetTexture()
-			icon.overlay:Hide()
-			icon.stealable:Hide()
-			icon.count:SetText()
 			icon:Show()
 
 			--[[ Callback: Auras:PostUpdateGapIcon(unit, icon, visibleBuffs)
