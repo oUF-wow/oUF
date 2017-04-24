@@ -60,16 +60,7 @@ local RequireSpec, RequireSpell
 local function UpdateColor(element)
 	local color = oUF.colors.power[ClassPowerType or 'COMBO_POINTS']
 	for i = 1, #element do
-		local icon = element[i]
-		if(element.isTexture) then
-			if(icon.SetDesaturated) then
-				icon:SetDesaturated(PlayerClass ~= 'PRIEST')
-			end
-
-			icon:SetVertexColor(color[1], color[2], color[3])
-		elseif(element.isStatusBar) then
-			icon:SetStatusBarColor(color[1], color[2], color[3])
-		end
+		element[i]:SetStatusBarColor(color[1], color[2], color[3])
 	end
 end
 
@@ -104,16 +95,10 @@ local function Update(self, event, unit, powerType)
 			mod = UnitPowerDisplayMod(ClassPowerID)
 		end
 
-		if(element.isStatusBar) then
-			for i = 1, max do
-				element[i]:Show()
-				-- mod should never be 0, but according to Blizz code it can actually happen
-				element[i]:SetValue(mod == 0 and 0 or (cur / mod - i + 1))
-			end
-		else
-			for i = 1, max do
-				element[i]:SetShown(i <= cur)
-			end
+		for i = 1, max do
+			element[i]:Show()
+			-- mod should never be 0, but according to Blizz code it can actually happen
+			element[i]:SetValue(mod == 0 and 0 or (cur / mod - i + 1))
 		end
 
 		oldMax = element.__max
@@ -267,27 +252,21 @@ local function Enable(self, unit)
 		element.ClassPowerEnable = ClassPowerEnable
 		element.ClassPowerDisable = ClassPowerDisable
 
+		local isStatusBar
 		for i = 1, #element do
 			local icon = element[i]
-			if(icon:IsObjectType('Texture')) then
-				if(not icon:GetTexture()) then
-					icon:SetTexCoord(0.45703125, 0.60546875, 0.44531250, 0.73437500)
-					icon:SetTexture([[Interface\PlayerFrame\Priest-ShadowUI]])
-				end
-
-				element.isTexture = true
-			elseif(icon:IsObjectType('StatusBar')) then
+			if(icon:IsObjectType('StatusBar')) then
 				if(not icon:GetStatusBarTexture()) then
 					icon:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 				end
 
 				icon:SetMinMaxValues(0, 1)
 
-				element.isStatusBar = true
+				isStatusBar = true
 			end
 		end
 
-		if(element.isTexture or element.isStatusBar) then
+		if(isStatusBar) then
 			--[[ Override: ClassPower:UpdateColor()
 			Used to completely override the internal function for updating the power icon colors.
 
