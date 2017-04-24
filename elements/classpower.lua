@@ -5,7 +5,15 @@ Handles updating and visibility of the player's class resources (like Chi Orbs o
 
 ## Widget
 
-ClassPower - An array consisting of as many UI sub-widgets as the theoretical maximum return of [UnitPowerMax](http://wowprogramming.com/docs/api/UnitPowerMax).
+ClassPower - An array consisting of as many StatusBars as the theoretical maximum return of [UnitPowerMax](http://wowprogramming.com/docs/api/UnitPowerMax).
+
+## Sub-Widgets
+
+.bg - A Texture which functions as a background. It will inherit the color of the main StatusBar.
+
+## Sub-Widget Options
+
+.multiplier - A number used to tint the background based on the main widget's color. Defaults to 1.
 
 ## Notes
 
@@ -59,10 +67,18 @@ local ClassPowerID, ClassPowerType, ClassPowerMod
 local ClassPowerEnable, ClassPowerDisable
 local RequireSpec, RequireSpell
 
-local function UpdateColor(element)
-	local color = oUF.colors.power[ClassPowerType or 'COMBO_POINTS']
+local function UpdateColor(element, powerType)
+	local color = oUF.colors.power[powerType]
+	local r, g, b = color[1], color[2], color[3]
 	for i = 1, #element do
-		element[i]:SetStatusBarColor(color[1], color[2], color[3])
+		local bar = element[i]
+		bar:SetStatusBarColor(r, g, b)
+
+		local bg = bar.bg
+		if(bg) then
+			local mu = bg.multiplier or 1
+			bg:SetVertexColor(r * mu, g * mu, b * mu)
+		end
 	end
 end
 
