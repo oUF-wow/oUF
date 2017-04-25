@@ -68,7 +68,7 @@ local ClassPowerEnable, ClassPowerDisable
 local RequireSpec, RequireSpell
 
 local function UpdateColor(element, powerType)
-	local color = oUF.colors.power[powerType]
+	local color = element.__owner.colors.power[powerType]
 	local r, g, b = color[1], color[2], color[3]
 	for i = 1, #element do
 		local bar = element[i]
