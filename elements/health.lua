@@ -71,8 +71,6 @@ The following options are listed by priority. The first check that returns true 
 local parent, ns = ...
 local oUF = ns.oUF
 
-oUF.colors.health = {49/255, 207/255, 37/255}
-
 local function Update(self, event, unit)
 	if(not unit or self.unit ~= unit) then return end
 	local element = self.Health
