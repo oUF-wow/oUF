@@ -53,6 +53,7 @@ local _, PlayerClass = UnitClass('player')
 local SPEC_MAGE_ARCANE = SPEC_MAGE_ARCANE or 1
 local SPEC_MONK_WINDWALKER = SPEC_MONK_WINDWALKER or 3
 local SPEC_PALADIN_RETRIBUTION = SPEC_PALADIN_RETRIBUTION or 3
+local SPELL_POWER_ENERGY = SPELL_POWER_ENERGY or 3
 local SPELL_POWER_COMBO_POINTS = SPELL_POWER_COMBO_POINTS or 4
 local SPELL_POWER_SOUL_SHARDS = SPELL_POWER_SOUL_SHARDS or 7
 local SPELL_POWER_HOLY_POWER = SPELL_POWER_HOLY_POWER or 9
@@ -65,7 +66,7 @@ local MAX_COMBO_POINTS = MAX_COMBO_POINTS or 5
 -- Holds the class specific stuff.
 local ClassPowerID, ClassPowerType
 local ClassPowerEnable, ClassPowerDisable
-local RequireSpec, RequireSpell
+local RequireSpec, RequirePower, RequireSpell
 
 local function UpdateColor(element, powerType)
 	local color = element.__owner.colors.power[powerType]
@@ -166,11 +167,13 @@ local function Visibility(self, event, unit)
 		unit = 'vehicle'
 	elseif(ClassPowerID) then
 		if(not RequireSpec or RequireSpec == GetSpecialization()) then
-			if(not RequireSpell or IsPlayerSpell(RequireSpell)) then
-				self:UnregisterEvent('SPELLS_CHANGED', Visibility)
-				shouldEnable = true
-			else
-				self:RegisterEvent('SPELLS_CHANGED', Visibility, true)
+			if(not RequirePower or RequirePower == UnitPowerType('player')) then
+				if(not RequireSpell or IsPlayerSpell(RequireSpell)) then
+					self:UnregisterEvent('SPELLS_CHANGED', Visibility)
+					shouldEnable = true
+				else
+					self:RegisterEvent('SPELLS_CHANGED', Visibility, true)
+				end
 			end
 		end
 	end
@@ -214,7 +217,6 @@ end
 
 do
 	function ClassPowerEnable(self)
-		self:RegisterEvent('UNIT_DISPLAYPOWER', Path)
 		self:RegisterEvent('UNIT_POWER_FREQUENT', Path)
 		self:RegisterEvent('UNIT_MAXPOWER', Path)
 
@@ -228,7 +230,6 @@ do
 	end
 
 	function ClassPowerDisable(self)
-		self:UnregisterEvent('UNIT_DISPLAYPOWER', Path)
 		self:UnregisterEvent('UNIT_POWER_FREQUENT', Path)
 		self:UnregisterEvent('UNIT_MAXPOWER', Path)
 
@@ -257,6 +258,7 @@ do
 		ClassPowerType = 'COMBO_POINTS'
 
 		if(PlayerClass == 'DRUID') then
+			RequirePower = SPELL_POWER_ENERGY
 			RequireSpell = 5221 -- Shred
 		end
 	elseif(PlayerClass == 'MAGE') then
@@ -277,6 +279,10 @@ local function Enable(self, unit)
 
 		if(RequireSpec or RequireSpell) then
 			self:RegisterEvent('PLAYER_TALENT_UPDATE', VisibilityPath, true)
+		end
+
+		if(RequirePower) then
+			self:RegisterEvent('UNIT_DISPLAYPOWER', VisibilityPath)
 		end
 
 		element.ClassPowerEnable = ClassPowerEnable
