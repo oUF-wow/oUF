@@ -51,7 +51,7 @@ A default texture will be applied if the widget is a StatusBar and doesn't have 
 local _, ns = ...
 local oUF = ns.oUF
 
-local playerClass = select(2, UnitClass('player'))
+local _, playerClass = UnitClass('player')
 
 -- sourced from FrameXML/AlternatePowerBar.lua
 local ADDITIONAL_POWER_BAR_NAME = ADDITIONAL_POWER_BAR_NAME or 'MANA'

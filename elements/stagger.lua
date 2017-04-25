@@ -30,10 +30,13 @@ A default texture will be applied if the widget is a StatusBar and doesn't have 
     self.Stagger = Stagger
 --]]
 
-if select(2, UnitClass('player')) ~= 'MONK' then return end
+if(select(2, UnitClass('player')) ~= 'MONK') then return end
 
 local parent, ns = ...
 local oUF = ns.oUF
+
+-- sourced from FrameXML/Constants.lua
+local SPEC_MONK_BREWMASTER = SPEC_MONK_BREWMASTER or 1
 
 -- sourced from FrameXML/MonkStaggerBar.lua
 local BREWMASTER_POWER_BAR_NAME = BREWMASTER_POWER_BAR_NAME or 'STAGGER'

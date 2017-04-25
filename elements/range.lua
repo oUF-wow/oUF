@@ -77,7 +77,7 @@ local function Enable(self)
 		table.insert(_FRAMES, self)
 
 		if(not OnRangeFrame) then
-			OnRangeFrame = CreateFrame'Frame'
+			OnRangeFrame = CreateFrame('Frame')
 			OnRangeFrame:SetScript('OnUpdate', OnRangeUpdate)
 		end
 

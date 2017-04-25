@@ -36,7 +36,7 @@ A default texture will be applied if the sub-widgets are StatusBars and doesn't 
     self.Runes = Runes
 --]]
 
-if select(2, UnitClass('player')) ~= 'DEATHKNIGHT' then return end
+if(select(2, UnitClass('player')) ~= 'DEATHKNIGHT') then return end
 
 local parent, ns = ...
 local oUF = ns.oUF

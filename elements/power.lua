@@ -82,6 +82,9 @@ The following options are listed by priority. The first check that returns true 
 local parent, ns = ...
 local oUF = ns.oUF
 
+-- sourced from FrameXML/UnitPowerBarAlt.lua
+local ALTERNATE_POWER_INDEX = ALTERNATE_POWER_INDEX or 10
+
 local function getDisplayPower(unit)
 	local _, min, _, _, _, _, showOnRaid = UnitAlternatePowerInfo(unit)
 	if(showOnRaid) then
