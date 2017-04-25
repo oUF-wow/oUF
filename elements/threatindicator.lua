@@ -22,7 +22,7 @@ A default texture will be applied if the widget is a Texture and doesn't have a 
     self.ThreatIndicator = ThreatIndicator
 --]]
 
-local parent, ns = ...
+local _, ns = ...
 local oUF = ns.oUF
 
 local function Update(self, event, unit)

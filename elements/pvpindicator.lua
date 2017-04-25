@@ -32,7 +32,7 @@ The `Prestige` sub-widget has to be on a lower sub-layer than the `PvP` texture.
     self.PvPIndicator = PvPIndicator
 --]]
 
-local parent, ns = ...
+local _, ns = ...
 local oUF = ns.oUF
 
 local FFA_ICON = [[Interface\TargetingFrame\UI-PVP-FFA]]

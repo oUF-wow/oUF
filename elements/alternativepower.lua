@@ -26,7 +26,7 @@ A default texture will be applied if the widget is a StatusBar and doesn't have 
     self.AlternativePower = AlternativePower
 --]]
 
-local parent, ns = ...
+local _, ns = ...
 local oUF = ns.oUF
 
 -- sourced from FrameXML/UnitPowerBarAlt.lua

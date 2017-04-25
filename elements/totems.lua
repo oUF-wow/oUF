@@ -45,7 +45,7 @@ OnEnter and OnLeave will be set to display a Tooltip if the `Totem` widget is mo
     self.Totems = Totems
 --]]
 
-local parent, ns = ...
+local _, ns = ...
 local oUF = ns.oUF
 
 local function UpdateTooltip(self)

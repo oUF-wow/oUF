@@ -79,7 +79,7 @@ The following options are listed by priority. The first check that returns true 
     self.Power = Power
 --]]
 
-local parent, ns = ...
+local _, ns = ...
 local oUF = ns.oUF
 
 -- sourced from FrameXML/UnitPowerBarAlt.lua

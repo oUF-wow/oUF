@@ -31,7 +31,7 @@ This element updates by changing the texture.
     self.ReadyCheckIndicator = ReadyCheckIndicator
 --]]
 
-local parent, ns = ...
+local _, ns = ...
 local oUF = ns.oUF
 
 local function OnFinished(self)

@@ -22,7 +22,7 @@ Default textures will be applied if the widget is a Texture and doesn't have a t
     self.RaidTargetIndicator = RaidTargetIndicator
 --]]
 
-local parent, ns = ...
+local _, ns = ...
 local oUF = ns.oUF
 
 local GetRaidTargetIndex = GetRaidTargetIndex

@@ -38,7 +38,7 @@ A default texture will be applied if the sub-widgets are StatusBars and doesn't 
 
 if(select(2, UnitClass('player')) ~= 'DEATHKNIGHT') then return end
 
-local parent, ns = ...
+local _, ns = ...
 local oUF = ns.oUF
 
 local function OnUpdate(self, elapsed)

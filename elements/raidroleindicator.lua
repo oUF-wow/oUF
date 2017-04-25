@@ -22,7 +22,7 @@ This element updates by changing the texture.
     self.RaidRoleIndicator = RaidRoleIndicator
 --]]
 
-local parent, ns = ...
+local _, ns = ...
 local oUF = ns.oUF
 
 local MAINTANK_ICON = [[Interface\GROUPFRAME\UI-GROUP-MAINTANKICON]]

@@ -31,7 +31,7 @@ A question mark model will be used if the widget is a Model and the client doesn
     self.Portrait = Portrait
 --]]
 
-local parent, ns = ...
+local _, ns = ...
 local oUF = ns.oUF
 
 local function Update(self, event, unit)
