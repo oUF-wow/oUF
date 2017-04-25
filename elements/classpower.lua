@@ -63,7 +63,7 @@ local SPELL_POWER_ARCANE_CHARGES = SPELL_POWER_ARCANE_CHARGES or 16
 local MAX_COMBO_POINTS = MAX_COMBO_POINTS or 5
 
 -- Holds the class specific stuff.
-local ClassPowerID, ClassPowerType, ClassPowerMod
+local ClassPowerID, ClassPowerType
 local ClassPowerEnable, ClassPowerDisable
 local RequireSpec, RequireSpell
 
@@ -99,21 +99,23 @@ local function Update(self, event, unit, powerType)
 		element:PreUpdate()
 	end
 
-	local cur, max, oldMax
+	local cur, max, mod, oldMax
 	if(event ~= 'ClassPowerDisable') then
 		if(unit == 'vehicle') then
 			-- BUG: UnitPower always returns 0 combo points for vehicles
 			cur = GetComboPoints(unit)
 			max = MAX_COMBO_POINTS
+			mod = 1
 		else
 			cur = UnitPower('player', ClassPowerID, true)
 			max = UnitPowerMax('player', ClassPowerID)
+			mod = UnitPowerDisplayMod(ClassPowerID)
 		end
 
 		for i = 1, max do
 			element[i]:Show()
-			-- ClassPowerMod should never be 0, but according to Blizz code it can actually happen
-			element[i]:SetValue(ClassPowerMod == 0 and 0 or (cur / ClassPowerMod - i + 1))
+			-- mod should never be 0, but according to Blizz code it can actually happen
+			element[i]:SetValue(mod == 0 and 0 or (cur / mod - i + 1))
 		end
 
 		oldMax = element.__max
@@ -138,7 +140,7 @@ local function Update(self, event, unit, powerType)
 	* powerType     - the active power type (string)
 	--]]
 	if(element.PostUpdate) then
-		return element:PostUpdate(cur, max, ClassPowerMod, oldMax ~= max, powerType)
+		return element:PostUpdate(cur, max, mod, oldMax ~= max, powerType)
 	end
 end
 
@@ -174,7 +176,6 @@ local function Visibility(self, event, unit)
 
 	local isEnabled = element.isEnabled
 	local powerType = unit == 'vehicle' and 'COMBO_POINTS' or ClassPowerType
-	ClassPowerMod = UnitPowerDisplayMod(unit ~= 'vehicle' and ClassPowerID and ClassPowerID or SPELL_POWER_COMBO_POINTS)
 
 	if(shouldEnable) then
 		--[[ Override: ClassPower:UpdateColor(powerType)
