@@ -43,6 +43,10 @@ A default texture will be applied if the widget is a StatusBar and doesn't have 
 local _, ns = ...
 local oUF = ns.oUF
 
+-- sourced from FrameXML/AlternatePowerBar.lua
+local ADDITIONAL_POWER_BAR_INDEX = ADDITIONAL_POWER_BAR_INDEX or 0
+local ALT_MANA_BAR_PAIR_DISPLAY_INFO = ALT_MANA_BAR_PAIR_DISPLAY_INFO
+
 local playerClass = select(2, UnitClass('player'))
 
 local function Update(self, event, unit)
