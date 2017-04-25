@@ -133,8 +133,8 @@ local function Update(self, event, unit, powerType)
 	Called after the element has been updated.
 
 	* self          - the ClassPower element
-	* cur           - the current modified amount of power (number)
-	* max           - the maximum unmodified amount of power (number)
+	* cur           - the current unmodified amount of power (number)
+	* max           - the maximum modified amount of power (number)
 	* mod           - the power modifier (number)
 	* hasMaxChanged - an indicator whether the maximum amount has changed since the last update (boolean)
 	* powerType     - the active power type (string)
