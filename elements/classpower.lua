@@ -123,6 +123,7 @@ local function Update(self, event, unit, powerType)
 			if(max < oldMax) then
 				for i = max + 1, oldMax do
 					element[i]:Hide()
+					element[i]:SetValue(0)
 				end
 			end
 
