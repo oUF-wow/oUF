@@ -19,7 +19,7 @@ Range - A table containing opacity values.
     }
 --]]
 
-local parent, ns = ...
+local _, ns = ...
 local oUF = ns.oUF
 
 local _FRAMES = {}

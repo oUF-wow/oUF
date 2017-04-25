@@ -68,7 +68,7 @@ The following options are listed by priority. The first check that returns true 
 	Health.bg = Background
     self.Health = Health
 --]]
-local parent, ns = ...
+local _, ns = ...
 local oUF = ns.oUF
 
 local function Update(self, event, unit)

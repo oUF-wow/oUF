@@ -44,7 +44,7 @@ Supported class powers:
     self.ClassPower = ClassPower
 --]]
 
-local parent, ns = ...
+local _, ns = ...
 local oUF = ns.oUF
 
 local _, PlayerClass = UnitClass('player')

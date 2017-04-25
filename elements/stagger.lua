@@ -32,7 +32,7 @@ A default texture will be applied if the widget is a StatusBar and doesn't have 
 
 if(select(2, UnitClass('player')) ~= 'MONK') then return end
 
-local parent, ns = ...
+local _, ns = ...
 local oUF = ns.oUF
 
 -- sourced from FrameXML/Constants.lua

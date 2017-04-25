@@ -70,7 +70,7 @@ A FontString to hold a tag string. Unlike other elements, this widget must not h
     self:Tag(info, '[mylayout:threatname]')
 --]]
 
-local parent, ns = ...
+local _, ns = ...
 local oUF = ns.oUF
 
 local _PATTERN = '%[..-%]+'

@@ -54,7 +54,7 @@ At least one of the above widgets must be present for the element to work.
     self.Buffs = Buffs
 --]]
 
-local parent, ns = ...
+local _, ns = ...
 local oUF = ns.oUF
 
 local VISIBLE = 1
