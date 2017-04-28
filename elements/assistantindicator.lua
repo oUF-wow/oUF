@@ -1,7 +1,7 @@
 --[[
 # Element: Assistant Indicator
 
-Toggles visibility of an indicator based on the unit's raid assistant status.
+Toggles the visibility of an indicator based on the unit's raid assistant status.
 
 ## Widget
 
@@ -49,7 +49,7 @@ local function Update(self, event)
 	Called after the element has been updated.
 
 	* self        - the AssistantIndicator element
-	* isAssistant - a Boolean that indicates whether or not the unit is a raid assistant
+	* isAssistant - indicates whether the unit is a raid assistant (boolean)
 	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(isAssistant)
@@ -61,8 +61,8 @@ local function Path(self, ...)
 	Used to completely override the element's update process.
 
 	* self  - the AssistantIndicator element
-	* event - the event triggering the update
-	* ...   - the arguments accompanying the event
+	* event - the event triggering the update (string)
+	* ...   - the arguments accompanying the event (string)
 	--]]
 	return (self.AssistantIndicator.Override or Update) (self, ...)
 end
