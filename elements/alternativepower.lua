@@ -1,12 +1,12 @@
 --[[
 # Element: Alternative Power Bar
 
-Handles updating and visibility of a status bar that displays encounter- or quest-related power information, such as the number of hour glass
-charges during Murozond encounter in End Time.
+Handles updating and visibility of a status bar that displays encounter- or quest-related power information, such as the
+number of hour glass charges during Murozond encounter in the dungeon End Time.
 
 ## Widget
 
-AlternativePower - A StatusBar that is used to represent the unit's alternative power.
+AlternativePower - A `StatusBar` that is used to represent the unit's alternative power.
 
 ## Notes
 
@@ -79,10 +79,10 @@ local function Update(self, event, unit, powerType)
 	Called after the element has been updated.
 
 	* self - the AlternativePower element
-	* unit - the unit for which the update has been triggered
-	* cur  - current value of the unit's alternative power
-	* min  - minimum value of the unit's alternative power
-	* max  - maximum value of the unit's alternative power
+	* unit - unit for which the update has been triggered (string)
+	* cur  - current value of the unit's alternative power (number)
+	* min  - minimum value of the unit's alternative power (number)
+	* max  - maximum value of the unit's alternative power (number)
 	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(unit, cur, min, max)
@@ -94,8 +94,8 @@ local function Path(self, ...)
 	Used to completely override the element's update process.
 
 	* self  - the AlternativePower element
-	* event - the event triggering the update
-	* unit  - the unit accompanying the event
+	* event - the event triggering the update (string)
+	* unit  - the unit accompanying the event (string)
 	* ...   - the arguments accompanying the event
 	--]]
 	return (self.AlternativePower.Override or Update)(self, ...)
@@ -126,8 +126,8 @@ local function VisibilityPath(self, ...)
 	Used to completely override the element's visibility update process.
 
 	* self  - the AlternativePower element
-	* event - the event triggering the update
-	* unit  - the unit accompanying the event
+	* event - the event triggering the update (string)
+	* unit  - the unit accompanying the event (string)
 	--]]
 	return (self.AlternativePower.OverrideVisibility or Visibility)(self, ...)
 end
@@ -161,7 +161,7 @@ local function Enable(self, unit)
 			end
 
 			--[[ Override: AlternativePower:UpdateTooltip()
-			Called when mouse is over the widget. Used to populate its tooltip.
+			Called when the mouse is over the widget. Used to populate its tooltip.
 
 			* self - the AlternativePower element
 			--]]
