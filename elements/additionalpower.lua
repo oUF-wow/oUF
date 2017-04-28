@@ -26,8 +26,7 @@ A default texture will be applied if the widget is a StatusBar and doesn't have 
 
 ## Sub-Widget Options
 
-.multiplier - Defines a multiplier that is used to tint the background based on the widget's R, G and B values.
-              Defaults to 1 if not present.
+.multiplier - A value used to tint the background based on the widget's R, G and B values. Defaults to 1. (number)[0-1]
 
 ## Examples
 
@@ -66,7 +65,7 @@ local function Update(self, event, unit, powertype)
 	Called before the element has been updated.
 
 	* self - the AdditionalPower element
-	* unit - the unit for which the update has been triggered
+	* unit - unit for which the update has been triggered (string)
 	--]]
 	if(element.PreUpdate) then element:PreUpdate(unit) end
 
@@ -102,9 +101,9 @@ local function Update(self, event, unit, powertype)
 	Called after the element has been updated.
 
 	* self - the AdditionalPower element
-	* unit - the unit for which the update has been triggered
-	* cur  - current value of player's additional power
-	* max  - maximum value of player's additional power
+	* unit - unit for which the update has been triggered (string)
+	* cur  - current value of the player's additional power (number)
+	* max  - maximum value of the player's additional power (number)
 	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(unit, cur, max)
@@ -166,7 +165,7 @@ local function VisibilityPath(self, ...)
 	--[[ Override: AdditionalPower:OverrideVisibility(event, unit)
 	Used to completely override the element's visibility update process.
 
-	* self - the AdditionalPower element
+	* self  - the AdditionalPower element
 	* event - the event triggering the update
 	* unit  - the unit accompanying the event
 	--]]
