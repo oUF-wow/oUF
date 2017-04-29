@@ -657,15 +657,15 @@ function oUF:Spawn(unit, overrideName)
 	return object
 end
 
---[[ oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
+--[[ oUF:SpawnNamePlates(prefix, callback, variables)
 Used to create nameplates and apply the currently active style to them.
 
-* self              - the global oUF object
-* namePrefix        - prefix for the global name of the nameplate. Defaults to an auto-generated prefix
-* nameplateCallback - function to be called after a nameplate unit or the player's target has changed. The arguments
+* self      - the global oUF object
+* prefix    - prefix for the global name of the nameplate. Defaults to an auto-generated prefix
+* callback  - function to be called after a nameplate unit or the player's target has changed. The arguments
                       passed to the callback are the updated nameplate, the event that triggered the update and the new
 					  unit
-* nameplateCVars    - table of console variable-value pairs to be set when the player logs in
+* variables - table of console variable-value pairs to be set when the player logs in
 --]]
 function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 	argcheck(nameplateCallback, 3, 'function', 'nil')
