@@ -1,13 +1,11 @@
 --[[
 # Element: Group Role Indicator
 
-Toggles visibility of an indicator based on the units current dungeon role.
+Toggles the visibility of an indicator based on the unit's current group role (tank, healer or damager).
 
 ## Widget
 
-GroupRoleIndicator - A Texture containing the LFD role icons at specific locations.
-                     See the default LFD role icon texture for an example of this.
-                     Alternatively look up the return values of `GetTexCoordsForRoleSmallCircle(role)`.
+GroupRoleIndicator - A `Texture` used to display the group role icon.
 
 ## Notes
 
@@ -63,7 +61,7 @@ local function Path(self, ...)
 	Used to completely override the internal update function.
 
 	* self  - the GroupRoleIndicator element
-	* event - the event triggering the update
+	* event - the event triggering the update (string)
 	* ...   - the arguments accompanying the event
 	--]]
 	return (self.GroupRoleIndicator.Override or Update) (self, ...)
