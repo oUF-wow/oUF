@@ -124,7 +124,7 @@ local function Path(self, ...)
 	--[[ Override: PowerPrediction:Override(event, unit, ...)
 	Used to completely override the internal update function.
 
-	* self  - the PowerPrediction element
+	* self  - the parent object
 	* event - the event triggering the update
 	* unit  - the unit accompanying the event
 	* ...   - the arguments accompanying the event
