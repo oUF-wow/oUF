@@ -90,7 +90,7 @@ end
 
 local function Path(self, event, ...)
 	local element = self.Runes
-	--[[ Override: Runes:Override(event, ...)
+	--[[ Override: Runes.Override(self, event, ...)
 	Used to completely override the internal update function.
 
 	* self  - the parent object
