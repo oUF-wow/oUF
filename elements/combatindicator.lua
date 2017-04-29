@@ -1,7 +1,7 @@
 --[[
 # Element: Combat Indicator
 
-Toggles visibility of an indicator based on the player's combat status.
+Toggles the visibility of an indicator based on the player's combat status.
 
 ## Widget
 
@@ -48,7 +48,7 @@ local function Update(self, event)
 	Called after the element has been updated.
 
 	* self     - the CombatIndicator element
-	* inCombat - a Boolean indicating if the player is affecting combat
+	* inCombat - indicates if the player is affecting combat (boolean)
 	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(inCombat)
@@ -60,7 +60,7 @@ local function Path(self, ...)
 	Used to completely override the internal update function.
 
 	* self  - the CombatIndicator element
-	* event - the event triggering the update
+	* event - the event triggering the update (string)
 	--]]
 	return (self.CombatIndicator.Override or Update) (self, ...)
 end
