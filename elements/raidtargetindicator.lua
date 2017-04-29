@@ -60,7 +60,7 @@ local function Update(self, event)
 end
 
 local function Path(self, ...)
-	--[[ Override: RaidTargetIndicator:Override(event)
+	--[[ Override: RaidTargetIndicator.Override(self, event)
 	Used to completely override the internal update function.
 
 	* self  - the parent object
