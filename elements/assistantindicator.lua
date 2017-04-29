@@ -57,7 +57,7 @@ local function Update(self, event)
 end
 
 local function Path(self, ...)
-	--[[ Override: AssistantIndicator:Override(event, ...)
+	--[[ Override: AssistantIndicator.Override(self, event, ...)
 	Used to completely override the element's update process.
 
 	* self  - the parent object
