@@ -1,7 +1,7 @@
 --[[
 # Element: Quest Indicator
 
-Handles visibility and updating of an indicator based on the units connection to a quest.
+Handles the visibility and updating of an indicator based on the unit's involvement in a quest.
 
 ## Widget
 
@@ -50,7 +50,7 @@ local function Update(self, event, unit)
 	Called after the element has been updated.
 
 	* self        - the QuestIndicator element
-	* isQuestBoss - a Boolean indicating if the unit is a quest boss
+	* isQuestBoss - indicates if the element is shown (boolean)
 	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(isQuestBoss)
@@ -58,12 +58,12 @@ local function Update(self, event, unit)
 end
 
 local function Path(self, ...)
-	--[[ Override: QuestIndicator:Override(event, unit)
+	--[[ Override: QuestIndicator:Override(event, ...)
 	Used to completely override the internal update function.
 
 	* self  - the QuestIndicator element
-	* event - the event triggering the update
-	* unit  - the unit accompanying the event
+	* event - the event triggering the update (string)
+	* ...   - the arguments accompanying the event
 	--]]
 	return (self.QuestIndicator.Override or Update) (self, ...)
 end
