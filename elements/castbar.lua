@@ -141,7 +141,7 @@ local function UNIT_SPELLCAST_START(self, event, unit)
 	local sf = element.SafeZone
 	if(sf) then
 		sf:ClearAllPoints()
-		sf:SetPoint('RIGHT')
+		sf:SetPoint(element:GetReverseFill() and 'LEFT' or 'RIGHT')
 		sf:SetPoint('TOP')
 		sf:SetPoint('BOTTOM')
 		updateSafeZone(element)
@@ -366,7 +366,7 @@ local function UNIT_SPELLCAST_CHANNEL_START(self, event, unit, _, _, _, spellID)
 	local sf = element.SafeZone
 	if(sf) then
 		sf:ClearAllPoints()
-		sf:SetPoint('LEFT')
+		sf:SetPoint(element:GetReverseFill() and 'RIGHT' or 'LEFT')
 		sf:SetPoint('TOP')
 		sf:SetPoint('BOTTOM')
 		updateSafeZone(element)
