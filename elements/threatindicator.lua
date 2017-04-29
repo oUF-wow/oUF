@@ -77,7 +77,7 @@ local function Update(self, event, unit)
 end
 
 local function Path(self, ...)
-	--[[ Override: ThreatIndicator:Override(event, ...)
+	--[[ Override: ThreatIndicator.Override(self, event, ...)
 	Used to completely override the internal update function.
 
 	* self  - the parent object
