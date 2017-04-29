@@ -48,7 +48,7 @@ local function Update(self, event)
 		element:Hide()
 	end
 
-	--[[ Callback:RaidTargetIndicator:PostUpdate(index)
+	--[[ Callback: RaidTargetIndicator:PostUpdate(index)
 	Called after the element has been updated.
 
 	* self  - the RaidTargetIndicator element
@@ -63,7 +63,7 @@ local function Path(self, ...)
 	--[[ Override: RaidTargetIndicator:Override(event)
 	Used to completely override the internal update function.
 
-	* self  - the RaidTargetIndicator element
+	* self  - the parent object
 	* event - the event triggering the update (string)
 	--]]
 	return (self.RaidTargetIndicator.Override or Update) (self, ...)
