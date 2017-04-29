@@ -60,7 +60,7 @@ local function Path(self, ...)
 	--[[ Override: AssistantIndicator:Override(event, ...)
 	Used to completely override the element's update process.
 
-	* self  - the AssistantIndicator element
+	* self  - the parent object
 	* event - the event triggering the update (string)
 	* ...   - the arguments accompanying the event (string)
 	--]]
