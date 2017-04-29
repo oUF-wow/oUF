@@ -60,7 +60,7 @@ local function Path(self, ...)
 	--[[ Override: GroupRoleIndicator:Override(event, ...)
 	Used to completely override the internal update function.
 
-	* self  - the GroupRoleIndicator element
+	* self  - the parent object
 	* event - the event triggering the update (string)
 	* ...   - the arguments accompanying the event
 	--]]
