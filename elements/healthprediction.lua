@@ -198,7 +198,7 @@ local function Update(self, event, unit)
 end
 
 local function Path(self, ...)
-	--[[ Override: HealthPrediction:Override(event, unit)
+	--[[ Override: HealthPrediction.Override(self, event, unit)
 	Used to completely override the internal update function.
 
 	* self  - the parent object
