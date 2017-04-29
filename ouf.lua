@@ -576,9 +576,13 @@ do
 	                 of the active style and other arguments passed to `:SpawnHeader`
 	* template     - name of a template to be used for creating the header. Defaults to `'SecureGroupHeaderTemplate'`
 	* visibility   - macro conditional(s) which define when to display the header (string).
-	* ...          - further argument pairs. Consult [Group Headers](http://wowprogramming.com/docs/secure_template/Group_Headers)
-	                 for possible values -- TODO: oUF-initialConfigFunction, oUF-headerType, oUF-onlyProcessChildren,
-	                 oUF-guessUnit
+	* ...          - further argument pairs. Consult [Group Headers](http://wowprogramming.com/docs/secure_template/Group_Headers) for possible values.
+
+	In addition to the standard group headers, oUF implements some of its own attributes.
+	These can be supplied by the layout, but are optional.
+
+	* oUF-initialConfigFunction - Can contain code that will be securely run at the end of the initial secure configuration (string).
+	* oUF-onlyProcessChildren   - Can be used to force headers to only process children (boolean).
 	--]]
 	function oUF:SpawnHeader(overrideName, template, visibility, ...)
 		if(not style) then return error('Unable to create frame. No styles have been registered.') end
