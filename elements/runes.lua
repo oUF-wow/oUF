@@ -93,7 +93,7 @@ local function Path(self, event, ...)
 	--[[ Override: Runes:Override(event, ...)
 	Used to completely override the internal update function.
 
-	* self  - the Runes element
+	* self  - the parent object
 	* event - the event triggering the update
 	* ...   - the arguments accompanying the event
 	--]]
