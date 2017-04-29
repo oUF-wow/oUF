@@ -80,7 +80,7 @@ local function Update(self, event, unit)
 end
 
 local function Path(self, ...)
-	--[[ Override: Portrait:Override(event, unit)
+	--[[ Override: Portrait.Override(self, event, unit)
 	Used to completely override the internal update function.
 
 	* self  - the parent object
