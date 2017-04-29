@@ -1,6 +1,15 @@
 local parent, ns = ...
 local oUF = ns.oUF
 
+-- sourced from Blizzard_ArenaUI/Blizzard_ArenaUI.lua
+local MAX_ARENA_ENEMIES = MAX_ARENA_ENEMIES or 5
+
+-- sourced from FrameXML/TargetFrame.lua
+local MAX_BOSS_FRAMES = MAX_BOSS_FRAMES or 5
+
+-- sourced from FrameXML/PartyMemberFrame.lua
+local MAX_PARTY_MEMBERS = MAX_PARTY_MEMBERS or 4
+
 local hiddenParent = CreateFrame('Frame', nil, UIParent)
 hiddenParent:SetAllPoints()
 hiddenParent:Hide()
@@ -78,7 +87,7 @@ function oUF:DisableBlizzard(unit)
 		if(id) then
 			handleFrame('Boss' .. id .. 'TargetFrame')
 		else
-			for i = 1, 5 do
+			for i = 1, MAX_BOSS_FRAMES do
 				handleFrame(string.format('Boss%dTargetFrame', i))
 			end
 		end
@@ -87,7 +96,7 @@ function oUF:DisableBlizzard(unit)
 		if(id) then
 			handleFrame('PartyMemberFrame' .. id)
 		else
-			for i = 1, 4 do
+			for i = 1, MAX_PARTY_MEMBERS do
 				handleFrame(string.format('PartyMemberFrame%d', i))
 			end
 		end
@@ -96,7 +105,7 @@ function oUF:DisableBlizzard(unit)
 		if(id) then
 			handleFrame('ArenaEnemyFrame' .. id)
 		else
-			for i = 1, 5 do
+			for i = 1, MAX_ARENA_ENEMIES do
 				handleFrame(string.format('ArenaEnemyFrame%d', i))
 			end
 		end
