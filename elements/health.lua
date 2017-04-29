@@ -68,8 +68,44 @@ The following options are listed by priority. The first check that returns true 
 	Health.bg = Background
     self.Health = Health
 --]]
+
 local _, ns = ...
 local oUF = ns.oUF
+
+local function UpdateColor(element, unit, cur, max)
+	local parent = element.__owner
+
+	local r, g, b, t
+	if(element.colorTapping and not UnitPlayerControlled(unit) and UnitIsTapDenied(unit)) then
+		t = parent.colors.tapped
+	elseif(element.colorDisconnected and element.disconnected) then
+		t = parent.colors.disconnected
+	elseif(element.colorClass and UnitIsPlayer(unit)) or
+		(element.colorClassNPC and not UnitIsPlayer(unit)) or
+		(element.colorClassPet and UnitPlayerControlled(unit) and not UnitIsPlayer(unit)) then
+		local _, class = UnitClass(unit)
+		t = parent.colors.class[class]
+	elseif(element.colorReaction and UnitReaction(unit, 'player')) then
+		t = parent.colors.reaction[UnitReaction(unit, 'player')]
+	elseif(element.colorSmooth) then
+		r, g, b = parent.ColorGradient(cur, max, unpack(element.smoothGradient or parent.colors.smooth))
+	elseif(element.colorHealth) then
+		t = parent.colors.health
+	end
+
+	if(t) then
+		r, g, b = t[1], t[2], t[3]
+	end
+
+	if(r or g or b) then
+		element:SetStatusBarColor(r, g, b)
+
+		local bg = element.bg
+		if(bg) then local mu = bg.multiplier or 1
+			bg:SetVertexColor(r * mu, g * mu, b * mu)
+		end
+	end
+end
 
 local function Update(self, event, unit)
 	if(not unit or self.unit ~= unit) then return end
@@ -97,36 +133,15 @@ local function Update(self, event, unit)
 
 	element.disconnected = disconnected
 
-	local r, g, b, t
-	if(element.colorTapping and not UnitPlayerControlled(unit) and UnitIsTapDenied(unit)) then
-		t = self.colors.tapped
-	elseif(element.colorDisconnected and disconnected) then
-		t = self.colors.disconnected
-	elseif(element.colorClass and UnitIsPlayer(unit)) or
-		(element.colorClassNPC and not UnitIsPlayer(unit)) or
-		(element.colorClassPet and UnitPlayerControlled(unit) and not UnitIsPlayer(unit)) then
-		local _, class = UnitClass(unit)
-		t = self.colors.class[class]
-	elseif(element.colorReaction and UnitReaction(unit, 'player')) then
-		t = self.colors.reaction[UnitReaction(unit, 'player')]
-	elseif(element.colorSmooth) then
-		r, g, b = self.ColorGradient(cur, max, unpack(element.smoothGradient or self.colors.smooth))
-	elseif(element.colorHealth) then
-		t = self.colors.health
-	end
+	--[[ Override: Health:UpdateColor(unit, cur, max, displayType)
+	Used to completely override the internal function for updating the widgets' colors.
 
-	if(t) then
-		r, g, b = t[1], t[2], t[3]
-	end
-
-	if(r or g or b) then
-		element:SetStatusBarColor(r, g, b)
-
-		local bg = element.bg
-		if(bg) then local mu = bg.multiplier or 1
-			bg:SetVertexColor(r * mu, g * mu, b * mu)
-		end
-	end
+	* self        - the Health element
+	* unit        - the event unit that the update has been triggered for
+	* cur         - the unit's current power value
+	* min         - the unit's minimum possible power value
+	--]]
+	element:UpdateColor(unit, cur, max)
 
 	--[[ Callback: Health:PostUpdate(unit, cur, max)
 	Called after the element has been updated.
@@ -174,6 +189,10 @@ local function Enable(self, unit)
 
 		if(element:IsObjectType('StatusBar') and not element:GetStatusBarTexture()) then
 			element:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+		end
+
+		if(not element.UpdateColor) then
+			element.UpdateColor = UpdateColor
 		end
 
 		return true
