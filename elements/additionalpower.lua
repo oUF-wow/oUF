@@ -114,7 +114,7 @@ local function Path(self, ...)
 	--[[ Override: AdditionalPower:Override(event, unit, ...)
 	Used to completely override the element's update process.
 
-	* self  - the AdditionalPower element
+	* self  - the parent object
 	* event - the event triggering the update
 	* unit  - the unit accompanying the event
 	* ...   - the arguments accompanying the event
