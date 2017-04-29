@@ -103,7 +103,7 @@ local function Update(self, event)
 end
 
 local function Path(self, ...)
-	--[[ Override: ReadyCheckIndicator:Override(event, ...)
+	--[[ Override: ReadyCheckIndicator.Override(self, event, ...)
 	Used to completely override the internal update function.
 
 	* self  - the parent object
