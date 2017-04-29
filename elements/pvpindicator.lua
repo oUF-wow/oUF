@@ -1,22 +1,22 @@
 --[[
 # Element: PvP and Prestige Icons
 
-Handles visibility and updating of an indicator based on the unit's PvP status and prestige level.
+Handles the visibility and updating of an indicator based on the unit's PvP status and prestige level.
 
 ## Widget
 
-PvPIndicator - A Texture used to display faction, FFA PvP status or prestige icon.
+PvPIndicator - A `Texture` used to display faction, FFA PvP status or prestige icon.
 
 ## Sub-Widgets
 
-Prestige - A Texture used to display the prestige background image.
+Prestige - A `Texture` used to display the prestige background image.
 
 ## Notes
 
 This element updates by changing the texture.
 The `Prestige` sub-widget has to be on a lower sub-layer than the `PvP` texture.
 
- Examples
+## Examples
 
     -- Position and size
     local PvPIndicator = self:CreateTexture(nil, 'ARTWORK', nil, 1)
@@ -47,7 +47,7 @@ local function Update(self, event, unit)
 	Called before the element has been updated.
 
 	* self - the PvPIndicator element
-	* unit - the event unit that the update has been triggered for
+	* unit - the unit for which the update has been triggered (string)
 	--]]
 	if(element.PreUpdate) then
 		element:PreUpdate(unit)
@@ -116,11 +116,11 @@ local function Update(self, event, unit)
 	Called after the element has been updated.
 
 	* self          - the PvPIndicator element
-	* unit          - the event unit that the update has been triggered for
-	* status        - a String representing the unit's current PvP status or faction accounting for mercenary mode
-	                  ('ffa', 'Alliance' or 'Horde')
-	* hasPrestige   - a Boolean indicating if the unit has a prestige rank higher then 0
-	* prestigeLevel - a Number representing the unit's current prestige rank
+	* unit          - the unit for which the update has been triggered (string)
+	* status        - the unit's current PvP status or faction accounting for mercenary mode (string)['ffa', 'Alliance',
+	                  'Horde']
+	* hasPrestige   - indicates if the unit has a prestige rank higher than 0 (boolean)
+	* prestigeLevel - the unit's current prestige rank (number)
 	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(unit, status, hasPrestige, prestigeLevel)
@@ -128,12 +128,12 @@ local function Update(self, event, unit)
 end
 
 local function Path(self, ...)
-	--[[Override: PvPIndicator:Override(event, unit)
+	--[[Override: PvPIndicator:Override(event, ...)
 	Used to completely override the internal update function.
 
 	* self  - the PvPIndicator element
-	* event - the event triggering the update
-	* unit  - the unit accompanying the event
+	* event - the event triggering the update (string)
+	* ...   - the arguments accompanying the event
 	--]]
 	return (self.PvPIndicator.Override or Update) (self, ...)
 end
