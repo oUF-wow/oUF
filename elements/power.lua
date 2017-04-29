@@ -92,7 +92,7 @@ local function getDisplayPower(unit)
 	end
 end
 
-local function UpdateColor(element, unit, cur, max, displayType)
+local function UpdateColor(element, unit, cur, min, max, displayType)
 	local parent = element.__owner
 	local ptype, ptoken, altR, altG, altB = UnitPowerType(unit)
 
@@ -196,16 +196,17 @@ local function Update(self, event, unit)
 	element.disconnected = disconnected
 	element.tapped = tapped
 
-	--[[ Override: Power:UpdateColor(unit, cur, max, displayType)
+	--[[ Override: Power:UpdateColor(unit, cur, min, max, displayType)
 	Used to completely override the internal function for updating the widgets' colors.
 
 	* self        - the Power element
 	* unit        - the event unit that the update has been triggered for
 	* cur         - the unit's current power value
 	* min         - the unit's minimum possible power value
+	* max         - the unit's maximum possible power value
 	* displayType - the alternative power display type, if any
 	--]]
-	element:UpdateColor(unit, cur, max, displayType)
+	element:UpdateColor(unit, cur, min, max, displayType)
 
 	--[[ Callback: Power:PostUpdate(unit, cur, min, max, powerToken, powerType)
 	Called after the element has been updated.
@@ -215,8 +216,6 @@ local function Update(self, event, unit)
 	* cur        - the unit's current power value
 	* min        - the unit's minimum possible power value
 	* max        - the unit's maximum possible power value
-	* powerToken - a locale independent String representing the unit's power type (like 'MANA')
-	* powerType  - a Number representing the unit's power type
 	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(unit, cur, min, max)
