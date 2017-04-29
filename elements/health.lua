@@ -133,13 +133,13 @@ local function Update(self, event, unit)
 
 	element.disconnected = disconnected
 
-	--[[ Override: Health:UpdateColor(unit, cur, max, displayType)
+	--[[ Override: Health:UpdateColor(unit, cur, max)
 	Used to completely override the internal function for updating the widgets' colors.
 
-	* self        - the Health element
-	* unit        - the event unit that the update has been triggered for
-	* cur         - the unit's current power value
-	* min         - the unit's minimum possible power value
+	* self - the Health element
+	* unit - the event unit that the update has been triggered for
+	* cur  - the unit's current health value
+	* max  - the unit's maximum possible health value
 	--]]
 	element:UpdateColor(unit, cur, max)
 
@@ -148,8 +148,8 @@ local function Update(self, event, unit)
 
 	* self - the Health element
 	* unit - the event unit that the update has been triggered for
-	* cur  - the current health value of the unit
-	* max  - the maximum possible value of the unit
+	* cur  - the unit's current health value
+	* max  - the unit's maximum possible health value
 	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(unit, cur, max)
