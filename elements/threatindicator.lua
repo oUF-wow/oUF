@@ -12,6 +12,11 @@ The element works by changing the texture's vertex color.
 
 A default texture will be applied if the widget is a Texture and doesn't have a texture or a color set.
 
+## Options
+
+.feedbackUnit - The unit whose threat situation is being requested. If defined, it'll be passed as the first argument to
+                [GetThreatStatusColor](http://wowprogramming.com/docs/api/UnitThreatSituation).
+
 ## Examples
 
     -- Position and size
@@ -39,7 +44,13 @@ local function Update(self, event, unit)
 	if(element.PreUpdate) then element:PreUpdate(unit) end
 
 	unit = unit or self.unit
-	local status = UnitThreatSituation(unit)
+
+	local status
+	if element.feedbackUnit and element.feedbackUnit ~= unit then
+		status = UnitThreatSituation(element.feedbackUnit, unit)
+	else
+		status = UnitThreatSituation(unit)
+	end
 
 	local r, g, b
 	if(status and status > 0) then
