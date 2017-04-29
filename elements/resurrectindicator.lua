@@ -1,11 +1,11 @@
 --[[
 # Element: Resurrect Indicator
 
-Handles visibility and updating of an indicator based on the unit's incoming resurrect status.
+Handles the visibility and updating of an indicator based on the unit's incoming resurrect status.
 
 ## Widget
 
-ResurrectIndicator - A Texture used to display if the unit has an incoming resurrect.
+ResurrectIndicator - A `Texture` used to display if the unit has an incoming resurrect.
 
 ## Notes
 
@@ -48,7 +48,7 @@ local function Update(self, event)
 	Called after the element has been updated.
 
 	* self              - the ResurrectIndicator element
-	* incomingResurrect - a Boolean indicating if the unit has an incoming resurrection
+	* incomingResurrect - indicates if the unit has an incoming resurrection (boolean)
 	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(incomingResurrect)
@@ -56,12 +56,12 @@ local function Update(self, event)
 end
 
 local function Path(self, ...)
-	--[[ Override: ResurrectIndicator:Override(event, unit)
+	--[[ Override: ResurrectIndicator:Override(event, ...)
 	Used to completely override the internal update function.
 
 	* self  - the ResurrectIndicator element
-	* event - the event triggering the update
-	* unit  - the unit accompanying the event
+	* event - the event triggering the update (string)
+	* ...   - the arguments accompanying the event
 	--]]
 	return (self.ResurrectIndicator.Override or Update) (self, ...)
 end
