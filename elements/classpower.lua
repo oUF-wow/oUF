@@ -150,7 +150,7 @@ local function Path(self, ...)
 	--[[ Override: ClassPower:Override(event, unit, ...)
 	Used to completely override the internal update function.
 
-	* self  - the ClassPower element
+	* self  - the parent object
 	* event - the event triggering the update (string)
 	* unit  - the unit accompanying the event (string)
 	* ...   - the arguments accompanying the event
