@@ -83,7 +83,7 @@ local function Path(self, ...)
 	--[[ Override: Portrait:Override(event, unit)
 	Used to completely override the internal update function.
 
-	* self  - the Portrait element
+	* self  - the parent object
 	* event - the event triggering the update
 	* unit  - the unit accompanying the event
 	--]]
