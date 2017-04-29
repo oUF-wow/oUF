@@ -54,7 +54,6 @@ local function Update(self, event, unit)
 	end
 
 	local status
-	local hasPrestige
 	local prestigeLevel = UnitPrestige(unit)
 	local factionGroup = UnitFactionGroup(unit)
 
@@ -63,8 +62,6 @@ local function Update(self, event, unit)
 			element:SetTexture(GetPrestigeInfo(prestigeLevel))
 			element:SetTexCoord(0, 1, 0, 1)
 			element.Prestige:SetAtlas('honorsystem-portrait-neutral', false)
-
-			hasPrestige = true
 		else
 			element:SetTexture(FFA_ICON)
 			element:SetTexCoord(0, 0.65625, 0, 0.65625)
@@ -84,8 +81,6 @@ local function Update(self, event, unit)
 			element:SetTexture(GetPrestigeInfo(prestigeLevel))
 			element:SetTexCoord(0, 1, 0, 1)
 			element.Prestige:SetAtlas('honorsystem-portrait-' .. factionGroup, false)
-
-			hasPrestige = true
 		else
 			element:SetTexture(FACTION_ICON .. factionGroup)
 			element:SetTexCoord(0, 0.65625, 0, 0.65625)
@@ -98,7 +93,7 @@ local function Update(self, event, unit)
 		element:Show()
 
 		if(element.Prestige) then
-			if(hasPrestige) then
+			if(prestigeLevel > 0) then
 				element.Prestige:Show()
 			else
 				element.Prestige:Hide()
@@ -112,18 +107,17 @@ local function Update(self, event, unit)
 		end
 	end
 
-	--[[ Callback: PvPIndicator:PostUpdate(unit, status, hasPrestige, prestigeLevel)
+	--[[ Callback: PvPIndicator:PostUpdate(unit, status, prestigeLevel)
 	Called after the element has been updated.
 
 	* self          - the PvPIndicator element
 	* unit          - the unit for which the update has been triggered (string)
 	* status        - the unit's current PvP status or faction accounting for mercenary mode (string)['ffa', 'Alliance',
 	                  'Horde']
-	* hasPrestige   - indicates if the unit has a prestige rank higher than 0 (boolean)
 	* prestigeLevel - the unit's current prestige rank (number)
 	--]]
 	if(element.PostUpdate) then
-		return element:PostUpdate(unit, status, hasPrestige, prestigeLevel)
+		return element:PostUpdate(unit, status, prestigeLevel)
 	end
 end
 
