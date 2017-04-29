@@ -1,7 +1,7 @@
 --[[
 # Element: Leader Indicator
 
-Toggles visibility of an indicator based on the units leader status.
+Toggles the visibility of an indicator based on the unit's leader status.
 
 ## Widget
 
@@ -31,7 +31,7 @@ local function Update(self, event)
 	--[[ Callback: LeaderIndicator:PreUpdate()
 	Called before the element has been updated.
 
-	* self - the HealthPrediction element
+	* self - the LeaderIndicator element
 	--]]
 	if(element.PreUpdate) then
 		element:PreUpdate()
@@ -49,7 +49,7 @@ local function Update(self, event)
 	Called after the element has been updated.
 
 	* self     - the LeaderIndicator element
-	* isLeader - a Boolean indicating whether the element is shown or not
+	* isLeader - indicates whether the element is shown (boolean)
 	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(isLeader)
@@ -61,7 +61,7 @@ local function Path(self, ...)
 	Used to completely override the internal update function.
 
 	* self  - the LeaderIndicator element
-	* event - the event triggering the update
+	* event - the event triggering the update (string)
 	* ...   - the arguments accompanying the event
 	--]]
 	return (self.LeaderIndicator.Override or Update) (self, ...)
