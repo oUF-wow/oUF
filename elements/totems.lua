@@ -111,7 +111,7 @@ local function Path(self, ...)
 	--[[ Override: Totem:Override(event, ...)
 	Used to completely override the internal update function.
 
-	* self  - the Totems element
+	* self  - the parent object
 	* event - the event triggering the update
 	* ...   - the arguments accompanying the event
 	--]]
