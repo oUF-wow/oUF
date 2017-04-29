@@ -33,7 +33,63 @@ local OnRangeFrame
 
 local UnitInRange, UnitIsConnected = UnitInRange, UnitIsConnected
 
--- updating of range.
+local function Update(self, event)
+	local element = self.Range
+	local unit = self.unit
+
+	--[[ Callback: Range:PreUpdate()
+	Called before the element has been updated.
+
+	* self - the Range element
+	--]]
+	if(element.PreUpdate) then
+		element:PreUpdate()
+	end
+
+	local inRange, checkedRange
+	local connected = UnitIsConnected(unit)
+	if(connected) then
+		inRange, checkedRange = UnitInRange(unit)
+		if(checkedRange and not inRange) then
+			self:SetAlpha(element.outsideAlpha)
+		else
+			self:SetAlpha(element.insideAlpha)
+		end
+	else
+		self:SetAlpha(element.insideAlpha)
+	end
+
+	--[[ Callback: Range:PostUpdate(object, inRange, checkedRange, isConnected)
+	Called after the element has been updated.
+
+	* self         - the Range element.
+	* object       - the parent object.
+	* inRange      - unit was within 40 yards of the player (boolean).
+	* checkedRange - range check was actually performed (boolean).
+	* isConnected  - unit is online or not (boolean).
+	--]]
+	if(element.PostUpdate) then
+		return element:PostUpdate(self, inRange, checkedRange, connected)
+	end
+end
+
+local function Path(self, ...)
+	--[[ Override: Range:Override(event)
+	Used to completely override the internal update function.
+
+	* self  - the parent object.
+	* event - the event triggering the update (string).
+	--]]
+	return (self.Range.Override or Update) (self, ...)
+end
+
+
+local function ForceUpdate(element)
+	if(not element.__owner.unit) then return end
+	return Path(element.__owner, 'ForceUpdate')
+end
+
+-- Internal updating method
 local timer = 0
 local function OnRangeUpdate(self, elapsed)
 	timer = timer + elapsed
@@ -41,35 +97,7 @@ local function OnRangeUpdate(self, elapsed)
 	if(timer >= .20) then
 		for _, object in next, _FRAMES do
 			if(object:IsShown()) then
-				local element = object.Range
-				if(UnitIsConnected(object.unit)) then
-					local inRange, checkedRange = UnitInRange(object.unit)
-					if(checkedRange and not inRange) then
-						--[[ Override: Range:Override(status)
-						Used to override the calls to :SetAlpha().
-
-						* self   - the unit frame holding the Range element
-						* status - the unit's range status (string)['inside', 'outside', 'offline']
-						--]]
-						if(element.Override) then
-							element.Override(object, 'outside')
-						else
-							object:SetAlpha(element.outsideAlpha)
-						end
-					else
-						if(element.Override) then
-							element.Override(object, 'inside')
-						elseif(object:GetAlpha() ~= element.insideAlpha) then
-							object:SetAlpha(element.insideAlpha)
-						end
-					end
-				else
-					if(element.Override) then
-						element.Override(object, 'offline')
-					elseif(object:GetAlpha() ~= element.insideAlpha) then
-						object:SetAlpha(element.insideAlpha)
-					end
-				end
+				Path(self, 'OnUpdate')
 			end
 		end
 
@@ -80,15 +108,16 @@ end
 local function Enable(self)
 	local element = self.Range
 	if(element) then
+		element.__owner = self
 		element.insideAlpha = element.insideAlpha or 1
 		element.outsideAlpha = element.outsideAlpha or 0.55
-		table.insert(_FRAMES, self)
 
 		if(not OnRangeFrame) then
 			OnRangeFrame = CreateFrame('Frame')
 			OnRangeFrame:SetScript('OnUpdate', OnRangeUpdate)
 		end
 
+		table.insert(_FRAMES, self)
 		OnRangeFrame:Show()
 
 		return true
