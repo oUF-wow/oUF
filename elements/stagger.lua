@@ -112,7 +112,7 @@ local function Update(self, event, unit)
 end
 
 local function Path(self, ...)
-	--[[ Override: Stagger:Override(event, unit)
+	--[[ Override: Stagger.Override(self, event, unit)
 	Used to completely override the internal update function.
 
 	* self  - the parent object
