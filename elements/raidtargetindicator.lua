@@ -1,15 +1,15 @@
 --[[
 # Element: Raid Target Indicator
 
-Handles visibility and updating of an indicator based on the unit's raid target assignation.
+Handles the visibility and updating of an indicator based on the unit's raid target assignment.
 
 ## Widget
 
-RaidTargetIndicator - A Texture used to display the raid target icon.
+RaidTargetIndicator - A `Texture` used to display the raid target icon.
 
 ## Notes
 
-Default textures will be applied if the widget is a Texture and doesn't have a texture set.
+A default texture will be applied if the widget is a Texture and doesn't have a texture set.
 
 ## Examples
 
@@ -34,7 +34,7 @@ local function Update(self, event)
 	--[[ Callback: RaidTargetIndicator:PreUpdate()
 	Called before the element has been updated.
 
-	* self - the PowerPrediction element
+	* self - the RaidTargetIndicator element
 	--]]
 	if(element.PreUpdate) then
 		element:PreUpdate()
@@ -52,7 +52,7 @@ local function Update(self, event)
 	Called after the element has been updated.
 
 	* self  - the RaidTargetIndicator element
-	* index - a Number representing the index of the raid target marker
+	* index - the index of the raid target marker (number?)[1-8]
 	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(index)
@@ -64,7 +64,7 @@ local function Path(self, ...)
 	Used to completely override the internal update function.
 
 	* self  - the RaidTargetIndicator element
-	* event - the event triggering the update
+	* event - the event triggering the update (string)
 	--]]
 	return (self.RaidTargetIndicator.Override or Update) (self, ...)
 end
