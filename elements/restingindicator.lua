@@ -56,7 +56,7 @@ local function Update(self, event)
 end
 
 local function Path(self, ...)
-	--[[ Override: RestingIndicator:Override(event)
+	--[[ Override: RestingIndicator.Override(self, event)
 	Used to completely override the internal update function.
 
 	* self  - the parent object
