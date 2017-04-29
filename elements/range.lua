@@ -13,8 +13,8 @@ Offline units are handled as if they are in range.
 
 ## Options
 
-.outsideAlpha - Opacity when the unit is out of range (number)[0-1].
-.insideAlpha  - Opacity when the unit is within range (number)[0-1].
+.outsideAlpha - Opacity when the unit is out of range. Defaults to 0.55 (number)[0-1].
+.insideAlpha  - Opacity when the unit is within range. Defaults to 1 (number)[0-1].
 
 ## Examples
 
@@ -79,7 +79,9 @@ end
 
 local function Enable(self)
 	local element = self.Range
-	if(element and element.insideAlpha and element.outsideAlpha) then
+	if(element) then
+		element.insideAlpha = element.insideAlpha or 1
+		element.outsideAlpha = element.outsideAlpha or 0.55
 		table.insert(_FRAMES, self)
 
 		if(not OnRangeFrame) then
