@@ -1,7 +1,7 @@
 --[[
 # Element: Phasing Indicator
 
-Toggles visibility of an indicator based on the units phasing compared to the player.
+Toggles the visibility of an indicator based on the unit's phasing relative to the player.
 
 ## Widget
 
@@ -37,21 +37,21 @@ local function Update(self, event)
 		element:PreUpdate()
 	end
 
-	local inPhase = UnitInPhase(self.unit)
-	if(inPhase) then
+	local isInSamePhase = UnitInPhase(self.unit)
+	if(isInSamePhase) then
 		element:Hide()
 	else
 		element:Show()
 	end
 
-	--[[ Callback: PhaseIndicator:PostUpdate(inPhase)
+	--[[ Callback: PhaseIndicator:PostUpdate(isInSamePhase)
 	Called after the element has been updated.
 
-	* self    - the PhaseIndicator element
-	* inPhase - a Boolean indicating whether the element is shown
+	* self          - the PhaseIndicator element
+	* isInSamePhase - indicates whether the element is hidden (boolean)
 	--]]
 	if(element.PostUpdate) then
-		return element:PostUpdate(inPhase)
+		return element:PostUpdate(isInSamePhase)
 	end
 end
 
@@ -60,7 +60,7 @@ local function Path(self, ...)
 	Used to completely override the internal update function.
 
 	* self  - the PhaseIndicator element
-	* event - the event triggering the update
+	* event - the event triggering the update (string)
 	* ...   - the arguments accompanying the event
 	--]]
 	return (self.PhaseIndicator.Override or Update) (self, ...)
