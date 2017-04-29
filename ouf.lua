@@ -575,7 +575,7 @@ do
 	* overrideName - unique global name to be used for the header. Defaults to an auto-generated name based on the name
 	                 of the active style and other arguments passed to `:SpawnHeader`
 	* template     - name of a template to be used for creating the header. Defaults to `'SecureGroupHeaderTemplate'`
-	* visibility   - macro conditional(s) which define when to display the header (list of string pairs).
+	* visibility   - macro conditional(s) which define when to display the header (string).
 	* ...          - further argument pairs. Consult [Group Headers](http://wowprogramming.com/docs/secure_template/Group_Headers)
 	                 for possible values -- TODO: oUF-initialConfigFunction, oUF-headerType, oUF-onlyProcessChildren,
 	                 oUF-guessUnit
