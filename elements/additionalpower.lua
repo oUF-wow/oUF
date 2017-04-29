@@ -111,7 +111,7 @@ local function Update(self, event, unit, powertype)
 end
 
 local function Path(self, ...)
-	--[[ Override: AdditionalPower:Override(event, unit, ...)
+	--[[ Override: AdditionalPower.Override(self, event, unit, ...)
 	Used to completely override the element's update process.
 
 	* self  - the parent object
