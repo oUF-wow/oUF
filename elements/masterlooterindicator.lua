@@ -41,6 +41,7 @@ local function Update(self, event)
 		element:PreUpdate()
 	end
 
+	local isShown = false
 	local method, partyIndex, raidIndex = GetLootMethod()
 	if(method == 'master') then
 		local mlUnit
@@ -56,7 +57,8 @@ local function Update(self, event)
 
 		if(UnitIsUnit(unit, mlUnit)) then
 			element:Show()
-		elseif(element:IsShown()) then
+			isShown = true
+		else
 			element:Hide()
 		end
 	else
@@ -70,7 +72,7 @@ local function Update(self, event)
 	* isShown - indicates whether the element is shown (boolean)
 	--]]
 	if(element.PostUpdate) then
-		return element:PostUpdate(element:IsShown())
+		return element:PostUpdate(isShown)
 	end
 end
 
