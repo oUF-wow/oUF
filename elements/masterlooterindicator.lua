@@ -1,7 +1,7 @@
 --[[
 # Element: Master Looter Indicator
 
-Toggles visibility of an indicator based on the units master looter status.
+Toggles the visibility of an indicator based on the unit's master looter status.
 
 ## Widget
 
@@ -66,8 +66,8 @@ local function Update(self, event)
 	--[[ Callback: MasterLooterIndicator:PostUpdate(isShown)
 	Called after the element has been updated.
 
-	* self - the MasterLooterIndicator element
-	* isShown - a Boolean indicating whether the element is shown
+	* self    - the MasterLooterIndicator element
+	* isShown - indicates whether the element is shown (boolean)
 	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(element:IsShown())
@@ -79,7 +79,7 @@ local function Path(self, ...)
 	Used to completely override the internal update function.
 
 	* self  - the MasterLooterIndicator element
-	* event - the event triggering the update
+	* event - the event triggering the update (string)
 	* ...   - the arguments accompanying the event
 	--]]
 	return (self.MasterLooterIndicator.Override or Update) (self, ...)
