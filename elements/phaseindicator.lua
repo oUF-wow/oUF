@@ -59,7 +59,7 @@ local function Path(self, ...)
 	--[[ Override: PhaseIndicator:Override(event, ...)
 	Used to completely override the internal update function.
 
-	* self  - the PhaseIndicator element
+	* self  - the parent object
 	* event - the event triggering the update (string)
 	* ...   - the arguments accompanying the event
 	--]]
