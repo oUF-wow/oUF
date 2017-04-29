@@ -122,7 +122,7 @@ local function Update(self, event, unit)
 end
 
 local function Path(self, ...)
-	--[[Override: PvPIndicator:Override(event, ...)
+	--[[Override: PvPIndicator.Override(self, event, ...)
 	Used to completely override the internal update function.
 
 	* self  - the parent object
