@@ -1,7 +1,7 @@
 --[[
 # Element: Resting Indicator
 
-Toggles visibility of an indicator based on the player's resting status.
+Toggles the visibility of an indicator based on the player's resting status.
 
 ## Widget
 
@@ -48,7 +48,7 @@ local function Update(self, event)
 	Called after the element has been updated.
 
 	* self      - the RestingIndicator element
-	* isResting - a Boolean indicating if the player is resting
+	* isResting - indicates if the player is resting (boolean)
 	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(isResting)
@@ -60,7 +60,7 @@ local function Path(self, ...)
 	Used to completely override the internal update function.
 
 	* self  - the RestingIndicator element
-	* event - the event triggering the update
+	* event - the event triggering the update (string)
 	--]]
 	return (self.RestingIndicator.Override or Update) (self, ...)
 end
