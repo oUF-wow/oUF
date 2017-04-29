@@ -108,7 +108,7 @@ local function UpdateTotem(self, event, slot)
 end
 
 local function Path(self, ...)
-	--[[ Override: Totem:Override(event, ...)
+	--[[ Override: Totem.Override(self, event, ...)
 	Used to completely override the internal update function.
 
 	* self  - the parent object
