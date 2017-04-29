@@ -121,7 +121,7 @@ local function Update(self, event, unit)
 end
 
 local function Path(self, ...)
-	--[[ Override: PowerPrediction:Override(event, unit, ...)
+	--[[ Override: PowerPrediction.Override(self, event, unit, ...)
 	Used to completely override the internal update function.
 
 	* self  - the parent object
