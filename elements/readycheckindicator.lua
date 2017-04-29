@@ -1,24 +1,29 @@
 --[[
 # Element: Ready Check Indicator
 
-Handles visibility and updating of an indicator based on the unit's ready check status.
+Handles the visibility and updating of an indicator based on the unit's ready check status.
 
 ## Widget
 
-ReadyCheckIndicator - A Texture representing ready check status.
+ReadyCheckIndicator - A `Texture` representing ready check status.
 
 ## Notes
 
 This element updates by changing the texture.
+Default textures will be applied if the layout does not provide custom ones. See Options.
 
 ## Options
 
-.finishedTime    - The number of seconds the icon should stick after a check has completed. Defaults to 10 seconds.
-.fadeTime        - The number of seconds the icon should use to fade away after the stick duration has completed.
-                   Defaults to 1.5 seconds.
-.readyTexture    - Path to alternate texture for the ready check 'ready' status.
-.notReadyTexture - Path to alternate texture for the ready check 'notready' status.
-.waitingTexture  - Path to alternate texture for the ready check 'waiting' status.
+.finishedTime    - For how many seconds the icon should stick after a check has completed. Defaults to 10 (number).
+.fadeTime        - For how many seconds the icon should fade away after the stick duration has completed. Defaults to
+                   1.5 (number).
+.readyTexture    - Path to an alternate texture for the ready check 'ready' status.
+.notReadyTexture - Path to an alternate texture for the ready check 'notready' status.
+.waitingTexture  - Path to an alternate texture for the ready check 'waiting' status.
+
+## Attributes
+
+.status - the unit's ready check status (string?)['ready', 'noready', 'waiting']
 
 ## Examples
 
@@ -90,7 +95,7 @@ local function Update(self, event)
 	Called after the element has been updated.
 
 	* self   - the ReadyCheckIndicator element
-	* status - a String representing the unit's ready check status ('ready', 'notready', 'waiting' or nil)
+	* status - the unit's ready check status (string?)['ready', 'notready', 'waiting']
 	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(status)
@@ -102,7 +107,7 @@ local function Path(self, ...)
 	Used to completely override the internal update function.
 
 	* self  - the ReadyCheckIndicator element
-	* event - the event triggering the update
+	* event - the event triggering the update (string)
 	* ...   - the arguments accompanying the event
 	--]]
 	return (self.ReadyCheckIndicator.Override or Update) (self, ...)
