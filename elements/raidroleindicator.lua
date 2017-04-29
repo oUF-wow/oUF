@@ -1,11 +1,11 @@
 --[[
 # Element: Raid Role Indicator
 
-Handles visibility and updating of an indicator based on the unit's party assignment.
+Handles the visibility and updating of an indicator based on the unit's raid assignment (main tank or main assist).
 
 ## Widget
 
-RaidRoleIndicator - A Texture representing the unit's party assignment (main tank, main assist or blank).
+RaidRoleIndicator - A `Texture` representing the unit's raid assignment.
 
 ## Notes
 
@@ -61,7 +61,7 @@ local function Update(self, event)
 	Called after the element has been updated.
 
 	* self - the RaidRoleIndicator element
-	* role - a String representing the unit's party assignment ('MAINTANK', 'MAINASSIST' or nil)
+	* role - the unit's raid assignment (string?)['MAINTANK', 'MAINASSIST']
 	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(role)
@@ -73,7 +73,7 @@ local function Path(self, ...)
 	Used to completely override the internal update function.
 
 	* self  - the RaidRoleIndicator element
-	* event - the event triggering the update
+	* event - the event triggering the update (string)
 	* ...   - the arguments accompanying the event
 	--]]
 	return (self.RaidRoleIndicator.Override or Update)(self, ...)
