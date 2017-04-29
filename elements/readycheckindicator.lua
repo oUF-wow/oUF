@@ -69,11 +69,11 @@ local function Update(self, event)
 	local status = GetReadyCheckStatus(unit)
 	if(UnitExists(unit) and status) then
 		if(status == 'ready') then
-			element:SetTexture(element.readyTexture or READY_CHECK_READY_TEXTURE)
+			element:SetTexture(element.readyTexture)
 		elseif(status == 'notready') then
-			element:SetTexture(element.notReadyTexture or READY_CHECK_NOT_READY_TEXTURE)
+			element:SetTexture(element.notReadyTexture)
 		else
-			element:SetTexture(element.waitingTexture or READY_CHECK_WAITING_TEXTURE)
+			element:SetTexture(element.waitingTexture)
 		end
 
 		element.status = status
@@ -85,7 +85,7 @@ local function Update(self, event)
 
 	if(event == 'READY_CHECK_FINISHED') then
 		if(element.status == 'waiting') then
-			element:SetTexture(element.notReadyTexture or READY_CHECK_NOT_READY_TEXTURE)
+			element:SetTexture(element.notReadyTexture)
 		end
 
 		element.Animation:Play()
@@ -122,6 +122,10 @@ local function Enable(self, unit)
 	if(element and (unit and (unit:sub(1, 5) == 'party' or unit:sub(1,4) == 'raid'))) then
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
+
+		element.readyTexture = element.readyTexture or READY_CHECK_READY_TEXTURE
+		element.notReadyTexture = element.notReadyTexture or READY_CHECK_NOT_READY_TEXTURE
+		element.waitingTexture = element.waitingTexture or READY_CHECK_WAITING_TEXTURE
 
 		local AnimationGroup = element:CreateAnimationGroup()
 		AnimationGroup:HookScript('OnFinished', OnFinished)
