@@ -1,14 +1,20 @@
 --[[
 # Element: Range Fader
 
+Changes the opacity of a unit frame based on whether the frame's unit is in the player's range.
+
 ## Widget
 
 Range - A table containing opacity values.
 
+## Notes
+
+Offline units are handled as if they are in range.
+
 ## Options
 
-.outsideAlpha - Opacity when the unit is out of range. Values 0 (fully transparent) - 1 (fully opaque).
-.insideAlpha  - Opacity when the unit is within range. Values 0 (fully transparent) - 1 (fully opaque).
+.outsideAlpha - Opacity when the unit is out of range (number)[0-1].
+.insideAlpha  - Opacity when the unit is within range (number)[0-1].
 
 ## Examples
 
@@ -43,7 +49,7 @@ local function OnRangeUpdate(self, elapsed)
 						Used to override the calls to :SetAlpha().
 
 						* self   - the unit frame holding the Range element
-						* status - a String representing the unit's range status ('inside', 'outside' or 'offline')
+						* status - the unit's range status (string)['inside', 'outside', 'offline']
 						--]]
 						if(element.Override) then
 							element.Override(object, 'outside')
