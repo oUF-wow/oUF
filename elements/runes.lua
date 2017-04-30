@@ -1,24 +1,23 @@
 --[[
 # Element: Runes
 
-Handles visibility and updating of Death Knight's runes.
+Handles the visibility and updating of Death Knight's runes.
 
 ## Widget
 
-Runes - An array holding StatusBar's.
+Runes - An `table` holding `StatusBar`s.
 
 ## Sub-Widgets
 
-.bg - A Texture which functions as a background. It will inherit the color of the main StatusBar.
+.bg - A `Texture` used as a background. It will inherit the color of the main StatusBar.
 
 ## Notes
 
-A default texture will be applied if the sub-widgets are StatusBars and doesn't have a texture or color set.
+A default texture will be applied if the sub-widgets are StatusBars and don't have a texture set.
 
 ## Sub-Widgets Options
 
-.multiplier - A Number used to tint the background based on the main widgets R, G and B values.
-              Defaults to 1 if not present.
+.multiplier - Used to tint the background based on the main widgets R, G and B values. Defaults to 1 (number)[0-1]
 
 ## Examples
 
@@ -77,11 +76,11 @@ local function Update(self, event, runeID, energized)
 	Called after the element has been updated.
 
 	* self     - the Runes element
-	* rune     - the StatusBar representing the updated rune
-	* runeID   - the index of the updated rune
-	* start    - the value of `GetTime()` when the rune cooldown started (0 for ready or energized runes)
-	* duration - the duration of the rune's cooldown
-	* isReady  - a Boolean indicating if the rune is ready for use
+	* rune     - the updated rune (StatusBar)
+	* runeID   - the index of the updated rune (number)
+	* start    - the value of `GetTime()` when the rune cooldown started (0 for ready or energized runes) (number)
+	* duration - the duration of the rune's cooldown (number)
+	* isReady  - indicates if the rune is ready for use (Boolean)
 	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(rune, runeID, energized and 0 or start, duration, energized or runeReady)
@@ -94,7 +93,7 @@ local function Path(self, event, ...)
 	Used to completely override the internal update function.
 
 	* self  - the parent object
-	* event - the event triggering the update
+	* event - the event triggering the update (string)
 	* ...   - the arguments accompanying the event
 	--]]
 	local UpdateMethod = element.Override or Update
