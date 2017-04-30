@@ -1,31 +1,32 @@
 --[[
 # Element: Health Prediction Bars
 
-Handle updating and visibility of the heal prediction status bars.
+Handles the visibility and updating of incoming heals and heal/damage absorbs.
 
 ## Widget
 
-HealthPrediction - A table containing references to sub-widgets and options.
+HealthPrediction - A `table` containing references to sub-widgets and options.
 
 ## Sub-Widgets
 
-myBar          - A StatusBar used to represent your incoming heals.
-otherBar       - A StatusBar used to represent other peoples incoming heals.
-absorbBar      - A StatusBar used to represent total absorbs.
-healAbsorbBar  - A StatusBar used to represent heal absorbs.
-overAbsorb     - A Texture used to signify that the amount of damage absorb is greater than the unit's missing health.
-overHealAbsorb - A Texture used to signify that the amount of heal absorb is greater than the unit's current health.
+myBar          - A `StatusBar` used to represent incoming heals from the player.
+otherBar       - A `StatusBar` used to represent incoming heals from others.
+absorbBar      - A `StatusBar` used to represent damage absorbs.
+healAbsorbBar  - A `StatusBar` used to represent heal absorbs.
+overAbsorb     - A `Texture` used to signify that the amount of damage absorb is greater than the unit's missing health.
+overHealAbsorb - A `Texture` used to signify that the amount of heal absorb is greater than the unit's current health.
 
 ## Notes
 
-A default texture will be applied if the widget is a StatusBar and doesn't have a texture or color set.
+A default texture will be applied to the StatusBar widgets if they don't have a texture set.
+A default texture will be applied to the Texture widgets if they don't have a texture or a color set.
 
 ## Options
 
-.maxOverflow     - Defines the maximum amount of overflow past the end of the health bar. Set this to 1 to disable the
-                   overflow. Defaults to 1.05.
-.frequentUpdates - Update on UNIT_HEALTH_FREQUENT instead of UNIT_HEALTH. Use this if .frequentUpdates is also set on
-                   the Health element.
+.maxOverflow     - The maximum amount of overflow past the end of the health bar. Set this to 1 to disable the overflow.
+                   Defaults to 1.05 (number)
+.frequentUpdates - Indicates whether to use UNIT_HEALTH_FREQUENT instead of UNIT_HEALTH. Use this if .frequentUpdates is
+                   also set on the Health element (boolean)
 
 ## Examples
 
@@ -93,7 +94,7 @@ local function Update(self, event, unit)
 	Called before the element has been updated.
 
 	* self - the HealthPrediction element
-	* unit - the event unit that the update has been triggered for
+	* unit - the unit for which the update has been triggered (string)
 	--]]
 	if(element.PreUpdate) then element:PreUpdate(unit) end
 
@@ -182,15 +183,15 @@ local function Update(self, event, unit)
 		end
 	end
 
-	--[[ Callback: HealthPrediction:PostUpdate(unit, overAbsorb, overHealAbsorb)
+	--[[ Callback: HealthPrediction:PostUpdate(unit, overAbsorb, overHealAbsorb, overHealAmount)
 	Called after the element has been updated.
 
 	* self           - the HealthPrediction element
-	* unit           - the event unit that the updated has been triggered for
-	* overAbsorb     - a Boolean indicating if the amount of damage absorb is higher than the unit's missing health
-	* overHealAbsorb - a Boolean indicating if the amount of heal absorb is bigger than the unit's current health
-	* overHealAmount - a Number representing the amount of overheal after the widget's .maxOverflow option and
-	                   healabsorb effect have been taken into account
+	* unit           - the unit for which the update has been triggered (string)
+	* overAbsorb     - indicates if the amount of damage absorb is higher than the unit's missing health (boolean)
+	* overHealAbsorb - indicates if the amount of heal absorb is higher than the unit's current health (boolean)
+	* overHealAmount - the amount of overheal after the widget's .maxOverflow option and healabsorb effect have been
+	                   taken into account (number)
 	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(unit, overAbsorb, overHealAbsorb, overHealAmount)
@@ -202,7 +203,7 @@ local function Path(self, ...)
 	Used to completely override the internal update function.
 
 	* self  - the parent object
-	* event - the event triggering the update
+	* event - the event triggering the update (string)
 	* unit  - the unit accompanying the event
 	--]]
 	return (self.HealthPrediction.Override or Update) (self, ...)
