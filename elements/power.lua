@@ -1,53 +1,62 @@
 --[[
 # Element: Power Bar
 
-Handles updating of a status bar that displays the units power.
+Handles the updating of a status bar that displays the unit's power.
 
 ## Widget
 
-Power - A StatusBar used to represent unit power.
+Power - A `StatusBar` used to represent the unit's power.
 
 ## Sub-Widgets
 
-.bg - A Texture which functions as a background. It will inherit the color of the main StatusBar.
+.bg - A `Texture` used as a background. It will inherit the color of the main StatusBar.
 
 ## Notes
 
-A default texture will be applied if the widget is a StatusBar and doesn't have a texture or color set.
+A default texture will be applied if the widget is a StatusBar and doesn't have a texture or a color set.
 
 ## Options
 
+.frequentUpdates - Indicates whether to use UNIT_POWER_FREQUENT instead UNIT_POWER to update the bar. Only valid for the
+                   player and pet units (boolean)
 .displayAltPower - Use this to let the widget display alternate power if the unit has one. If no alternate power the
-                   display will fall back to primary power.
+                   display will fall back to primary power (boolean)
 .useAtlas        - Use this to let the widget use an atlas for its texture if `.atlas` is defined on the widget or an
-                   atlas is present in `self.colors.power` for the appropriate power type.
-.atlas           - A custom atlas
+                   atlas is present in `self.colors.power` for the appropriate power type (boolean)
+.atlas           - A custom atlas (string)
+.smoothGradient  - 9 color values to be used with the .colorSmooth option (table)
 
 The following options are listed by priority. The first check that returns true decides the color of the bar.
 
-.colorTapping      - Use `self.colors.tapping` to color the bar if the unit isn't tapped by the player.
-.colorDisconnected - Use `self.colors.disconnected` to color the bar if the unit is offline.
-.altPowerColor     - A table containing the RGB values to use for a fixed color if the alt power bar is being displayed
-                     instead.
+.colorTapping      - Use `self.colors.tapping` to color the bar if the unit isn't tapped by the player (boolean)
+.colorDisconnected - Use `self.colors.disconnected` to color the bar if the unit is offline (boolean)
+.altPowerColor     - The RGB values to use for a fixed color if the alt power bar is being displayed instead of primary
+                     power bar (table)
 .colorPower        - Use `self.colors.power[token]` to color the bar based on the unit's power type. This method will
                      fall-back to `:GetAlternativeColor()` if it can't find a color matching the token. If this function
                      isn't defined, then it will attempt to color based upon the alternative power colors returned by
                      [UnitPowerType](http://wowprogramming.com/docs/api/UnitPowerType). Finally, if these aren't
-                     defined, then it will attempt to color the bar based upon `self.colors.power[type]`.
+                     defined, then it will attempt to color the bar based upon `self.colors.power[type]` (boolean)
 .colorClass        - Use `self.colors.class[class]` to color the bar based on unit class. `class` is defined by the
-                     second return of [UnitClass](http://wowprogramming.com/docs/api/UnitClass).
-.colorClassNPC     - Use `self.colors.class[class]` to color the bar if the unit is a NPC.
-.colorClassPet     - Use `self.colors.class[class]` to color the bar if the unit is player controlled, but not a player.
+                     second return of [UnitClass](http://wowprogramming.com/docs/api/UnitClass) (boolean)
+.colorClassNPC     - Use `self.colors.class[class]` to color the bar if the unit is a NPC (boolean)
+.colorClassPet     - Use `self.colors.class[class]` to color the bar if the unit is player controlled, but not a player
+                     (boolean)
 .colorReaction     - Use `self.colors.reaction[reaction]` to color the bar based on the player's reaction towards the
                      unit. `reaction` is defined by the return value of
-                     [UnitReaction](http://wowprogramming.com/docs/api/UnitReaction).
-.colorSmooth       - Use `self.colors.smooth` to color the bar with a smooth gradient based on the player's current
-                     health percentage.
+                     [UnitReaction](http://wowprogramming.com/docs/api/UnitReaction) (boolean)
+.colorSmooth       - Use `smoothGradient` if present or `self.colors.smooth` to color the bar with a smooth gradient
+                     based on the player's current power percentage (boolean)
 
 ## Sub-Widget Options
 
-.multiplier - Defines a multiplier, which is used to tint the background based on the main widgets R, G and B values.
-              Defaults to 1 if not present.
+.multiplier - A multiplier used to tint the background based on the main widgets R, G and B values. Defaults to 1
+              (number)[0-1]
+
+## Attributes
+
+.disconnected - Indicates whether the unit is disconnected (boolean)
+.tapped       - Indicates whether the unit is tapped by the player (boolean)
 
 ## Examples
 
@@ -173,9 +182,11 @@ local function Update(self, event, unit)
 	Called before the element has been updated.
 
 	* self - the Power element
-	* unit - the event unit that the update has been triggered for
+	* unit - the unit for which the update has been triggered (string)
 	--]]
-	if(element.PreUpdate) then element:PreUpdate(unit) end
+	if(element.PreUpdate) then
+		element:PreUpdate(unit)
+	end
 
 	local displayType, min
 	if(element.displayAltPower) then
@@ -197,25 +208,25 @@ local function Update(self, event, unit)
 	element.tapped = tapped
 
 	--[[ Override: Power:UpdateColor(unit, cur, min, max, displayType)
-	Used to completely override the internal function for updating the widgets' colors.
+	Used to completely override the internal function for updating the widget's colors.
 
 	* self        - the Power element
-	* unit        - the event unit that the update has been triggered for
-	* cur         - the unit's current power value
-	* min         - the unit's minimum possible power value
-	* max         - the unit's maximum possible power value
-	* displayType - the alternative power display type, if any
+	* unit        - the unit for which the update has been triggered (string)
+	* cur         - the unit's current power value (number)
+	* min         - the unit's minimum possible power value (number)
+	* max         - the unit's maximum possible power value (number)
+	* displayType - the alternative power display type if applicable (number?)[ALTERNATE_POWER_INDEX]
 	--]]
 	element:UpdateColor(unit, cur, min, max, displayType)
 
-	--[[ Callback: Power:PostUpdate(unit, cur, min, max, powerToken, powerType)
+	--[[ Callback: Power:PostUpdate(unit, cur, min, max)
 	Called after the element has been updated.
 
 	* self       - the Power element
-	* unit       - the event unit that the update has been triggered for
-	* cur        - the unit's current power value
-	* min        - the unit's minimum possible power value
-	* max        - the unit's maximum possible power value
+	* unit       - the unit for which the update has been triggered (string)
+	* cur        - the unit's current power value (number)
+	* min        - the unit's minimum possible power value (number)
+	* max        - the unit's maximum possible power value (number)
 	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(unit, cur, min, max)
@@ -227,8 +238,8 @@ local function Path(self, ...)
 	Used to completely override the internal update function.
 
 	* self  - the parent object
-	* event - the event triggering the update
-	* unit  - the unit accompanying the event
+	* event - the event triggering the update (string)
+	* unit  - the unit accompanying the event (string)
 	* ...   - the arguments accompanying the event
 	--]]
 	return (self.Power.Override or Update) (self, ...)
