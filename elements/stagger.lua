@@ -1,24 +1,23 @@
 --[[
 # Element: Monk Stagger Bar
 
-Handles updating and visibility of Monks' stagger bar.
+Handles the visibility and updating of the Monk's stagger bar.
 
 ## Widget
 
-Stagger - A StatusBar used to represent the current stagger level.
+Stagger - A `StatusBar` used to represent the current stagger level.
 
 ## Sub-Widgets
 
-.bg - A Texture that functions as a background. It will inherit the color of the main StatusBar.
+.bg - A `Texture` used as a background. It will inherit the color of the main StatusBar.
 
 ## Notes
 
-A default texture will be applied if the widget is a StatusBar and doesn't have a texture or color set.
+A default texture will be applied if the widget is a StatusBar and doesn't have a texture set.
 
 ## Sub-Widgets Options
 
-.multiplier - A Number used to tint the background based on the main widgets R, G and B values.
-              Defaults to 1 if not present.
+.multiplier - Used to tint the background based on the main widgets R, G and B values. Defaults to 1 (number)[0-1]
 
 ## Examples
 
@@ -100,11 +99,11 @@ local function Update(self, event, unit)
 	Called after the element has been updated.
 
 	* self - the Stagger element
-	* cur  - the amount of staggered damage
-	* max  - the player's maximum possible health value
-	* r    - the red component of the StatusBar color (depends on perc)
-	* g    - the green component of the StatusBar color (depends on perc)
-	* b    - the blue component of the StatusBar color (depends on perc)
+	* cur  - the amount of staggered damage (number)
+	* max  - the player's maximum possible health value (number)
+	* r    - the red component of the StatusBar color (number)[0-1]
+	* g    - the green component of the StatusBar color (number)[0-1]
+	* b    - the blue component of the StatusBar color (number)[0-1]
 	--]]
 	if(element.PostUpdate) then
 		element:PostUpdate(cur, max, r, g, b)
@@ -116,8 +115,8 @@ local function Path(self, ...)
 	Used to completely override the internal update function.
 
 	* self  - the parent object
-	* event - the event triggering the update
-	* unit  - the unit accompanying the event
+	* event - the event triggering the update (string)
+	* unit  - the unit accompanying the event (string)
 	--]]
 	return (self.Stagger.Override or Update)(self, ...)
 end
@@ -139,12 +138,12 @@ local function Visibility(self, event, unit)
 end
 
 local function VisibilityPath(self, ...)
-	--[[ Override: Stagger:OverrideVisibility(event, unit)
+	--[[ Override: Stagger.OverrideVisibility(self, event, unit)
 	Used to completely override the internal visibility toggling function.
 
-	* self  - the Stagger element
-	* event - the event triggering the update
-	* unit  - the unit accompanying the event
+	* self  - the parent object
+	* event - the event triggering the update (string)
+	* unit  - the unit accompanying the event (string)
 	--]]
 	return (self.Stagger.OverrideVisibility or Visibility)(self, ...)
 end
@@ -153,7 +152,7 @@ local function ForceUpdate(element)
 	return VisibilityPath(element.__owner, 'ForceUpdate', element.__owner.unit)
 end
 
-local function Enable(self, unit)
+local function Enable(self)
 	local element = self.Stagger
 	if(element) then
 		element.__owner = self
