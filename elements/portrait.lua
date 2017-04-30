@@ -1,15 +1,16 @@
 --[[
 # Element: Portraits
 
-Handles updating of the unit's portrait.
+Handles the updating of the unit's portrait.
 
 ## Widget
 
-Portrait - A PlayerModel or Texture used to represent the unit's portrait.
+Portrait - A `PlayerModel` or a `Texture` used to represent the unit's portrait.
 
 ## Notes
 
-A question mark model will be used if the widget is a Model and the client doesn't have the model information for the unit.
+A question mark model will be used if the widget is a PlayerModel and the client doesn't have the model information for
+the unit.
 
 ## Examples
 
@@ -35,7 +36,7 @@ local _, ns = ...
 local oUF = ns.oUF
 
 local function Update(self, event, unit)
-	if(not unit or not UnitIsUnit(self.unit, unit)) then return end
+	if(self.unit ~= unit) then return end
 
 	local element = self.Portrait
 
@@ -43,7 +44,7 @@ local function Update(self, event, unit)
 	Called before the element has been updated.
 
 	* self - the Portrait element
-	* unit - the event unit that the update has been triggered for
+	* unit - the unit for which the update has been triggered (string)
 	--]]
 	if(element.PreUpdate) then element:PreUpdate(unit) end
 
@@ -72,7 +73,7 @@ local function Update(self, event, unit)
 	Called after the element has been updated.
 
 	* self - the Portrait element
-	* unit - the event unit that the update has been triggered for
+	* unit - the unit for which the update has been triggered (string)
 	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(unit)
@@ -84,8 +85,8 @@ local function Path(self, ...)
 	Used to completely override the internal update function.
 
 	* self  - the parent object
-	* event - the event triggering the update
-	* unit  - the unit accompanying the event
+	* event - the event triggering the update (string)
+	* unit  - the unit accompanying the event (string)
 	--]]
 	return (self.Portrait.Override or Update) (self, ...)
 end
