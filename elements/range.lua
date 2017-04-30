@@ -62,11 +62,11 @@ local function Update(self, event)
 	--[[ Callback: Range:PostUpdate(object, inRange, checkedRange, isConnected)
 	Called after the element has been updated.
 
-	* self         - the Range element.
-	* object       - the parent object.
-	* inRange      - unit was within 40 yards of the player (boolean).
-	* checkedRange - range check was actually performed (boolean).
-	* isConnected  - unit is online or not (boolean).
+	* self         - the Range element
+	* object       - the parent object
+	* inRange      - indicates if the unit was within 40 yards of the player (boolean)
+	* checkedRange - indicates if the range check was actually performed (boolean)
+	* isConnected  - indicates if the unit is online (boolean)
 	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(self, inRange, checkedRange, connected)
@@ -77,8 +77,8 @@ local function Path(self, ...)
 	--[[ Override: Range.Override(self, event)
 	Used to completely override the internal update function.
 
-	* self  - the parent object.
-	* event - the event triggering the update (string).
+	* self  - the parent object
+	* event - the event triggering the update (string)
 	--]]
 	return (self.Range.Override or Update) (self, ...)
 end
