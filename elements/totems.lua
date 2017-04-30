@@ -1,11 +1,11 @@
 --[[
 # Element: Totem Indicator
 
-Handles updating and visibility of totems.
+Handles the updating and visibility of totems.
 
 ## Widget
 
-Totems - A table to hold sub-widgets.
+Totems - A `table` to hold sub-widgets.
 
 ## Sub-Widgets
 
@@ -13,12 +13,12 @@ Totem - Any UI widget.
 
 ## Sub-Widget Options
 
-.Icon     - A Texture representing the totem icon.
-.Cooldown - A Cooldown representing the duration of the totem.
+.Icon     - A `Texture` representing the totem icon.
+.Cooldown - A `Cooldown` representing the duration of the totem.
 
 ## Notes
 
-OnEnter and OnLeave will be set to display a Tooltip if the `Totem` widget is mouse enabled.
+OnEnter and OnLeave script handlers will be set to display a Tooltip if the `Totem` widget is mouse enabled.
 
 ## Examples
 
@@ -71,7 +71,7 @@ local function UpdateTotem(self, event, slot)
 	Called before the element has been updated.
 
 	* self - the Totems element
-	* slot - a Number representing the slot of the totem to be updated
+	* slot - the slot of the totem to be updated (number)
 	--]]
 	if(element.PreUpdate) then element:PreUpdate(slot) end
 
@@ -95,12 +95,12 @@ local function UpdateTotem(self, event, slot)
 	Called after the element has been updated.
 
 	* self      - the Totems element
-	* slot      - a Number representing the slot of the updated totem
-	* haveTotem - a Boolean indicating if a totem is present in the given slot
-	* name      - the name of the totem
-	* start     - the value of `GetTime()` when the totem was created
-	* duration  - the total duration that the totem should last
-	* icon      - a Texture used as the totem's icon
+	* slot      - the slot of the updated totem (number)
+	* haveTotem - indicates if a totem is present in the given slot (boolean)
+	* name      - the name of the totem (string)
+	* start     - the value of `GetTime()` when the totem was created (number)
+	* duration  - the total duration for which the totem should last (number)
+	* icon      - the totem's icon (Texture)
 	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(slot, haveTotem, name, start, duration, icon)
@@ -112,7 +112,7 @@ local function Path(self, ...)
 	Used to completely override the internal update function.
 
 	* self  - the parent object
-	* event - the event triggering the update
+	* event - the event triggering the update (string)
 	* ...   - the arguments accompanying the event
 	--]]
 	return (self.Totems.Override or UpdateTotem) (self, ...)
@@ -146,7 +146,7 @@ local function Enable(self)
 				--[[ Override: Totems[slot]:UpdateTooltip()
 				Used to populate the tooltip when the totem is hovered.
 
-				* self - the widget at the given slot (index)
+				* self - the widget at the given slot index
 				--]]
 				if(not totem.UpdateTooltip) then
 					totem.UpdateTooltip = UpdateTooltip
