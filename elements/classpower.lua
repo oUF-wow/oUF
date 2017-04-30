@@ -1,23 +1,23 @@
 --[[
 # Element: ClassPower
 
-Handles updating and visibility of the player's class resources (like Chi Orbs or Holy Power) and combo points.
+Handles the visibility and updating of the player's class resources (like Chi Orbs or Holy Power) and combo points.
 
 ## Widget
 
-ClassPower - An array consisting of as many StatusBars as the theoretical maximum return of [UnitPowerMax](http://wowprogramming.com/docs/api/UnitPowerMax).
+ClassPower - An `table` consisting of as many StatusBars as the theoretical maximum return of [UnitPowerMax](http://wowprogramming.com/docs/api/UnitPowerMax).
 
 ## Sub-Widgets
 
-.bg - A Texture which functions as a background. It will inherit the color of the main StatusBar.
+.bg - A `Texture` used as a background. It will inherit the color of the main StatusBar.
 
 ## Sub-Widget Options
 
-.multiplier - A number used to tint the background based on the main widget's color. Defaults to 1.
+.multiplier - Used to tint the background based on the widget's R, G and B values. Defaults to 1 (number)[0-1]
 
 ## Notes
 
-A default texture will be applied if the sub-widgets are StatusBars and don't have a texture or color set.
+A default texture will be applied if the sub-widgets are StatusBars and don't have a texture set.
 If the sub-widgets are StatusBars, their minimum and maximum values will be set to 0 and 1 respectively.
 
 Supported class powers:
@@ -138,7 +138,7 @@ local function Update(self, event, unit, powerType)
 	* cur           - the current unmodified amount of power (number)
 	* max           - the maximum modified amount of power (number)
 	* mod           - the power modifier (number)
-	* hasMaxChanged - an indicator whether the maximum amount has changed since the last update (boolean)
+	* hasMaxChanged - indicates whether the maximum amount has changed since the last update (boolean)
 	* powerType     - the active power type (string)
 	--]]
 	if(element.PostUpdate) then
@@ -203,10 +203,10 @@ local function Visibility(self, event, unit)
 end
 
 local function VisibilityPath(self, ...)
-	--[[ Override: ClassPower:OverrideVisibility(event, unit)
+	--[[ Override: ClassPower.OverrideVisibility(self, event, unit)
 	Used to completely override the internal visibility function.
 
-	* self  - the ClassPower element
+	* self  - the parent object
 	* event - the event triggering the update (string)
 	* unit  - the unit accompanying the event (string)
 	--]]
