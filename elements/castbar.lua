@@ -1,7 +1,7 @@
 --[[
 # Element: Castbar
 
-Handles updating and visibility of spell castbars.
+Handles the visibility and updating of spell castbars.
 Based upon oUF_Castbar by starlon.
 
 ## Widget
@@ -18,7 +18,7 @@ Castbar - A `StatusBar` to represent spell cast/channel progress.
 
 ## Notes
 
-A default texture will be applied if the widget is a StatusBar and doesn't have a texture or color set.
+A default texture will be applied to the StatusBar and Texture widgets if they don't have a texture or a color set.
 
 ## Options
 
