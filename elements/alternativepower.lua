@@ -1,17 +1,17 @@
 --[[
 # Element: Alternative Power Bar
 
-Handles updating and visibility of a status bar that displays encounter- or quest-related power information, such as the
-number of hour glass charges during Murozond encounter in the dungeon End Time.
+Handles the visibility and updating of a status bar that displays encounter- or quest-related power information, such as
+the number of hour glass charges during the Murozond encounter in the dungeon End Time.
 
 ## Widget
 
-AlternativePower - A `StatusBar` that is used to represent the unit's alternative power.
+AlternativePower - A `StatusBar` used to represent the unit's alternative power.
 
 ## Notes
 
 If mouse interactivity is enabled for the widget, `OnEnter` and/or `OnLeave` handlers will be set to display a tooltip.
-A default texture will be applied if the widget is a StatusBar and doesn't have a texture or color set.
+A default texture will be applied if the widget is a StatusBar and doesn't have a texture set.
 
 ## Examples
 
@@ -79,10 +79,10 @@ local function Update(self, event, unit, powerType)
 	Called after the element has been updated.
 
 	* self - the AlternativePower element
-	* unit - unit for which the update has been triggered (string)
-	* cur  - current value of the unit's alternative power (number)
-	* min  - minimum value of the unit's alternative power (number)
-	* max  - maximum value of the unit's alternative power (number)
+	* unit - the unit for which the update has been triggered (string)
+	* cur  - the current value of the unit's alternative power (number)
+	* min  - the minimum value of the unit's alternative power (number)
+	* max  - the maximum value of the unit's alternative power (number)
 	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(unit, cur, min, max)
@@ -122,10 +122,10 @@ local function Visibility(self, event, unit)
 end
 
 local function VisibilityPath(self, ...)
-	--[[ Override: AlternativePower:OverrideVisibility(event, unit)
+	--[[ Override: AlternativePower.OverrideVisibility(self, event, unit)
 	Used to completely override the element's visibility update process.
 
-	* self  - the AlternativePower element
+	* self  - the parent object
 	* event - the event triggering the update (string)
 	* unit  - the unit accompanying the event (string)
 	--]]
