@@ -96,8 +96,8 @@ local function OnRangeUpdate(self, elapsed)
 
 	if(timer >= .20) then
 		for _, object in next, _FRAMES do
-			if(object:IsShown()) then
-				Path(self, 'OnUpdate')
+			if(object:IsShown() and object.Range) then
+				Path(object, 'OnUpdate')
 			end
 		end
 
