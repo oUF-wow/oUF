@@ -1,20 +1,20 @@
 --[[
 # Element: Power Prediction Bar
 
-Handles updating and visibility of power prediction status bars.
+Handles the visibility and updating of power cost prediction.
 
 ## Widget
 
-PowerPrediction - A table containing `mainBar` and `altBar`.
+PowerPrediction - A `table` containing the sub-widgets.
 
 ## Sub-Widgets
 
-mainBar - A StatusBar used to represent power cost of spells for the Power element.
-altBar  - A StatusBar used to represent power cost of spells for the AdditionalPower element.
+mainBar - A `StatusBar` used to represent power cost of spells on top of the Power element.
+altBar  - A `StatusBar` used to represent power cost of spells on top of the AdditionalPower element.
 
 ## Notes
 
-A default texture will be applied if the widget is a StatusBar and doesn't have a texture or color set.
+A default texture will be applied if the widget is a StatusBar and doesn't have a texture set.
 
 ## Examples
 
@@ -47,7 +47,7 @@ local oUF = ns.oUF
 local ADDITIONAL_POWER_BAR_INDEX = ADDITIONAL_POWER_BAR_INDEX or 0
 local ALT_MANA_BAR_PAIR_DISPLAY_INFO = ALT_MANA_BAR_PAIR_DISPLAY_INFO
 
-local playerClass = select(2, UnitClass('player'))
+local _, playerClass = UnitClass('player')
 
 local function Update(self, event, unit)
 	if(self.unit ~= unit) then return end
@@ -58,7 +58,7 @@ local function Update(self, event, unit)
 	Called before the element has been updated.
 
 	* self - the PowerPrediction element
-	* unit - the event unit that the update has been triggered for
+	* unit - the unit for which the update has been triggered (string)
 	--]]
 	if(element.PreUpdate) then
 		element:PreUpdate(unit)
@@ -110,10 +110,10 @@ local function Update(self, event, unit)
 	Called after the element has been updated.
 
 	* self          - the PowerPrediction element
-	* unit          - the event unit that the update has been triggered for
-	* mainCost      - a Number representing the main power type cost of the cast ability
-	* altCost       - a Number representing the secondary power type cost of the cast ability
-	* hasAltManaBar - a Boolean indicating if the unit has a secondary power bar
+	* unit          - the unit for which the update has been triggered (string)
+	* mainCost      - the main power type cost of the cast ability (number)
+	* altCost       - the secondary power type cost of the cast ability (number)
+	* hasAltManaBar - indicates if the unit has a secondary power bar (boolean)
 	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(unit, mainCost, altCost, hasAltManaBar)
@@ -125,8 +125,8 @@ local function Path(self, ...)
 	Used to completely override the internal update function.
 
 	* self  - the parent object
-	* event - the event triggering the update
-	* unit  - the unit accompanying the event
+	* event - the event triggering the update (string)
+	* unit  - the unit accompanying the event (string)
 	* ...   - the arguments accompanying the event
 	--]]
 	return (self.PowerPrediction.Override or Update) (self, ...)
