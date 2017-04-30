@@ -103,7 +103,7 @@ local function colorsAndPercent(a, b, ...)
 end
 
 -- http://www.wowwiki.com/ColorGradient
---[[ oUF:RGBColorGradient(a, b, ...)
+--[[ Colors: oUF:RGBColorGradient(a, b, ...)
 Used to convert a percent value (the quotient of `a` and `b`) into a gradient from 2 or more RGB colors. If more than 2
 colors are passed, the gradient will be between the two colors which perc lies in an evenly divided range. A RGB color
 is a sequence of 3 consecutive RGB percent values (in the range [0-1]). If `a` is negative or `b` is zero then the first
@@ -129,7 +129,7 @@ local function getY(r, g, b)
 	return 0.299 * r + 0.587 * g + 0.114 * b
 end
 
---[[ oUF:RGBToHCY(r, g, b)
+--[[ Colors: oUF:RGBToHCY(r, g, b)
 Used to convert a color from RGB to HCY color space.
 
 * self - the global oUF object
@@ -155,7 +155,7 @@ function oUF:RGBToHCY(r, g, b)
 end
 
 local math_abs = math.abs
---[[ oUF:HCYtoRGB(hue, chroma, luma)
+--[[ Colors: oUF:HCYtoRGB(hue, chroma, luma)
 Used to convert a color from HCY to RGB color space.
 
 * self   - the global oUF object
@@ -196,7 +196,7 @@ function oUF:HCYtoRGB(hue, chroma, luma)
 	return r, g, b
 end
 
---[[ oUF:HCYColorGradient(a, b, ...)
+--[[ Colors: oUF:HCYColorGradient(a, b, ...)
 Used to convert a percent value (the quotient of `a` and `b`) into a gradient from 2 or more HCY colors. If more than 2
 colors are passed, the gradient will be between the two colors which perc lies in an evenly divided range. A HCY color
 is a sequence of 3 consecutive values in the range [0-1]. If `a` is negative or `b` is zero then the first
@@ -234,7 +234,7 @@ local function HCYColorGradient(...)
 
 end
 
---[[ oUF:ColorGradient(a, b, ...) or frame:ColorGradient(a, b, ...)
+--[[ Colors: oUF:ColorGradient(a, b, ...) or frame:ColorGradient(a, b, ...)
 Used as a proxy to call the proper gradient function depending on the user's preference. If `oUF.useHCYColorGradient` is
 set to true, `:HCYColorGradient` will be called, else `:RGBColorGradient`.
 

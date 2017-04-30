@@ -52,17 +52,18 @@ local event_metatable = {
 	end,
 }
 
---[[ frame:RegisterEvent(event, func, unitless)
-Used to register a frame for a game event and add an event handler.
+--[[ Events: frame:RegisterEvent(event, func, unitless)
+Used to register a frame for a game event and add an event handler. OnUpdate polled frames are prevented from
+registering events.
 
-* self     - frame that will be registered for the given event. OnUpdate polled frames are prevented from registering
-             events
-* event    - name of the event to register
+* self     - frame that will be registered for the given event.
+* event    - name of the event to register (string)
 * func     - function that will be executed when the event fires. If a string is passed, then a function by that name
-             must be defined on the frame. Multiple functions can be added for the same frame and event.
-* unitless - boolean indicating that the event does not fire for a specific unit, so the event arguments won't be
+             must be defined on the frame. Multiple functions can be added for the same frame and event
+             (string or function)
+* unitless - indicates that the event does not fire for a specific unit, so the event arguments won't be
              matched to the frame unit(s). Events that do not start with UNIT_ or are not known to be unit events are
-             automatically considered unitless
+             automatically considered unitless (boolean)
 --]]
 function frame_metatable.__index:RegisterEvent(event, func, unitless)
 	-- Block OnUpdate polled frames from registering events.
@@ -113,11 +114,11 @@ function frame_metatable.__index:RegisterEvent(event, func, unitless)
 	end
 end
 
---[[ frame:UnregisterEvent(event, func)
+--[[ Events: frame:UnregisterEvent(event, func)
 Used to remove a function from the event handler list for a game event.
 
-* self  - frame registered for the event
-* event - name of the registered event
+* self  - the frame registered for the event
+* event - name of the registered event (string)
 * func  - function to be removed from the list of event handlers. If this is the only handler for the given event, then
           the frame will be unregistered for the event
 --]]
