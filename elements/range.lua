@@ -83,20 +83,14 @@ local function Path(self, ...)
 	return (self.Range.Override or Update) (self, ...)
 end
 
-
-local function ForceUpdate(element)
-	if(not element.__owner.unit) then return end
-	return Path(element.__owner, 'ForceUpdate')
-end
-
 -- Internal updating method
 local timer = 0
-local function OnRangeUpdate(self, elapsed)
+local function OnRangeUpdate(_, elapsed)
 	timer = timer + elapsed
 
 	if(timer >= .20) then
 		for _, object in next, _FRAMES do
-			if(object:IsShown() and object.Range) then
+			if(object:IsShown()) then
 				Path(object, 'OnUpdate')
 			end
 		end
@@ -133,7 +127,7 @@ local function Disable(self)
 				break
 			end
 		end
-		self:SetAlpha(1)
+		self:SetAlpha(element.insideAlpha)
 
 		if(#_FRAMES == 0) then
 			OnRangeFrame:Hide()
