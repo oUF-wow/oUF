@@ -84,19 +84,20 @@ A default texture will be applied to the Texture widgets if they don't have a te
 local _, ns = ...
 local oUF = ns.oUF
 
-local math_max = math.max
-
 local function Update(self, event, unit)
 	if(self.unit ~= unit) then return end
 
 	local element = self.HealthPrediction
+
 	--[[ Callback: HealthPrediction:PreUpdate(unit)
 	Called before the element has been updated.
 
 	* self - the HealthPrediction element
 	* unit - the unit for which the update has been triggered (string)
 	--]]
-	if(element.PreUpdate) then element:PreUpdate(unit) end
+	if(element.PreUpdate) then
+		element:PreUpdate(unit)
+	end
 
 	local myIncomingHeal = UnitGetIncomingHeals(unit, 'player') or 0
 	local allIncomingHeal = UnitGetIncomingHeals(unit) or 0
@@ -128,9 +129,9 @@ local function Update(self, event, unit)
 		end
 
 		if(allIncomingHeal > healAbsorb) then
-			damageAbsorb = math_max(0, maxHealth - (health - healAbsorb + allIncomingHeal))
+			damageAbsorb = math.max(0, maxHealth - (health - healAbsorb + allIncomingHeal))
 		else
-			damageAbsorb = math_max(0, maxHealth - health)
+			damageAbsorb = math.max(0, maxHealth - health)
 		end
 	end
 
@@ -218,14 +219,14 @@ local function Enable(self)
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
 
-		self:RegisterEvent('UNIT_HEAL_PREDICTION', Path)
-		self:RegisterEvent('UNIT_MAXHEALTH', Path)
-
 		if(element.frequentUpdates) then
 			self:RegisterEvent('UNIT_HEALTH_FREQUENT', Path)
 		else
 			self:RegisterEvent('UNIT_HEALTH', Path)
 		end
+
+		self:RegisterEvent('UNIT_MAXHEALTH', Path)
+		self:RegisterEvent('UNIT_HEAL_PREDICTION', Path)
 		self:RegisterEvent('UNIT_ABSORB_AMOUNT_CHANGED', Path)
 		self:RegisterEvent('UNIT_HEAL_ABSORB_AMOUNT_CHANGED', Path)
 
@@ -240,6 +241,7 @@ local function Enable(self)
 
 			element.myBar:Show()
 		end
+
 		if(element.otherBar) then
 			if(element.otherBar:IsObjectType('StatusBar') and not element.otherBar:GetStatusBarTexture()) then
 				element.otherBar:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
@@ -247,6 +249,7 @@ local function Enable(self)
 
 			element.otherBar:Show()
 		end
+
 		if(element.damageAbsorbBar) then
 			if(element.damageAbsorbBar:IsObjectType('StatusBar') and not element.damageAbsorbBar:GetStatusBarTexture()) then
 				element.damageAbsorbBar:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
@@ -254,6 +257,7 @@ local function Enable(self)
 
 			element.damageAbsorbBar:Show()
 		end
+
 		if(element.healAbsorbBar) then
 			if(element.healAbsorbBar:IsObjectType('StatusBar') and not element.healAbsorbBar:GetStatusBarTexture()) then
 				element.healAbsorbBar:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
@@ -261,12 +265,14 @@ local function Enable(self)
 
 			element.healAbsorbBar:Show()
 		end
+
 		if(element.overDamageAbsorb) then
 			if(element.overDamageAbsorb:IsObjectType('Texture') and not element.overDamageAbsorb:GetTexture()) then
 				element.overDamageAbsorb:SetTexture([[Interface\RaidFrame\Shield-Overshield]])
 				element.overDamageAbsorb:SetBlendMode('ADD')
 			end
 		end
+
 		if(element.overHealAbsorb) then
 			if(element.overHealAbsorb:IsObjectType('Texture') and not element.overHealAbsorb:GetTexture()) then
 				element.overHealAbsorb:SetTexture([[Interface\RaidFrame\Absorb-Overabsorb]])
@@ -284,26 +290,31 @@ local function Disable(self)
 		if(element.myBar) then
 			element.myBar:Hide()
 		end
+
 		if(element.otherBar) then
 			element.otherBar:Hide()
 		end
+
 		if(element.damageAbsorbBar) then
 			element.damageAbsorbBar:Hide()
 		end
+
 		if(element.healAbsorbBar) then
 			element.healAbsorbBar:Hide()
 		end
+
 		if(element.overDamageAbsorb) then
 			element.overDamageAbsorb:Hide()
 		end
+
 		if(element.overHealAbsorb) then
 			element.overHealAbsorb:Hide()
 		end
 
-		self:UnregisterEvent('UNIT_HEAL_PREDICTION', Path)
-		self:UnregisterEvent('UNIT_MAXHEALTH', Path)
 		self:UnregisterEvent('UNIT_HEALTH', Path)
+		self:UnregisterEvent('UNIT_MAXHEALTH', Path)
 		self:UnregisterEvent('UNIT_HEALTH_FREQUENT', Path)
+		self:UnregisterEvent('UNIT_HEAL_PREDICTION', Path)
 		self:UnregisterEvent('UNIT_ABSORB_AMOUNT_CHANGED', Path)
 		self:UnregisterEvent('UNIT_HEAL_ABSORB_AMOUNT_CHANGED', Path)
 	end
