@@ -185,8 +185,8 @@ local function Update(self, event, unit)
 
 	* self                - the HealthPrediction element
 	* unit                - the unit for which the update has been triggered (string)
-	* myIncomingHeal      - the amount of incoming heal done by the player (number)
-	* otherIncomingHeal   - the amount of incoming heal from other sources (number)
+	* myIncomingHeal      - the amount of incoming healing done by the player (number)
+	* otherIncomingHeal   - the amount of incoming healing done by others (number)
 	* damageAbsorb        - the amount of damage the unit can absorb without losing health (number)
 	* healAbsorb          - the amount of healing the unit can absorb without gaining health (number)
 	* hasOverDamageAbsorb - indicates if the amount of damage absorb is higher than the unit's missing health (boolean)
