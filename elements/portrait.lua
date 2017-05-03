@@ -48,7 +48,7 @@ local function Update(self, event, unit)
 	--]]
 	if(element.PreUpdate) then element:PreUpdate(unit) end
 
-	if(element:IsObjectType('Model')) then
+	if(element:IsObjectType('PlayerModel')) then
 		local guid = UnitGUID(unit)
 		if(not UnitExists(unit) or not UnitIsConnected(unit) or not UnitIsVisible(unit)) then
 			element:SetCamDistanceScale(0.25)
