@@ -9,12 +9,12 @@ HealthPrediction - A `table` containing references to sub-widgets and options.
 
 ## Sub-Widgets
 
-myBar          - A `StatusBar` used to represent incoming heals from the player.
-otherBar       - A `StatusBar` used to represent incoming heals from others.
-absorbBar      - A `StatusBar` used to represent damage absorbs.
-healAbsorbBar  - A `StatusBar` used to represent heal absorbs.
-overAbsorb     - A `Texture` used to signify that the amount of damage absorb is greater than the unit's missing health.
-overHealAbsorb - A `Texture` used to signify that the amount of heal absorb is greater than the unit's current health.
+myBar            - A `StatusBar` used to represent incoming heals from the player.
+otherBar         - A `StatusBar` used to represent incoming heals from others.
+damageAbsorbBar  - A `StatusBar` used to represent damage absorbs.
+healAbsorbBar    - A `StatusBar` used to represent heal absorbs.
+overDamageAbsorb - A `Texture` used to signify that the amount of damage absorb is greater than the unit's missing health.
+overHealAbsorb   - A `Texture` used to signify that the amount of heal absorb is greater than the unit's current health.
 
 ## Notes
 
@@ -43,11 +43,11 @@ A default texture will be applied to the Texture widgets if they don't have a te
     otherBar:SetPoint('LEFT', myBar:GetStatusBarTexture(), 'RIGHT')
     otherBar:SetWidth(200)
 
-    local absorbBar = CreateFrame('StatusBar', nil, self.Health)
-    absorbBar:SetPoint('TOP')
-    absorbBar:SetPoint('BOTTOM')
-    absorbBar:SetPoint('LEFT', otherBar:GetStatusBarTexture(), 'RIGHT')
-    absorbBar:SetWidth(200)
+    local damageAbsorbBar = CreateFrame('StatusBar', nil, self.Health)
+    damageAbsorbBar:SetPoint('TOP')
+    damageAbsorbBar:SetPoint('BOTTOM')
+    damageAbsorbBar:SetPoint('LEFT', otherBar:GetStatusBarTexture(), 'RIGHT')
+    damageAbsorbBar:SetWidth(200)
 
     local healAbsorbBar = CreateFrame('StatusBar', nil, self.Health)
     healAbsorbBar:SetPoint('TOP')
@@ -56,11 +56,11 @@ A default texture will be applied to the Texture widgets if they don't have a te
     healAbsorbBar:SetWidth(200)
     healAbsorbBar:SetReverseFill(true)
 
-    local overAbsorb = self.Health:CreateTexture(nil, "OVERLAY")
-    overAbsorb:SetPoint('TOP')
-    overAbsorb:SetPoint('BOTTOM')
-    overAbsorb:SetPoint('LEFT', self.Health, 'RIGHT')
-    overAbsorb:SetWidth(10)
+    local overDamageAbsorb = self.Health:CreateTexture(nil, "OVERLAY")
+    overDamageAbsorb:SetPoint('TOP')
+    overDamageAbsorb:SetPoint('BOTTOM')
+    overDamageAbsorb:SetPoint('LEFT', self.Health, 'RIGHT')
+    overDamageAbsorb:SetWidth(10)
 
 	local overHealAbsorb = self.Health:CreateTexture(nil, "OVERLAY")
     overHealAbsorb:SetPoint('TOP')
@@ -72,9 +72,9 @@ A default texture will be applied to the Texture widgets if they don't have a te
     self.HealthPrediction = {
         myBar = myBar,
         otherBar = otherBar,
-        absorbBar = absorbBar,
+        damageAbsorbBar = damageAbsorbBar,
         healAbsorbBar = healAbsorbBar,
-        overAbsorb = overAbsorb,
+        overDamageAbsorb = overDamageAbsorb,
         overHealAbsorb = overHealAbsorb,
         maxOverflow = 1.05,
         frequentUpdates = true,
@@ -100,21 +100,18 @@ local function Update(self, event, unit)
 
 	local myIncomingHeal = UnitGetIncomingHeals(unit, 'player') or 0
 	local allIncomingHeal = UnitGetIncomingHeals(unit) or 0
-	local totalAbsorb = UnitGetTotalAbsorbs(unit) or 0
-	local myCurrentHealAbsorb = UnitGetTotalHealAbsorbs(unit) or 0
+	local damageAbsorb = UnitGetTotalAbsorbs(unit) or 0
+	local healAbsorb = UnitGetTotalHealAbsorbs(unit) or 0
 	local health, maxHealth = UnitHealth(unit), UnitHealthMax(unit)
 
-	local overHealAbsorb = false
-	if(health < myCurrentHealAbsorb) then
-		overHealAbsorb = true
-		myCurrentHealAbsorb = health
+	local hasOverHealAbsorb = false
+	if(health < healAbsorb) then
+		hasOverHealAbsorb = true
+		healAbsorb = health
 	end
 
-	local overHealAmount = 0
-	if(health - myCurrentHealAbsorb + allIncomingHeal > maxHealth * element.maxOverflow) then
-		local newAllIncomingHeal = maxHealth * element.maxOverflow - health + myCurrentHealAbsorb
-		overHealAmount = allIncomingHeal - newAllIncomingHeal
-		allIncomingHeal = newAllIncomingHeal
+	if(health - healAbsorb + allIncomingHeal > maxHealth * element.maxOverflow) then
+		allIncomingHeal = maxHealth * element.maxOverflow - health + healAbsorb
 	end
 
 	local otherIncomingHeal = 0
@@ -124,23 +121,23 @@ local function Update(self, event, unit)
 		otherIncomingHeal = allIncomingHeal - myIncomingHeal
 	end
 
-	local overAbsorb = false
-	if(health - myCurrentHealAbsorb + allIncomingHeal + totalAbsorb >= maxHealth or health + totalAbsorb >= maxHealth) then
-		if(totalAbsorb > 0) then
-			overAbsorb = true
+	local hasOverDamageAbsorb = false
+	if(health - healAbsorb + allIncomingHeal + damageAbsorb >= maxHealth or health + damageAbsorb >= maxHealth) then
+		if(damageAbsorb > 0) then
+			hasOverDamageAbsorb = true
 		end
 
-		if(allIncomingHeal > myCurrentHealAbsorb) then
-			totalAbsorb = math_max(0, maxHealth - (health - myCurrentHealAbsorb + allIncomingHeal))
+		if(allIncomingHeal > healAbsorb) then
+			damageAbsorb = math_max(0, maxHealth - (health - healAbsorb + allIncomingHeal))
 		else
-			totalAbsorb = math_max(0, maxHealth - health)
+			damageAbsorb = math_max(0, maxHealth - health)
 		end
 	end
 
-	if(myCurrentHealAbsorb > allIncomingHeal) then
-		myCurrentHealAbsorb = myCurrentHealAbsorb - allIncomingHeal
+	if(healAbsorb > allIncomingHeal) then
+		healAbsorb = healAbsorb - allIncomingHeal
 	else
-		myCurrentHealAbsorb = 0
+		healAbsorb = 0
 	end
 
 	if(element.myBar) then
@@ -155,46 +152,48 @@ local function Update(self, event, unit)
 		element.otherBar:Show()
 	end
 
-	if(element.absorbBar) then
-		element.absorbBar:SetMinMaxValues(0, maxHealth)
-		element.absorbBar:SetValue(totalAbsorb)
-		element.absorbBar:Show()
+	if(element.damageAbsorbBar) then
+		element.damageAbsorbBar:SetMinMaxValues(0, maxHealth)
+		element.damageAbsorbBar:SetValue(damageAbsorb)
+		element.damageAbsorbBar:Show()
 	end
 
 	if(element.healAbsorbBar) then
 		element.healAbsorbBar:SetMinMaxValues(0, maxHealth)
-		element.healAbsorbBar:SetValue(myCurrentHealAbsorb)
+		element.healAbsorbBar:SetValue(healAbsorb)
 		element.healAbsorbBar:Show()
 	end
 
-	if(element.overAbsorb) then
-		if(overAbsorb) then
-			element.overAbsorb:Show()
+	if(element.overDamageAbsorb) then
+		if(hasOverDamageAbsorb) then
+			element.overDamageAbsorb:Show()
 		else
-			element.overAbsorb:Hide()
+			element.overDamageAbsorb:Hide()
 		end
 	end
 
 	if(element.overHealAbsorb) then
-		if(overHealAbsorb) then
+		if(hasOverHealAbsorb) then
 			element.overHealAbsorb:Show()
 		else
 			element.overHealAbsorb:Hide()
 		end
 	end
 
-	--[[ Callback: HealthPrediction:PostUpdate(unit, overAbsorb, overHealAbsorb, overHealAmount)
+	--[[ Callback: HealthPrediction:PostUpdate(unit, myIncomingHeal, otherIncomingHeal, damageAbsorb, healAbsorb, hasOverDamageAbsorb, hasOverHealAbsorb)
 	Called after the element has been updated.
 
-	* self           - the HealthPrediction element
-	* unit           - the unit for which the update has been triggered (string)
-	* overAbsorb     - indicates if the amount of damage absorb is higher than the unit's missing health (boolean)
-	* overHealAbsorb - indicates if the amount of heal absorb is higher than the unit's current health (boolean)
-	* overHealAmount - the amount of overheal after the widget's .maxOverflow option and healabsorb effect have been
-	                   taken into account (number)
+	* self                - the HealthPrediction element
+	* unit                - the unit for which the update has been triggered (string)
+	* myIncomingHeal      - the amount of incoming heal done by the player (number)
+	* otherIncomingHeal   - the amount of incoming heal from other sources (number)
+	* damageAbsorb        - the amount of damage the unit can absorb without losing health (number)
+	* healAbsorb          - the amount of healing the unit can absorb without gaining health (number)
+	* hasOverDamageAbsorb - indicates if the amount of damage absorb is higher than the unit's missing health (boolean)
+	* hasOverHealAbsorb   - indicates if the amount of heal absorb is higher than the unit's current health (boolean)
 	--]]
 	if(element.PostUpdate) then
-		return element:PostUpdate(unit, overAbsorb, overHealAbsorb, overHealAmount)
+		return element:PostUpdate(unit, myIncomingHeal, otherIncomingHeal, damageAbsorb, healAbsorb, hasOverDamageAbsorb, hasOverHealAbsorb)
 	end
 end
 
@@ -248,12 +247,12 @@ local function Enable(self)
 
 			element.otherBar:Show()
 		end
-		if(element.absorbBar) then
-			if(element.absorbBar:IsObjectType('StatusBar') and not element.absorbBar:GetStatusBarTexture()) then
-				element.absorbBar:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+		if(element.damageAbsorbBar) then
+			if(element.damageAbsorbBar:IsObjectType('StatusBar') and not element.damageAbsorbBar:GetStatusBarTexture()) then
+				element.damageAbsorbBar:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 			end
 
-			element.absorbBar:Show()
+			element.damageAbsorbBar:Show()
 		end
 		if(element.healAbsorbBar) then
 			if(element.healAbsorbBar:IsObjectType('StatusBar') and not element.healAbsorbBar:GetStatusBarTexture()) then
@@ -262,10 +261,10 @@ local function Enable(self)
 
 			element.healAbsorbBar:Show()
 		end
-		if(element.overAbsorb) then
-			if(element.overAbsorb:IsObjectType('Texture') and not element.overAbsorb:GetTexture()) then
-				element.overAbsorb:SetTexture([[Interface\RaidFrame\Shield-Overshield]])
-				element.overAbsorb:SetBlendMode('ADD')
+		if(element.overDamageAbsorb) then
+			if(element.overDamageAbsorb:IsObjectType('Texture') and not element.overDamageAbsorb:GetTexture()) then
+				element.overDamageAbsorb:SetTexture([[Interface\RaidFrame\Shield-Overshield]])
+				element.overDamageAbsorb:SetBlendMode('ADD')
 			end
 		end
 		if(element.overHealAbsorb) then
@@ -288,14 +287,14 @@ local function Disable(self)
 		if(element.otherBar) then
 			element.otherBar:Hide()
 		end
-		if(element.absorbBar) then
-			element.absorbBar:Hide()
+		if(element.damageAbsorbBar) then
+			element.damageAbsorbBar:Hide()
 		end
 		if(element.healAbsorbBar) then
 			element.healAbsorbBar:Hide()
 		end
-		if(element.overAbsorb) then
-			element.overAbsorb:Hide()
+		if(element.overDamageAbsorb) then
+			element.overDamageAbsorb:Hide()
 		end
 		if(element.overHealAbsorb) then
 			element.overHealAbsorb:Hide()
