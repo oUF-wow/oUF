@@ -19,16 +19,15 @@ timer duration and a tooltip
 
 ## Sub-Widget Options
 
-.Time - Used to represent the remaining timer duration (FontString)
+.Time - used to represent the remaining timer duration (FontString)
 
 ## Sub-Widget Attributes
 
-.__owner      - the PlayerBuffTimers element
-.duration     - the total timer duration in seconds (number)
-.expiration   - the time at which the timer expires. Can be compared to `GetTime()` (number)
-.auraID       - the spellid of the timer aura (number)
-.powerName    - the alternate power name of the timer buff (string)
-.powerTooltip - the alternate power description of the timer buff (string)
+.duration   - the total timer duration in seconds (number)
+.expiration - the time at which the timer expires. Can be compared to `GetTime()` (number)
+.auraID     - the spellid of the timer aura (number)
+.name       - the alternate power name of the timer buff (string)
+.tooltip    - the alternate power description of the timer buff (string)
 
 ## Examples
 
@@ -46,31 +45,38 @@ timer duration and a tooltip
     self.PlayerBuffTimers = timers
 
     -- Using cooldown buttons instead of status bars
-    local timers = {
-        UpdateTimer = function(_, timer, duration, expiration, barID, auraID)
-            local _, _, texture = GetSpellInfo(auraID)
-            timer.cd:SetCooldown(expiration - duration, duration)
-            timer.icon:SetTexture(texture)
-        end,
-    }
+    -- custom UpdateTimer is mandatory!
+    local function UpdateTimer(timer, duration, expiration, barID, auraID)
+        local _, _, texture = GetSpellInfo(auraID)
+        timer.cd:SetCooldown(expiration - duration, duration)
+        timer.icon:SetTexture(texture)
+	end
 
+    -- Position and size
+    local timers = {}
     for i = 1, 2 do
-        local timer = CreateFrame("Button", self:GetDebugName() .. 'BuffTimer' .. i, self)
+        -- a Button to hold a cooldown spiral and a texture
+        local timer = CreateFrame('Button', nil, self)
         timer:SetSize(32, 32)
         timer:SetPoint("BOTTOMLEFT", self, "TOPLEFT", (i - 1) * (32 + 5), 65)
 
-        local cd = CreateFrame("Cooldown", '$parentCooldown', timer, 'CooldownFrameTemplate')
+        -- the cooldown spiral
+        local cd = CreateFrame('Cooldown', nil, timer, 'CooldownFrameTemplate')
         cd:SetAllPoints()
         cd:SetReverse(true)
         timer.cd = cd
 
-        local icon = timer:CreateTexture(nil, "BORDER")
+        -- the icon texture
+        local icon = timer:CreateTexture(nil, 'BORDER')
         icon:SetAllPoints()
         timer.icon = icon
+
+        timer.UpdateTimer = UpdateTimer
 
         timers[i] = timer
     end
 
+    -- Register with oUF
     self.PlayerBuffTimers = timers
 --]]
 
@@ -79,8 +85,8 @@ local oUF = ns.oUF
 
 local function UpdateTooltip(timer)
 	GameTooltip:SetOwner(timer, 'ANCHOR_BOTTOMRIGHT')
-	GameTooltip:SetText(timer.powerName, 1, 1, 1)
-	GameTooltip:AddLine(timer.powerTooltip, nil, nil, nil, true)
+	GameTooltip:SetText(timer.name, 1, 1, 1)
+	GameTooltip:AddLine(timer.tooltip, nil, nil, nil, true)
 	GameTooltip:Show()
 end
 
@@ -91,14 +97,12 @@ local function OnEnter(timer)
 		timer.Time:Show()
 	end
 
-	--[[ Callback: PlayerBuffTimers.UpdateTooltip(timer)
+	--[[ Override: timer:UpdateTooltip()
 	Called when the mouse is over the widget. Used to populate its tooltip.
 
-	timer - the timer widget
+	self - the timer sub-widget
 	--]]
-	if(timer.__owner.UpdateTooltip) then
-		timer.__owner.UpdateTooltip(timer)
-	end
+	timer:UpdateTooltip()
 end
 
 local function OnLeave(timer)
@@ -116,7 +120,7 @@ local function OnUpdate(timer)
 
 		if(timer.Time and timer.Time:IsVisible()) then
 			--[[ Callback: timer:CustomTime(timeLeft)
-			Called after the timer's remaining time changed.
+			Called after the timer's remaining time changed. Used together with the `.Time` sub-widget option.
 
 			* self     - the timer widget
 			* timeLeft - the remaining timer duration in seconds (number)
@@ -138,10 +142,10 @@ end
 
 -- TODO: remove before merge
 -- Use for testing outside of Darkmoon Fair
-local function UnitPowerBarTimerInfo(unit, index)
-	local duration = math.random(20, 60)
-	return duration, GetTime() + duration, 84, 101871
-end
+-- local function UnitPowerBarTimerInfo(unit, index)
+-- 	local duration = math.random(20, 60)
+-- 	return duration, GetTime() + duration, 84, 101871
+-- end
 
 local function Update(self, event)
 	local element = self.PlayerBuffTimers
@@ -167,18 +171,18 @@ local function Update(self, event)
 			timer.duration = duration
 			timer.expiration = expiration
 			timer.auraID = auraID
-			timer.powerName, timer.powerTooltip = select(11, GetAlternatePowerInfoByID(barID))
+			timer.name, timer.tooltip = select(11, GetAlternatePowerInfoByID(barID))
 
-			--[[ Override: PlayerBuffTimers.UpdateTimer(timer, duration, expiration, barID, auraID)
+			--[[ Override: timer:UpdateTimer(duration, expiration, barID, auraID)
 			Used to update the timer attributes. You have to override this if your sub-widgets are not StatusBars.
 
-			* timer      - the timer widget
+			* self       - the timer sub-widget
 			* duration   - the total timer duration in seconds (number)
 			* expiration - the time at which the timer expires. Can be compared to `GetTime()` (number)
 			* barID      - the alternate power id of the timer (number)
 			* auraID     - the spellid of the timer aura (number)
 			--]]
-			element.UpdateTimer(timer, duration, expiration, barID, auraID)
+			timer:UpdateTimer(duration, expiration, barID, auraID)
 			timer:Show()
 		else
 			timer:Hide()
@@ -218,10 +222,9 @@ local function Enable(self, unit)
 
 		for i = 1, #element do
 			local timer = element[i]
-			timer.__owner = element
 
 			if(timer:IsObjectType('StatusBar')) then
-				element.UpdateTimer = element.UpdateTimer or UpdateTimer
+				timer.UpdateTimer = timer.UpdateTimer or UpdateTimer
 
 				if(not timer:GetStatusBarTexture()) then
 					timer:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
@@ -233,7 +236,7 @@ local function Enable(self, unit)
 			end
 
 			if(timer:IsMouseEnabled()) then
-				element.UpdateTooltip = element.UpdateTooltip or UpdateTooltip
+				timer.UpdateTooltip = timer.UpdateTooltip or UpdateTooltip
 
 				if(not timer:GetScript('OnEnter')) then
 					timer:SetScript('OnEnter', OnEnter)
