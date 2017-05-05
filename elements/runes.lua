@@ -65,7 +65,8 @@ local function Update(self, event, runeID, energized)
 		else
 			rune.duration = GetTime() - start
 			rune.max = duration
-			rune:SetMinMaxValues(1, duration)
+			rune:SetMinMaxValues(0, duration)
+			rune:SetValue(0)
 			rune:SetScript('OnUpdate', OnUpdate)
 		end
 
