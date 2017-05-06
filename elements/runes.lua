@@ -15,6 +15,11 @@ Runes - An `table` holding `StatusBar`s.
 
 A default texture will be applied if the sub-widgets are StatusBars and don't have a texture set.
 
+## Options
+
+.colorSpec - Use `self.colors.runes[specID]` to color the bar based on player's spec. `specID` is defined by the return
+             value of [GetSpecialization](http://wowprogramming.com/docs/api/GetSpecialization) (boolean)
+
 ## Sub-Widgets Options
 
 .multiplier - Used to tint the background based on the main widgets R, G and B values. Defaults to 1 (number)[0-1]
@@ -40,10 +45,29 @@ if(select(2, UnitClass('player')) ~= 'DEATHKNIGHT') then return end
 local _, ns = ...
 local oUF = ns.oUF
 
-local function OnUpdate(self, elapsed)
+local function onUpdate(self, elapsed)
 	local duration = self.duration + elapsed
 	self.duration = duration
 	self:SetValue(duration)
+end
+
+local function UpdateColor(element, runeID)
+	local color
+	if element.colorSpec then
+		color = element.__owner.colors.runes[GetSpecialization()]
+	else
+		color = element.__owner.colors.power.RUNES
+	end
+
+	local r, g, b = color[1], color[2], color[3]
+
+	element[runeID]:SetStatusBarColor(r, g, b)
+
+	local bg = element[runeID].bg
+	if(bg) then
+		local mu = bg.multiplier or 1
+		bg:SetVertexColor(r * mu, g * mu, b * mu)
+	end
 end
 
 local function Update(self, event, runeID, energized)
@@ -67,7 +91,7 @@ local function Update(self, event, runeID, energized)
 			rune.max = duration
 			rune:SetMinMaxValues(0, duration)
 			rune:SetValue(0)
-			rune:SetScript('OnUpdate', OnUpdate)
+			rune:SetScript('OnUpdate', onUpdate)
 		end
 
 		rune:Show()
@@ -101,7 +125,15 @@ local function Path(self, event, ...)
 	if(event == 'RUNE_POWER_UPDATE') then
 		return UpdateMethod(self, event, ...)
 	else
+		--[[ Override: Runes:UpdateColor(powerType)
+		Used to completely override the internal function for updating the widgets' colors.
+
+		* self  - the Runes element
+		* index - the index of the updated rune (number)
+		--]]
+		local UpdateColorMethod = element.UpdateColor or UpdateColor
 		for index = 1, #element do
+			UpdateColorMethod(element, index)
 			UpdateMethod(self, event, index)
 		end
 	end
@@ -119,19 +151,12 @@ local function Enable(self, unit)
 
 		for i = 1, #element do
 			local rune = element[i]
-
-			local r, g, b = unpack(self.colors.power.RUNES)
 			if(rune:IsObjectType('StatusBar') and not rune:GetStatusBarTexture()) then
 				rune:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
-				rune:SetStatusBarColor(r, g, b)
-			end
-
-			if(rune.bg) then
-				local mu = rune.bg.multiplier or 1
-				rune.bg:SetVertexColor(r * mu, g * mu, b * mu)
 			end
 		end
 
+		self:RegisterEvent('PLAYER_SPECIALIZATION_CHANGED', Path, true)
 		self:RegisterEvent('RUNE_POWER_UPDATE', Path, true)
 
 		return true
@@ -145,6 +170,7 @@ local function Disable(self)
 			element[i]:Hide()
 		end
 
+		self:UnregisterEvent('PLAYER_SPECIALIZATION_CHANGED', Path)
 		self:UnregisterEvent('RUNE_POWER_UPDATE', Path)
 	end
 end

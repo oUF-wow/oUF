@@ -13,6 +13,11 @@ local colors = {
 	health = {49 / 255, 207 / 255, 37 / 255},
 	disconnected = {.6, .6, .6},
 	tapped = {.6, .6, .6},
+	runes = {
+		{247 / 255, 65 / 255, 57 / 255}, -- blood
+		{148 / 255, 203 / 255, 247 / 255}, -- frost
+		{173 / 255, 235 / 255, 66 / 255}, -- unholy
+	},
 	class = {},
 	reaction = {},
 	power = {},
