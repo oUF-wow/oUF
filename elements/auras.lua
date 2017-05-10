@@ -15,10 +15,10 @@ At least one of the above widgets must be present for the element to work.
 
 ## Options
 
-.disableCooldown    - Disable the cooldown spiral (boolean)
+.disableCooldown    - Disables the cooldown spiral (boolean)
 .size               - Aura icon size. Defaults to 16 (number)
-.onlyShowPlayer     - Only show auras created by player/vehicle (boolean)
-.showStealableBuffs - Display the stealable texture on buffs that can be stolen (boolean)
+.onlyShowPlayer     - Shows only auras created by player/vehicle (boolean)
+.showStealableBuffs - Displays the stealable texture on buffs that can be stolen (boolean)
 .spacing            - Spacing between each icon. Defaults to 0 (number)
 .['spacing-x']      - Horizontal spacing between each icon. Takes priority over `spacing` (number)
 .['spacing-y']      - Vertical spacing between each icon. Takes priority over `spacing` (number)
