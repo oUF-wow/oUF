@@ -46,7 +46,7 @@ At least one of the above widgets must be present for the element to work.
 
 ## Attributes
 
-button.owner    - the unit who cast the aura (string)
+button.caster   - the unit who cast the aura (string)
 button.filter   - the filter list used to determine the visibility of the aura (string)
 button.isDebuff - indicates if the button holds a debuff (boolean)
 button.isPlayer - indicates if the aura caster is the player or their vehicle (boolean)
@@ -159,7 +159,7 @@ local function updateIcon(unit, element, index, offset, filter, isDebuff, visibl
 			element.createdIcons = element.createdIcons + 1
 		end
 
-		button.owner = caster
+		button.caster = caster
 		button.filter = filter
 		button.isDebuff = isDebuff
 		button.isPlayer = caster == 'player' or caster == 'vehicle'
