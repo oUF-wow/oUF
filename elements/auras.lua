@@ -15,6 +15,7 @@ At least one of the above widgets must be present for the element to work.
 
 ## Options
 
+.disableMouse       - Disables mouse events (boolean)
 .disableCooldown    - Disables the cooldown spiral (boolean)
 .size               - Aura icon size. Defaults to 16 (number)
 .onlyShowPlayer     - Shows only auras created by player/vehicle (boolean)
@@ -219,7 +220,7 @@ local function updateIcon(element, unit, index, offset, filter, isDebuff, visibl
 			local size = element.size or 16
 			button:SetSize(size, size)
 
-			button:EnableMouse(true)
+			button:EnableMouse(not element.disableMouse)
 			button:SetID(index)
 			button:Show()
 
