@@ -51,8 +51,8 @@ local STAGGER_RED_INDEX = STAGGER_RED_INDEX or 3
 
 local function UpdateColor(element, perc)
 	local colors = element.__owner.colors.power[BREWMASTER_POWER_BAR_NAME]
-	local t
 
+	local t
 	if(perc >= STAGGER_RED_TRANSITION) then
 		t = colors and colors[STAGGER_RED_INDEX]
 	elseif(perc > STAGGER_YELLOW_TRANSITION) then
