@@ -134,7 +134,7 @@ local function customFilter(element, unit, button, name)
 	end
 end
 
-local function updateIcon(unit, element, index, offset, filter, isDebuff, visible)
+local function updateIcon(element, unit, index, offset, filter, isDebuff, visible)
 	local name, rank, texture, count, dispelType, duration, expiration, caster, isStealable,
 		nameplateShowSelf, spellID, canApply, isBossDebuff, casterIsPlayer, nameplateShowAll,
 		timeMod, effect1, effect2, effect3 = UnitAura(unit, index, filter)
@@ -263,13 +263,13 @@ local function SetPosition(element, from, to)
 	end
 end
 
-local function filterIcons(unit, element, filter, limit, isDebuff, offset, dontHide)
+local function filterIcons(element, unit, filter, limit, isDebuff, offset, dontHide)
 	if(not offset) then offset = 0 end
 	local index = 1
 	local visible = 0
 	local hidden = 0
 	while(visible < limit) do
-		local result = updateIcon(unit, element, index, offset, filter, isDebuff, visible)
+		local result = updateIcon(element, unit, index, offset, filter, isDebuff, visible)
 		if(not result) then
 			break
 		elseif(result == VISIBLE) then
@@ -307,7 +307,7 @@ local function UpdateAuras(self, event, unit)
 		local numDebuffs = auras.numDebuffs or 40
 		local max = numBuffs + numDebuffs
 
-		local visibleBuffs, hiddenBuffs = filterIcons(unit, auras, auras.buffFilter or auras.filter or 'HELPFUL', numBuffs, nil, 0, true)
+		local visibleBuffs, hiddenBuffs = filterIcons(auras, unit, auras.buffFilter or auras.filter or 'HELPFUL', numBuffs, nil, 0, true)
 
 		local hasGap
 		if(visibleBuffs ~= 0 and auras.gap) then
@@ -344,7 +344,7 @@ local function UpdateAuras(self, event, unit)
 			end
 		end
 
-		local visibleDebuffs, hiddenDebuffs = filterIcons(unit, auras, auras.debuffFilter or auras.filter or 'HARMFUL', numDebuffs, true, visibleBuffs)
+		local visibleDebuffs, hiddenDebuffs = filterIcons(auras, unit, auras.debuffFilter or auras.filter or 'HARMFUL', numDebuffs, true, visibleBuffs)
 		auras.visibleDebuffs = visibleDebuffs
 
 		if(hasGap and visibleDebuffs == 0) then
@@ -398,7 +398,7 @@ local function UpdateAuras(self, event, unit)
 		if(buffs.PreUpdate) then buffs:PreUpdate(unit) end
 
 		local numBuffs = buffs.num or 32
-		local visibleBuffs, hiddenBuffs = filterIcons(unit, buffs, buffs.filter or 'HELPFUL', numBuffs)
+		local visibleBuffs, hiddenBuffs = filterIcons(buffs, unit, buffs.filter or 'HELPFUL', numBuffs)
 		buffs.visibleBuffs = visibleBuffs
 
 		local fromRange, toRange
@@ -419,7 +419,7 @@ local function UpdateAuras(self, event, unit)
 		if(debuffs.PreUpdate) then debuffs:PreUpdate(unit) end
 
 		local numDebuffs = debuffs.num or 40
-		local visibleDebuffs, hiddenDebuffs = filterIcons(unit, debuffs, debuffs.filter or 'HARMFUL', numDebuffs, true)
+		local visibleDebuffs, hiddenDebuffs = filterIcons(debuffs, unit, debuffs.filter or 'HARMFUL', numDebuffs, true)
 		debuffs.visibleDebuffs = visibleDebuffs
 
 		local fromRange, toRange
