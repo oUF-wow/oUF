@@ -49,28 +49,8 @@ local STAGGER_GREEN_INDEX = STAGGER_GREEN_INDEX or 1
 local STAGGER_YELLOW_INDEX = STAGGER_YELLOW_INDEX or 2
 local STAGGER_RED_INDEX = STAGGER_RED_INDEX or 3
 
-local function Update(self, event, unit)
-	if(unit and unit ~= self.unit) then return end
-
-	local element = self.Stagger
-
-	--[[ Callback: Stagger:PreUpdate()
-	Called before the element has been updated.
-
-	* self - the Stagger element
-	--]]
-	if(element.PreUpdate) then
-		element:PreUpdate()
-	end
-
-	local cur = UnitStagger('player')
-	local max = UnitHealthMax('player')
-	local perc = cur / max
-
-	element:SetMinMaxValues(0, max)
-	element:SetValue(cur)
-
-	local colors = self.colors.power[BREWMASTER_POWER_BAR_NAME]
+local function UpdateColor(element, perc)
+	local colors = element.__owner.colors.power[BREWMASTER_POWER_BAR_NAME]
 	local t
 
 	if(perc >= STAGGER_RED_TRANSITION) then
@@ -94,6 +74,36 @@ local function Update(self, event, unit)
 			end
 		end
 	end
+end
+
+local function Update(self, event, unit)
+	if(unit and unit ~= self.unit) then return end
+
+	local element = self.Stagger
+
+	--[[ Callback: Stagger:PreUpdate()
+	Called before the element has been updated.
+
+	* self - the Stagger element
+	--]]
+	if(element.PreUpdate) then
+		element:PreUpdate()
+	end
+
+	local cur = UnitStagger('player')
+	local max = UnitHealthMax('player')
+	local perc = cur / max
+
+	element:SetMinMaxValues(0, max)
+	element:SetValue(cur)
+
+	--[[ Override: Stagger:UpdateColor(unit, perc)
+	Used to completely override the internal function for updating the widgets' colors.
+
+	* self - the Stagger element
+	* perc - the percentage of staggered damage (number)
+	--]]
+	element:UpdateColor(perc)
 
 	--[[ Callback: Stagger:PostUpdate(cur, max, r, g, b)
 	Called after the element has been updated.
@@ -101,12 +111,9 @@ local function Update(self, event, unit)
 	* self - the Stagger element
 	* cur  - the amount of staggered damage (number)
 	* max  - the player's maximum possible health value (number)
-	* r    - the red component of the StatusBar color (number)[0-1]
-	* g    - the green component of the StatusBar color (number)[0-1]
-	* b    - the blue component of the StatusBar color (number)[0-1]
 	--]]
 	if(element.PostUpdate) then
-		element:PostUpdate(cur, max, r, g, b)
+		element:PostUpdate(cur, max)
 	end
 end
 
@@ -164,6 +171,10 @@ local function Enable(self)
 
 		if(element:IsObjectType('StatusBar') and not element:GetStatusBarTexture()) then
 			element:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+		end
+
+		if(not element.UpdateColor) then
+			element.UpdateColor = UpdateColor
 		end
 
 		MonkStaggerBar:UnregisterEvent('PLAYER_ENTERING_WORLD')
