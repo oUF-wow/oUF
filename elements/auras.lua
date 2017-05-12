@@ -33,7 +33,8 @@ At least one of the above widgets must be present for the element to work.
 
 .numBuffs     - The maximum number of buffs to display. Defaults to 32 (number)
 .numDebuffs   - The maximum number of debuffs to display. Defaults to 40 (number)
-.numTotal     - The maximum number of auras to display. Defaults to sum of .numBuffs and .numDebuffs (number)
+.numTotal     - The maximum number of auras to display. Prioritizes buffs over debuffs. Defaults to the sum of
+                .numBuffs and .numDebuffs (number)
 .gap          - Controls the creation of an invisible icon between buffs and debuffs. Defaults to false (boolean)
 .buffFilter   - Custom filter list for buffs to display. Takes priority over `filter` (string)
 .debuffFilter - Custom filter list for debuffs to display. Takes priority over `filter` (string)
