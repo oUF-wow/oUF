@@ -97,15 +97,15 @@ local function Update(self, event, unit)
 	element:SetMinMaxValues(0, max)
 	element:SetValue(cur)
 
-	--[[ Override: Stagger:UpdateColor(unit, perc)
-	Used to completely override the internal function for updating the widgets' colors.
+	--[[ Override: Stagger:UpdateColor(perc)
+	Used to completely override the internal function for updating the widget's colors.
 
 	* self - the Stagger element
 	* perc - the percentage of staggered damage (number)
 	--]]
 	element:UpdateColor(perc)
 
-	--[[ Callback: Stagger:PostUpdate(cur, max, r, g, b)
+	--[[ Callback: Stagger:PostUpdate(cur, max)
 	Called after the element has been updated.
 
 	* self - the Stagger element
