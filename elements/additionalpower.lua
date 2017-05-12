@@ -105,7 +105,7 @@ local function Update(self, event, unit, powertype)
 	element:SetValue(cur)
 
 	--[[ Override: AdditionalPower:UpdateColor(cur, max)
-	Used to completely override the internal function for updating the widgets' colors.
+	Used to completely override the internal function for updating the widget's colors.
 
 	* self - the AdditionalPower element
 	* cur  - the current value of the player's additional power (number)
