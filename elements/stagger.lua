@@ -101,7 +101,7 @@ local function Update(self, event, unit)
 	Used to completely override the internal function for updating the widget's colors.
 
 	* self - the Stagger element
-	* perc - the percentage of staggered damage (number)
+	* perc - the percentage of staggered damage (number)[0-1]
 	--]]
 	element:UpdateColor(perc)
 
