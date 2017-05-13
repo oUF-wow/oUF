@@ -49,8 +49,9 @@ local STAGGER_GREEN_INDEX = STAGGER_GREEN_INDEX or 1
 local STAGGER_YELLOW_INDEX = STAGGER_YELLOW_INDEX or 2
 local STAGGER_RED_INDEX = STAGGER_RED_INDEX or 3
 
-local function UpdateColor(element, perc)
+local function UpdateColor(element, cur, max)
 	local colors = element.__owner.colors.power[BREWMASTER_POWER_BAR_NAME]
+	local perc = cur / max
 
 	local t
 	if(perc >= STAGGER_RED_TRANSITION) then
@@ -92,18 +93,18 @@ local function Update(self, event, unit)
 
 	local cur = UnitStagger('player')
 	local max = UnitHealthMax('player')
-	local perc = cur / max
 
 	element:SetMinMaxValues(0, max)
 	element:SetValue(cur)
 
-	--[[ Override: Stagger:UpdateColor(perc)
+	--[[ Override: Stagger:UpdateColor(cur, max)
 	Used to completely override the internal function for updating the widget's colors.
 
 	* self - the Stagger element
-	* perc - the percentage of staggered damage (number)[0-1]
+	* cur  - the amount of staggered damage (number)
+	* max  - the player's maximum possible health value (number)
 	--]]
-	element:UpdateColor(perc)
+	element:UpdateColor(cur, max)
 
 	--[[ Callback: Stagger:PostUpdate(cur, max)
 	Called after the element has been updated.
