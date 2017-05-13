@@ -60,6 +60,33 @@ local ADDITIONAL_POWER_BAR_NAME = ADDITIONAL_POWER_BAR_NAME or 'MANA'
 local ADDITIONAL_POWER_BAR_INDEX = ADDITIONAL_POWER_BAR_INDEX or 0
 local ALT_MANA_BAR_PAIR_DISPLAY_INFO = ALT_MANA_BAR_PAIR_DISPLAY_INFO
 
+local function UpdateColor(element, cur, max)
+	local parent = element.__owner
+
+	local r, g, b, t
+	if(element.colorClass) then
+		t = parent.colors.class[playerClass]
+	elseif(element.colorSmooth) then
+		r, g, b = parent.ColorGradient(cur, max, unpack(element.smoothGradient or parent.colors.smooth))
+	elseif(element.colorPower) then
+		t = parent.colors.power[ADDITIONAL_POWER_BAR_NAME]
+	end
+
+	if(t) then
+		r, g, b = t[1], t[2], t[3]
+	end
+
+	if(b) then
+		element:SetStatusBarColor(r, g, b)
+
+		local bg = element.bg
+		if(bg) then
+			local mu = bg.multiplier or 1
+			bg:SetVertexColor(r * mu, g * mu, b * mu)
+		end
+	end
+end
+
 local function Update(self, event, unit, powertype)
 	if(unit ~= 'player' or (powertype and powertype ~= ADDITIONAL_POWER_BAR_NAME)) then return end
 
@@ -77,28 +104,14 @@ local function Update(self, event, unit, powertype)
 	element:SetMinMaxValues(0, max)
 	element:SetValue(cur)
 
-	local r, g, b, t
-	if(element.colorClass) then
-		t = self.colors.class[playerClass]
-	elseif(element.colorSmooth) then
-		r, g, b = self.ColorGradient(cur, max, unpack(element.smoothGradient or self.colors.smooth))
-	elseif(element.colorPower) then
-		t = self.colors.power[ADDITIONAL_POWER_BAR_NAME]
-	end
+	--[[ Override: AdditionalPower:UpdateColor(cur, max)
+	Used to completely override the internal function for updating the widget's colors.
 
-	if(t) then
-		r, g, b = t[1], t[2], t[3]
-	end
-
-	if(r or g or b) then
-		element:SetStatusBarColor(r, g, b)
-
-		local bg = element.bg
-		if(bg) then
-			local mu = bg.multiplier or 1
-			bg:SetVertexColor(r * mu, g * mu, b * mu)
-		end
-	end
+	* self - the AdditionalPower element
+	* cur  - the current value of the player's additional power (number)
+	* max  - the maximum value of the player's additional power (number)
+	--]]
+	element:UpdateColor(cur, max)
 
 	--[[ Callback: AdditionalPower:PostUpdate(unit, cur, max)
 	Called after the element has been updated.
@@ -127,7 +140,6 @@ end
 
 local function ElementEnable(self)
 	self:RegisterEvent('UNIT_POWER_FREQUENT', Path)
-	self:RegisterEvent('UNIT_DISPLAYPOWER', Path)
 	self:RegisterEvent('UNIT_MAXPOWER', Path)
 
 	self.AdditionalPower:Show()
@@ -137,7 +149,6 @@ end
 
 local function ElementDisable(self)
 	self:UnregisterEvent('UNIT_POWER_FREQUENT', Path)
-	self:UnregisterEvent('UNIT_DISPLAYPOWER', Path)
 	self:UnregisterEvent('UNIT_MAXPOWER', Path)
 
 	self.AdditionalPower:Hide()
@@ -189,6 +200,10 @@ local function Enable(self, unit)
 
 		if(element:IsObjectType('StatusBar') and not element:GetStatusBarTexture()) then
 			element:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+		end
+
+		if(not element.UpdateColor) then
+			element.UpdateColor = UpdateColor
 		end
 
 		return true
