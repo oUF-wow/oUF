@@ -113,10 +113,17 @@ local function Update(self, event, unit, powerType)
 			mod = UnitPowerDisplayMod(ClassPowerID)
 		end
 
+		local numActive = math.ceil(mod == 0 and 0 or cur / mod)
 		for i = 1, max do
-			element[i]:Show()
-			-- mod should never be 0, but according to Blizz code it can actually happen
-			element[i]:SetValue(mod == 0 and 0 or (cur / mod - i + 1))
+			local bar = element[i]
+			if(i > numActive) then
+				bar:Hide()
+				bar:SetValue(0)
+			else
+				bar:Show()
+				-- mod should never be 0, but according to Blizz code it can actually happen
+				bar:SetValue(mod == 0 and 0 or (cur / mod - i + 1))
+			end
 		end
 
 		oldMax = element.__max
