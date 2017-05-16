@@ -37,9 +37,9 @@ in the `oUF.Tags.SharedEvents` table as follows: `oUF.Tags.SharedEvents.EVENT_NA
 .overrideUnit    - if specified on the font string widget, the frame's realUnit will be passed as the second argument to
                    every tag function whose name is contained in the relevant tag string. Otherwise the second argument
                    is always nil (boolean)
-.frequentUpdates - defines how often the correspondig tag function(s) should be called. If the value is a number, it is
-                   taken as a time interval in seconds. If the value is a boolean, the time interval is set to 0.5
-                   seconds (number or boolean)
+.frequentUpdates - defines how often the correspondig tag function(s) should be called. This will override the events for
+                   the tag(s), if any. If the value is a number, it is taken as a time interval in seconds. If the value
+                   is a boolean, the time interval is set to 0.5 seconds (number or boolean)
 
 ## Attributes
 
@@ -57,12 +57,11 @@ in the `oUF.Tags.SharedEvents` table as follows: `oUF.Tags.SharedEvents.EVENT_NA
     -- add the events
     oUF.Tags.Events['mylayout:threatname'] = 'UNIT_NAME_UPDATE UNIT_THREAT_SITUATION_UPDATE'
 
-    -- create the FontString
+    -- create the text widget
     local info = self.Health:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
     info:SetPoint('LEFT')
-    info.overrideUnit = true
 
-    -- register the tag with oUF
+    -- register the tag on the text widget with oUF
     self:Tag(info, '[mylayout:threatname]')
 --]]
 
