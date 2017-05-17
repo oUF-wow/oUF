@@ -103,9 +103,9 @@ local function Update(self, event, runeID, energized)
 	* self     - the Runes element
 	* rune     - the updated rune (StatusBar)
 	* runeID   - the index of the updated rune (number)
-	* start    - the value of `GetTime()` when the rune cooldown started (0 for ready or energized runes) (number)
-	* duration - the duration of the rune's cooldown (number)
-	* isReady  - indicates if the rune is ready for use (Boolean)
+	* start    - the value of `GetTime()` when the rune cooldown started (0 for ready or energized runes) (number?)
+	* duration - the duration of the rune's cooldown (number?)
+	* isReady  - indicates if the rune is ready for use (boolean)
 	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(rune, runeID, energized and 0 or start, duration, energized or runeReady)
