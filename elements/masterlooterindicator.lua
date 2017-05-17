@@ -28,9 +28,6 @@ local oUF = ns.oUF
 local function Update(self, event)
 	local unit = self.unit
 	local element = self.MasterLooterIndicator
-	if(not (UnitInParty(unit) or UnitInRaid(unit))) then
-		return element:Hide()
-	end
 
 	--[[ Callback: MasterLooterIndicator:PreUpdate()
 	Called before the element has been updated.
@@ -42,28 +39,27 @@ local function Update(self, event)
 	end
 
 	local isShown = false
-	local method, partyIndex, raidIndex = GetLootMethod()
-	if(method == 'master') then
-		local mlUnit
-		if(partyIndex) then
-			if(partyIndex == 0) then
-				mlUnit = 'player'
-			else
-				mlUnit = 'party' .. partyIndex
+	if(UnitInParty(unit) or UnitInRaid(unit)) then
+		local method, partyIndex, raidIndex = GetLootMethod()
+		if(method == 'master') then
+			local mlUnit
+			if(partyIndex) then
+				if(partyIndex == 0) then
+					mlUnit = 'player'
+				else
+					mlUnit = 'party' .. partyIndex
+				end
+			elseif(raidIndex) then
+				mlUnit = 'raid' .. raidIndex
 			end
-		elseif(raidIndex) then
-			mlUnit = 'raid' .. raidIndex
-		end
 
-		if(UnitIsUnit(unit, mlUnit)) then
-			element:Show()
-			isShown = true
-		else
-			element:Hide()
+			if(UnitIsUnit(unit, mlUnit)) then
+				isShown = true
+			end
 		end
-	else
-		element:Hide()
 	end
+
+	element:SetShown(isShown)
 
 	--[[ Callback: MasterLooterIndicator:PostUpdate(isShown)
 	Called after the element has been updated.
