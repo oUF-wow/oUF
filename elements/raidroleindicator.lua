@@ -30,7 +30,6 @@ local MAINASSIST_ICON = [[Interface\GROUPFRAME\UI-GROUP-MAINASSISTICON]]
 
 local function Update(self, event)
 	local unit = self.unit
-	if(not UnitInRaid(unit)) then return end
 
 	local element = self.RaidRoleIndicator
 
@@ -43,19 +42,20 @@ local function Update(self, event)
 		element:PreUpdate()
 	end
 
-	local inVehicle = UnitHasVehicleUI(unit)
-	local role
-	if(GetPartyAssignment('MAINTANK', unit) and not inVehicle) then
-		element:Show()
-		element:SetTexture(MAINTANK_ICON)
-		role = 'MAINTANK'
-	elseif(GetPartyAssignment('MAINASSIST', unit) and not inVehicle) then
-		element:Show()
-		element:SetTexture(MAINASSIST_ICON)
-		role = 'MAINASSIST'
-	else
-		element:Hide()
+	local role, isShown
+	if(UnitInRaid(unit) and not UnitHasVehicleUI(unit)) then
+		if(GetPartyAssignment('MAINTANK', unit)) then
+			isShown = true
+			element:SetTexture(MAINTANK_ICON)
+			role = 'MAINTANK'
+		elseif(GetPartyAssignment('MAINASSIST', unit)) then
+			isShown = true
+			element:SetTexture(MAINASSIST_ICON)
+			role = 'MAINASSIST'
+		end
 	end
+
+	element:SetShown(isShown)
 
 	--[[ Callback: RaidRoleIndicator:PostUpdate(role)
 	Called after the element has been updated.
