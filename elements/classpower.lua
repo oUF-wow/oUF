@@ -113,7 +113,7 @@ local function Update(self, event, unit, powerType)
 			mod = UnitPowerDisplayMod(ClassPowerID)
 		end
 
-		local numActive = math.ceil(mod == 0 and 0 or cur / mod)
+		local numActive = (mod == 0 and 0 or cur / mod) + 0.9
 		for i = 1, max do
 			if(i > numActive) then
 				element[i]:Hide()
