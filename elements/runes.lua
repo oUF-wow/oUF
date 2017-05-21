@@ -52,9 +52,11 @@ local function onUpdate(self, elapsed)
 end
 
 local function UpdateColor(element, runeID)
+	local spec = GetSpecialization()
+
 	local color
-	if element.colorSpec then
-		color = element.__owner.colors.runes[GetSpecialization()]
+	if element.colorSpec and spec and spec ~= 0 then
+		color = element.__owner.colors.runes[spec]
 	else
 		color = element.__owner.colors.power.RUNES
 	end
