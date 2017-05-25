@@ -53,6 +53,7 @@ local _, PlayerClass = UnitClass('player')
 local SPEC_MAGE_ARCANE = SPEC_MAGE_ARCANE or 1
 local SPEC_MONK_WINDWALKER = SPEC_MONK_WINDWALKER or 3
 local SPEC_PALADIN_RETRIBUTION = SPEC_PALADIN_RETRIBUTION or 3
+local SPEC_WARLOCK_DESTRUCTION = SPEC_WARLOCK_DESTRUCTION or 3
 local SPELL_POWER_ENERGY = SPELL_POWER_ENERGY or 3
 local SPELL_POWER_COMBO_POINTS = SPELL_POWER_COMBO_POINTS or 4
 local SPELL_POWER_SOUL_SHARDS = SPELL_POWER_SOUL_SHARDS or 7
@@ -113,15 +114,22 @@ local function Update(self, event, unit, powerType)
 			mod = UnitPowerDisplayMod(ClassPowerID)
 		end
 
-		local numActive = (mod == 0 and 0 or cur / mod) + 0.9
+		-- mod should never be 0, but according to Blizz code it can actually happen
+		cur = mod == 0 and 0 or cur / mod
+
+		-- BUG: Destruction is supposed to show partial soulshards, but Affliction and Demonology should only show full ones
+		if(ClassPowerType == 'SOUL_SHARDS' and GetSpecialization() ~= SPEC_WARLOCK_DESTRUCTION) then
+			cur = math.floor(cur)
+		end
+
+		local numActive = cur + 0.9
 		for i = 1, max do
 			if(i > numActive) then
 				element[i]:Hide()
 				element[i]:SetValue(0)
 			else
 				element[i]:Show()
-				-- mod should never be 0, but according to Blizz code it can actually happen
-				element[i]:SetValue(mod == 0 and 0 or (cur / mod - i + 1))
+				element[i]:SetValue(cur - i + 1)
 			end
 		end
 
@@ -137,18 +145,17 @@ local function Update(self, event, unit, powerType)
 			element.__max = max
 		end
 	end
-	--[[ Callback: ClassPower:PostUpdate(cur, max, mod, hasMaxChanged, powerType)
+	--[[ Callback: ClassPower:PostUpdate(cur, max, hasMaxChanged, powerType)
 	Called after the element has been updated.
 
 	* self          - the ClassPower element
-	* cur           - the current unmodified amount of power (number)
-	* max           - the maximum modified amount of power (number)
-	* mod           - the power modifier (number)
+	* cur           - the current amount of power (number)
+	* max           - the maximum amount of power (number)
 	* hasMaxChanged - indicates whether the maximum amount has changed since the last update (boolean)
 	* powerType     - the active power type (string)
 	--]]
 	if(element.PostUpdate) then
-		return element:PostUpdate(cur, max, mod, oldMax ~= max, powerType)
+		return element:PostUpdate(cur, max, oldMax ~= max, powerType)
 	end
 end
 
