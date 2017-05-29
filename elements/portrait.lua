@@ -98,7 +98,6 @@ end
 local function Enable(self, unit)
 	local element = self.Portrait
 	if(element) then
-		element:Show()
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
 
@@ -115,6 +114,8 @@ local function Enable(self, unit)
 		if(unit == 'party') then
 			self:RegisterEvent('PARTY_MEMBER_ENABLE', Path)
 		end
+
+		element:Show()
 
 		return true
 	end
