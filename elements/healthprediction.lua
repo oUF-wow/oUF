@@ -238,32 +238,24 @@ local function Enable(self)
 			if(element.myBar:IsObjectType('StatusBar') and not element.myBar:GetStatusBarTexture()) then
 				element.myBar:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 			end
-
-			element.myBar:Show()
 		end
 
 		if(element.otherBar) then
 			if(element.otherBar:IsObjectType('StatusBar') and not element.otherBar:GetStatusBarTexture()) then
 				element.otherBar:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 			end
-
-			element.otherBar:Show()
 		end
 
 		if(element.absorbBar) then
 			if(element.absorbBar:IsObjectType('StatusBar') and not element.absorbBar:GetStatusBarTexture()) then
 				element.absorbBar:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 			end
-
-			element.absorbBar:Show()
 		end
 
 		if(element.healAbsorbBar) then
 			if(element.healAbsorbBar:IsObjectType('StatusBar') and not element.healAbsorbBar:GetStatusBarTexture()) then
 				element.healAbsorbBar:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 			end
-
-			element.healAbsorbBar:Show()
 		end
 
 		if(element.overAbsorb) then
