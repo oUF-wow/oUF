@@ -43,12 +43,13 @@ local function Update(self, event, unit)
 	--]]
 	if(element.PreUpdate) then element:PreUpdate(unit) end
 
+	local feedbackUnit = element.feedbackUnit
 	unit = unit or self.unit
 
 	local status
 	if(UnitExists(unit)) then
-		if(element.feedbackUnit and element.feedbackUnit ~= unit and UnitExists(element.feedbackUnit)) then
-			status = UnitThreatSituation(element.feedbackUnit, unit)
+		if(feedbackUnit and feedbackUnit ~= unit and UnitExists(feedbackUnit)) then
+			status = UnitThreatSituation(feedbackUnit, unit)
 		else
 			status = UnitThreatSituation(unit)
 		end
