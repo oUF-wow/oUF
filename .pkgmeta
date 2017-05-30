@@ -1,0 +1,11 @@
+package-as: oUF
+
+manual-changelog:
+  filename: CHANGELOG.md
+  markup-type: markdown
+
+optional-dependencies:
+  - clique
+
+ignore:
+  - utils
