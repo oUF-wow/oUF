@@ -8,10 +8,9 @@
 **oUF** is a unit frame framework. It attempts to simplify the process of writing unit frames for WoW by doing all the trivial and painfully boring parts for you. So you can focus more on experimenting with the look of the frames.
 
 By itself oUF doesn't do much, a layout is required.
-<!--
-## Documentation
 
-Some stuff will be here.-->
+## Documentation
+See our oUF 7.0 upgrade guide [here](http://www.wowinterface.com/forums/showthread.php?t=55422).
 
 ## Feedback
 Generally, bugs should be reported through the author of the layout.
