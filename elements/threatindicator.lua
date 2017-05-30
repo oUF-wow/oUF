@@ -43,13 +43,17 @@ local function Update(self, event, unit)
 	--]]
 	if(element.PreUpdate) then element:PreUpdate(unit) end
 
+	local feedbackUnit = element.feedbackUnit
 	unit = unit or self.unit
 
 	local status
-	if element.feedbackUnit and element.feedbackUnit ~= unit then
-		status = UnitThreatSituation(element.feedbackUnit, unit)
-	else
-		status = UnitThreatSituation(unit)
+	-- BUG: Non-existent '*target' or '*pet' units cause UnitThreatSituation() errors
+	if(UnitExists(unit)) then
+		if(feedbackUnit and feedbackUnit ~= unit and UnitExists(feedbackUnit)) then
+			status = UnitThreatSituation(feedbackUnit, unit)
+		else
+			status = UnitThreatSituation(unit)
+		end
 	end
 
 	local r, g, b
