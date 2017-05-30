@@ -3,7 +3,7 @@ language: c
 
 branches:
   only:
-    - ^\d+\.\d+(\.\d+)?(-\S*)?$
+    - /^\d+\.\d+(\.\d+)?(-\S*)?$/
 
 addons:
   apt:
