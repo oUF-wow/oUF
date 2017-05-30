@@ -46,10 +46,12 @@ local function Update(self, event, unit)
 	unit = unit or self.unit
 
 	local status
-	if element.feedbackUnit and element.feedbackUnit ~= unit then
-		status = UnitThreatSituation(element.feedbackUnit, unit)
-	else
-		status = UnitThreatSituation(unit)
+	if(UnitExists(unit)) then
+		if(element.feedbackUnit and element.feedbackUnit ~= unit and UnitExists(element.feedbackUnit)) then
+			status = UnitThreatSituation(element.feedbackUnit, unit)
+		else
+			status = UnitThreatSituation(unit)
+		end
 	end
 
 	local r, g, b
