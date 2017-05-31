@@ -186,9 +186,18 @@ local tagStrings = {
 	end]],
 
 	['raidcolor'] = [[function(u)
-		local _, x = UnitClass(u)
-		if(x) then
-			return Hex(_COLORS.class[x])
+		local _, class = UnitClass(u)
+		if(class) then
+			return Hex(_COLORS.class[class])
+		else
+			local id = u:match('arena(%d)$')
+			if(id) then
+				local specID = GetArenaOpponentSpec(tonumber(id))
+				if(specID and specID > 0) then
+					_, _, _, _, _, class = GetSpecializationInfoByID(specID)
+					return Hex(_COLORS.class[class])
+				end
+			end
 		end
 	end]],
 
