@@ -29,6 +29,7 @@ local generateLog = function(prevTag, currentTag)
 	local sf = string.format
 
 	local out = {}
+	local i = 0
 
 	ti(out, sf('**Changes in %s:**\n', currentTag))
 
@@ -41,8 +42,10 @@ local generateLog = function(prevTag, currentTag)
 				line = line:sub(7)
 			end
 
-			ti(out, sf('  - %s', line))
+			i = i + 1
+			ti(out, sf('  %s. %s', i, line))
 		elseif(#line ~= 0) then
+			i = 0
 			ti(out, sf('- _%s_', line))
 		end
 	end
