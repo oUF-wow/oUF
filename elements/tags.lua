@@ -419,6 +419,17 @@ local tagStrings = {
 
 		return amount
 	end]],
+
+	['arenaspec'] = [[function(u)
+		local id = u:match('arena(%d)$')
+		if(id) then
+			local specID = GetArenaOpponentSpec(tonumber(id))
+			if(specID and specID > 0) then
+				local _, specName = GetSpecializationInfoByID(specID)
+				return specName
+			end
+		end
+	end]],
 }
 
 local tags = setmetatable(
@@ -502,6 +513,7 @@ local tagEvents = {
 	['arcanecharges']       = 'UNIT_POWER_UPDATE SPELLS_CHANGED',
 	['powercolor']          = 'UNIT_DISPLAYPOWER',
 	['runes']               = 'RUNE_POWER_UPDATE',
+	['arenaspec']           = 'ARENA_PREP_OPPONENT_SPECIALIZATIONS',
 }
 
 local unitlessEvents = {
@@ -511,6 +523,7 @@ local unitlessEvents = {
 	PARTY_LEADER_CHANGED = true,
 	GROUP_ROSTER_UPDATE = true,
 	RUNE_POWER_UPDATE = true,
+	ARENA_PREP_OPPONENT_SPECIALIZATIONS = true,
 }
 
 local events = {}
