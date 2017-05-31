@@ -6,6 +6,23 @@ local function updateElement(self, event, element, specID)
 	local el = self[element]
 	if(el and self:IsElementEnabled(element)) then
 		if(el.Override) then
+			--[[ Override: Health.OverrideArenaPreparation(self, event, specID)
+			Used as an alternative to Health.Override for arena preperation frames.
+
+			* self   - the parent object
+			* event  - the event triggering the update (string)
+			* specID - the specialization ID for the opponent (number)
+			--]]
+			--[[ Override: Power.OverrideArenaPreparation(self, event, specID)
+			Used as an alternative to Power.Override for arena preperation frames.
+
+			* self   - the parent object
+			* event  - the event triggering the update (string)
+			* specID - the specialization ID for the opponent (number)
+			--]]
+			if(el.OverrideArenaPreparation) then
+				el.OverrideArenaPreparation(self, event, specID)
+			end
 			return
 		end
 
@@ -38,6 +55,23 @@ local function updateElement(self, event, element, specID)
 				local mu = bg.multiplier or 1
 				bg:SetVertexColor(r * mu, g * mu, b * mu)
 			end
+		end
+
+		--[[ Callback: Health:PostUpdateArenaPreparation(specID)
+		Called after the element has been updated during arena preperation.
+
+		* self   - the Health element
+		* specID - the specialization ID for the opponent (number)
+		--]]
+		--[[ Callback: Power:PostUpdateArenaPreparation(specID)
+		Called after the element has been updated during arena preperation.
+
+		* self   - the Power element
+		* specID - the specialization ID for the opponent (number)
+		--]]
+		if(el.PostUpdateArenaPreparation) then
+			-- TODO: document
+			el:PostUpdateArenaPreparation(specID)
 		end
 	end
 end
