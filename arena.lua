@@ -57,7 +57,13 @@ function Private.UpdateArenaPreperation(self, event)
 	elseif(event == 'PLAYER_ENTERING_WORLD' and not UnitExists(self.unit)) then
 		Private.UpdateArenaPreperation(self, 'ARENA_PREP_OPPONENT_SPECIALIZATIONS')
 	elseif(event == 'ARENA_PREP_OPPONENT_SPECIALIZATIONS') then
-		local specID = GetArenaOpponentSpec(tonumber(id))
+		local id = tonumber(self.id)
+		if(not self:IsEnabled() and GetNumArenaOpponentSpecs() < id) then
+			-- in case someone leaves
+			self:Hide()
+		end
+
+		local specID = GetArenaOpponentSpec(id)
 		if(specID) then
 			if(self:IsEnabled()) then
 				self:Disable()
