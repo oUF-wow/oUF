@@ -5,6 +5,10 @@ local Private = oUF.Private
 local function updateElement(self, event, element, specID)
 	local el = self[element]
 	if(el and self:IsElementEnabled(element)) then
+		if(el.Override) then
+			return
+		end
+
 		el:SetMinMaxValues(0, 1)
 		el:SetValue(1)
 
