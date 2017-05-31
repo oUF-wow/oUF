@@ -696,7 +696,17 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 	eventHandler:RegisterEvent('NAME_PLATE_UNIT_ADDED')
 	eventHandler:RegisterEvent('NAME_PLATE_UNIT_REMOVED')
 	eventHandler:RegisterEvent('PLAYER_TARGET_CHANGED')
-	eventHandler:RegisterEvent('PLAYER_LOGIN')
+
+	if(IsLoggedIn()) then
+		if(nameplateCVars) then
+			for cvar, value in next, nameplateCVars do
+				SetCVar(cvar, value)
+			end
+		end
+	else
+		eventHandler:RegisterEvent('PLAYER_LOGIN')
+	end
+
 	eventHandler:SetScript('OnEvent', function(_, event, unit)
 		if(event == 'PLAYER_LOGIN') then
 			if(nameplateCVars) then
