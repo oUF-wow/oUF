@@ -321,6 +321,9 @@ end
 local function Disable(self)
 	if(self.ClassPower) then
 		ClassPowerDisable(self)
+
+		self:UnregisterEvent('PLAYER_TALENT_UPDATE', VisibilityPath)
+		self:UnregisterEvent('UNIT_DISPLAYPOWER', VisibilityPath)
 	end
 end
 
