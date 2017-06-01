@@ -43,7 +43,7 @@ local generateLog = function(prevTag, currentTag)
 			end
 
 			i = i + 1
-			ti(out, sf('  %s. %s', i, line))
+			ti(out, sf('    %s. %s', i, line))
 		elseif(#line ~= 0) then
 			i = 0
 			ti(out, sf('- _%s_', line))
