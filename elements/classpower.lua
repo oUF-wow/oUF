@@ -324,6 +324,7 @@ local function Disable(self)
 
 		self:UnregisterEvent('PLAYER_TALENT_UPDATE', VisibilityPath)
 		self:UnregisterEvent('UNIT_DISPLAYPOWER', VisibilityPath)
+		self:UnregisterEvent('SPELLS_CHANGED', Visibility)
 	end
 end
 
