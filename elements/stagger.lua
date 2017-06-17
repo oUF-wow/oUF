@@ -91,7 +91,7 @@ local function Update(self, event, unit)
 		element:PreUpdate()
 	end
 
-	local cur = UnitStagger('player')
+	local cur = UnitStagger('player') or 0
 	local max = UnitHealthMax('player')
 
 	element:SetMinMaxValues(0, max)
