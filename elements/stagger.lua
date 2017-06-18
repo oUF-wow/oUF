@@ -91,6 +91,7 @@ local function Update(self, event, unit)
 		element:PreUpdate()
 	end
 
+	-- Blizzard code has nil checks for UnitStagger return
 	local cur = UnitStagger('player') or 0
 	local max = UnitHealthMax('player')
 
