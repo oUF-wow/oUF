@@ -91,7 +91,7 @@ local function updateSafeZone(self)
 	-- Guard against GetNetStats returning latencies of 0.
 	if(ms ~= 0) then
 		-- MADNESS!
-		local safeZonePercent = (width / self.max) * (ms / 1e5)
+		local safeZonePercent = (ms / 1e3) / self.max
 		if(safeZonePercent > 1) then
 			safeZonePercent = 1
 		end
