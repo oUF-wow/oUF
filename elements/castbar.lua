@@ -94,7 +94,6 @@ local function updateSafeZone(self)
 	end
 
 	safeZone:SetWidth(width * safeZoneRatio)
-	safeZone:Show()
 end
 
 local function UNIT_SPELLCAST_START(self, event, unit)
