@@ -88,19 +88,13 @@ local function updateSafeZone(self)
 	local width = self:GetWidth()
 	local _, _, _, ms = GetNetStats()
 
-	-- Guard against GetNetStats returning latencies of 0.
-	if(ms ~= 0) then
-		-- MADNESS!
-		local safeZonePercent = (ms / 1e3) / self.max
-		if(safeZonePercent > 1) then
-			safeZonePercent = 1
-		end
-
-		safeZone:SetWidth(width * safeZonePercent)
-		safeZone:Show()
-	else
-		safeZone:Hide()
+	local safeZoneRatio = (ms / 1e3) / self.max
+	if(safeZoneRatio > 1) then
+		safeZoneRatio = 1
 	end
+
+	safeZone:SetWidth(width * safeZoneRatio)
+	safeZone:Show()
 end
 
 local function UNIT_SPELLCAST_START(self, event, unit)
