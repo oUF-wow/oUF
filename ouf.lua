@@ -744,7 +744,7 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 				-- Do not parent nameplates to default ones because it causes nameplate flickering, do not use UIParent
 				-- as a parent either, for some reason it makes some other frames flicker.
 				nameplate.unitFrame = CreateFrame('Button', prefix..nameplate:GetName(), WorldFrame)
-				nameplate.unitFrame:SetPoint("CENTER", nameplate, "CENTER", 0, 0)
+				nameplate.unitFrame:SetPoint('CENTER', nameplate, 'CENTER', 0, 0)
 				nameplate.unitFrame:EnableMouse(false)
 				nameplate.unitFrame.isNamePlate = true
 				nameplate.unitFrame.style = style
