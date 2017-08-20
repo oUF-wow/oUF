@@ -708,9 +708,15 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 		eventHandler:RegisterEvent('PLAYER_LOGIN')
 	end
 
-	eventHandler:SetScript("OnUpdate", function()
-		for blizz, ouf in next, nameplates do
-			ouf:SetAlpha(blizz:GetAlpha())
+	eventHandler:SetScript('OnUpdate', function(handler, elapsed)
+		handler.elapsed = (handler.elapsed or 0) + elapsed
+
+		if handler.elapsed >= 0.05 then
+			for blizz, ouf in next, nameplates do
+				ouf:SetAlpha(blizz:GetAlpha())
+			end
+
+			handler.elapsed = 0
 		end
 	end)
 
