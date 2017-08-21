@@ -711,7 +711,7 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 	eventHandler:SetScript('OnUpdate', function(handler, elapsed)
 		handler.elapsed = (handler.elapsed or 0) + elapsed
 
-		-- Updating alpha less often than every 4th frame at 60fps makes it look choppy.
+		-- Updating alpha less often than every 4 frames at 60fps makes it look choppy.
 		-- Frames refresh every 0.016-0.017s at 60fps, 0.0165 * 3 = 0.0495.
 		if (handler.elapsed >= 0.05) then
 			for blizz, ouf in next, nameplates do
