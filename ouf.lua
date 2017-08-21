@@ -674,7 +674,7 @@ Used to create nameplates and apply the currently active style to them.
               the callback are the updated nameplate, the event that triggered the update and the new unit (function?)
 * variables - list of console variable-value pairs to be set when the player logs in (table?)
 --]]
-function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
+function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars, noAlphaOverride)
 	argcheck(nameplateCallback, 3, 'function', 'nil')
 	argcheck(nameplateCVars, 4, 'table', 'nil')
 	if(not style) then return error('Unable to create frame. No styles have been registered.') end
@@ -708,19 +708,21 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 		eventHandler:RegisterEvent('PLAYER_LOGIN')
 	end
 
-	eventHandler:SetScript('OnUpdate', function(handler, elapsed)
-		handler.elapsed = (handler.elapsed or 0) + elapsed
+	if(not noAlphaOverride) then
+		eventHandler:SetScript('OnUpdate', function(handler, elapsed)
+			handler.elapsed = (handler.elapsed or 0) + elapsed
 
-		-- Updating alpha less often than every 4 frames at 60fps makes it look choppy.
-		-- Frames refresh every 0.016-0.017s at 60fps, 0.0165 * 3 = 0.0495.
-		if (handler.elapsed >= 0.05) then
-			for blizz, ouf in next, nameplates do
-				ouf:SetAlpha(blizz:GetAlpha())
+			-- Updating alpha less often than every 4 frames at 60fps makes it look choppy.
+			-- Frames refresh every 0.016-0.017s at 60fps, 0.0165 * 3 = 0.0495.
+			if(handler.elapsed >= 0.05) then
+				for blizz, ouf in next, nameplates do
+					ouf:SetAlpha(blizz:GetAlpha())
+				end
+
+				handler.elapsed = 0
 			end
-
-			handler.elapsed = 0
-		end
-	end)
+		end)
+	end
 
 	eventHandler:SetScript('OnEvent', function(_, event, unit)
 		if(event == 'PLAYER_LOGIN') then
@@ -760,9 +762,12 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 
 			nameplate.unitFrame:SetAttribute('unit', unit)
 			nameplate.unitFrame:UpdateAllElements(event)
-			nameplate.unitFrame:SetAlpha(0)
 
-			nameplates[nameplate] = nameplate.unitFrame
+			if(not noAlphaOverride) then
+				nameplate.unitFrame:SetAlpha(0)
+
+				nameplates[nameplate] = nameplate.unitFrame
+			end
 
 			if(nameplateCallback) then
 				nameplateCallback(nameplate.unitFrame, event, unit)
@@ -774,7 +779,9 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 			nameplate.unitFrame:SetAttribute('unit', nil)
 			nameplate.unitFrame:UpdateAllElements(event)
 
-			nameplates[nameplate] = nil
+			if(not noAlphaOverride) then
+				nameplates[nameplate] = nil
+			end
 
 			if(nameplateCallback) then
 				nameplateCallback(nameplate.unitFrame, event, unit)
