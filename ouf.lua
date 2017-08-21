@@ -760,6 +760,7 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 
 			nameplate.unitFrame:SetAttribute('unit', unit)
 			nameplate.unitFrame:UpdateAllElements(event)
+			nameplate.unitFrame:SetAlpha(0)
 
 			nameplates[nameplate] = nameplate.unitFrame
 
