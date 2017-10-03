@@ -23,7 +23,7 @@ If you intend to embed oUF into your project, please refer to our [embedding wik
 
 ## Feedback
 
-If you have an issue, please use the [issue tracker](https://github.com/oUF-wow/oUF/issues), alternatively you can start a topic on our [official forums](https://www.wowinterface.com/forums/forumdisplay.php?f=87).
+If you have an issue, please use the [issue tracker](https://github.com/oUF-wow/oUF/issues). Alternatively you can start a topic on our [official forums](https://www.wowinterface.com/forums/forumdisplay.php?f=87).
 
-Please make sure you search first to make sure it has not been reported and/or solved already.  
+Please search first to make sure your issue has not been reported/solved already.  
 Generally, bugs should be reported through the author of the layout you're using.
