@@ -67,8 +67,8 @@ registering events.
 --]]
 function frame_metatable.__index:RegisterEvent(event, func, unitless)
 	-- Block OnUpdate polled frames from registering events except for
-	-- UNIT_MODEL_CHANGED which is used for portrait updates.
-	if(self.__eventless and event ~= 'UNIT_MODEL_CHANGED') then return end
+	-- UNIT_PORTRAIT_UPDATE which is used for portrait updates.
+	if(self.__eventless and event ~= 'UNIT_PORTRAIT_UPDATE') then return end
 
 	argcheck(event, 2, 'string')
 
