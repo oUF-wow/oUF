@@ -105,6 +105,7 @@ local function Enable(self, unit)
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
 
+		self:RegisterEvent('UNIT_MODEL_CHANGED', Path)
 		self:RegisterEvent('UNIT_PORTRAIT_UPDATE', Path)
 		self:RegisterEvent('UNIT_CONNECTION', Path)
 
@@ -129,6 +130,7 @@ local function Disable(self)
 	if(element) then
 		element:Hide()
 
+		self:UnregisterEvent('UNIT_MODEL_CHANGED', Path)
 		self:UnregisterEvent('UNIT_PORTRAIT_UPDATE', Path)
 		self:UnregisterEvent('PARTY_MEMBER_ENABLE', Path)
 		self:UnregisterEvent('UNIT_CONNECTION', Path)
