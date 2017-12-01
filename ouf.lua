@@ -656,6 +656,8 @@ do
 
 				if(id == 1712) then
 					initialConfigFunction = initialConfigFunctionTemp:format(0)
+
+					isHacked = true
 				end
 			end
 		elseif(event == 'ZONE_CHANGED_NEW_AREA') then
