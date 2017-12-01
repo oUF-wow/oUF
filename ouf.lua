@@ -508,7 +508,7 @@ do
 	end
 
 	-- There has to be an easier way to do this.
-	local initialConfigFunction = [[
+	local initialConfigFunctionTemp = [[
 		local header = self:GetParent()
 		local frames = table.new()
 		table.insert(frames, self)
@@ -550,7 +550,7 @@ do
 
 				frame:SetAttribute('*type1', 'target')
 				frame:SetAttribute('*type2', 'togglemenu')
-				frame:SetAttribute('toggleForVehicle', true)
+				frame:SetAttribute('toggleForVehicle', %d == 1)
 				frame:SetAttribute('oUF-guessUnit', unit)
 			end
 
@@ -568,6 +568,9 @@ do
 			clique:RunAttribute('clickcast_register')
 		end
 	]]
+
+	-- it's needed for vehicle hack
+	local initialConfigFunction = initialConfigFunctionTemp:format(1)
 
 	--[[ oUF:SpawnHeader(overrideName, template, visibility, ...)
 	Used to create a group header and apply the currently active style to it.
@@ -647,14 +650,24 @@ do
 	eventHandler:RegisterEvent('ZONE_CHANGED_NEW_AREA')
 	eventHandler:RegisterEvent('PLAYER_REGEN_ENABLED')
 	eventHandler:SetScript('OnEvent', function(_, event)
-		if(event == 'PLAYER_LOGIN' or event == 'ZONE_CHANGED_NEW_AREA') then
+		if(event == 'PLAYER_LOGIN') then
+			if(IsInInstance()) then
+				local _, _, _, _, _, _, _, id = GetInstanceInfo()
+
+				if(id == 1712) then
+					initialConfigFunction = initialConfigFunctionTemp:format(0)
+				end
+			end
+		elseif(event == 'ZONE_CHANGED_NEW_AREA') then
 			local id, _
 			if(IsInInstance()) then
 				_, _, _, _, _, _, _, id = GetInstanceInfo()
 			end
 
-			if(id and id == 1712) then
+			if(id == 1712) then
 				if(not isHacked) then
+					initialConfigFunction = initialConfigFunctionTemp:format(0)
+
 					if(not InCombatLockdown()) then
 						for _, header in next, headers do
 							for _, button in next, {header:GetChildren()} do
@@ -670,6 +683,8 @@ do
 				end
 			else
 				if(isHacked) then
+					initialConfigFunction = initialConfigFunctionTemp:format(1)
+
 					if(not InCombatLockdown()) then
 						for _, header in next, headers do
 							for _, button in next, {header:GetChildren()} do
