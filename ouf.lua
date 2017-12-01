@@ -657,6 +657,15 @@ do
 				if(id == 1712) then
 					initialConfigFunction = initialConfigFunctionTemp:format(0)
 
+					-- This is here for layouts that don't use oUF:Factory
+					for _, header in next, headers do
+						header:SetAttribute('initialConfigFunction', initialConfigFunction)
+
+						for _, button in next, {header:GetChildren()} do
+							button:SetAttribute('toggleForVehicle', false)
+						end
+					end
+
 					isHacked = true
 				end
 			end
