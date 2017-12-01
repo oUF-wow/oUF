@@ -672,6 +672,8 @@ do
 
 					if(not InCombatLockdown()) then
 						for _, header in next, headers do
+							header:SetAttribute('initialConfigFunction', initialConfigFunction)
+
 							for _, button in next, {header:GetChildren()} do
 								button:SetAttribute('toggleForVehicle', false)
 							end
@@ -689,6 +691,8 @@ do
 
 					if(not InCombatLockdown()) then
 						for _, header in next, headers do
+							header:SetAttribute('initialConfigFunction', initialConfigFunction)
+
 							for _, button in next, {header:GetChildren()} do
 								button:SetAttribute('toggleForVehicle', true)
 							end
@@ -704,6 +708,8 @@ do
 		elseif(event == 'PLAYER_REGEN_ENABLED') then
 			if(isHacked and shouldHack == false) then
 				for _, header in next, headers do
+					header:SetAttribute('initialConfigFunction', initialConfigFunction)
+
 					for _, button in next, {header:GetChildren()} do
 						button:SetAttribute('toggleForVehicle', true)
 					end
@@ -713,6 +719,8 @@ do
 				shouldHack = nil
 			elseif(not isHacked and shouldHack == true) then
 				for _, header in next, headers do
+					header:SetAttribute('initialConfigFunction', initialConfigFunction)
+
 					for _, button in next, {header:GetChildren()} do
 						button:SetAttribute('toggleForVehicle', false)
 					end
