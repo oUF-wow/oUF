@@ -637,6 +637,75 @@ do
 
 		return header
 	end
+
+	-- hacks
+	local isHacked = false
+	local shouldHack
+
+	local eventHandler = CreateFrame('Frame')
+	eventHandler:RegisterEvent('PLAYER_LOGIN')
+	eventHandler:RegisterEvent('ZONE_CHANGED_NEW_AREA')
+	eventHandler:RegisterEvent('PLAYER_REGEN_ENABLED')
+	eventHandler:SetScript('OnEvent', function(_, event)
+		if(event == 'PLAYER_LOGIN' or event == 'ZONE_CHANGED_NEW_AREA') then
+			local id, _
+			if(IsInInstance()) then
+				_, _, _, _, _, _, _, id = GetInstanceInfo()
+			end
+
+			if(id and id == 1712) then
+				if(not isHacked) then
+					if(not InCombatLockdown()) then
+						for _, header in next, headers do
+							for _, button in next, {header:GetChildren()} do
+								button:SetAttribute('toggleForVehicle', false)
+							end
+						end
+
+						isHacked = true
+						shouldHack = nil
+					else
+						shouldHack = true
+					end
+				end
+			else
+				if(isHacked) then
+					if(not InCombatLockdown()) then
+						for _, header in next, headers do
+							for _, button in next, {header:GetChildren()} do
+								button:SetAttribute('toggleForVehicle', true)
+							end
+						end
+
+						isHacked = false
+						shouldHack = nil
+					else
+						shouldHack = false
+					end
+				end
+			end
+		elseif(event == 'PLAYER_REGEN_ENABLED') then
+			if(isHacked and shouldHack == false) then
+				for _, header in next, headers do
+					for _, button in next, {header:GetChildren()} do
+						button:SetAttribute('toggleForVehicle', true)
+					end
+				end
+
+				isHacked = false
+				shouldHack = nil
+			elseif(not isHacked and shouldHack == true) then
+				for _, header in next, headers do
+					for _, button in next, {header:GetChildren()} do
+						button:SetAttribute('toggleForVehicle', false)
+					end
+				end
+
+				isHacked = true
+				shouldHack = nil
+			end
+		end
+	end)
 end
 
 --[[ oUF:Spawn(unit, overrideName)
