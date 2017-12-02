@@ -659,6 +659,9 @@ do
 				child:SetAttribute('toggleForVehicle', flag)
 			end
 		end
+
+		isHacked = not flag
+		shouldHack = nil
 	end
 
 	local eventHandler = CreateFrame('Frame')
@@ -673,7 +676,6 @@ do
 
 				-- This is here for layouts that don't use oUF:Factory
 				toggleHeaders(false)
-				isHacked = true
 			end
 		elseif(event == 'ZONE_CHANGED_NEW_AREA') then
 			local _, _, _, _, _, _, _, id = GetInstanceInfo()
@@ -682,8 +684,6 @@ do
 
 				if(not InCombatLockdown()) then
 					toggleHeaders(false)
-					isHacked = true
-					shouldHack = nil
 				else
 					shouldHack = true
 				end
@@ -692,21 +692,15 @@ do
 
 				if(not InCombatLockdown()) then
 					toggleHeaders(true)
-					isHacked = false
-					shouldHack = nil
 				else
 					shouldHack = false
 				end
 			end
 		elseif(event == 'PLAYER_REGEN_ENABLED') then
-			if(isHacked and not shouldHack == false) then
+			if(isHacked and shouldHack == false) then
 				toggleHeaders(true)
-				isHacked = false
-				shouldHack = nil
 			elseif(not isHacked and shouldHack) then
 				toggleHeaders(false)
-				isHacked = true
-				shouldHack = nil
 			end
 		end
 	end)
