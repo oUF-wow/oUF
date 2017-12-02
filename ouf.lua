@@ -550,7 +550,7 @@ do
 
 				frame:SetAttribute('*type1', 'target')
 				frame:SetAttribute('*type2', 'togglemenu')
-				frame:SetAttribute('toggleForVehicle', %d == 1)
+				frame:SetAttribute('toggleForVehicle', %d == 1) -- See issue #404
 				frame:SetAttribute('oUF-guessUnit', unit)
 			end
 
@@ -569,7 +569,7 @@ do
 		end
 	]]
 
-	-- it's needed for vehicle hack
+	-- Necessary for a vehicle support hack (see issue #404)
 	local initialConfigFunction = initialConfigFunctionTemp:format(1)
 
 	--[[ oUF:SpawnHeader(overrideName, template, visibility, ...)
@@ -641,9 +641,20 @@ do
 		return header
 	end
 
-	-- hacks
+	-- The remainder of this scope is a temporary fix for issue #404,
+	-- regarding vehicle support on headers for the Antorus raid instance.
 	local isHacked = false
 	local shouldHack
+
+	local function toggleHeaders(flag)
+		for _, header in next, headers do
+			header:SetAttribute('initialConfigFunction', initialConfigFunction)
+
+			for _, child in next, {header:GetChildren()} do
+				child:SetAttribute('toggleForVehicle', flag)
+			end
+		end
+	end
 
 	local eventHandler = CreateFrame('Frame')
 	eventHandler:RegisterEvent('PLAYER_LOGIN')
@@ -651,90 +662,44 @@ do
 	eventHandler:RegisterEvent('PLAYER_REGEN_ENABLED')
 	eventHandler:SetScript('OnEvent', function(_, event)
 		if(event == 'PLAYER_LOGIN') then
-			if(IsInInstance()) then
-				local _, _, _, _, _, _, _, id = GetInstanceInfo()
+			local _, _, _, _, _, _, _, id = GetInstanceInfo()
+			if(id == 1712) then
+				initialConfigFunction = initialConfigFunctionTemp:format(0)
 
-				if(id == 1712) then
-					initialConfigFunction = initialConfigFunctionTemp:format(0)
-
-					-- This is here for layouts that don't use oUF:Factory
-					for _, header in next, headers do
-						header:SetAttribute('initialConfigFunction', initialConfigFunction)
-
-						for _, button in next, {header:GetChildren()} do
-							button:SetAttribute('toggleForVehicle', false)
-						end
-					end
-
-					isHacked = true
-				end
+				-- This is here for layouts that don't use oUF:Factory
+				toggleHeaders(false)
+				isHacked = true
 			end
 		elseif(event == 'ZONE_CHANGED_NEW_AREA') then
-			local id, _
-			if(IsInInstance()) then
-				_, _, _, _, _, _, _, id = GetInstanceInfo()
-			end
+			local _, _, _, _, _, _, _, id = GetInstanceInfo()
+			if(id == 1712 and not isHacked) then
+				initialConfigFunction = initialConfigFunctionTemp:format(0)
 
-			if(id == 1712) then
-				if(not isHacked) then
-					initialConfigFunction = initialConfigFunctionTemp:format(0)
-
-					if(not InCombatLockdown()) then
-						for _, header in next, headers do
-							header:SetAttribute('initialConfigFunction', initialConfigFunction)
-
-							for _, button in next, {header:GetChildren()} do
-								button:SetAttribute('toggleForVehicle', false)
-							end
-						end
-
-						isHacked = true
-						shouldHack = nil
-					else
-						shouldHack = true
-					end
+				if(not InCombatLockdown()) then
+					toggleHeaders(false)
+					isHacked = true
+					shouldHack = nil
+				else
+					shouldHack = true
 				end
-			else
-				if(isHacked) then
-					initialConfigFunction = initialConfigFunctionTemp:format(1)
+			elseif(isHacked) then
+				initialConfigFunction = initialConfigFunctionTemp:format(1)
 
-					if(not InCombatLockdown()) then
-						for _, header in next, headers do
-							header:SetAttribute('initialConfigFunction', initialConfigFunction)
-
-							for _, button in next, {header:GetChildren()} do
-								button:SetAttribute('toggleForVehicle', true)
-							end
-						end
-
-						isHacked = false
-						shouldHack = nil
-					else
-						shouldHack = false
-					end
+				if(not InCombatLockdown()) then
+					toggleHeaders(true)
+					isHacked = false
+					shouldHack = nil
+				else
+					shouldHack = false
 				end
 			end
 		elseif(event == 'PLAYER_REGEN_ENABLED') then
-			if(isHacked and shouldHack == false) then
-				for _, header in next, headers do
-					header:SetAttribute('initialConfigFunction', initialConfigFunction)
-
-					for _, button in next, {header:GetChildren()} do
-						button:SetAttribute('toggleForVehicle', true)
-					end
-				end
-
+			if(isHacked and not shouldHack == false) then
+				toggleHeaders(true)
 				isHacked = false
 				shouldHack = nil
-			elseif(not isHacked and shouldHack == true) then
-				for _, header in next, headers do
-					header:SetAttribute('initialConfigFunction', initialConfigFunction)
-
-					for _, button in next, {header:GetChildren()} do
-						button:SetAttribute('toggleForVehicle', false)
-					end
-				end
-
+			elseif(not isHacked and shouldHack) then
+				toggleHeaders(false)
 				isHacked = true
 				shouldHack = nil
 			end
