@@ -104,15 +104,27 @@ local function Update(self, event, unit)
 	local absorb = UnitGetTotalAbsorbs(unit) or 0
 	local healAbsorb = UnitGetTotalHealAbsorbs(unit) or 0
 	local health, maxHealth = UnitHealth(unit), UnitHealthMax(unit)
+	local overHealAbsorb = 0
 
 	local hasOverHealAbsorb = false
 	if(health < healAbsorb) then
-		hasOverHealAbsorb = true
+		overHealAbsorb = healAbsorb - health
 		healAbsorb = health
+		hasOverHealAbsorb = true
 	end
 
-	if(health - healAbsorb + allIncomingHeal > maxHealth * element.maxOverflow) then
-		allIncomingHeal = maxHealth * element.maxOverflow - health + healAbsorb
+	-- incoming heals shouldn't be visible if they get absorbed by the excess of
+	-- heal absorbs
+	if(overHealAbsorb > allIncomingHeal) then
+		allIncomingHeal = 0
+		myIncomingHeal = 0
+	else
+		-- visible amount of all incoming heals
+		allIncomingHeal = allIncomingHeal - overHealAbsorb
+
+		if(health - healAbsorb + allIncomingHeal > maxHealth * element.maxOverflow) then
+			allIncomingHeal = maxHealth * element.maxOverflow - health + healAbsorb
+		end
 	end
 
 	local otherIncomingHeal = 0
@@ -133,12 +145,6 @@ local function Update(self, event, unit)
 		else
 			absorb = math.max(0, maxHealth - health)
 		end
-	end
-
-	if(healAbsorb > allIncomingHeal) then
-		healAbsorb = healAbsorb - allIncomingHeal
-	else
-		healAbsorb = 0
 	end
 
 	if(element.myBar) then
