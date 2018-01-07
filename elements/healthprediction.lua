@@ -104,47 +104,40 @@ local function Update(self, event, unit)
 	local absorb = UnitGetTotalAbsorbs(unit) or 0
 	local healAbsorb = UnitGetTotalHealAbsorbs(unit) or 0
 	local health, maxHealth = UnitHealth(unit), UnitHealthMax(unit)
-	local overHealAbsorb = 0
-
+	local otherIncomingHeal = 0
 	local hasOverHealAbsorb = false
-	if(health < healAbsorb) then
-		overHealAbsorb = healAbsorb - health
-		healAbsorb = health
-		hasOverHealAbsorb = true
-	end
 
-	-- incoming heals shouldn't be visible if they get absorbed by the excess of
-	-- heal absorbs
-	if(overHealAbsorb > allIncomingHeal) then
+	if(healAbsorb > allIncomingHeal) then
+		healAbsorb = healAbsorb - allIncomingHeal
 		allIncomingHeal = 0
 		myIncomingHeal = 0
-	else
-		-- visible amount of all incoming heals
-		allIncomingHeal = allIncomingHeal - overHealAbsorb
 
-		if(health - healAbsorb + allIncomingHeal > maxHealth * element.maxOverflow) then
-			allIncomingHeal = maxHealth * element.maxOverflow - health + healAbsorb
+		if(health < healAbsorb) then
+			hasOverHealAbsorb = true
+			healAbsorb = health
+		end
+	else
+		allIncomingHeal = allIncomingHeal - healAbsorb
+		healAbsorb = 0
+
+		if(health + allIncomingHeal > maxHealth * element.maxOverflow) then
+			allIncomingHeal = maxHealth * element.maxOverflow - health
+		end
+
+		if(allIncomingHeal < myIncomingHeal) then
+			myIncomingHeal = allIncomingHeal
+		else
+			otherIncomingHeal = allIncomingHeal - myIncomingHeal
 		end
 	end
 
-	local otherIncomingHeal = 0
-	if(allIncomingHeal < myIncomingHeal) then
-		myIncomingHeal = allIncomingHeal
-	else
-		otherIncomingHeal = allIncomingHeal - myIncomingHeal
-	end
-
 	local hasOverAbsorb = false
-	if(health - healAbsorb + allIncomingHeal + absorb >= maxHealth or health + absorb >= maxHealth) then
+	if(health + allIncomingHeal + absorb >= maxHealth or health + absorb >= maxHealth) then
 		if(absorb > 0) then
 			hasOverAbsorb = true
 		end
 
-		if(allIncomingHeal > healAbsorb) then
-			absorb = math.max(0, maxHealth - (health - healAbsorb + allIncomingHeal))
-		else
-			absorb = math.max(0, maxHealth - health)
-		end
+		absorb = math.max(0, maxHealth - (health + allIncomingHeal))
 	end
 
 	if(element.myBar) then
