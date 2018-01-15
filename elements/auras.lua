@@ -228,14 +228,18 @@ local function updateIcon(element, unit, index, offset, filter, isDebuff, visibl
 			--[[ Callback: Auras:PostUpdateIcon(unit, button, index, position)
 			Called after the aura button has been updated.
 
-			* self     - the widget holding the aura buttons
-			* unit     - the unit on which the aura is cast (string)
-			* button   - the updated aura button (Button)
-			* index    - the index of the aura (number)
-			* position - the actual position of the aura button (number)
+			* self        - the widget holding the aura buttons
+			* unit        - the unit on which the aura is cast (string)
+			* button      - the updated aura button (Button)
+			* index       - the index of the aura (number)
+			* position    - the actual position of the aura button (number)
+			* duration    - the aura duration in seconds (number?)
+			* expiration  - the point in time when the aura will expire. Comparable to GetTime() (number)
+			* dispelType  - the dispel type of the aura (string?)['Curse', 'Disease', 'Magic', 'Poison']
+			* isStealable - whether the aura can be stolen or purged (boolean)
 			--]]
 			if(element.PostUpdateIcon) then
-				element:PostUpdateIcon(unit, button, index, position)
+				element:PostUpdateIcon(unit, button, index, position, duration, expiration, dispelType, isStealable)
 			end
 
 			return VISIBLE
