@@ -198,7 +198,7 @@ local function updateIcon(element, unit, index, offset, filter, isDebuff, visibl
 
 			if(button.overlay) then
 				if((isDebuff and element.showDebuffType) or (not isDebuff and element.showBuffType) or element.showType) then
-					local color = DebuffTypeColor[dispelType] or DebuffTypeColor.none
+					local color = DebuffTypeColor[dispelType or 'none']
 
 					button.overlay:SetVertexColor(color.r, color.g, color.b)
 					button.overlay:Show()
