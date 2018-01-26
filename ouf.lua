@@ -454,9 +454,9 @@ local function generateName(unit, ...)
 	for i = 1, select('#', ...), 2 do
 		local att, val = select(i, ...)
 		if(att == 'showRaid') then
-			raid = true
+			raid = val ~= false and val ~= nil
 		elseif(att == 'showParty') then
-			party = true
+			party = val ~= false and val ~= nil
 		elseif(att == 'groupFilter') then
 			groupFilter = val
 		end
