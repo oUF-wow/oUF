@@ -467,9 +467,9 @@ local function generateName(unit, ...)
 		if(groupFilter) then
 			if(type(groupFilter) == 'number' and groupFilter > 0) then
 				append = groupFilter
-			elseif(groupFilter:match('TANK')) then
+			elseif(groupFilter:match('MAINTANK')) then
 				append = 'MainTank'
-			elseif(groupFilter:match('ASSIST')) then
+			elseif(groupFilter:match('MAINASSIST')) then
 				append = 'MainAssist'
 			else
 				local _, count = groupFilter:gsub(',', '')
