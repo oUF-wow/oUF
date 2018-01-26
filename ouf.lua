@@ -468,7 +468,7 @@ local function generateName(unit, ...)
 	if(raid) then
 		if(groupFilter) then
 			if(type(groupFilter) == 'number' and groupFilter > 0) then
-				append = groupFilter
+				append = 'Raid' .. groupFilter
 			elseif(groupFilter:match('MAINTANK')) then
 				append = 'MainTank'
 			elseif(groupFilter:match('MAINASSIST')) then
