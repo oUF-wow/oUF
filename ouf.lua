@@ -450,10 +450,12 @@ end
 local function generateName(unit, ...)
 	local name = 'oUF_' .. style:gsub('^oUF_?', ''):gsub('[^%a%d_]+', '')
 
-	local raid, party, groupFilter
+	local raid, party, groupFilter, unitsuffix
 	for i = 1, select('#', ...), 2 do
 		local att, val = select(i, ...)
-		if(att == 'showRaid') then
+		if(att == 'oUF-initialConfigFunction') then
+			unitsuffix = val:match('unitsuffix[%p%s]+(%a+)')
+		elseif(att == 'showRaid') then
 			raid = val ~= false and val ~= nil
 		elseif(att == 'showParty') then
 			party = val ~= false and val ~= nil
@@ -489,7 +491,7 @@ local function generateName(unit, ...)
 	end
 
 	if(append) then
-		name = name .. append
+		name = name .. append .. (unitsuffix or '')
 	end
 
 	-- Change oUF_LilyRaidRaid into oUF_LilyRaid
