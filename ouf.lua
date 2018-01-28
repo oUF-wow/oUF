@@ -687,7 +687,7 @@ do
 				else
 					shouldHack = true
 				end
-			elseif(isHacked) then
+			elseif(id ~= 1712 and isHacked) then
 				initialConfigFunction = initialConfigFunctionTemp:format(1)
 
 				if(not InCombatLockdown()) then
