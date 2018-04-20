@@ -17,8 +17,8 @@ A default texture will be applied if the widget is a StatusBar and doesn't have 
 
 ## Options
 
-.frequentUpdates - Indicates whether to use UNIT_POWER_FREQUENT instead UNIT_POWER to update the bar. Only valid for the
-                   player and pet units (boolean)
+.frequentUpdates - Indicates whether to use UNIT_POWER_FREQUENT instead UNIT_POWER_UPDATE to update the bar. Only valid
+                   for the player and pet units (boolean)
 .displayAltPower - Use this to let the widget display alternate power if the unit has one. If no alternate power the
                    display will fall back to primary power (boolean)
 .useAtlas        - Use this to let the widget use an atlas for its texture if `.atlas` is defined on the widget or an
@@ -258,7 +258,7 @@ local function Enable(self, unit)
 		if(element.frequentUpdates and (unit == 'player' or unit == 'pet')) then
 			self:RegisterEvent('UNIT_POWER_FREQUENT', Path)
 		else
-			self:RegisterEvent('UNIT_POWER', Path)
+			self:RegisterEvent('UNIT_POWER_UPDATE', Path)
 		end
 
 		self:RegisterEvent('UNIT_POWER_BAR_SHOW', Path)
@@ -289,7 +289,7 @@ local function Disable(self)
 		element:Hide()
 
 		self:UnregisterEvent('UNIT_POWER_FREQUENT', Path)
-		self:UnregisterEvent('UNIT_POWER', Path)
+		self:UnregisterEvent('UNIT_POWER_UPDATE', Path)
 		self:UnregisterEvent('UNIT_POWER_BAR_SHOW', Path)
 		self:UnregisterEvent('UNIT_POWER_BAR_HIDE', Path)
 		self:UnregisterEvent('UNIT_DISPLAYPOWER', Path)
