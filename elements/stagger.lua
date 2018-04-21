@@ -181,7 +181,7 @@ local function Enable(self)
 		MonkStaggerBar:UnregisterEvent('PLAYER_ENTERING_WORLD')
 		MonkStaggerBar:UnregisterEvent('PLAYER_SPECIALIZATION_CHANGED')
 		MonkStaggerBar:UnregisterEvent('UNIT_DISPLAYPOWER')
-		MonkStaggerBar:UnregisterEvent('UPDATE_VEHICLE_ACTION_BAR')
+		MonkStaggerBar:UnregisterEvent('UPDATE_VEHICLE_ACTIONBAR')
 
 		element:Hide()
 
@@ -198,10 +198,10 @@ local function Disable(self)
 		self:UnregisterEvent('UNIT_DISPLAYPOWER', VisibilityPath)
 		self:UnregisterEvent('PLAYER_TALENT_UPDATE', VisibilityPath)
 
-		MonkStaggerBar:UnregisterEvent('PLAYER_ENTERING_WORLD')
-		MonkStaggerBar:UnregisterEvent('PLAYER_SPECIALIZATION_CHANGED')
-		MonkStaggerBar:UnregisterEvent('UNIT_DISPLAYPOWER')
-		MonkStaggerBar:UnregisterEvent('UPDATE_VEHICLE_ACTION_BAR')
+		MonkStaggerBar:RegisterEvent('PLAYER_ENTERING_WORLD')
+		MonkStaggerBar:RegisterEvent('PLAYER_SPECIALIZATION_CHANGED')
+		MonkStaggerBar:RegisterEvent('UNIT_DISPLAYPOWER')
+		MonkStaggerBar:RegisterEvent('UPDATE_VEHICLE_ACTIONBAR')
 	end
 end
 
