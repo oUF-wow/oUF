@@ -100,7 +100,7 @@ local function UNIT_SPELLCAST_START(self, event, unit)
 	if(self.unit ~= unit and self.realUnit ~= unit) then return end
 
 	local element = self.Castbar
-	local name, _, text, texture, startTime, endTime, _, castID, notInterruptible, spellID = UnitCastingInfo(unit)
+	local name, text, texture, startTime, endTime, _, castID, notInterruptible, spellID = UnitCastingInfo(unit)
 	if(not name) then
 		return element:Hide()
 	end
@@ -265,7 +265,7 @@ local function UNIT_SPELLCAST_DELAYED(self, event, unit, _, spellID)
 	if(self.unit ~= unit and self.realUnit ~= unit) then return end
 
 	local element = self.Castbar
-	local name, _, _, _, startTime, _, _, castID = UnitCastingInfo(unit)
+	local name, _, _, startTime, _, _, castID = UnitCastingInfo(unit)
 	if(not startTime or not element:IsShown()) then return end
 
 	local duration = GetTime() - (startTime / 1000)
@@ -319,7 +319,7 @@ local function UNIT_SPELLCAST_CHANNEL_START(self, event, unit, _, spellID)
 	if(self.unit ~= unit and self.realUnit ~= unit) then return end
 
 	local element = self.Castbar
-	local name, _, _, texture, startTime, endTime, _, notInterruptible = UnitChannelInfo(unit)
+	local name, _, texture, startTime, endTime, _, notInterruptible = UnitChannelInfo(unit)
 	if(not name) then
 		return
 	end
@@ -383,7 +383,7 @@ local function UNIT_SPELLCAST_CHANNEL_UPDATE(self, event, unit, _, spellID)
 	if(self.unit ~= unit and self.realUnit ~= unit) then return end
 
 	local element = self.Castbar
-	local name, _, _, _, startTime, endTime = UnitChannelInfo(unit)
+	local name, _, _, startTime, endTime = UnitChannelInfo(unit)
 	if(not name or not element:IsShown()) then
 		return
 	end
