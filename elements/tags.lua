@@ -331,15 +331,15 @@ local tagStrings = {
 	end]],
 
 	['curmana'] = [[function(unit)
-		return UnitPower(unit, Enum.PowerTypes.Mana)
+		return UnitPower(unit, Enum.PowerType.Mana)
 	end]],
 
 	['maxmana'] = [[function(unit)
-		return UnitPowerMax(unit, Enum.PowerTypes.Mana)
+		return UnitPowerMax(unit, Enum.PowerType.Mana)
 	end]],
 
 	['soulshards'] = [[function()
-		local num = UnitPower('player', Enum.PowerTypes.SoulShards)
+		local num = UnitPower('player', Enum.PowerType.SoulShards)
 		if(num > 0) then
 			return num
 		end
@@ -347,7 +347,7 @@ local tagStrings = {
 
 	['holypower'] = [[function()
 		if(GetSpecialization() == SPEC_PALADIN_RETRIBUTION) then
-			local num = UnitPower('player', Enum.PowerTypes.HolyPower)
+			local num = UnitPower('player', Enum.PowerType.HolyPower)
 			if(num > 0) then
 				return num
 			end
@@ -356,7 +356,7 @@ local tagStrings = {
 
 	['chi'] = [[function()
 		if(GetSpecialization() == SPEC_MONK_WINDWALKER) then
-			local num = UnitPower('player', Enum.PowerTypes.Chi)
+			local num = UnitPower('player', Enum.PowerType.Chi)
 			if(num > 0) then
 				return num
 			end
@@ -365,7 +365,7 @@ local tagStrings = {
 
 	['arcanecharges'] = [[function()
 		if(GetSpecialization() == SPEC_MAGE_ARCANE) then
-			local num = UnitPower('player', Enum.PowerTypes.ArcaneCharges)
+			local num = UnitPower('player', Enum.PowerType.ArcaneCharges)
 			if(num > 0) then
 				return num
 			end
