@@ -155,7 +155,7 @@ local function UNIT_SPELLCAST_START(self, event, unit)
 	element:Show()
 end
 
-local function UNIT_SPELLCAST_FAILED(self, event, unit, spellname, _, castID, spellID)
+local function UNIT_SPELLCAST_FAILED(self, event, unit, castID, spellID)
 	if(self.unit ~= unit and self.realUnit ~= unit) then return end
 
 	local element = self.Castbar
@@ -182,11 +182,11 @@ local function UNIT_SPELLCAST_FAILED(self, event, unit, spellname, _, castID, sp
 	* spellID - spell identifier of the failed spell (number)
 	--]]
 	if(element.PostCastFailed) then
-		return element:PostCastFailed(unit, spellname, castID, spellID)
+		return element:PostCastFailed(unit, GetSpellInfo(spellID), castID, spellID)
 	end
 end
 
-local function UNIT_SPELLCAST_INTERRUPTED(self, event, unit, spellname, _, castID, spellID)
+local function UNIT_SPELLCAST_INTERRUPTED(self, event, unit, castID, spellID)
 	if(self.unit ~= unit and self.realUnit ~= unit) then return end
 
 	local element = self.Castbar
@@ -213,7 +213,7 @@ local function UNIT_SPELLCAST_INTERRUPTED(self, event, unit, spellname, _, castI
 	* spellID - spell identifier of the interrupted spell (number)
 	--]]
 	if(element.PostCastInterrupted) then
-		return element:PostCastInterrupted(unit, spellname, castID, spellID)
+		return element:PostCastInterrupted(unit, GetSpellInfo(spellID), castID, spellID)
 	end
 end
 
@@ -261,7 +261,7 @@ local function UNIT_SPELLCAST_NOT_INTERRUPTIBLE(self, event, unit)
 	end
 end
 
-local function UNIT_SPELLCAST_DELAYED(self, event, unit, _, _, _, spellID)
+local function UNIT_SPELLCAST_DELAYED(self, event, unit, _, spellID)
 	if(self.unit ~= unit and self.realUnit ~= unit) then return end
 
 	local element = self.Castbar
@@ -290,7 +290,7 @@ local function UNIT_SPELLCAST_DELAYED(self, event, unit, _, _, _, spellID)
 	end
 end
 
-local function UNIT_SPELLCAST_STOP(self, event, unit, spellname, _, castID, spellID)
+local function UNIT_SPELLCAST_STOP(self, event, unit, castID, spellID)
 	if(self.unit ~= unit and self.realUnit ~= unit) then return end
 
 	local element = self.Castbar
@@ -311,11 +311,11 @@ local function UNIT_SPELLCAST_STOP(self, event, unit, spellname, _, castID, spel
 	* spellID - spell identifier of the spell (number)
 	--]]
 	if(element.PostCastStop) then
-		return element:PostCastStop(unit, spellname, castID, spellID)
+		return element:PostCastStop(unit, GetSpellInfo(spellID), castID, spellID)
 	end
 end
 
-local function UNIT_SPELLCAST_CHANNEL_START(self, event, unit, _, _, _, spellID)
+local function UNIT_SPELLCAST_CHANNEL_START(self, event, unit, _, spellID)
 	if(self.unit ~= unit and self.realUnit ~= unit) then return end
 
 	local element = self.Castbar
@@ -379,7 +379,7 @@ local function UNIT_SPELLCAST_CHANNEL_START(self, event, unit, _, _, _, spellID)
 	element:Show()
 end
 
-local function UNIT_SPELLCAST_CHANNEL_UPDATE(self, event, unit, _, _, _, spellID)
+local function UNIT_SPELLCAST_CHANNEL_UPDATE(self, event, unit, _, spellID)
 	if(self.unit ~= unit and self.realUnit ~= unit) then return end
 
 	local element = self.Castbar
@@ -410,7 +410,7 @@ local function UNIT_SPELLCAST_CHANNEL_UPDATE(self, event, unit, _, _, _, spellID
 	end
 end
 
-local function UNIT_SPELLCAST_CHANNEL_STOP(self, event, unit, spellname, _, _, spellID)
+local function UNIT_SPELLCAST_CHANNEL_STOP(self, event, unit, _, spellID)
 	if(self.unit ~= unit and self.realUnit ~= unit) then return end
 
 	local element = self.Castbar
@@ -427,7 +427,7 @@ local function UNIT_SPELLCAST_CHANNEL_STOP(self, event, unit, spellname, _, _, s
 		* spellID - spell identifier of the channeled spell (number)
 		--]]
 		if(element.PostChannelStop) then
-			return element:PostChannelStop(unit, spellname, spellID)
+			return element:PostChannelStop(unit, GetSpellInfo(spellID), spellID)
 		end
 	end
 end
