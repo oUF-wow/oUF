@@ -92,7 +92,7 @@ local _, ns = ...
 local oUF = ns.oUF
 
 -- sourced from FrameXML/UnitPowerBarAlt.lua
-local ALTERNATE_POWER_INDEX = ALTERNATE_POWER_INDEX or 10
+local ALTERNATE_POWER_INDEX = Enum.PowerType.Alternate or 10
 
 local function getDisplayPower(unit)
 	local _, min, _, _, _, _, showOnRaid = UnitAlternatePowerInfo(unit)
@@ -215,7 +215,7 @@ local function Update(self, event, unit)
 	* cur         - the unit's current power value (number)
 	* min         - the unit's minimum possible power value (number)
 	* max         - the unit's maximum possible power value (number)
-	* displayType - the alternative power display type if applicable (number?)[ALTERNATE_POWER_INDEX]
+	* displayType - the alternative power display type if applicable (number?)[Enum.PowerType.Alternate]
 	--]]
 	element:UpdateColor(unit, cur, min, max, displayType)
 
