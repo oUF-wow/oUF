@@ -491,12 +491,12 @@ local unitlessEvents = {
 
 local events = {}
 local frame = CreateFrame('Frame')
-frame:SetScript('OnEvent', function(self, event, unit)
+frame:SetScript('OnEvent', function(self, event, unit, ...)
 	local strings = events[event]
 	if(strings) then
 		for _, fs in next, strings do
 			if(fs:IsVisible() and (unitlessEvents[event] or fs.parent.unit == unit or (fs.extraUnits and fs.extraUnits[unit]))) then
-				fs:UpdateTag()
+				fs:UpdateTag(event, unit, ...)
 			end
 		end
 	end
@@ -517,7 +517,7 @@ local function createOnUpdate(timer)
 			if(total >= timer) then
 				for _, fs in next, strings do
 					if(fs.parent:IsShown() and UnitExists(fs.parent.unit)) then
-						fs:UpdateTag()
+						fs:UpdateTag('OnUpdate')
 					end
 				end
 
@@ -533,7 +533,7 @@ end
 
 local function onShow(self)
 	for _, fs in next, self.__tags do
-		fs:UpdateTag()
+		fs:UpdateTag('OnShow')
 	end
 end
 
@@ -629,8 +629,8 @@ local function Tag(self, fs, tagstr, ...)
 						local prefix = bracket:sub(2, tagStart)
 						local suffix = bracket:sub(tagEnd, -2)
 
-						tagFunc = function(unit, realUnit)
-							local str = tag(unit, realUnit)
+						tagFunc = function(unit, realUnit, event, ...)
+							local str = tag(unit, realUnit, event, ...)
 							if(str) then
 								return prefix .. str .. suffix
 							end
@@ -638,8 +638,8 @@ local function Tag(self, fs, tagstr, ...)
 					elseif(tagStart ~= 0) then
 						local prefix = bracket:sub(2, tagStart)
 
-						tagFunc = function(unit, realUnit)
-							local str = tag(unit, realUnit)
+						tagFunc = function(unit, realUnit, event, ...)
+							local str = tag(unit, realUnit, event, ...)
 							if(str) then
 								return prefix .. str
 							end
@@ -647,8 +647,8 @@ local function Tag(self, fs, tagstr, ...)
 					elseif(tagEnd ~= 0) then
 						local suffix = bracket:sub(tagEnd, -2)
 
-						tagFunc = function(unit, realUnit)
-							local str = tag(unit, realUnit)
+						tagFunc = function(unit, realUnit, event, ...)
+							local str = tag(unit, realUnit, event, ...)
 							if(str) then
 								return str .. suffix
 							end
@@ -667,7 +667,7 @@ local function Tag(self, fs, tagstr, ...)
 		end
 
 		if(numTags == 1) then
-			func = function(self)
+			func = function(self, event, ...)
 				local parent = self.parent
 				local realUnit
 				if(self.overrideUnit) then
@@ -677,11 +677,11 @@ local function Tag(self, fs, tagstr, ...)
 				_ENV._COLORS = parent.colors
 				return self:SetFormattedText(
 					format,
-					args[1](parent.unit, realUnit) or ''
+					args[1](parent.unit, realUnit, event, ...) or ''
 				)
 			end
 		elseif(numTags == 2) then
-			func = function(self)
+			func = function(self, event, ...)
 				local parent = self.parent
 				local unit = parent.unit
 				local realUnit
@@ -692,12 +692,12 @@ local function Tag(self, fs, tagstr, ...)
 				_ENV._COLORS = parent.colors
 				return self:SetFormattedText(
 					format,
-					args[1](unit, realUnit) or '',
-					args[2](unit, realUnit) or ''
+					args[1](unit, realUnit, event, ...) or '',
+					args[2](unit, realUnit, event, ...) or ''
 				)
 			end
 		elseif(numTags == 3) then
-			func = function(self)
+			func = function(self, event, ...)
 				local parent = self.parent
 				local unit = parent.unit
 				local realUnit
@@ -708,13 +708,13 @@ local function Tag(self, fs, tagstr, ...)
 				_ENV._COLORS = parent.colors
 				return self:SetFormattedText(
 					format,
-					args[1](unit, realUnit) or '',
-					args[2](unit, realUnit) or '',
-					args[3](unit, realUnit) or ''
+					args[1](unit, realUnit, event, ...) or '',
+					args[2](unit, realUnit, event, ...) or '',
+					args[3](unit, realUnit, event, ...) or ''
 				)
 			end
 		else
-			func = function(self)
+			func = function(self, event, ...)
 				local parent = self.parent
 				local unit = parent.unit
 				local realUnit
@@ -724,7 +724,7 @@ local function Tag(self, fs, tagstr, ...)
 
 				_ENV._COLORS = parent.colors
 				for i, func in next, args do
-					tmp[i] = func(unit, realUnit) or ''
+					tmp[i] = func(unit, realUnit, event, ...) or ''
 				end
 
 				-- We do 1, numTags because tmp can hold several unneeded variables.
