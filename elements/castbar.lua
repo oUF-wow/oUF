@@ -140,17 +140,16 @@ local function UNIT_SPELLCAST_START(self, event, unit)
 		updateSafeZone(element)
 	end
 
-	--[[ Callback: Castbar:PostCastStart(unit, name, castID, spellID)
+	--[[ Callback: Castbar:PostCastStart(unit, name, spellID)
 	Called after the element has been updated upon a spell cast start.
 
 	* self    - the Castbar widget
 	* unit    - unit for which the update has been triggered (string)
 	* name    - name of the spell being cast (string)
-	* castID  - unique identifier of the current spell cast (string)
 	* spellID - spell identifier of the spell being cast (number)
 	--]]
 	if(element.PostCastStart) then
-		element:PostCastStart(unit, name, castID, spellID)
+		element:PostCastStart(unit, name, spellID)
 	end
 	element:Show()
 end
@@ -172,16 +171,15 @@ local function UNIT_SPELLCAST_FAILED(self, event, unit, castID, spellID)
 	element.notInterruptible = nil
 	element.holdTime = element.timeToHold or 0
 
-	--[[ Callback: Castbar:PostCastFailed(unit, castID, spellID)
+	--[[ Callback: Castbar:PostCastFailed(unit, spellID)
 	Called after the element has been updated upon a failed spell cast.
 
 	* self    - the Castbar widget
 	* unit    - unit for which the update has been triggered (string)
-	* castID  - unique identifier of the failed spell cast (string)
 	* spellID - spell identifier of the failed spell (number)
 	--]]
 	if(element.PostCastFailed) then
-		return element:PostCastFailed(unit, castID, spellID)
+		return element:PostCastFailed(unit, spellID)
 	end
 end
 
@@ -202,16 +200,15 @@ local function UNIT_SPELLCAST_INTERRUPTED(self, event, unit, castID, spellID)
 	element.channeling = nil
 	element.holdTime = element.timeToHold or 0
 
-	--[[ Callback: Castbar:PostCastInterrupted(unit, castID, spellID)
+	--[[ Callback: Castbar:PostCastInterrupted(unit, spellID)
 	Called after the element has been updated upon an interrupted spell cast.
 
 	* self    - the Castbar widget
 	* unit    - unit for which the update has been triggered (string)
-	* castID  - unique identifier of the interrupted spell cast (string)
 	* spellID - spell identifier of the interrupted spell (number)
 	--]]
 	if(element.PostCastInterrupted) then
-		return element:PostCastInterrupted(unit, castID, spellID)
+		return element:PostCastInterrupted(unit, spellID)
 	end
 end
 
@@ -263,7 +260,7 @@ local function UNIT_SPELLCAST_DELAYED(self, event, unit, _, spellID)
 	if(self.unit ~= unit and self.realUnit ~= unit) then return end
 
 	local element = self.Castbar
-	local name, _, _, startTime, _, _, castID = UnitCastingInfo(unit)
+	local name, _, _, startTime = UnitCastingInfo(unit)
 	if(not startTime or not element:IsShown()) then return end
 
 	local duration = GetTime() - (startTime / 1000)
@@ -274,17 +271,16 @@ local function UNIT_SPELLCAST_DELAYED(self, event, unit, _, spellID)
 
 	element:SetValue(duration)
 
-	--[[ Callback: Castbar:PostCastDelayed(unit, name, castID, spellID)
+	--[[ Callback: Castbar:PostCastDelayed(unit, name, spellID)
 	Called after the element has been updated when a spell cast has been delayed.
 
 	* self    - the Castbar widget
 	* unit    - unit that the update has been triggered (string)
 	* name    - name of the delayed spell (string)
-	* castID  - unique identifier of the delayed spell cast (string)
 	* spellID - spell identifier of the delayed spell (number)
 	--]]
 	if(element.PostCastDelayed) then
-		return element:PostCastDelayed(unit, name, castID, spellID)
+		return element:PostCastDelayed(unit, name, spellID)
 	end
 end
 
@@ -299,7 +295,7 @@ local function UNIT_SPELLCAST_STOP(self, event, unit, castID, spellID)
 	element.casting = nil
 	element.notInterruptible = nil
 
-	--[[ Callback: Castbar:PostCastStop(unit, castID, spellID)
+	--[[ Callback: Castbar:PostCastStop(unit, spellID)
 	Called after the element has been updated when a spell cast has finished.
 
 	* self    - the Castbar widget
@@ -308,7 +304,7 @@ local function UNIT_SPELLCAST_STOP(self, event, unit, castID, spellID)
 	* spellID - spell identifier of the spell (number)
 	--]]
 	if(element.PostCastStop) then
-		return element:PostCastStop(unit, castID, spellID)
+		return element:PostCastStop(unit, spellID)
 	end
 end
 
