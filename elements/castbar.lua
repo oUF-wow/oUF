@@ -413,7 +413,7 @@ local function UNIT_SPELLCAST_CHANNEL_STOP(self, event, unit)
 		element.channeling = nil
 		element.notInterruptible = nil
 
-		--[[ Callback: Castbar:PostChannelUpdate(unit)
+		--[[ Callback: Castbar:PostChannelStop(unit)
 		Called after the element has been updated after a channeled spell has been completed.
 
 		* self - the Castbar widget
