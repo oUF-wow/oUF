@@ -25,6 +25,13 @@ A default texture will be applied to the StatusBar and Texture widgets if they d
 .timeToHold - indicates for how many seconds the castbar should be visible after a _FAILED or _INTERRUPTED
               event. Defaults to 0 (number)
 
+## Attributes
+
+.castID           - a globally unique identifier of the currently cast spell (string?)
+.casting          - indicates whether the current spell is an ordinary cast (boolean)
+.channeling       - indicates whether the current spell is a channeled cast (boolean)
+.notInterruptible - indicates whether the current spell is interruptible (boolean)
+
 ## Examples
 
     -- Position and size
