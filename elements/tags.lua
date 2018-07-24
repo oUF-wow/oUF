@@ -206,7 +206,7 @@ local tagStrings = {
 	end]],
 	
 	['runes'] = [[function(u)
-		if unit ~= 'player' then return end
+		if u ~= 'player' then return end
 		local amount = 0
 		for i=1,6 do
 			local _, _, ready = GetRuneCooldown(i)
