@@ -204,6 +204,18 @@ local tagStrings = {
 			return 'zzz'
 		end
 	end]],
+	
+	['runes'] = [[function(u)
+		if unit ~= 'player' then return end
+		local amount = 0
+		for i=1,6 do
+			local _, _, ready = GetRuneCooldown(i)
+			if ready == true then
+				amount = amount + 1
+			end
+		end
+		return amount
+	end]],
 
 	['sex'] = [[function(u)
 		local s = UnitSex(u)
