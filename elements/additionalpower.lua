@@ -201,7 +201,7 @@ local function Enable(self, unit)
 		self:RegisterEvent('UNIT_DISPLAYPOWER', VisibilityPath)
 
 		if(not element.displayPairs) then
-			element.displayPairs = ALT_MANA_BAR_PAIR_DISPLAY_INFO
+			element.displayPairs = CopyTable(ALT_MANA_BAR_PAIR_DISPLAY_INFO)
 		end
 
 		if(element:IsObjectType('StatusBar') and not element:GetStatusBarTexture()) then
