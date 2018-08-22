@@ -158,8 +158,8 @@ local function ElementDisable(self)
 end
 
 local function Visibility(self, event, unit)
-	local shouldEnable
 	local element = self.AdditionalPower
+	local shouldEnable
 
 	if(not UnitHasVehicleUI('player')) then
 		if(UnitPowerMax(unit, ADDITIONAL_POWER_BAR_INDEX) ~= 0) then
