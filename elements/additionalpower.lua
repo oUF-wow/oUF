@@ -26,7 +26,7 @@ The following options are listed by priority. The first check that returns true 
 .colorSmooth  - Use `self.colors.smooth` to color the bar with a smooth gradient based on the player's current additional
                power percentage (boolean)
 .colorPower   - Use `self.colors.power[token]` to color the bar based on the player's additional power type. (boolean)
-.displayPairs - Use to override `ALT_MANA_BAR_PAIR_DISPLAY_INFO`. (table)
+.displayPairs - Use to override display pairs. (table)
 
 ## Sub-Widget Options
 
