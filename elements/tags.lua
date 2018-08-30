@@ -204,18 +204,6 @@ local tagStrings = {
 			return 'zzz'
 		end
 	end]],
-	
-	['runes'] = [[function(u)
-		if u ~= 'player' then return end
-		local amount = 0
-		for i=1,6 do
-			local _, _, ready = GetRuneCooldown(i)
-			if ready == true then
-				amount = amount + 1
-			end
-		end
-		return amount
-	end]],
 
 	['sex'] = [[function(u)
 		local s = UnitSex(u)
@@ -409,6 +397,19 @@ local tagStrings = {
 
 		return Hex(t)
 	end]],
+
+	['runes'] = [[function()
+		local amount = 0
+
+		for i = 1, 6 do
+			local _, _, ready = GetRuneCooldown(i)
+			if(ready) then
+				amount = amount + 1
+			end
+		end
+
+		return amount
+	end]],
 }
 
 local tags = setmetatable(
@@ -491,6 +492,7 @@ local tagEvents = {
 	['chi']                 = 'UNIT_POWER_UPDATE SPELLS_CHANGED',
 	['arcanecharges']       = 'UNIT_POWER_UPDATE SPELLS_CHANGED',
 	['powercolor']          = 'UNIT_DISPLAYPOWER',
+	['runes']               = 'RUNE_POWER_UPDATE',
 }
 
 local unitlessEvents = {
@@ -499,6 +501,7 @@ local unitlessEvents = {
 	PLAYER_TARGET_CHANGED = true,
 	PARTY_LEADER_CHANGED = true,
 	GROUP_ROSTER_UPDATE = true,
+	RUNE_POWER_UPDATE = true,
 }
 
 local events = {}
