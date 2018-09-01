@@ -37,6 +37,7 @@
 	<Script file="elements\classpower.lua"/>
 	<Script file="elements\stagger.lua"/>
 	<Script file="elements\raidroleindicator.lua"/>
+	<Script file="elements\playerbufftimers.lua"/>
 
 	<!-- Clique support -->
 	<Button name="oUF_ClickCastUnitTemplate" virtual="true" inherits="SecureUnitButtonTemplate, SecureHandlerStateTemplate, SecureHandlerEnterLeaveTemplate">
