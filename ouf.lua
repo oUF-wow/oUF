@@ -299,13 +299,6 @@ local function initObject(unit, style, styleFunc, header, ...)
 			else
 				oUF:HandleUnit(object)
 			end
-
-			-- Arena preparation
-			if(unit and unit:match('arena%d?$')) then
-				object:RegisterEvent('ARENA_PREP_OPPONENT_SPECIALIZATIONS', Private.UpdateArenaPreperation, true)
-				-- the event handler only fires for visible frames, so we have to hook it
-				object:HookScript('OnEvent', Private.UpdateArenaPreperation)
-			end
 		else
 			-- Used to update frames when they change position in a group.
 			object:RegisterEvent('GROUP_ROSTER_UPDATE', object.UpdateAllElements)
