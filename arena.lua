@@ -29,31 +29,51 @@ local function updateElement(self, event, element, specID)
 		el:SetMinMaxValues(0, 1)
 		el:SetValue(1)
 
-		local r, g, b, t, _
-		if(el.colorPower and element == 'Power') then
-			-- FIXME: no idea if we can get power type here without the unit
-		elseif(el.colorClass) then
-			local _, _, _, _, _, _, class = GetSpecializationInfoByID(specID)
-			t = self.colors.class[class]
-		elseif(el.colorReaction) then
-			t = self.colors.reaction[2]
-		elseif(el.colorSmooth) then
-			_, _, _, _, _, _, r, g, b = unpack(el.smoothGradient or self.colors.smooth)
-		elseif(el.colorHealth and element == 'Health') then
-			t = self.colors.health
-		end
+		if(element.UpdateColor) then
+			if(element.UpdateColorArenaPreparation) then
+				--[[ Override: Health:UpdateColor(specID)
+				Used to completely override the internal function for updating the widget's colors
+				during arena preparation.
 
-		if(t) then
-			r, g, b = t[1], t[2], t[3]
-		end
+				* self   - the Health element
+				* specID - the specialization ID for the opponent (number)
+				--]]
+				--[[ Override: Power:UpdateColor(specID)
+				Used to completely override the internal function for updating the widget's colors
+				during arena preparation.
 
-		if(r or g or b) then
-			el:SetStatusBarColor(r, g, b)
+				* self   - the Power element
+				* specID - the specialization ID for the opponent (number)
+				--]]
+				element:UpdateColorArenaPreparation(specID)
+			end
+		else
+			local r, g, b, t, _
+			if(el.colorPower and element == 'Power') then
+				-- FIXME: no idea if we can get power type here without the unit
+			elseif(el.colorClass) then
+				local _, _, _, _, _, class = GetSpecializationInfoByID(specID)
+				t = self.colors.class[class]
+			elseif(el.colorReaction) then
+				t = self.colors.reaction[2]
+			elseif(el.colorSmooth) then
+				_, _, _, _, _, _, r, g, b = unpack(el.smoothGradient or self.colors.smooth)
+			elseif(el.colorHealth and element == 'Health') then
+				t = self.colors.health
+			end
 
-			local bg = el.bg
-			if(bg) then
-				local mu = bg.multiplier or 1
-				bg:SetVertexColor(r * mu, g * mu, b * mu)
+			if(t) then
+				r, g, b = t[1], t[2], t[3]
+			end
+
+			if(r or g or b) then
+				el:SetStatusBarColor(r, g, b)
+
+				local bg = el.bg
+				if(bg) then
+					local mu = bg.multiplier or 1
+					bg:SetVertexColor(r * mu, g * mu, b * mu)
+				end
 			end
 		end
 
