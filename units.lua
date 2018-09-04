@@ -120,6 +120,10 @@ local function updateArenaPreparation(self, event)
 		-- semi-recursive call for when the player zones into an arena
 		updateArenaPreparation(self, 'ARENA_PREP_OPPONENT_SPECIALIZATIONS')
 	elseif(event == 'ARENA_PREP_OPPONENT_SPECIALIZATIONS') then
+		if(self.PreUpdate) then
+			self:PreUpdate(event)
+		end
+
 		local id = tonumber(self.id)
 		if(not self:IsEnabled() and GetNumArenaOpponentSpecs() < id) then
 			-- hide the object if the opponent leaves
@@ -151,6 +155,10 @@ local function updateArenaPreparation(self, event)
 
 			self:Show()
 			self:UpdateTags()
+		end
+
+		if(self.PostUpdate) then
+			self:PostUpdate(event)
 		end
 	end
 end

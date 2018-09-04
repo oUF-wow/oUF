@@ -205,7 +205,7 @@ for k, v in next, {
 
 		if(self.PreUpdate) then
 			--[[ Callback: frame:PreUpdate(event)
-			Fired before all elements owned by the frame is updated through `UpdateAllElements`.
+			Fired before the frame is updated.
 
 			* self  - the unit frame
 			* event - the event triggering the update (string)
@@ -219,7 +219,7 @@ for k, v in next, {
 
 		if(self.PostUpdate) then
 			--[[ Callback: frame:PostUpdate(event)
-			Fired after all elements owned by the frame has been updated through `UpdateAllElements`.
+			Fired after the frame is updated.
 
 			* self  - the unit frame
 			* event - the event triggering the update (string)
