@@ -7,48 +7,43 @@ local enableTargetUpdate = Private.enableTargetUpdate
 local function updateArenaPreparationElements(self, event, elementName, specID)
 	local element = self[elementName]
 	if(element and self:IsElementEnabled(elementName)) then
-		if(element.Override) then
-			if(element.OverrideArenaPreparation) then
-				--[[ Override: Health.OverrideArenaPreparation(self, event, specID)
-				Used to completely override the internal update function for arena preparation.
+		if(element.OverrideArenaPreparation) then
+			--[[ Override: Health.OverrideArenaPreparation(self, event, specID)
+			Used to completely override the internal update function for arena preparation.
 
-				* self   - the parent object
-				* event  - the event triggering the update (string)
-				* specID - the specialization ID for the opponent (number)
-				--]]
-				--[[ Override: Power.OverrideArenaPreparation(self, event, specID)
-				Used to completely override the internal update function for arena preparation.
+			* self   - the parent object
+			* event  - the event triggering the update (string)
+			* specID - the specialization ID for the opponent (number)
+			--]]
+			--[[ Override: Power.OverrideArenaPreparation(self, event, specID)
+			Used to completely override the internal update function for arena preparation.
 
-				* self   - the parent object
-				* event  - the event triggering the update (string)
-				* specID - the specialization ID for the opponent (number)
-				--]]
-				element.OverrideArenaPreparation(self, event, specID)
-			end
+			* self   - the parent object
+			* event  - the event triggering the update (string)
+			* specID - the specialization ID for the opponent (number)
+			--]]
+			element.OverrideArenaPreparation(self, event, specID)
 			return
 		end
 
 		element:SetMinMaxValues(0, 1)
 		element:SetValue(1)
+		if(element.UpdateColorArenaPreparation) then
+			--[[ Override: Health:UpdateColor(specID)
+			Used to completely override the internal function for updating the widget's colors
+			during arena preparation.
 
-		if(element.UpdateColor) then
-			if(element.UpdateColorArenaPreparation) then
-				--[[ Override: Health:UpdateColor(specID)
-				Used to completely override the internal function for updating the widget's colors
-				during arena preparation.
+			* self   - the Health element
+			* specID - the specialization ID for the opponent (number)
+			--]]
+			--[[ Override: Power:UpdateColor(specID)
+			Used to completely override the internal function for updating the widget's colors
+			during arena preparation.
 
-				* self   - the Health element
-				* specID - the specialization ID for the opponent (number)
-				--]]
-				--[[ Override: Power:UpdateColor(specID)
-				Used to completely override the internal function for updating the widget's colors
-				during arena preparation.
-
-				* self   - the Power element
-				* specID - the specialization ID for the opponent (number)
-				--]]
-				element:UpdateColorArenaPreparation(specID)
-			end
+			* self   - the Power element
+			* specID - the specialization ID for the opponent (number)
+			--]]
+			element:UpdateColorArenaPreparation(specID)
 		else
 			-- this section just replicates the color options available to the Health and Power elements
 			local r, g, b, t, _
