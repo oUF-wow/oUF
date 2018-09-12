@@ -9,9 +9,9 @@ local oUF = ns.oUF
 local Private = oUF.Private
 
 local argcheck = Private.argcheck
-
-local print = Private.print
 local error = Private.error
+local print = Private.print
+local UnitExists = Private.UnitExists
 
 local styles, style = {}
 local callback, objects, headers = {}, {}, {}
@@ -199,7 +199,7 @@ for k, v in next, {
 	--]]
 	UpdateAllElements = function(self, event)
 		local unit = self.unit
-		if(not (UnitExists(unit) or ShowBossFrameWhenUninteractable(unit))) then return end
+		if(not UnitExists(unit)) then return end
 
 		assert(type(event) == 'string', "Invalid argument 'event' in UpdateAllElements.")
 
