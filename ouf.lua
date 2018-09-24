@@ -141,12 +141,6 @@ for k, v in next, {
 
 		activeElements[self][name] = nil
 
-		-- We need to run a new update cycle in-case we knocked ourself out of sync.
-		-- The main reason we do this is to make sure the full update is completed
-		-- if an element for some reason removes itself _during_ the update
-		-- progress.
-		self:UpdateAllElements('DisableElement')
-
 		return elements[name].disable(self)
 	end,
 
