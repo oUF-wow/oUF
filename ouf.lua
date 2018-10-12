@@ -669,7 +669,7 @@ Used to create a single unit frame and apply the currently active style to it.
 
 oUF implements some of its own attributes. These can be supplied by the layout, but are optional.
 
-* oUF-enableArenaPrep - can be used to toggle arena prep support (boolean, enabled by default)
+* oUF-enableArenaPrep - can be used to toggle arena prep support. Defaults to true (boolean)
 --]]
 function oUF:Spawn(unit, overrideName)
 	argcheck(unit, 2, 'string')
