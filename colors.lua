@@ -147,7 +147,7 @@ Used to convert a color from RGB to HCY color space.
 * g    - green color component (number [0-1])
 * b    - blue color component (number [0-1])
 --]]
-function oUF:RGBToHCY(r, g, b)
+local function RGBToHCY(r, g, b)
 	local min, max = min(r, g, b), max(r, g, b)
 	local chroma = max - min
 	local hue
@@ -173,7 +173,7 @@ Used to convert a color from HCY to RGB color space.
 * chroma - chroma color component (number [0-1])
 * luma   - luminance color component (number [0-1])
 --]]
-function oUF:HCYtoRGB(hue, chroma, luma)
+local function HCYtoRGB(hue, chroma, luma)
 	local r, g, b = 0, 0, 0
 	if(hue and luma > 0) then
 		local h2 = hue * 6
@@ -224,8 +224,8 @@ local function HCYColorGradient(...)
 		return r1, g1, b1
 	end
 
-	local h1, c1, y1 = self:RGBToHCY(r1, g1, b1)
-	local h2, c2, y2 = self:RGBToHCY(r2, g2, b2)
+	local h1, c1, y1 = RGBToHCY(r1, g1, b1)
+	local h2, c2, y2 = RGBToHCY(r2, g2, b2)
 	local c = c1 + (c2 - c1) * relperc
 	local y = y1 + (y2 - y1) * relperc
 
@@ -237,9 +237,9 @@ local function HCYColorGradient(...)
 			dh = dh - 1
 		end
 
-		return self:HCYtoRGB((h1 + dh * relperc) % 1, c, y)
+		return HCYtoRGB((h1 + dh * relperc) % 1, c, y)
 	else
-		return self:HCYtoRGB(h1 or h2, c, y)
+		return HCYtoRGB(h1 or h2, c, y)
 	end
 
 end
@@ -261,7 +261,9 @@ Private.colors = colors
 
 oUF.colors = colors
 oUF.ColorGradient = ColorGradient
+oUF.RGBToHCY = RGBToHCY
 oUF.RGBColorGradient = RGBColorGradient
+oUF.HCYtoRGB = HCYtoRGB
 oUF.HCYColorGradient = HCYColorGradient
 oUF.useHCYColorGradient = false
 
