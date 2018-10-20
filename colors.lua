@@ -253,10 +253,15 @@ set to true, `:HCYColorGradient` will be called, else `:RGBColorGradient`.
 * ...  - a list of color values. At least 6 values should be passed (number [0-1])
 --]]
 function oUF:ColorGradient(...)
-	return (self.useHCYColorGradient and self.HCYColorGradient or self.RGBColorGradient)(self, ...)
+	return (oUF.useHCYColorGradient and self.HCYColorGradient or self.RGBColorGradient)(self, ...)
 end
 
 oUF.colors = colors
 oUF.useHCYColorGradient = false
 
 frame_metatable.__index.colors = colors
+frame_metatable.__index.RGBToHCY = oUF.RGBToHCY
+frame_metatable.__index.HCYToRGB = oUF.HCYToRGB
+frame_metatable.__index.RGBColorGradient = oUF.RGBColorGradient
+frame_metatable.__index.HCYColorGradient = oUF.HCYColorGradient
+frame_metatable.__index.ColorGradient = oUF.ColorGradient

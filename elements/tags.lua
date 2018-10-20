@@ -84,10 +84,11 @@ local _ENV = {
 		end
 		return string.format('|cff%02x%02x%02x', r * 255, g * 255, b * 255)
 	end,
-	ColorGradient = function(...)
-		oUF:ColorGradient(...)
-	end,
 }
+_ENV.ColorGradient = function(...)
+	return _ENV._FRAME:ColorGradient(...)
+end
+
 local _PROXY = setmetatable(_ENV, {__index = _G})
 
 local tagStrings = {
@@ -724,6 +725,7 @@ local function Tag(self, fs, tagstr, ...)
 				end
 
 				_ENV._COLORS = parent.colors
+				_ENV._FRAME = parent
 				return self:SetFormattedText(
 					format,
 					args[1](parent.unit, realUnit) or ''
@@ -739,6 +741,7 @@ local function Tag(self, fs, tagstr, ...)
 				end
 
 				_ENV._COLORS = parent.colors
+				_ENV._FRAME = parent
 				return self:SetFormattedText(
 					format,
 					args[1](unit, realUnit) or '',
@@ -755,6 +758,7 @@ local function Tag(self, fs, tagstr, ...)
 				end
 
 				_ENV._COLORS = parent.colors
+				_ENV._FRAME = parent
 				return self:SetFormattedText(
 					format,
 					args[1](unit, realUnit) or '',
@@ -772,6 +776,7 @@ local function Tag(self, fs, tagstr, ...)
 				end
 
 				_ENV._COLORS = parent.colors
+				_ENV._FRAME = parent
 				for i, func in next, args do
 					tmp[i] = func(unit, realUnit) or ''
 				end
