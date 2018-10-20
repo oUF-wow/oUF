@@ -139,15 +139,7 @@ local function getY(r, g, b)
 	return 0.299 * r + 0.587 * g + 0.114 * b
 end
 
---[[ Colors: oUF:RGBToHCY(r, g, b)
-Used to convert a color from RGB to HCY color space.
-
-* self - the global oUF object
-* r    - red color component (number [0-1])
-* g    - green color component (number [0-1])
-* b    - blue color component (number [0-1])
---]]
-function oUF:RGBToHCY(r, g, b)
+local function rgbToHCY(r, g, b)
 	local min, max = math.min(r, g, b), math.max(r, g, b)
 	local chroma = max - min
 	local hue
@@ -164,15 +156,7 @@ function oUF:RGBToHCY(r, g, b)
 	return hue, chroma, getY(r, g, b)
 end
 
---[[ Colors: oUF:HCYToRGB(hue, chroma, luma)
-Used to convert a color from HCY to RGB color space.
-
-* self   - the global oUF object
-* hue    - hue color component (number [0-1])
-* chroma - chroma color component (number [0-1])
-* luma   - luminance color component (number [0-1])
---]]
-function oUF:HCYToRGB(hue, chroma, luma)
+local function hcyToRGB(hue, chroma, luma)
 	local r, g, b = 0, 0, 0
 	if(hue and luma > 0) then
 		local h2 = hue * 6
@@ -223,8 +207,8 @@ function oUF:HCYColorGradient(...)
 		return r1, g1, b1
 	end
 
-	local h1, c1, y1 = self:RGBToHCY(r1, g1, b1)
-	local h2, c2, y2 = self:RGBToHCY(r2, g2, b2)
+	local h1, c1, y1 = rgbToHCY(r1, g1, b1)
+	local h2, c2, y2 = rgbToHCY(r2, g2, b2)
 	local c = c1 + (c2 - c1) * relperc
 	local y = y1 + (y2 - y1) * relperc
 
@@ -236,9 +220,9 @@ function oUF:HCYColorGradient(...)
 			dh = dh - 1
 		end
 
-		return self:HCYToRGB((h1 + dh * relperc) % 1, c, y)
+		return hcyToRGB((h1 + dh * relperc) % 1, c, y)
 	else
-		return self:HCYToRGB(h1 or h2, c, y)
+		return hcyToRGB(h1 or h2, c, y)
 	end
 
 end
@@ -260,8 +244,6 @@ oUF.colors = colors
 oUF.useHCYColorGradient = false
 
 frame_metatable.__index.colors = colors
-frame_metatable.__index.RGBToHCY = oUF.RGBToHCY
-frame_metatable.__index.HCYToRGB = oUF.HCYToRGB
 frame_metatable.__index.RGBColorGradient = oUF.RGBColorGradient
 frame_metatable.__index.HCYColorGradient = oUF.HCYColorGradient
 frame_metatable.__index.ColorGradient = oUF.ColorGradient
