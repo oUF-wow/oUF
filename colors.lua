@@ -113,14 +113,14 @@ local function colorsAndPercent(a, b, ...)
 end
 
 -- http://www.wowwiki.com/ColorGradient
---[[ Colors: oUF:RGBColorGradient(a, b, ...) or frame:RGBColorGradient(a, b, ...)
+--[[ Colors: oUF:RGBColorGradient(a, b, ...)
 Used to convert a percent value (the quotient of `a` and `b`) into a gradient from 2 or more RGB colors. If more than 2
 colors are passed, the gradient will be between the two colors which perc lies in an evenly divided range. A RGB color
 is a sequence of 3 consecutive RGB percent values (in the range [0-1]). If `a` is negative or `b` is zero then the first
 RGB color (the first 3 RGB values passed to the function) is returned. If `a` is bigger than or equal to `b`, then the
 last 3 RGB values are returned.
 
-* self - the global oUF object or a unit frame
+* self - the global oUF object
 * a    - value used as numerator to calculate the percentage (number)
 * b    - value used as denominator to calculate the percentage (number)
 * ...  - a list of RGB percent values. At least 6 values should be passed (number [0-1])
@@ -189,14 +189,14 @@ local function hcyToRGB(hue, chroma, luma)
 	return r, g, b
 end
 
---[[ Colors: oUF:HCYColorGradient(a, b, ...) or frame:HCYColorGradient(a, b, ...)
+--[[ Colors: oUF:HCYColorGradient(a, b, ...)
 Used to convert a percent value (the quotient of `a` and `b`) into a gradient from 2 or more HCY colors. If more than 2
 colors are passed, the gradient will be between the two colors which perc lies in an evenly divided range. A HCY color
 is a sequence of 3 consecutive values in the range [0-1]. If `a` is negative or `b` is zero then the first
 HCY color (the first 3 HCY values passed to the function) is returned. If `a` is bigger than or equal to `b`, then the
 last 3 HCY values are returned.
 
-* self - the global oUF object or a unit frame
+* self - the global oUF object
 * a    - value used as numerator to calculate the percentage (number)
 * b    - value used as denominator to calculate the percentage (number)
 * ...  - a list of HCY color values. At least 6 values should be passed (number [0-1])
@@ -237,13 +237,11 @@ set to true, `:HCYColorGradient` will be called, else `:RGBColorGradient`.
 * ...  - a list of color values. At least 6 values should be passed (number [0-1])
 --]]
 function oUF:ColorGradient(...)
-	return (oUF.useHCYColorGradient and self.HCYColorGradient or self.RGBColorGradient)(self, ...)
+	return (oUF.useHCYColorGradient and oUF.HCYColorGradient or oUF.RGBColorGradient)(self, ...)
 end
 
 oUF.colors = colors
 oUF.useHCYColorGradient = false
 
 frame_metatable.__index.colors = colors
-frame_metatable.__index.RGBColorGradient = oUF.RGBColorGradient
-frame_metatable.__index.HCYColorGradient = oUF.HCYColorGradient
 frame_metatable.__index.ColorGradient = oUF.ColorGradient
