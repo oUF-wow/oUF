@@ -2,6 +2,8 @@ local parent, ns = ...
 local oUF = ns.oUF
 local Private = oUF.Private
 
+local print = Private.print
+
 local frame_metatable = Private.frame_metatable
 
 local colors = {
@@ -122,6 +124,10 @@ function oUF:UnitSelectionColor(unit)
 	elseif r == 0 and g == 255 and b == 0 then
 		return self.colors.reaction[5][1], self.colors.reaction[5][2], self.colors.reaction[5][3]
 	elseif r == 0 and g == 0 and b == 255 then
+		return self.colors.reaction[0][1], self.colors.reaction[0][2], self.colors.reaction[0][3]
+	else
+		-- turns out there's still some unknown colours, default to blue for the time being
+		-- print("|cffffd200Unknown colour:|r", r, g, b)
 		return self.colors.reaction[0][1], self.colors.reaction[0][2], self.colors.reaction[0][3]
 	end
 end
