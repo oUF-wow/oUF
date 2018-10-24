@@ -44,6 +44,14 @@ local colors = {
 	},
 }
 
+colors.selection[255 * 65536 + 255 * 256 + 139] = colors.selection[1]
+colors.selection[255 * 65536 + 255 * 256 +   0] = colors.selection[2]
+colors.selection[255 * 65536 + 129 * 256 +   0] = colors.selection[3]
+colors.selection[255 * 65536 +   0 * 256 +   0] = colors.selection[4]
+colors.selection[128 * 65536 + 128 * 256 + 128] = colors.selection[5]
+colors.selection[  0 * 65536 + 255 * 256 +   0] = colors.selection[6]
+colors.selection[  0 * 65536 +   0 * 256 + 255] = colors.selection[7]
+
 -- We do this because people edit the vars directly, and changing the default
 -- globals makes SPICE FLOW!
 local function customClassColors()
@@ -120,34 +128,16 @@ colors.power[16] = colors.power.ARCANE_CHARGES
 colors.power[17] = colors.power.FURY
 colors.power[18] = colors.power.PAIN
 
-local function round(v)
-	return math.floor(v + 0.5)
-end
-
 --[[ Colors: oUF:UnitSelectionColor(unit) or frame:UnitSelectionColor(unit)
 
 --]]
 function oUF:UnitSelectionColor(unit)
 	local r, g, b = UnitSelectionColor(unit)
-	r, g, b = round(r * 255), round(g * 255), round(b * 255)
+	r = math.ceil(r * 255) * 65536 + math.ceil(g * 255) * 256 + math.ceil(b * 255)
 
-	local color
-	if(r == 255 and g == 255 and b == 139) then
-		color = self.colors.selection[1]
-	elseif(r == 255 and g == 255 and b == 0) then
-		color = self.colors.selection[2]
-	elseif(r == 255 and g == 129 and b == 0) then
-		color = self.colors.selection[3]
-	elseif(r == 255 and g == 0 and b == 0) then
-		color = self.colors.selection[4]
-	elseif(r == 128 and g == 128 and b == 128) then
-		color = self.colors.selection[5]
-	elseif(r == 0 and g == 255 and b == 0) then
-		color = self.colors.selection[6]
-	elseif(r == 0 and g == 0 and b == 255) then
-		color = self.colors.selection[7]
-	else
-		-- print("|cffffd200Unknown colour:|r", r, g, b)
+	local color = self.colors.selection[r]
+	if(not color) then
+		-- print("|cffffd200Unknown colour:|r", UnitSelectionColor(unit))
 		color = self.colors.selection[7]
 	end
 
