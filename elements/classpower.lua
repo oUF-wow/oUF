@@ -167,7 +167,7 @@ local function Visibility(self, event, unit)
 	local shouldEnable
 
 	if(UnitHasVehicleUI('player')) then
-		shouldEnable = true
+		shouldEnable = PlayerVehicleHasComboPoints()
 		unit = 'vehicle'
 	elseif(ClassPowerID) then
 		if(not RequireSpec or RequireSpec == GetSpecialization()) then
