@@ -30,7 +30,7 @@ local colors = {
 		{255 / 255, 255 / 255, 139 / 255},
 		-- yellow, used for neutral units
 		{255 / 255, 255 / 255, 0 / 255},
-		-- orange, used for non-interactive unfriendly units
+		-- orange, used for unfriendly units
 		{255 / 255, 129 / 255, 0 / 255},
 		-- red, used for hostile units
 		{255 / 255, 0 / 255, 0 /255},
@@ -38,8 +38,7 @@ local colors = {
 		{128 / 255, 128 / 255, 128 / 255},
 		-- green, used for friendly units
 		{0 / 255, 255 / 255, 0 / 255},
-		-- blue, the default colour, also used for friendly player names in dungeons, unattackable
-		-- players in sanctuaries, etc.
+		-- blue, the default colour, mainly used for players in dungeons, raids, and sanctuaries
 		{0 / 255, 0 / 255, 255 / 255},
 	},
 }
@@ -134,6 +133,12 @@ colors.power[18] = colors.power.PAIN
 function oUF:UnitSelectionColor(unit)
 	local r, g, b = UnitSelectionColor(unit)
 	r = math.ceil(r * 255) * 65536 + math.ceil(g * 255) * 256 + math.ceil(b * 255)
+
+	-- BUG: When targeting yourself while in combat, UnitSelectionColor for "player" or any other unit that's actually
+	-- player returns either green or blue instead of intended light yellow
+	if(UnitIsUnit(unit, 'player') and UnitAffectingCombat('player')) then
+		r = 16777099 -- 255 * 65536 + 255 * 256 + 139
+	end
 
 	local color = self.colors.selection[r]
 	if(not color) then
