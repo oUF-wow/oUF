@@ -153,7 +153,7 @@ local function colorsAndPercent(a, b, ...)
 	if(a <= 0 or b == 0) then
 		return nil, ...
 	elseif(a >= b) then
-		return nil, select(select('#', ...) - 2, ...)
+		return nil, select(-3, ...)
 	end
 
 	local num = select('#', ...) / 3
