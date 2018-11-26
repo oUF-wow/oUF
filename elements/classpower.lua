@@ -133,11 +133,13 @@ local function Update(self, event, unit, powerType)
 
 		oldMax = element.__max
 		if(max ~= oldMax) then
-			for i = max + 1, oldMax do
-				if(max < oldMax) then
+			if(max < oldMax) then
+				for i = max + 1, oldMax do
 					element[i]:Hide()
 					element[i]:SetValue(0)
-				else
+				end
+			else
+				for i = oldMax + 1, max do
 					element[i]:Show()
 				end
 			end
@@ -234,6 +236,11 @@ do
 	function ClassPowerEnable(self)
 		self:RegisterEvent('UNIT_POWER_FREQUENT', Path)
 		self:RegisterEvent('UNIT_MAXPOWER', Path)
+
+		local element = self.ClassPower
+		for i = 1, #element do
+			element[i]:Show()
+		end
 
 		self.ClassPower.isEnabled = true
 
