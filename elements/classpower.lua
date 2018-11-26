@@ -125,20 +125,20 @@ local function Update(self, event, unit, powerType)
 		local numActive = cur + 0.9
 		for i = 1, max do
 			if(i > numActive) then
-				element[i]:Hide()
 				element[i]:SetValue(0)
 			else
-				element[i]:Show()
 				element[i]:SetValue(cur - i + 1)
 			end
 		end
 
 		oldMax = element.__max
 		if(max ~= oldMax) then
-			if(max < oldMax) then
-				for i = max + 1, oldMax do
+			for i = max + 1, oldMax do
+				if(max < oldMax) then
 					element[i]:Hide()
 					element[i]:SetValue(0)
+				else
+					element[i]:Show()
 				end
 			end
 
