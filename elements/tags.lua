@@ -106,7 +106,7 @@ local tagStrings = {
 
 	['difficulty'] = [[function(u)
 		if UnitCanAttack('player', u) then
-			local l = UnitLevel(u)
+			local l = UnitEffectiveLevel(u)
 			return Hex(GetCreatureDifficultyColor((l > 0) and l or 999))
 		end
 	end]],
@@ -495,6 +495,7 @@ local tagEvents = {
 	['curpp']               = 'UNIT_POWER_UPDATE UNIT_MAXPOWER',
 	['dead']                = 'UNIT_HEALTH',
 	['deficit:name']        = 'UNIT_HEALTH UNIT_MAXHEALTH UNIT_NAME_UPDATE',
+	['difficulty']          = 'UNIT_FACTION',
 	['faction']             = 'NEUTRAL_FACTION_SELECT_RESULT',
 	['group']               = 'GROUP_ROSTER_UPDATE',
 	['holypower']           = 'UNIT_POWER_UPDATE PLAYER_TALENT_UPDATE',
