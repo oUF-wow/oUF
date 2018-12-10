@@ -265,17 +265,12 @@ local tagStrings = {
 	end]],
 
 	['cpoints'] = [[function(u)
-		local cp
-		if(UnitHasVehicleUI('player')) then
-			cp = GetComboPoints('vehicle', 'target')
-		else
-			cp = GetComboPoints('player', 'target')
-		end
+		local cp = UnitPower(u, Enum.PowerType.ComboPoints)
 
 		if(cp > 0) then
 			return cp
 		end
-	end]],
+	]],
 
 	['smartlevel'] = [[function(u)
 		local c = UnitClassification(u)
