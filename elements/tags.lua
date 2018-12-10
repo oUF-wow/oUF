@@ -149,7 +149,7 @@ local tagStrings = {
 		if(cp > 0) then
 			return cp
 		end
-	]],
+	end]],
 
 	['creature'] = [[function(u)
 		return UnitCreatureFamily(u) or UnitCreatureType(u)
