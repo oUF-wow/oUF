@@ -36,6 +36,7 @@
 	<Script file="elements\classpower.lua"/>
 	<Script file="elements\stagger.lua"/>
 	<Script file="elements\raidroleindicator.lua"/>
+	<Script file="elements\summonindicator.lua"/>
 
 	<Script file="finalize.lua"/>
 
