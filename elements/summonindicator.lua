@@ -20,7 +20,7 @@ local function Update(self)
 	--[[ Callback: SummonIndicator:PreUpdate()
 	Called before the element has been updated.
 
-	* self - the Health element
+	* self - the SummonIndicator element
 	--]]
 	if(element.PreUpdate) then
 		element:PreUpdate()
