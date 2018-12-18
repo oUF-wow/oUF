@@ -12,22 +12,22 @@ local registerUnitEvent = frame_metatable.__index.RegisterUnitEvent
 local unregisterEvent = frame_metatable.__index.UnregisterEvent
 local isEventRegistered = frame_metatable.__index.IsEventRegistered
 
-local unitEvents = {}
-
 function Private.UpdateUnits(frame, unit, realUnit)
 	if(unit == realUnit) then
 		realUnit = nil
 	end
 
 	if(frame.unit ~= unit or frame.realUnit ~= realUnit) then
-		for event in next, unitEvents do
-			-- IsEventRegistered returns the units in case of an event
-			-- registered with RegisterUnitEvent
-			local registered, unit1 = isEventRegistered(frame, event)
-			if(registered and unit1 and unit1 ~= unit) then
-				-- RegisterUnitEvent erases previously registered units so
-				-- do not bother to unregister it
-				registerUnitEvent(frame, event, unit, realUnit)
+		if(frame.unitEvents) then
+			for event in next, frame.unitEvents do
+				-- IsEventRegistered returns the units in case of an event
+				-- registered with RegisterUnitEvent
+				local registered, unit1 = isEventRegistered(frame, event)
+				if(registered and unit1 and unit1 ~= unit) then
+					-- RegisterUnitEvent erases previously registered units so
+					-- do not bother to unregister it
+					registerUnitEvent(frame, event, unit, realUnit)
+				end
 			end
 		end
 
@@ -61,7 +61,7 @@ registering events.
 * func     - a function that will be executed when the event fires. Multiple functions can be added for the same frame
              and event (function)
 * unitless - indicates that the event does not fire for a specific unit, so the event arguments won't be
-             matched to the frame unit(s).
+             matched to the frame unit(s). Obligatory for unitless event (boolean)
 --]]
 function frame_metatable.__index:RegisterEvent(event, func, unitless)
 	-- Block OnUpdate polled frames from registering events except for
@@ -89,6 +89,9 @@ function frame_metatable.__index:RegisterEvent(event, func, unitless)
 			-- re-register the event in case we have mixed registration
 			-- this will remove previously registered units
 			registerEvent(self, event)
+			if(self.unitEvents) then
+				self.unitEvents[event] = nil
+			end
 		end
 	else
 		self[event] = func
@@ -100,7 +103,8 @@ function frame_metatable.__index:RegisterEvent(event, func, unitless)
 		if unitless then
 			registerEvent(self, event)
 		else
-			unitEvents[event] = true
+			self.unitEvents = self.unitEvents or {}
+			self.unitEvents[event] = true
 			registerUnitEvent(self, event, self.unit)
 		end
 	end
@@ -112,7 +116,7 @@ Used to remove a function from the event handler list for a game event.
 * self  - the frame registered for the event
 * event - name of the registered event (string)
 * func  - function to be removed from the list of event handlers. If this is the only handler for the given event, then
-          the frame will be unregistered for the event
+          the frame will be unregistered for the event (function)
 --]]
 function frame_metatable.__index:UnregisterEvent(event, func)
 	argcheck(event, 2, 'string')
