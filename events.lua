@@ -84,6 +84,12 @@ function frame_metatable.__index:RegisterEvent(event, func, unitless)
 
 			table.insert(curev, func)
 		end
+
+		if unitless then
+			-- re-register the event in case we have mixed registration
+			-- this will remove previously registered units
+			registerEvent(self, event)
+		end
 	else
 		self[event] = func
 
