@@ -9,7 +9,7 @@ SummonIndicator - A `Texture` used to display if the unit has an incoming summon
 
 ## Notes
 
-A default texture will be applied if the widget is a Texture and doesn't have a texture or a color set.
+This element updates by changing the texture.
 
 ## Examples
 
