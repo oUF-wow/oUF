@@ -24,7 +24,7 @@ function Private.UpdateUnits(frame, unit, realUnit)
 			-- IsEventRegistered returns the units in case of an event
 			-- registered with RegisterUnitEvent
 			local registered, unit1 = isEventRegistered(frame, event)
-			if(registered and unit1 ~= unit) then
+			if(registered and unit1 and unit1 ~= unit) then
 				-- RegisterUnitEvent erases previously registered units so
 				-- do not bother to unregister it
 				registerUnitEvent(frame, event, unit, realUnit)
