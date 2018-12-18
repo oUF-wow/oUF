@@ -58,9 +58,8 @@ registering events.
 
 * self     - frame that will be registered for the given event.
 * event    - name of the event to register (string)
-* func     - function that will be executed when the event fires. If a string is passed, then a function by that name
-             must be defined on the frame. Multiple functions can be added for the same frame and event
-             (string or function)
+* func     - a function that will be executed when the event fires. Multiple functions can be added for the same frame
+             and event (function)
 * unitless - indicates that the event does not fire for a specific unit, so the event arguments won't be
              matched to the frame unit(s).
 --]]
@@ -71,14 +70,11 @@ function frame_metatable.__index:RegisterEvent(event, func, unitless)
 	if(self.__eventless and event ~= 'UNIT_PORTRAIT_UPDATE' and event ~= 'UNIT_MODEL_CHANGED') then return end
 
 	argcheck(event, 2, 'string')
-
-	if(type(func) == 'string' and type(self[func]) == 'function') then
-		func = self[func]
-	end
+	argcheck(func, 3, 'function')
 
 	local curev = self[event]
 	local kind = type(curev)
-	if(curev and func) then
+	if(curev) then
 		if(kind == 'function' and curev ~= func) then
 			self[event] = setmetatable({curev, func}, event_metatable)
 		elseif(kind == 'table') then
@@ -88,14 +84,8 @@ function frame_metatable.__index:RegisterEvent(event, func, unitless)
 
 			table.insert(curev, func)
 		end
-	elseif(isEventRegistered(self, event)) then
-		return
 	else
-		if(type(func) == 'function') then
-			self[event] = func
-		elseif(not self[event]) then
-			return error("Style [%s] attempted to register event [%s] on unit [%s] with a handler that doesn't exist.", self.style, event, self.unit or 'unknown')
-		end
+		self[event] = func
 
 		if not self:GetScript('OnEvent') then
 			self:SetScript('OnEvent', onEvent)
