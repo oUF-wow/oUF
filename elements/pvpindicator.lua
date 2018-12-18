@@ -127,7 +127,7 @@ local function Enable(self)
 		element.ForceUpdate = ForceUpdate
 
 		self:RegisterEvent('UNIT_FACTION', Path)
-		self:RegisterEvent('HONOR_LEVEL_UPDATE', Path)
+		self:RegisterEvent('HONOR_LEVEL_UPDATE', Path, true)
 
 		return true
 	end

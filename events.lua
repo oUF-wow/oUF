@@ -62,8 +62,7 @@ registering events.
              must be defined on the frame. Multiple functions can be added for the same frame and event
              (string or function)
 * unitless - indicates that the event does not fire for a specific unit, so the event arguments won't be
-             matched to the frame unit(s). Events that do not start with UNIT_ or are not known to be unit events are
-             automatically considered unitless (boolean)
+             matched to the frame unit(s).
 --]]
 function frame_metatable.__index:RegisterEvent(event, func, unitless)
 	-- Block OnUpdate polled frames from registering events except for
@@ -75,11 +74,6 @@ function frame_metatable.__index:RegisterEvent(event, func, unitless)
 
 	if(type(func) == 'string' and type(self[func]) == 'function') then
 		func = self[func]
-	end
-
-	-- FIXME: should warn the user.
-	if(not unitless and not (unitEvents[event] or event:match('^UNIT_'))) then
-		unitless = true
 	end
 
 	local curev = self[event]
