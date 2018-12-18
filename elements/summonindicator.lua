@@ -1,8 +1,25 @@
 --[[
 # Element: SummonIndicator
 
-TBD
+Handles the visibility and updating of an indicator based on the unit's incoming summon status.
 
+## Widget
+
+SummonIndicator - A `Texture` used to display if the unit has an incoming summon.
+
+## Notes
+
+A default texture will be applied if the widget is a Texture and doesn't have a texture or a color set.
+
+## Examples
+
+    -- Position and size
+    local SummonIndicator = self:CreateTexture(nil, 'OVERLAY')
+    SummonIndicator:SetSize(32, 32)
+    SummonIndicator:SetPoint('TOPRIGHT', self)
+
+    -- Register it with oUF
+    self.SummonIndicator = SummonIndicator
 --]]
 
 local _, ns = ...
