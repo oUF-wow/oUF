@@ -26,7 +26,9 @@ function Private.UpdateUnits(frame, unit, realUnit)
 				if(registered and unit1 and unit1 ~= unit) then
 					-- RegisterUnitEvent erases previously registered units so
 					-- do not bother to unregister it
-					registerUnitEvent(frame, event, unit, realUnit)
+					-- BUG: passing explicit nil units to RegisterUnitEvent
+					-- makes it silently fall back to RegisterEvent
+					registerUnitEvent(frame, event, unit, realUnit or '')
 				end
 			end
 		end
@@ -96,11 +98,11 @@ function frame_metatable.__index:RegisterEvent(event, func, unitless)
 	else
 		self[event] = func
 
-		if not self:GetScript('OnEvent') then
+		if(not self:GetScript('OnEvent')) then
 			self:SetScript('OnEvent', onEvent)
 		end
 
-		if unitless then
+		if(unitless) then
 			registerEvent(self, event)
 		else
 			self.unitEvents = self.unitEvents or {}
@@ -141,6 +143,9 @@ function frame_metatable.__index:UnregisterEvent(event, func)
 		end
 	elseif(curev == func) then
 		self[event] = nil
+		if(self.unitEvents) then
+			self.unitEvents[event] = nil
+		end
 		unregisterEvent(self, event)
 	end
 end
