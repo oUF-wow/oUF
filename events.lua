@@ -23,7 +23,11 @@ function Private.UpdateUnits(frame, unit, realUnit)
 				-- IsEventRegistered returns the units in case of an event
 				-- registered with RegisterUnitEvent
 				local registered, unit1 = isEventRegistered(frame, event)
-				if(registered and unit1 and unit1 ~= unit) then
+				-- unit event registration for header units is postponed until
+				-- the frame units are known
+				-- we don't want to re-register unitless/shared events in case
+				-- someone added them by hand to the unitEvents table
+				if(registered and unit1 and unit1 ~= unit or not registered) then
 					-- RegisterUnitEvent erases previously registered units so
 					-- do not bother to unregister it
 					-- BUG: passing explicit nil units to RegisterUnitEvent
@@ -107,7 +111,10 @@ function frame_metatable.__index:RegisterEvent(event, func, unitless)
 		else
 			self.unitEvents = self.unitEvents or {}
 			self.unitEvents[event] = true
-			registerUnitEvent(self, event, self.unit)
+			-- UpdateUnits will take care of event registration for header units
+			if(self.unit and not self:GetParent():GetAttribute('oUF-headerType')) then
+				registerUnitEvent(self, event, self.unit)
+			end
 		end
 	end
 end
