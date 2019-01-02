@@ -250,13 +250,15 @@ local function ForceUpdate(element)
 end
 
 local function SetFrequentUpdates(element, state)
-	element.frequentUpdates = state
-	if(element.frequentUpdates) then
-		element.__owner:UnregisterEvent('UNIT_POWER_UPDATE', Path)
-		element.__owner:RegisterEvent('UNIT_POWER_FREQUENT', Path)
-	else
-		element.__owner:UnregisterEvent('UNIT_POWER_FREQUENT', Path)
-		element.__owner:RegisterEvent('UNIT_POWER_UPDATE', Path)
+	if(element.frequentUpdates ~= state) then
+		element.frequentUpdates = state
+		if(element.frequentUpdates) then
+			element.__owner:UnregisterEvent('UNIT_POWER_UPDATE', Path)
+			element.__owner:RegisterEvent('UNIT_POWER_FREQUENT', Path)
+		else
+			element.__owner:UnregisterEvent('UNIT_POWER_FREQUENT', Path)
+			element.__owner:RegisterEvent('UNIT_POWER_UPDATE', Path)
+		end
 	end
 end
 
