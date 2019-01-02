@@ -178,11 +178,23 @@ local function ForceUpdate(element)
 	return Path(element.__owner, 'ForceUpdate', element.__owner.unit)
 end
 
+local function SetFrequentUpdates(element, state)
+	element.frequentUpdates = state
+	if(element.frequentUpdates) then
+		element.__owner:UnregisterEvent('UNIT_HEALTH', Path)
+		element.__owner:RegisterEvent('UNIT_HEALTH_FREQUENT', Path)
+	else
+		element.__owner:UnregisterEvent('UNIT_HEALTH_FREQUENT', Path)
+		element.__owner:RegisterEvent('UNIT_HEALTH', Path)
+	end
+end
+
 local function Enable(self, unit)
 	local element = self.Health
 	if(element) then
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
+		element.SetFrequentUpdates = SetFrequentUpdates
 
 		if(element.frequentUpdates) then
 			self:RegisterEvent('UNIT_HEALTH_FREQUENT', Path)
