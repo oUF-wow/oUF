@@ -178,6 +178,12 @@ local function ForceUpdate(element)
 	return Path(element.__owner, 'ForceUpdate', element.__owner.unit)
 end
 
+--[[ Health:SetFrequentUpdates(state)
+Used to toggle frequent updates.
+
+* self  - the Health element
+* state - the desired state of frequent updates (boolean)
+--]]
 local function SetFrequentUpdates(element, state)
 	if(element.frequentUpdates ~= state) then
 		element.frequentUpdates = state
