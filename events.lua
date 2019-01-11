@@ -133,9 +133,9 @@ function frame_metatable.__index:UnregisterEvent(event, func)
 	if(type(curev) == 'table' and func) then
 		for k, infunc in next, curev do
 			if(infunc == func) then
-				table.remove(curev, k)
+				curev[k] = nil
 
-				if(#curev == 0) then
+				if(not next(curev)) then
 					cleanUp = true
 				end
 
