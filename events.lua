@@ -134,13 +134,12 @@ function frame_metatable.__index:UnregisterEvent(event, func)
 		for k, infunc in next, curev do
 			if(infunc == func) then
 				curev[k] = nil
-
-				if(not next(curev)) then
-					cleanUp = true
-				end
-
 				break
 			end
+		end
+
+		if(not next(curev)) then
+			cleanUp = true
 		end
 	end
 
