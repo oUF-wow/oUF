@@ -379,10 +379,6 @@ function oUF:RegisterMetaFunction(name, func)
 	argcheck(name, 2, 'string')
 	argcheck(func, 3, 'function', 'table')
 
-	if(frame_metatable.__index[name]) then
-		return
-	end
-
 	frame_metatable.__index[name] = func
 end
 
