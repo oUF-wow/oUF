@@ -129,6 +129,7 @@ local function CastStart(self, event, unit, castID, spellID)
 	startTime = startTime / 1e3
 
 	element.max = endTime - startTime
+	element.startTime = startTime
 	element.delay = 0
 	element.casting = event == 'UNIT_SPELLCAST_START'
 	element.channeling = event == 'UNIT_SPELLCAST_CHANNEL_START'
@@ -200,6 +201,60 @@ local function CastStop(self, event, unit, castID, spellID)
 	--]]
 	if(element.PostCastStop) then
 		return element:PostCastStop(unit)
+	end
+end
+
+local function CastDelay(self, event, unit, castID, spellID)
+	if(self.unit ~= unit and self.realUnit ~= unit) then return end
+
+	local element = self.Castbar
+	if(not element:IsShown() or element.castID ~= castID or element.spellID ~= spellID) then
+		return
+	end
+
+	local name, startTime, endTime, _
+	if(event == 'UNIT_SPELLCAST_DELAYED') then
+		name, _, _, startTime, endTime = UnitCastingInfo(unit)
+	else
+		name, _, _, startTime, endTime = UnitChannelInfo(unit)
+	end
+
+	if(not name) then return end
+
+	endTime = endTime / 1e3
+	startTime = startTime / 1e3
+
+	local delta
+	if(element.casting) then
+		delta = startTime - element.startTime
+
+		element.duration = GetTime() - startTime
+	else
+		delta = element.startTime - startTime
+
+		element.duration = endTime - GetTime()
+	end
+
+	if(delta < 0) then
+		delta = 0
+	end
+
+	element.max = endTime - startTime
+	element.startTime = startTime
+	element.delay = element.delay + delta
+
+	element:SetMinMaxValues(0, element.max)
+	element:SetValue(element.duration)
+
+	--[[ Callback: Castbar:PostCastDelayed(unit, name)
+	Called after the element has been updated when a spell cast has been delayed.
+
+	* self - the Castbar widget
+	* unit - unit that the update has been triggered (string)
+	* name - name of the delayed spell (string)
+	--]]
+	if(element.PostCastDelayed) then
+		return element:PostCastDelayed(unit, name)
 	end
 end
 
@@ -303,65 +358,6 @@ local function UNIT_SPELLCAST_NOT_INTERRUPTIBLE(self, event, unit)
 	end
 end
 
-local function UNIT_SPELLCAST_DELAYED(self, event, unit)
-	if(self.unit ~= unit and self.realUnit ~= unit) then return end
-
-	local element = self.Castbar
-	local name, _, _, startTime = UnitCastingInfo(unit)
-	if(not startTime or not element:IsShown()) then return end
-
-	local duration = GetTime() - (startTime / 1000)
-	if(duration < 0) then duration = 0 end
-
-	element.delay = element.delay + element.duration - duration
-	element.duration = duration
-
-	element:SetValue(duration)
-
-	--[[ Callback: Castbar:PostCastDelayed(unit, name)
-	Called after the element has been updated when a spell cast has been delayed.
-
-	* self - the Castbar widget
-	* unit - unit that the update has been triggered (string)
-	* name - name of the delayed spell (string)
-	--]]
-	if(element.PostCastDelayed) then
-		return element:PostCastDelayed(unit, name)
-	end
-end
-
-local function UNIT_SPELLCAST_CHANNEL_UPDATE(self, event, unit)
-	if(self.unit ~= unit and self.realUnit ~= unit) then return end
-
-	local element = self.Castbar
-	local name, _, _, startTime, endTime = UnitChannelInfo(unit)
-	if(not name or not element:IsShown()) then
-		return
-	end
-
-	local duration = (endTime / 1000) - GetTime()
-
-	element.delay = element.delay + element.duration - duration
-	element.duration = duration
-	element.max = (endTime - startTime) / 1000
-
-	element:SetMinMaxValues(0, element.max)
-	element:SetValue(duration)
-
-	--[[ Callback: Castbar:PostChannelUpdate(unit, name)
-	Called after the element has been updated after a channeled spell has been delayed or interrupted.
-
-	* self - the Castbar widget
-	* unit - unit for which the update has been triggered (string)
-	* name - name of the channeled spell (string)
-	--]]
-	if(element.PostChannelUpdate) then
-		return element:PostChannelUpdate(unit, name)
-	end
-end
-
-
-
 local function onUpdate(self, elapsed)
 	if(self.casting) then
 		local duration = self.duration + elapsed
@@ -378,7 +374,7 @@ local function onUpdate(self, elapsed)
 				if(self.CustomDelayText) then
 					self:CustomDelayText(duration)
 				else
-					self.Time:SetFormattedText('%.1f|cffff0000-%.1f|r', duration, self.delay)
+					self.Time:SetFormattedText('%.1f|cffff0000+%.2f|r', duration, self.delay)
 				end
 			else
 				if(self.CustomTimeText) then
@@ -419,7 +415,7 @@ local function onUpdate(self, elapsed)
 				if(self.CustomDelayText) then
 					self:CustomDelayText(duration)
 				else
-					self.Time:SetFormattedText('%.1f|cffff0000-%.1f|r', duration, self.delay)
+					self.Time:SetFormattedText('%.1f|cffff0000-%.2f|r', duration, self.delay)
 				end
 			else
 				if(self.CustomTimeText) then
@@ -473,13 +469,13 @@ local function Enable(self, unit)
 			self:RegisterEvent('UNIT_SPELLCAST_CHANNEL_START', CastStart)
 			self:RegisterEvent('UNIT_SPELLCAST_STOP', CastStop)
 			self:RegisterEvent('UNIT_SPELLCAST_CHANNEL_STOP', CastStop)
+			self:RegisterEvent('UNIT_SPELLCAST_DELAYED', CastDelay)
+			self:RegisterEvent('UNIT_SPELLCAST_CHANNEL_UPDATE', CastDelay)
 
 			self:RegisterEvent('UNIT_SPELLCAST_FAILED', UNIT_SPELLCAST_FAILED)
 			self:RegisterEvent('UNIT_SPELLCAST_INTERRUPTED', UNIT_SPELLCAST_INTERRUPTED)
 			self:RegisterEvent('UNIT_SPELLCAST_INTERRUPTIBLE', UNIT_SPELLCAST_INTERRUPTIBLE)
 			self:RegisterEvent('UNIT_SPELLCAST_NOT_INTERRUPTIBLE', UNIT_SPELLCAST_NOT_INTERRUPTIBLE)
-			self:RegisterEvent('UNIT_SPELLCAST_DELAYED', UNIT_SPELLCAST_DELAYED)
-			self:RegisterEvent('UNIT_SPELLCAST_CHANNEL_UPDATE', UNIT_SPELLCAST_CHANNEL_UPDATE)
 		end
 
 		element.horizontal = element:GetOrientation() == 'HORIZONTAL'
@@ -530,13 +526,13 @@ local function Disable(self)
 		self:UnregisterEvent('UNIT_SPELLCAST_CHANNEL_START', CastStart)
 		self:UnregisterEvent('UNIT_SPELLCAST_STOP', CastStop)
 		self:UnregisterEvent('UNIT_SPELLCAST_CHANNEL_STOP', CastStop)
+		self:UnregisterEvent('UNIT_SPELLCAST_DELAYED', CastDelay)
+		self:UnregisterEvent('UNIT_SPELLCAST_CHANNEL_UPDATE', CastDelay)
 
 		self:UnregisterEvent('UNIT_SPELLCAST_FAILED', UNIT_SPELLCAST_FAILED)
 		self:UnregisterEvent('UNIT_SPELLCAST_INTERRUPTED', UNIT_SPELLCAST_INTERRUPTED)
 		self:UnregisterEvent('UNIT_SPELLCAST_INTERRUPTIBLE', UNIT_SPELLCAST_INTERRUPTIBLE)
 		self:UnregisterEvent('UNIT_SPELLCAST_NOT_INTERRUPTIBLE', UNIT_SPELLCAST_NOT_INTERRUPTIBLE)
-		self:UnregisterEvent('UNIT_SPELLCAST_DELAYED', UNIT_SPELLCAST_DELAYED)
-		self:UnregisterEvent('UNIT_SPELLCAST_CHANNEL_UPDATE', UNIT_SPELLCAST_CHANNEL_UPDATE)
 
 		element:SetScript('OnUpdate', nil)
 	end
