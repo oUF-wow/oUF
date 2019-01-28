@@ -104,7 +104,7 @@ local function updateSafeZone(self)
 	safeZone:SetWidth(width * safeZoneRatio)
 end
 
-local function CastStart(self, event, unit, castID, spellID)
+local function CastStart(self, event, unit)
 	if(self.unit ~= unit and self.realUnit ~= unit) then return end
 
 	local element = self.Castbar
@@ -116,14 +116,15 @@ local function CastStart(self, event, unit, castID, spellID)
 		  and the player is shown in the pet frame, see PetCastingBarFrame_OnEvent
 	]]
 
-	local name, texture, startTime, endTime, isTradeSkill, notInterruptible, _
-	if(event == 'UNIT_SPELLCAST_START') then
-		name, _, texture, startTime, endTime, isTradeSkill, _, notInterruptible = UnitCastingInfo(unit)
-	else
-		name, _, texture, startTime, endTime, isTradeSkill, notInterruptible = UnitChannelInfo(unit)
-	end
+	local name, _, texture, startTime, endTime, isTradeSkill, castID, notInterruptible, spellID = UnitCastingInfo(unit)
+	event = 'UNIT_SPELLCAST_START'
 
-	if(not name) then return end
+	if(not name) then
+		name, _, texture, startTime, endTime, isTradeSkill, notInterruptible, spellID = UnitChannelInfo(unit)
+		event = 'UNIT_SPELLCAST_CHANNEL_START'
+
+		if(not name) then return end
+	end
 
 	endTime = endTime / 1e3
 	startTime = startTime / 1e3
