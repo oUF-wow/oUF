@@ -128,7 +128,6 @@ local function CastStart(self, event, unit, castID, spellID)
 	endTime = endTime / 1e3
 	startTime = startTime / 1e3
 
-	element.duration = GetTime() - startTime
 	element.max = endTime - startTime
 	element.delay = 0
 	element.casting = event == 'UNIT_SPELLCAST_START'
@@ -137,6 +136,12 @@ local function CastStart(self, event, unit, castID, spellID)
 	element.holdTime = 0
 	element.castID = castID
 	element.spellID = spellID
+
+	if(element.casting) then
+		element.duration = GetTime() - startTime
+	else
+		element.duration = endTime - GetTime()
+	end
 
 	element:SetMinMaxValues(0, element.max)
 	element:SetValue(0)
