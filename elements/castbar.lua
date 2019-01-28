@@ -286,16 +286,15 @@ local function CastFail(self, event, unit, castID, spellID)
 	end
 end
 
-local function UNIT_SPELLCAST_INTERRUPTIBLE(self, event, unit)
+local function CastInterruptible(self, event, unit)
 	if(self.unit ~= unit and self.realUnit ~= unit) then return end
 
 	local element = self.Castbar
-	local shield = element.Shield
-	if(shield) then
-		shield:Hide()
-	end
+	if(not element:IsShown()) then return end
 
-	element.notInterruptible = nil
+	element.notInterruptible = event == 'UNIT_SPELLCAST_NOT_INTERRUPTIBLE'
+
+	if(element.Shield) then element.Shield:SetShown(element.notInterruptible) end
 
 	--[[ Callback: Castbar:PostCastInterruptible(unit)
 	Called after the element has been updated when a spell cast has become interruptible.
@@ -305,28 +304,6 @@ local function UNIT_SPELLCAST_INTERRUPTIBLE(self, event, unit)
 	--]]
 	if(element.PostCastInterruptible) then
 		return element:PostCastInterruptible(unit)
-	end
-end
-
-local function UNIT_SPELLCAST_NOT_INTERRUPTIBLE(self, event, unit)
-	if(self.unit ~= unit and self.realUnit ~= unit) then return end
-
-	local element = self.Castbar
-	local shield = element.Shield
-	if(shield) then
-		shield:Show()
-	end
-
-	element.notInterruptible = true
-
-	--[[ Callback: Castbar:PostCastNotInterruptible(unit)
-	Called after the element has been updated when a spell cast has become non-interruptible.
-
-	* self - the Castbar widget
-	* unit - unit for which the update has been triggered (string)
-	--]]
-	if(element.PostCastNotInterruptible) then
-		return element:PostCastNotInterruptible(unit)
 	end
 end
 
@@ -445,9 +422,8 @@ local function Enable(self, unit)
 			self:RegisterEvent('UNIT_SPELLCAST_CHANNEL_UPDATE', CastDelay)
 			self:RegisterEvent('UNIT_SPELLCAST_FAILED', CastFail)
 			self:RegisterEvent('UNIT_SPELLCAST_INTERRUPTED', CastFail)
-
-			self:RegisterEvent('UNIT_SPELLCAST_INTERRUPTIBLE', UNIT_SPELLCAST_INTERRUPTIBLE)
-			self:RegisterEvent('UNIT_SPELLCAST_NOT_INTERRUPTIBLE', UNIT_SPELLCAST_NOT_INTERRUPTIBLE)
+			self:RegisterEvent('UNIT_SPELLCAST_INTERRUPTIBLE', CastInterruptible)
+			self:RegisterEvent('UNIT_SPELLCAST_NOT_INTERRUPTIBLE', CastInterruptible)
 		end
 
 		element.horizontal = element:GetOrientation() == 'HORIZONTAL'
@@ -502,9 +478,8 @@ local function Disable(self)
 		self:UnregisterEvent('UNIT_SPELLCAST_CHANNEL_UPDATE', CastDelay)
 		self:UnregisterEvent('UNIT_SPELLCAST_FAILED', CastFail)
 		self:UnregisterEvent('UNIT_SPELLCAST_INTERRUPTED', CastFail)
-
-		self:UnregisterEvent('UNIT_SPELLCAST_INTERRUPTIBLE', UNIT_SPELLCAST_INTERRUPTIBLE)
-		self:UnregisterEvent('UNIT_SPELLCAST_NOT_INTERRUPTIBLE', UNIT_SPELLCAST_NOT_INTERRUPTIBLE)
+		self:UnregisterEvent('UNIT_SPELLCAST_INTERRUPTIBLE', CastInterruptible)
+		self:UnregisterEvent('UNIT_SPELLCAST_NOT_INTERRUPTIBLE', CastInterruptible)
 
 		element:SetScript('OnUpdate', nil)
 	end
