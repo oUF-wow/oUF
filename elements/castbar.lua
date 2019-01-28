@@ -258,20 +258,20 @@ local function CastDelay(self, event, unit, castID, spellID)
 	end
 end
 
-local function UNIT_SPELLCAST_FAILED(self, event, unit, castID)
+local function CastFail(self, event, unit, castID, spellID)
 	if(self.unit ~= unit and self.realUnit ~= unit) then return end
 
 	local element = self.Castbar
-	if(element.castID ~= castID) then
+	if(not element:IsShown() or element.castID ~= castID or element.spellID ~= spellID) then
 		return
 	end
 
-	local text = element.Text
-	if(text) then
-		text:SetText(FAILED)
+	if(element.Text) then
+		element.Text:SetText(event == 'UNIT_SPELLCAST_FAILED' and FAILED or INTERRUPTED)
 	end
 
 	element.casting = nil
+	element.channeling = nil
 	element.notInterruptible = nil
 	element.holdTime = element.timeToHold or 0
 
@@ -283,34 +283,6 @@ local function UNIT_SPELLCAST_FAILED(self, event, unit, castID)
 	--]]
 	if(element.PostCastFailed) then
 		return element:PostCastFailed(unit)
-	end
-end
-
-local function UNIT_SPELLCAST_INTERRUPTED(self, event, unit, castID)
-	if(self.unit ~= unit and self.realUnit ~= unit) then return end
-
-	local element = self.Castbar
-	if(element.castID ~= castID) then
-		return
-	end
-
-	local text = element.Text
-	if(text) then
-		text:SetText(INTERRUPTED)
-	end
-
-	element.casting = nil
-	element.channeling = nil
-	element.holdTime = element.timeToHold or 0
-
-	--[[ Callback: Castbar:PostCastInterrupted(unit)
-	Called after the element has been updated upon an interrupted spell cast.
-
-	* self - the Castbar widget
-	* unit - unit for which the update has been triggered (string)
-	--]]
-	if(element.PostCastInterrupted) then
-		return element:PostCastInterrupted(unit)
 	end
 end
 
@@ -471,9 +443,9 @@ local function Enable(self, unit)
 			self:RegisterEvent('UNIT_SPELLCAST_CHANNEL_STOP', CastStop)
 			self:RegisterEvent('UNIT_SPELLCAST_DELAYED', CastDelay)
 			self:RegisterEvent('UNIT_SPELLCAST_CHANNEL_UPDATE', CastDelay)
+			self:RegisterEvent('UNIT_SPELLCAST_FAILED', CastFail)
+			self:RegisterEvent('UNIT_SPELLCAST_INTERRUPTED', CastFail)
 
-			self:RegisterEvent('UNIT_SPELLCAST_FAILED', UNIT_SPELLCAST_FAILED)
-			self:RegisterEvent('UNIT_SPELLCAST_INTERRUPTED', UNIT_SPELLCAST_INTERRUPTED)
 			self:RegisterEvent('UNIT_SPELLCAST_INTERRUPTIBLE', UNIT_SPELLCAST_INTERRUPTIBLE)
 			self:RegisterEvent('UNIT_SPELLCAST_NOT_INTERRUPTIBLE', UNIT_SPELLCAST_NOT_INTERRUPTIBLE)
 		end
@@ -528,9 +500,9 @@ local function Disable(self)
 		self:UnregisterEvent('UNIT_SPELLCAST_CHANNEL_STOP', CastStop)
 		self:UnregisterEvent('UNIT_SPELLCAST_DELAYED', CastDelay)
 		self:UnregisterEvent('UNIT_SPELLCAST_CHANNEL_UPDATE', CastDelay)
+		self:UnregisterEvent('UNIT_SPELLCAST_FAILED', CastFail)
+		self:UnregisterEvent('UNIT_SPELLCAST_INTERRUPTED', CastFail)
 
-		self:UnregisterEvent('UNIT_SPELLCAST_FAILED', UNIT_SPELLCAST_FAILED)
-		self:UnregisterEvent('UNIT_SPELLCAST_INTERRUPTED', UNIT_SPELLCAST_INTERRUPTED)
 		self:UnregisterEvent('UNIT_SPELLCAST_INTERRUPTIBLE', UNIT_SPELLCAST_INTERRUPTIBLE)
 		self:UnregisterEvent('UNIT_SPELLCAST_NOT_INTERRUPTIBLE', UNIT_SPELLCAST_NOT_INTERRUPTIBLE)
 
