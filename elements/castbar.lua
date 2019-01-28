@@ -175,6 +175,29 @@ local function CastStart(self, event, unit, castID, spellID)
 	element:Show()
 end
 
+local function CastStop(self, event, unit, castID, spellID)
+	if(self.unit ~= unit and self.realUnit ~= unit) then return end
+
+	local element = self.Castbar
+
+	-- Channeled spells for some reason don't have castIDs
+	if(element.castID ~= castID or element.spellID ~= spellID) then return end
+
+	element.casting = nil
+	element.channeling = nil
+	element.notInterruptible = nil
+
+	--[[ Callback: Castbar:PostCastStop(unit)
+	Called after the element has been updated when a spell cast has finished.
+
+	* self - the Castbar widget
+	* unit - unit for which the update has been triggered (string)
+	--]]
+	if(element.PostCastStop) then
+		return element:PostCastStop(unit)
+	end
+end
+
 local function UNIT_SPELLCAST_FAILED(self, event, unit, castID)
 	if(self.unit ~= unit and self.realUnit ~= unit) then return end
 
@@ -302,28 +325,6 @@ local function UNIT_SPELLCAST_DELAYED(self, event, unit)
 	end
 end
 
-local function UNIT_SPELLCAST_STOP(self, event, unit, castID)
-	if(self.unit ~= unit and self.realUnit ~= unit) then return end
-
-	local element = self.Castbar
-	if(element.castID ~= castID) then
-		return
-	end
-
-	element.casting = nil
-	element.notInterruptible = nil
-
-	--[[ Callback: Castbar:PostCastStop(unit)
-	Called after the element has been updated when a spell cast has finished.
-
-	* self - the Castbar widget
-	* unit - unit for which the update has been triggered (string)
-	--]]
-	if(element.PostCastStop) then
-		return element:PostCastStop(unit)
-	end
-end
-
 local function UNIT_SPELLCAST_CHANNEL_UPDATE(self, event, unit)
 	if(self.unit ~= unit and self.realUnit ~= unit) then return end
 
@@ -354,25 +355,7 @@ local function UNIT_SPELLCAST_CHANNEL_UPDATE(self, event, unit)
 	end
 end
 
-local function UNIT_SPELLCAST_CHANNEL_STOP(self, event, unit)
-	if(self.unit ~= unit and self.realUnit ~= unit) then return end
 
-	local element = self.Castbar
-	if(element:IsShown()) then
-		element.channeling = nil
-		element.notInterruptible = nil
-
-		--[[ Callback: Castbar:PostChannelStop(unit)
-		Called after the element has been updated after a channeled spell has been completed.
-
-		* self - the Castbar widget
-		* unit - unit for which the update has been triggered (string)
-		--]]
-		if(element.PostChannelStop) then
-			return element:PostChannelStop(unit)
-		end
-	end
-end
 
 local function onUpdate(self, elapsed)
 	if(self.casting) then
@@ -483,15 +466,15 @@ local function Enable(self, unit)
 		if(not (unit and unit:match'%wtarget$')) then
 			self:RegisterEvent('UNIT_SPELLCAST_START', CastStart)
 			self:RegisterEvent('UNIT_SPELLCAST_CHANNEL_START', CastStart)
+			self:RegisterEvent('UNIT_SPELLCAST_STOP', CastStop)
+			self:RegisterEvent('UNIT_SPELLCAST_CHANNEL_STOP', CastStop)
 
 			self:RegisterEvent('UNIT_SPELLCAST_FAILED', UNIT_SPELLCAST_FAILED)
-			self:RegisterEvent('UNIT_SPELLCAST_STOP', UNIT_SPELLCAST_STOP)
 			self:RegisterEvent('UNIT_SPELLCAST_INTERRUPTED', UNIT_SPELLCAST_INTERRUPTED)
 			self:RegisterEvent('UNIT_SPELLCAST_INTERRUPTIBLE', UNIT_SPELLCAST_INTERRUPTIBLE)
 			self:RegisterEvent('UNIT_SPELLCAST_NOT_INTERRUPTIBLE', UNIT_SPELLCAST_NOT_INTERRUPTIBLE)
 			self:RegisterEvent('UNIT_SPELLCAST_DELAYED', UNIT_SPELLCAST_DELAYED)
 			self:RegisterEvent('UNIT_SPELLCAST_CHANNEL_UPDATE', UNIT_SPELLCAST_CHANNEL_UPDATE)
-			self:RegisterEvent('UNIT_SPELLCAST_CHANNEL_STOP', UNIT_SPELLCAST_CHANNEL_STOP)
 		end
 
 		element.horizontal = element:GetOrientation() == 'HORIZONTAL'
@@ -540,15 +523,15 @@ local function Disable(self)
 
 		self:UnregisterEvent('UNIT_SPELLCAST_START', CastStart)
 		self:UnregisterEvent('UNIT_SPELLCAST_CHANNEL_START', CastStart)
+		self:UnregisterEvent('UNIT_SPELLCAST_STOP', CastStop)
+		self:UnregisterEvent('UNIT_SPELLCAST_CHANNEL_STOP', CastStop)
 
 		self:UnregisterEvent('UNIT_SPELLCAST_FAILED', UNIT_SPELLCAST_FAILED)
-		self:UnregisterEvent('UNIT_SPELLCAST_STOP', UNIT_SPELLCAST_STOP)
 		self:UnregisterEvent('UNIT_SPELLCAST_INTERRUPTED', UNIT_SPELLCAST_INTERRUPTED)
 		self:UnregisterEvent('UNIT_SPELLCAST_INTERRUPTIBLE', UNIT_SPELLCAST_INTERRUPTIBLE)
 		self:UnregisterEvent('UNIT_SPELLCAST_NOT_INTERRUPTIBLE', UNIT_SPELLCAST_NOT_INTERRUPTIBLE)
 		self:UnregisterEvent('UNIT_SPELLCAST_DELAYED', UNIT_SPELLCAST_DELAYED)
 		self:UnregisterEvent('UNIT_SPELLCAST_CHANNEL_UPDATE', UNIT_SPELLCAST_CHANNEL_UPDATE)
-		self:UnregisterEvent('UNIT_SPELLCAST_CHANNEL_STOP', UNIT_SPELLCAST_CHANNEL_STOP)
 
 		element:SetScript('OnUpdate', nil)
 	end
