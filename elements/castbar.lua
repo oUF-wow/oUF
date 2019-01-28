@@ -91,12 +91,9 @@ local GetTime = GetTime
 local UnitCastingInfo = UnitCastingInfo
 local UnitChannelInfo = UnitChannelInfo
 
-local FALLBACK_ICON = 136243
-
 local function updateSafeZone(self)
-	local sz = self.SafeZone
-	local horiz = self.horizontal
-	local width = horiz and self:GetWidth() or self:GetHeight()
+	local safeZone = self.SafeZone
+	local width = self:GetWidth()
 	local _, _, _, ms = GetNetStats()
 
 	local safeZoneRatio = (ms / 1e3) / self.max
@@ -104,71 +101,63 @@ local function updateSafeZone(self)
 		safeZoneRatio = 1
 	end
 
-	sz[horiz and 'SetWidth' or 'SetHeight'](sz, width * safeZoneRatio)
+	safeZone:SetWidth(width * safeZoneRatio)
 end
 
-local function positionSafeZone(self, isChanneling)
-	local sz = self.SafeZone
-	local horiz = self.horizontal
-
-	sz:ClearAllPoints()
-
-	if(not isChanneling) then
-		sz:SetPoint(
-			self:GetReverseFill()
-			and (horiz and 'LEFT' or 'BOTTOM')
-			or (horiz and 'RIGHT' or 'TOP')
-		)
-	else
-		sz:SetPoint(
-			self:GetReverseFill()
-			and (horiz and 'RIGHT' or 'TOP')
-			or (horiz and 'LEFT' or 'BOTTOM')
-		)
-	end
-
-	sz:SetPoint(horiz and 'TOP' or 'LEFT')
-	sz:SetPoint(horiz and 'BOTTOM' or 'RIGHT')
-end
-
-local function UNIT_SPELLCAST_START(self, event, unit)
+local function CastStart(self, event, unit, castID, spellID)
 	if(self.unit ~= unit and self.realUnit ~= unit) then return end
 
 	local element = self.Castbar
-	local name, text, texture, startTime, endTime, _, castID, notInterruptible, spellID = UnitCastingInfo(unit)
-	if(not name) then
-		return element:Hide()
+
+	--[[ REVAMP NOTES:
+		- It's possible not to display the castbar for trade skills in the default UI
+		  via the .showTradeSkills attribute
+		- The pet castbar should be hidden while the player is possessing something,
+		  and the player is shown in the pet frame, see PetCastingBarFrame_OnEvent
+	]]
+
+	local name, texture, startTime, endTime, isTradeSkill, notInterruptible, _
+	if(event == 'UNIT_SPELLCAST_START') then
+		name, _, texture, startTime, endTime, isTradeSkill, _, notInterruptible = UnitCastingInfo(unit)
+	else
+		name, _, texture, startTime, endTime, isTradeSkill, notInterruptible = UnitChannelInfo(unit)
 	end
+
+	if(not name) then return end
 
 	endTime = endTime / 1e3
 	startTime = startTime / 1e3
-	local max = endTime - startTime
 
-	element.castID = castID
 	element.duration = GetTime() - startTime
-	element.max = max
+	element.max = endTime - startTime
 	element.delay = 0
-	element.casting = true
+	element.casting = event == 'UNIT_SPELLCAST_START'
+	element.channeling = event == 'UNIT_SPELLCAST_CHANNEL_START'
 	element.notInterruptible = notInterruptible
 	element.holdTime = 0
+	element.castID = castID
 	element.spellID = spellID
 
-	element:SetMinMaxValues(0, max)
+	element:SetMinMaxValues(0, element.max)
 	element:SetValue(0)
 
-	if(element.Text) then element.Text:SetText(text) end
-	if(element.Icon) then element.Icon:SetTexture(texture or FALLBACK_ICON) end
+	if(element.Icon) then element.Icon:SetTexture(texture or [[Interface\ICONS\INV_Misc_QuestionMark]]) end
+	if(element.Shield) then element.Shield:SetShown(notInterruptible) end
+	if(element.Text) then element.Text:SetText(name) end
 	if(element.Time) then element.Time:SetText() end
 
-	local shield = element.Shield
-	if(shield and notInterruptible) then
-		shield:Show()
-	elseif(shield) then
-		shield:Hide()
-	end
+	local safeZone = element.SafeZone
+	if(safeZone) then
+		safeZone:ClearAllPoints()
+		safeZone:SetPoint('TOP')
+		safeZone:SetPoint('BOTTOM')
 
-	if(element.SafeZone) then
-		positionSafeZone(element)
+		if(element.casting) then
+			safeZone:SetPoint(element:GetReverseFill() and 'LEFT' or 'RIGHT')
+		else
+			safeZone:SetPoint(element:GetReverseFill() and 'RIGHT' or 'LEFT')
+		end
+
 		updateSafeZone(element)
 	end
 
@@ -182,6 +171,7 @@ local function UNIT_SPELLCAST_START(self, event, unit)
 	if(element.PostCastStart) then
 		element:PostCastStart(unit, name)
 	end
+
 	element:Show()
 end
 
@@ -334,66 +324,6 @@ local function UNIT_SPELLCAST_STOP(self, event, unit, castID)
 	end
 end
 
-local function UNIT_SPELLCAST_CHANNEL_START(self, event, unit, _, spellID)
-	if(self.unit ~= unit and self.realUnit ~= unit) then return end
-
-	local element = self.Castbar
-	local name, _, texture, startTime, endTime, _, notInterruptible = UnitChannelInfo(unit)
-	if(not name) then
-		return
-	end
-
-	endTime = endTime / 1e3
-	startTime = startTime / 1e3
-	local max = (endTime - startTime)
-	local duration = endTime - GetTime()
-
-	element.duration = duration
-	element.max = max
-	element.delay = 0
-	element.channeling = true
-	element.notInterruptible = notInterruptible
-	element.holdTime = 0
-	element.spellID = spellID
-
-	-- We have to do this, as it's possible for spell casts to never have _STOP
-	-- executed or be fully completed by the OnUpdate handler before CHANNEL_START
-	-- is called.
-	element.casting = nil
-	element.castID = nil
-
-	element:SetMinMaxValues(0, max)
-	element:SetValue(duration)
-
-	if(element.Text) then element.Text:SetText(name) end
-	if(element.Icon) then element.Icon:SetTexture(texture or FALLBACK_ICON) end
-	if(element.Time) then element.Time:SetText() end
-
-	local shield = element.Shield
-	if(shield and notInterruptible) then
-		shield:Show()
-	elseif(shield) then
-		shield:Hide()
-	end
-
-	if(element.SafeZone) then
-		positionSafeZone(element, true)
-		updateSafeZone(element)
-	end
-
-	--[[ Callback: Castbar:PostChannelStart(unit, name)
-	Called after the element has been updated upon a spell channel start.
-
-	* self - the Castbar widget
-	* unit - unit for which the update has been triggered (string)
-	* name - name of the channeled spell (string)
-	--]]
-	if(element.PostChannelStart) then
-		element:PostChannelStart(unit, name)
-	end
-	element:Show()
-end
-
 local function UNIT_SPELLCAST_CHANNEL_UPDATE(self, event, unit)
 	if(self.unit ~= unit and self.realUnit ~= unit) then return end
 
@@ -537,8 +467,7 @@ local function onUpdate(self, elapsed)
 end
 
 local function Update(self, ...)
-	UNIT_SPELLCAST_START(self, ...)
-	return UNIT_SPELLCAST_CHANNEL_START(self, ...)
+	CastStart(self, ...)
 end
 
 local function ForceUpdate(element)
@@ -552,14 +481,15 @@ local function Enable(self, unit)
 		element.ForceUpdate = ForceUpdate
 
 		if(not (unit and unit:match'%wtarget$')) then
-			self:RegisterEvent('UNIT_SPELLCAST_START', UNIT_SPELLCAST_START)
+			self:RegisterEvent('UNIT_SPELLCAST_START', CastStart)
+			self:RegisterEvent('UNIT_SPELLCAST_CHANNEL_START', CastStart)
+
 			self:RegisterEvent('UNIT_SPELLCAST_FAILED', UNIT_SPELLCAST_FAILED)
 			self:RegisterEvent('UNIT_SPELLCAST_STOP', UNIT_SPELLCAST_STOP)
 			self:RegisterEvent('UNIT_SPELLCAST_INTERRUPTED', UNIT_SPELLCAST_INTERRUPTED)
 			self:RegisterEvent('UNIT_SPELLCAST_INTERRUPTIBLE', UNIT_SPELLCAST_INTERRUPTIBLE)
 			self:RegisterEvent('UNIT_SPELLCAST_NOT_INTERRUPTIBLE', UNIT_SPELLCAST_NOT_INTERRUPTIBLE)
 			self:RegisterEvent('UNIT_SPELLCAST_DELAYED', UNIT_SPELLCAST_DELAYED)
-			self:RegisterEvent('UNIT_SPELLCAST_CHANNEL_START', UNIT_SPELLCAST_CHANNEL_START)
 			self:RegisterEvent('UNIT_SPELLCAST_CHANNEL_UPDATE', UNIT_SPELLCAST_CHANNEL_UPDATE)
 			self:RegisterEvent('UNIT_SPELLCAST_CHANNEL_STOP', UNIT_SPELLCAST_CHANNEL_STOP)
 		end
@@ -597,6 +527,8 @@ local function Enable(self, unit)
 			safeZone:SetColorTexture(1, 0, 0)
 		end
 
+		element:Hide()
+
 		return true
 	end
 end
@@ -606,14 +538,15 @@ local function Disable(self)
 	if(element) then
 		element:Hide()
 
-		self:UnregisterEvent('UNIT_SPELLCAST_START', UNIT_SPELLCAST_START)
+		self:UnregisterEvent('UNIT_SPELLCAST_START', CastStart)
+		self:UnregisterEvent('UNIT_SPELLCAST_CHANNEL_START', CastStart)
+
 		self:UnregisterEvent('UNIT_SPELLCAST_FAILED', UNIT_SPELLCAST_FAILED)
 		self:UnregisterEvent('UNIT_SPELLCAST_STOP', UNIT_SPELLCAST_STOP)
 		self:UnregisterEvent('UNIT_SPELLCAST_INTERRUPTED', UNIT_SPELLCAST_INTERRUPTED)
 		self:UnregisterEvent('UNIT_SPELLCAST_INTERRUPTIBLE', UNIT_SPELLCAST_INTERRUPTIBLE)
 		self:UnregisterEvent('UNIT_SPELLCAST_NOT_INTERRUPTIBLE', UNIT_SPELLCAST_NOT_INTERRUPTIBLE)
 		self:UnregisterEvent('UNIT_SPELLCAST_DELAYED', UNIT_SPELLCAST_DELAYED)
-		self:UnregisterEvent('UNIT_SPELLCAST_CHANNEL_START', UNIT_SPELLCAST_CHANNEL_START)
 		self:UnregisterEvent('UNIT_SPELLCAST_CHANNEL_UPDATE', UNIT_SPELLCAST_CHANNEL_UPDATE)
 		self:UnregisterEvent('UNIT_SPELLCAST_CHANNEL_STOP', UNIT_SPELLCAST_CHANNEL_STOP)
 
