@@ -149,6 +149,7 @@ local function CastStart(self, event, unit, castID, spellID)
 
 	if(element.Icon) then element.Icon:SetTexture(texture or [[Interface\ICONS\INV_Misc_QuestionMark]]) end
 	if(element.Shield) then element.Shield:SetShown(notInterruptible) end
+	if(element.Spark) then element.Spark:Show() end
 	if(element.Text) then element.Text:SetText(name) end
 	if(element.Time) then element.Time:SetText() end
 
@@ -189,9 +190,13 @@ local function CastStop(self, event, unit, castID, spellID)
 	-- Channeled spells for some reason don't have castIDs
 	if(element.castID ~= castID or element.spellID ~= spellID) then return end
 
+	if(element.Spark) then element.Spark:Hide() end
+
 	element.casting = nil
 	element.channeling = nil
 	element.notInterruptible = nil
+
+	element:SetValue(element.max)
 
 	--[[ Callback: Castbar:PostCastStop(unit)
 	Called after the element has been updated when a spell cast has finished.
@@ -270,10 +275,14 @@ local function CastFail(self, event, unit, castID, spellID)
 		element.Text:SetText(event == 'UNIT_SPELLCAST_FAILED' and FAILED or INTERRUPTED)
 	end
 
+	if(element.Spark) then element.Spark:Hide() end
+
 	element.casting = nil
 	element.channeling = nil
 	element.notInterruptible = nil
 	element.holdTime = element.timeToHold or 0
+
+	element:SetValue(element.max)
 
 	--[[ Callback: Castbar:PostCastFailed(unit)
 	Called after the element has been updated upon a failed spell cast.
