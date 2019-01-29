@@ -367,8 +367,8 @@ local function onUpdate(self, elapsed)
 	end
 end
 
-local function Update(self, ...)
-	CastStart(self, ...)
+local function Update(...)
+	CastStart(...)
 end
 
 local function ForceUpdate(element)
