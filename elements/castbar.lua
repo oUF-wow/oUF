@@ -91,19 +91,6 @@ local GetTime = GetTime
 local UnitCastingInfo = UnitCastingInfo
 local UnitChannelInfo = UnitChannelInfo
 
-local function updateSafeZone(self)
-	local safeZone = self.SafeZone
-	local width = self:GetWidth()
-	local _, _, _, ms = GetNetStats()
-
-	local safeZoneRatio = (ms / 1e3) / self.max
-	if(safeZoneRatio > 1) then
-		safeZoneRatio = 1
-	end
-
-	safeZone:SetWidth(width * safeZoneRatio)
-end
-
 local function CastStart(self, event, unit)
 	if(self.unit ~= unit and self.realUnit ~= unit) then return end
 
@@ -138,6 +125,8 @@ local function CastStart(self, event, unit)
 	element.holdTime = 0
 	element.castID = castID
 	element.spellID = spellID
+	element.isHorizontal = element:GetOrientation() == 'HORIZONTAL'
+	element.isReversed = element:GetReverseFill()
 
 	if(element.casting) then
 		element.duration = GetTime() - startTime
@@ -156,17 +145,24 @@ local function CastStart(self, event, unit)
 
 	local safeZone = element.SafeZone
 	if(safeZone) then
+		local isHoriz = element.isHorizontal
+
 		safeZone:ClearAllPoints()
-		safeZone:SetPoint('TOP')
-		safeZone:SetPoint('BOTTOM')
+		safeZone:SetPoint(isHoriz and 'TOP' or 'LEFT')
+		safeZone:SetPoint(isHoriz and 'BOTTOM' or 'RIGHT')
 
 		if(element.casting) then
-			safeZone:SetPoint(element:GetReverseFill() and 'LEFT' or 'RIGHT')
+			safeZone:SetPoint(element.isReversed and (isHoriz and 'LEFT' or 'BOTTOM') or (isHoriz and 'RIGHT' or 'TOP'))
 		else
-			safeZone:SetPoint(element:GetReverseFill() and 'RIGHT' or 'LEFT')
+			safeZone:SetPoint(element.isReversed and (isHoriz and 'RIGHT' or 'TOP') or (isHoriz and 'LEFT' or 'BOTTOM'))
 		end
 
-		updateSafeZone(element)
+		local ratio = (select(4, GetNetStats()) / 1e3) / element.max
+		if(ratio > 1) then
+			ratio = 1
+		end
+
+		safeZone:SetWidth(element[isHoriz and 'GetWidth' or 'GetHeight'](element) * ratio)
 	end
 
 	--[[ Callback: Castbar:PostCastStart(unit, name)
