@@ -316,68 +316,51 @@ local function CastInterruptible(self, event, unit)
 end
 
 local function onUpdate(self, elapsed)
-	if(self.casting) then
-		local duration = self.duration + elapsed
-		if(duration >= self.max) then
-			resetAttributes(self)
-			self:Hide()
+	if(self.casting or self.channeling) then
+		local isCasting = self.casting
+		if(isCasting) then
+			self.duration = self.duration + elapsed
+			if(self.duration >= self.max) then
+				resetAttributes(self)
+				self:Hide()
 
-			if(self.PostCastStop) then
-				self:PostCastStop(self.__owner.unit)
+				if(self.PostCastStop) then
+					self:PostCastStop(self.__owner.unit)
+				end
+
+				return
 			end
+		else
+			self.duration = self.duration - elapsed
+			if(self.duration <= 0) then
+				resetAttributes(self)
+				self:Hide()
 
-			return
+				if(self.PostCastStop) then
+					self:PostCastStop(self.__owner.unit)
+				end
+
+				return
+			end
 		end
 
 		if(self.Time) then
 			if(self.delay ~= 0) then
 				if(self.CustomDelayText) then
-					self:CustomDelayText(duration)
+					self:CustomDelayText(self.duration)
 				else
-					self.Time:SetFormattedText('%.1f|cffff0000+%.2f|r', duration, self.delay)
+					self.Time:SetFormattedText('%.1f|cffff0000%s%.2f|r', self.duration, isCasting and '+' or '-', self.delay)
 				end
 			else
 				if(self.CustomTimeText) then
-					self:CustomTimeText(duration)
+					self:CustomTimeText(self.duration)
 				else
-					self.Time:SetFormattedText('%.1f', duration)
+					self.Time:SetFormattedText('%.1f', self.duration)
 				end
 			end
 		end
 
-		self.duration = duration
-		self:SetValue(duration)
-	elseif(self.channeling) then
-		local duration = self.duration - elapsed
-		if(duration <= 0) then
-			resetAttributes(self)
-			self:Hide()
-
-			if(self.PostChannelStop) then
-				self:PostChannelStop(self.__owner.unit)
-			end
-
-			return
-		end
-
-		if(self.Time) then
-			if(self.delay ~= 0) then
-				if(self.CustomDelayText) then
-					self:CustomDelayText(duration)
-				else
-					self.Time:SetFormattedText('%.1f|cffff0000-%.2f|r', duration, self.delay)
-				end
-			else
-				if(self.CustomTimeText) then
-					self:CustomTimeText(duration)
-				else
-					self.Time:SetFormattedText('%.1f', duration)
-				end
-			end
-		end
-
-		self.duration = duration
-		self:SetValue(duration)
+		self:SetValue(self.duration)
 	elseif(self.holdTime > 0) then
 		self.holdTime = self.holdTime - elapsed
 	else
