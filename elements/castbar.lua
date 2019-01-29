@@ -252,15 +252,14 @@ local function CastDelay(self, event, unit, castID, spellID)
 	element:SetMinMaxValues(0, element.max)
 	element:SetValue(element.duration)
 
-	--[[ Callback: Castbar:PostCastDelayed(unit, name)
+	--[[ Callback: Castbar:PostCastDelay(unit)
 	Called after the element has been updated when a spell cast has been delayed.
 
 	* self - the Castbar widget
 	* unit - unit that the update has been triggered (string)
-	* name - name of the delayed spell (string)
 	--]]
-	if(element.PostCastDelayed) then
-		return element:PostCastDelayed(unit, name)
+	if(element.PostCastDelay) then
+		return element:PostCastDelay(unit)
 	end
 end
 
