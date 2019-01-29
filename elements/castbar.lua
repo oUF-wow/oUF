@@ -439,11 +439,9 @@ local function Enable(self, unit)
 
 		if(self.unit == 'player') then
 			CastingBarFrame:UnregisterAllEvents()
-			CastingBarFrame.Show = CastingBarFrame.Hide
 			CastingBarFrame:Hide()
 
 			PetCastingBarFrame:UnregisterAllEvents()
-			PetCastingBarFrame.Show = PetCastingBarFrame.Hide
 			PetCastingBarFrame:Hide()
 		end
 
@@ -489,6 +487,11 @@ local function Disable(self)
 		self:UnregisterEvent('UNIT_SPELLCAST_NOT_INTERRUPTIBLE', CastInterruptible)
 
 		element:SetScript('OnUpdate', nil)
+
+		if(self.unit == 'player') then
+			CastingBarFrame_OnLoad(CastingBarFrame, "player", true, false)
+			PetCastingBarFrame_OnLoad(PetCastingBarFrame)
+		end
 	end
 end
 
