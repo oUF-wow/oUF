@@ -119,7 +119,12 @@ local function CastStart(self, event, unit)
 		name, _, texture, startTime, endTime, isTradeSkill, notInterruptible, spellID = UnitChannelInfo(unit)
 		event = 'UNIT_SPELLCAST_CHANNEL_START'
 
-		if(not name) then return end
+		if(not name) then
+			resetAttributes(element)
+			element:Hide()
+
+			return
+		end
 	end
 
 	endTime = endTime / 1e3
