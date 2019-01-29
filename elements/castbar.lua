@@ -51,6 +51,7 @@ A default texture will be applied to the StatusBar and Texture widgets if they d
     local Spark = Castbar:CreateTexture(nil, 'OVERLAY')
     Spark:SetSize(20, 20)
     Spark:SetBlendMode('ADD')
+    Spark:SetPoint("CENTER", Castbar:GetStatusBarTexture(), "RIGHT", 0, 0)
 
     -- Add a timer
     local Time = Castbar:CreateFontString(nil, 'OVERLAY', 'GameFontNormalSmall')
@@ -346,17 +347,6 @@ local function onUpdate(self, elapsed)
 
 		self.duration = duration
 		self:SetValue(duration)
-
-		if(self.Spark) then
-			local isHoriz = self.isHorizontal
-			local size = self[isHoriz and 'GetWidth' or 'GetHeight'](self)
-			local offset = (duration / self.max) * size
-			if(self.isReversed) then
-				offset = size - offset
-			end
-
-			self.Spark:SetPoint('CENTER', self, isHoriz and 'LEFT' or 'BOTTOM', isHoriz and offset or 0, isHoriz and 0 or offset)
-		end
 	elseif(self.channeling) then
 		local duration = self.duration - elapsed
 		if(duration <= 0) then
@@ -388,17 +378,6 @@ local function onUpdate(self, elapsed)
 
 		self.duration = duration
 		self:SetValue(duration)
-
-		if(self.Spark) then
-			local isHoriz = self.isHorizontal
-			local size = self[isHoriz and 'GetWidth' or 'GetHeight'](self)
-			local offset = (duration / self.max) * size
-			if(self.isReversed) then
-				offset = size - offset
-			end
-
-			self.Spark:SetPoint('CENTER', self, isHoriz and 'LEFT' or 'BOTTOM', isHoriz and offset or 0, isHoriz and 0 or offset)
-		end
 	elseif(self.holdTime > 0) then
 		self.holdTime = self.holdTime - elapsed
 	else
