@@ -101,7 +101,7 @@ local function resetAttributes(self)
 end
 
 local function CastStart(self, event, unit)
-	if(self.unit ~= unit and self.realUnit ~= unit) then return end
+	if(self.unit ~= unit) then return end
 
 	local element = self.Castbar
 
@@ -186,7 +186,7 @@ local function CastStart(self, event, unit)
 end
 
 local function CastStop(self, event, unit, castID, spellID)
-	if(self.unit ~= unit and self.realUnit ~= unit) then return end
+	if(self.unit ~= unit) then return end
 
 	local element = self.Castbar
 
@@ -210,7 +210,7 @@ local function CastStop(self, event, unit, castID, spellID)
 end
 
 local function CastDelay(self, event, unit, castID, spellID)
-	if(self.unit ~= unit and self.realUnit ~= unit) then return end
+	if(self.unit ~= unit) then return end
 
 	local element = self.Castbar
 	if(not element:IsShown() or element.castID ~= castID or element.spellID ~= spellID) then
@@ -263,7 +263,7 @@ local function CastDelay(self, event, unit, castID, spellID)
 end
 
 local function CastFail(self, event, unit, castID, spellID)
-	if(self.unit ~= unit and self.realUnit ~= unit) then return end
+	if(self.unit ~= unit) then return end
 
 	local element = self.Castbar
 	if(not element:IsShown() or element.castID ~= castID or element.spellID ~= spellID) then
@@ -293,7 +293,7 @@ local function CastFail(self, event, unit, castID, spellID)
 end
 
 local function CastInterruptible(self, event, unit)
-	if(self.unit ~= unit and self.realUnit ~= unit) then return end
+	if(self.unit ~= unit) then return end
 
 	local element = self.Castbar
 	if(not element:IsShown()) then return end
