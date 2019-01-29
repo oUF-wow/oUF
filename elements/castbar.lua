@@ -173,15 +173,14 @@ local function CastStart(self, event, unit)
 		safeZone:SetWidth(element[isHoriz and 'GetWidth' or 'GetHeight'](element) * ratio)
 	end
 
-	--[[ Callback: Castbar:PostCastStart(unit, name)
+	--[[ Callback: Castbar:PostCastStart(unit)
 	Called after the element has been updated upon a spell cast start.
 
 	* self - the Castbar widget
 	* unit - unit for which the update has been triggered (string)
-	* name - name of the spell being cast (string)
 	--]]
 	if(element.PostCastStart) then
-		element:PostCastStart(unit, name)
+		element:PostCastStart(unit)
 	end
 
 	element:Show()
