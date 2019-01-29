@@ -91,6 +91,14 @@ local GetTime = GetTime
 local UnitCastingInfo = UnitCastingInfo
 local UnitChannelInfo = UnitChannelInfo
 
+local function resetAttributes(self)
+	self.castID = nil
+	self.casting = nil
+	self.channeling = nil
+	self.notInterruptible = nil
+	self.spellID = nil
+end
+
 local function CastStart(self, event, unit)
 	if(self.unit ~= unit and self.realUnit ~= unit) then return end
 
@@ -189,10 +197,7 @@ local function CastStop(self, event, unit, castID, spellID)
 
 	if(element.Spark) then element.Spark:Hide() end
 
-	element.casting = nil
-	element.channeling = nil
-	element.notInterruptible = nil
-
+	resetAttributes(element)
 	element:SetValue(element.max)
 
 	--[[ Callback: Castbar:PostCastStop(unit)
@@ -274,11 +279,9 @@ local function CastFail(self, event, unit, castID, spellID)
 
 	if(element.Spark) then element.Spark:Hide() end
 
-	element.casting = nil
-	element.channeling = nil
-	element.notInterruptible = nil
 	element.holdTime = element.timeToHold or 0
 
+	resetAttributes(element)
 	element:SetValue(element.max)
 
 	--[[ Callback: Castbar:PostCastFailed(unit)
@@ -317,10 +320,13 @@ local function onUpdate(self, elapsed)
 	if(self.casting) then
 		local duration = self.duration + elapsed
 		if(duration >= self.max) then
-			self.casting = nil
+			resetAttributes(self)
 			self:Hide()
 
-			if(self.PostCastStop) then self:PostCastStop(self.__owner.unit) end
+			if(self.PostCastStop) then
+				self:PostCastStop(self.__owner.unit)
+			end
+
 			return
 		end
 
@@ -355,12 +361,14 @@ local function onUpdate(self, elapsed)
 		end
 	elseif(self.channeling) then
 		local duration = self.duration - elapsed
-
 		if(duration <= 0) then
-			self.channeling = nil
+			resetAttributes(self)
 			self:Hide()
 
-			if(self.PostChannelStop) then self:PostChannelStop(self.__owner.unit) end
+			if(self.PostChannelStop) then
+				self:PostChannelStop(self.__owner.unit)
+			end
+
 			return
 		end
 
@@ -382,6 +390,7 @@ local function onUpdate(self, elapsed)
 
 		self.duration = duration
 		self:SetValue(duration)
+
 		if(self.Spark) then
 			local isHoriz = self.isHorizontal
 			local size = self[isHoriz and 'GetWidth' or 'GetHeight'](self)
@@ -395,10 +404,7 @@ local function onUpdate(self, elapsed)
 	elseif(self.holdTime > 0) then
 		self.holdTime = self.holdTime - elapsed
 	else
-		self.casting = nil
-		self.castID = nil
-		self.channeling = nil
-
+		resetAttributes(self)
 		self:Hide()
 	end
 end
