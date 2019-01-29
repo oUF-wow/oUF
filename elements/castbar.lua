@@ -282,14 +282,14 @@ local function CastFail(self, event, unit, castID, spellID)
 	resetAttributes(element)
 	element:SetValue(element.max)
 
-	--[[ Callback: Castbar:PostCastFailed(unit)
+	--[[ Callback: Castbar:PostCastFail(unit)
 	Called after the element has been updated upon a failed spell cast.
 
 	* self - the Castbar widget
 	* unit - unit for which the update has been triggered (string)
 	--]]
-	if(element.PostCastFailed) then
-		return element:PostCastFailed(unit)
+	if(element.PostCastFail) then
+		return element:PostCastFail(unit)
 	end
 end
 
