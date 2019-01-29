@@ -134,8 +134,6 @@ local function CastStart(self, event, unit)
 	element.holdTime = 0
 	element.castID = castID
 	element.spellID = spellID
-	element.isHorizontal = element:GetOrientation() == 'HORIZONTAL'
-	element.isReversed = element:GetReverseFill()
 
 	if(element.casting) then
 		element.duration = GetTime() - startTime
@@ -154,16 +152,16 @@ local function CastStart(self, event, unit)
 
 	local safeZone = element.SafeZone
 	if(safeZone) then
-		local isHoriz = element.isHorizontal
+		local isHoriz = element:GetOrientation() == 'HORIZONTAL'
 
 		safeZone:ClearAllPoints()
 		safeZone:SetPoint(isHoriz and 'TOP' or 'LEFT')
 		safeZone:SetPoint(isHoriz and 'BOTTOM' or 'RIGHT')
 
 		if(element.casting) then
-			safeZone:SetPoint(element.isReversed and (isHoriz and 'LEFT' or 'BOTTOM') or (isHoriz and 'RIGHT' or 'TOP'))
+			safeZone:SetPoint(element:GetReverseFill() and (isHoriz and 'LEFT' or 'BOTTOM') or (isHoriz and 'RIGHT' or 'TOP'))
 		else
-			safeZone:SetPoint(element.isReversed and (isHoriz and 'RIGHT' or 'TOP') or (isHoriz and 'LEFT' or 'BOTTOM'))
+			safeZone:SetPoint(element:GetReverseFill() and (isHoriz and 'RIGHT' or 'TOP') or (isHoriz and 'LEFT' or 'BOTTOM'))
 		end
 
 		local ratio = (select(4, GetNetStats()) / 1e3) / element.max
