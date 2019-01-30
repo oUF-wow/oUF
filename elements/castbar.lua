@@ -222,7 +222,7 @@ local function CastUpdate(self, event, unit, castID, spellID)
 	element:SetValue(element.duration)
 
 	--[[ Callback: Castbar:PostCastUpdate(unit)
-	Called after the element has been updated when a spell cast has been delayed.
+	Called after the element has been updated when a spell cast has been updated.
 
 	* self - the Castbar widget
 	* unit - the unit that the update has been triggered (string)
