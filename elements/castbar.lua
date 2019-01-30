@@ -52,7 +52,7 @@ A default texture will be applied to the StatusBar and Texture widgets if they d
     local Spark = Castbar:CreateTexture(nil, 'OVERLAY')
     Spark:SetSize(20, 20)
     Spark:SetBlendMode('ADD')
-    Spark:SetPoint("CENTER", Castbar:GetStatusBarTexture(), "RIGHT", 0, 0)
+    Spark:SetPoint('CENTER', Castbar:GetStatusBarTexture(), 'RIGHT', 0, 0)
 
     -- Add a timer
     local Time = Castbar:CreateFontString(nil, 'OVERLAY', 'GameFontNormalSmall')
@@ -444,7 +444,7 @@ local function Disable(self)
 		element:SetScript('OnUpdate', nil)
 
 		if(self.unit == 'player') then
-			CastingBarFrame_OnLoad(CastingBarFrame, "player", true, false)
+			CastingBarFrame_OnLoad(CastingBarFrame, 'player', true, false)
 			PetCastingBarFrame_OnLoad(PetCastingBarFrame)
 		end
 	end
