@@ -85,6 +85,7 @@ A default texture will be applied to the StatusBar and Texture widgets if they d
     Castbar.SafeZone = SafeZone
     self.Castbar = Castbar
 --]]
+
 local _, ns = ...
 local oUF = ns.oUF
 
@@ -169,7 +170,7 @@ local function CastStart(self, event, unit)
 	Called after the element has been updated upon a spell cast start.
 
 	* self - the Castbar widget
-	* unit - unit for which the update has been triggered (string)
+	* unit - the unit for which the update has been triggered (string)
 	--]]
 	if(element.PostCastStart) then
 		element:PostCastStart(unit)
@@ -195,7 +196,7 @@ local function CastStop(self, event, unit, castID, spellID)
 	Called after the element has been updated when a spell cast has stopped.
 
 	* self    - the Castbar widget
-	* unit    - unit for which the update has been triggered (string)
+	* unit    - the unit for which the update has been triggered (string)
 	* spellID - the ID of the spell (number)
 	--]]
 	if(element.PostCastStop) then
@@ -249,7 +250,7 @@ local function CastDelay(self, event, unit, castID, spellID)
 	Called after the element has been updated when a spell cast has been delayed.
 
 	* self - the Castbar widget
-	* unit - unit that the update has been triggered (string)
+	* unit - the unit that the update has been triggered (string)
 	--]]
 	if(element.PostCastDelay) then
 		return element:PostCastDelay(unit)
@@ -279,7 +280,7 @@ local function CastFail(self, event, unit, castID, spellID)
 	Called after the element has been updated upon a failed spell cast.
 
 	* self    - the Castbar widget
-	* unit    - unit for which the update has been triggered (string)
+	* unit    - the unit for which the update has been triggered (string)
 	* spellID - the ID of the spell (number)
 	--]]
 	if(element.PostCastFail) then
@@ -301,7 +302,7 @@ local function CastInterruptible(self, event, unit)
 	Called after the element has been updated when a spell cast has become interruptible or uninterruptible.
 
 	* self - the Castbar widget
-	* unit - unit for which the update has been triggered (string)
+	* unit - the unit for which the update has been triggered (string)
 	--]]
 	if(element.PostCastInterruptible) then
 		return element:PostCastInterruptible(unit)
