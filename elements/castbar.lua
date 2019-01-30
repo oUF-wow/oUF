@@ -88,11 +88,6 @@ A default texture will be applied to the StatusBar and Texture widgets if they d
 local _, ns = ...
 local oUF = ns.oUF
 
-local GetNetStats = GetNetStats
-local GetTime = GetTime
-local UnitCastingInfo = UnitCastingInfo
-local UnitChannelInfo = UnitChannelInfo
-
 local function resetAttributes(self)
 	self.castID = nil
 	self.casting = nil
