@@ -191,14 +191,15 @@ local function CastStop(self, event, unit, castID, spellID)
 	resetAttributes(element)
 	element:SetValue(element.max)
 
-	--[[ Callback: Castbar:PostCastStop(unit)
+	--[[ Callback: Castbar:PostCastStop(unit, spellID)
 	Called after the element has been updated when a spell cast has stopped.
 
-	* self - the Castbar widget
-	* unit - unit for which the update has been triggered (string)
+	* self    - the Castbar widget
+	* unit    - unit for which the update has been triggered (string)
+	* spellID - the ID of the spell (number)
 	--]]
 	if(element.PostCastStop) then
-		return element:PostCastStop(unit)
+		return element:PostCastStop(unit, spellID)
 	end
 end
 
@@ -274,14 +275,15 @@ local function CastFail(self, event, unit, castID, spellID)
 	resetAttributes(element)
 	element:SetValue(element.max)
 
-	--[[ Callback: Castbar:PostCastFail(unit)
+	--[[ Callback: Castbar:PostCastFail(unit, spellID)
 	Called after the element has been updated upon a failed spell cast.
 
-	* self - the Castbar widget
-	* unit - unit for which the update has been triggered (string)
+	* self    - the Castbar widget
+	* unit    - unit for which the update has been triggered (string)
+	* spellID - the ID of the spell (number)
 	--]]
 	if(element.PostCastFail) then
-		return element:PostCastFail(unit)
+		return element:PostCastFail(unit, spellID)
 	end
 end
 
@@ -312,11 +314,13 @@ local function onUpdate(self, elapsed)
 		if(isCasting) then
 			self.duration = self.duration + elapsed
 			if(self.duration >= self.max) then
+				local spellID = self.spellID
+
 				resetAttributes(self)
 				self:Hide()
 
 				if(self.PostCastStop) then
-					self:PostCastStop(self.__owner.unit)
+					self:PostCastStop(self.__owner.unit, spellID)
 				end
 
 				return
@@ -324,11 +328,13 @@ local function onUpdate(self, elapsed)
 		else
 			self.duration = self.duration - elapsed
 			if(self.duration <= 0) then
+				local spellID = self.spellID
+
 				resetAttributes(self)
 				self:Hide()
 
 				if(self.PostCastStop) then
-					self:PostCastStop(self.__owner.unit)
+					self:PostCastStop(self.__owner.unit, spellID)
 				end
 
 				return
