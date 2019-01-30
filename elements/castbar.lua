@@ -22,8 +22,9 @@ A default texture will be applied to the StatusBar and Texture widgets if they d
 
 ## Options
 
-.timeToHold - indicates for how many seconds the castbar should be visible after a _FAILED or _INTERRUPTED
-              event. Defaults to 0 (number)
+.timeToHold      - indicates for how many seconds the castbar should be visible after a _FAILED or _INTERRUPTED
+                   event. Defaults to 0 (number)
+.hideTradeSkills - makes the element ignore casts related to crafted professions (boolean)
 
 ## Attributes
 
@@ -105,26 +106,18 @@ local function CastStart(self, event, unit)
 
 	local element = self.Castbar
 
-	--[[ REVAMP NOTES:
-		- It's possible not to display the castbar for trade skills in the default UI
-		  via the .showTradeSkills attribute
-		- The pet castbar should be hidden while the player is possessing something,
-		  and the player is shown in the pet frame, see PetCastingBarFrame_OnEvent
-	]]
-
 	local name, _, texture, startTime, endTime, isTradeSkill, castID, notInterruptible, spellID = UnitCastingInfo(unit)
 	event = 'UNIT_SPELLCAST_START'
-
 	if(not name) then
 		name, _, texture, startTime, endTime, isTradeSkill, notInterruptible, spellID = UnitChannelInfo(unit)
 		event = 'UNIT_SPELLCAST_CHANNEL_START'
+	end
 
-		if(not name) then
-			resetAttributes(element)
-			element:Hide()
+	if(not name or (isTradeSkill and element.hideTradeSkills)) then
+		resetAttributes(element)
+		element:Hide()
 
-			return
-		end
+		return
 	end
 
 	endTime = endTime / 1e3
