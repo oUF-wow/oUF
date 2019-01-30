@@ -197,7 +197,7 @@ local function CastStop(self, event, unit, castID, spellID)
 	element:SetValue(element.max)
 
 	--[[ Callback: Castbar:PostCastStop(unit)
-	Called after the element has been updated when a spell cast has finished.
+	Called after the element has been updated when a spell cast has stopped.
 
 	* self - the Castbar widget
 	* unit - unit for which the update has been triggered (string)
@@ -301,7 +301,7 @@ local function CastInterruptible(self, event, unit)
 	if(element.Shield) then element.Shield:SetShown(element.notInterruptible) end
 
 	--[[ Callback: Castbar:PostCastInterruptible(unit)
-	Called after the element has been updated when a spell cast has become interruptible.
+	Called after the element has been updated when a spell cast has become interruptible or uninterruptible.
 
 	* self - the Castbar widget
 	* unit - unit for which the update has been triggered (string)
