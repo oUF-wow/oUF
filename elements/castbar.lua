@@ -179,31 +179,6 @@ local function CastStart(self, event, unit)
 	element:Show()
 end
 
-local function CastStop(self, event, unit, castID, spellID)
-	if(self.unit ~= unit) then return end
-
-	local element = self.Castbar
-
-	-- Channeled spells for some reason don't have castIDs
-	if(element.castID ~= castID or element.spellID ~= spellID) then return end
-
-	if(element.Spark) then element.Spark:Hide() end
-
-	resetAttributes(element)
-	element:SetValue(element.max)
-
-	--[[ Callback: Castbar:PostCastStop(unit, spellID)
-	Called after the element has been updated when a spell cast has stopped.
-
-	* self    - the Castbar widget
-	* unit    - the unit for which the update has been triggered (string)
-	* spellID - the ID of the spell (number)
-	--]]
-	if(element.PostCastStop) then
-		return element:PostCastStop(unit, spellID)
-	end
-end
-
 local function CastUpdate(self, event, unit, castID, spellID)
 	if(self.unit ~= unit) then return end
 
@@ -254,6 +229,31 @@ local function CastUpdate(self, event, unit, castID, spellID)
 	--]]
 	if(element.PostCastUpdate) then
 		return element:PostCastUpdate(unit)
+	end
+end
+
+local function CastStop(self, event, unit, castID, spellID)
+	if(self.unit ~= unit) then return end
+
+	local element = self.Castbar
+
+	-- Channeled spells for some reason don't have castIDs
+	if(element.castID ~= castID or element.spellID ~= spellID) then return end
+
+	if(element.Spark) then element.Spark:Hide() end
+
+	resetAttributes(element)
+	element:SetValue(element.max)
+
+	--[[ Callback: Castbar:PostCastStop(unit, spellID)
+	Called after the element has been updated when a spell cast has stopped.
+
+	* self    - the Castbar widget
+	* unit    - the unit for which the update has been triggered (string)
+	* spellID - the ID of the spell (number)
+	--]]
+	if(element.PostCastStop) then
+		return element:PostCastStop(unit, spellID)
 	end
 end
 
@@ -434,10 +434,10 @@ local function Disable(self)
 
 		self:UnregisterEvent('UNIT_SPELLCAST_START', CastStart)
 		self:UnregisterEvent('UNIT_SPELLCAST_CHANNEL_START', CastStart)
-		self:UnregisterEvent('UNIT_SPELLCAST_STOP', CastStop)
-		self:UnregisterEvent('UNIT_SPELLCAST_CHANNEL_STOP', CastStop)
 		self:UnregisterEvent('UNIT_SPELLCAST_DELAYED', CastUpdate)
 		self:UnregisterEvent('UNIT_SPELLCAST_CHANNEL_UPDATE', CastUpdate)
+		self:UnregisterEvent('UNIT_SPELLCAST_STOP', CastStop)
+		self:UnregisterEvent('UNIT_SPELLCAST_CHANNEL_STOP', CastStop)
 		self:UnregisterEvent('UNIT_SPELLCAST_FAILED', CastFail)
 		self:UnregisterEvent('UNIT_SPELLCAST_INTERRUPTED', CastFail)
 		self:UnregisterEvent('UNIT_SPELLCAST_INTERRUPTIBLE', CastInterruptible)
