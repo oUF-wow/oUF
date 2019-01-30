@@ -204,7 +204,7 @@ local function CastStop(self, event, unit, castID, spellID)
 	end
 end
 
-local function CastDelay(self, event, unit, castID, spellID)
+local function CastUpdate(self, event, unit, castID, spellID)
 	if(self.unit ~= unit) then return end
 
 	local element = self.Castbar
@@ -246,14 +246,14 @@ local function CastDelay(self, event, unit, castID, spellID)
 	element:SetMinMaxValues(0, element.max)
 	element:SetValue(element.duration)
 
-	--[[ Callback: Castbar:PostCastDelay(unit)
+	--[[ Callback: Castbar:PostCastUpdate(unit)
 	Called after the element has been updated when a spell cast has been delayed.
 
 	* self - the Castbar widget
 	* unit - the unit that the update has been triggered (string)
 	--]]
-	if(element.PostCastDelay) then
-		return element:PostCastDelay(unit)
+	if(element.PostCastUpdate) then
+		return element:PostCastUpdate(unit)
 	end
 end
 
@@ -385,8 +385,8 @@ local function Enable(self, unit)
 		self:RegisterEvent('UNIT_SPELLCAST_CHANNEL_START', CastStart)
 		self:RegisterEvent('UNIT_SPELLCAST_STOP', CastStop)
 		self:RegisterEvent('UNIT_SPELLCAST_CHANNEL_STOP', CastStop)
-		self:RegisterEvent('UNIT_SPELLCAST_DELAYED', CastDelay)
-		self:RegisterEvent('UNIT_SPELLCAST_CHANNEL_UPDATE', CastDelay)
+		self:RegisterEvent('UNIT_SPELLCAST_DELAYED', CastUpdate)
+		self:RegisterEvent('UNIT_SPELLCAST_CHANNEL_UPDATE', CastUpdate)
 		self:RegisterEvent('UNIT_SPELLCAST_FAILED', CastFail)
 		self:RegisterEvent('UNIT_SPELLCAST_INTERRUPTED', CastFail)
 		self:RegisterEvent('UNIT_SPELLCAST_INTERRUPTIBLE', CastInterruptible)
@@ -436,8 +436,8 @@ local function Disable(self)
 		self:UnregisterEvent('UNIT_SPELLCAST_CHANNEL_START', CastStart)
 		self:UnregisterEvent('UNIT_SPELLCAST_STOP', CastStop)
 		self:UnregisterEvent('UNIT_SPELLCAST_CHANNEL_STOP', CastStop)
-		self:UnregisterEvent('UNIT_SPELLCAST_DELAYED', CastDelay)
-		self:UnregisterEvent('UNIT_SPELLCAST_CHANNEL_UPDATE', CastDelay)
+		self:UnregisterEvent('UNIT_SPELLCAST_DELAYED', CastUpdate)
+		self:UnregisterEvent('UNIT_SPELLCAST_CHANNEL_UPDATE', CastUpdate)
 		self:UnregisterEvent('UNIT_SPELLCAST_FAILED', CastFail)
 		self:UnregisterEvent('UNIT_SPELLCAST_INTERRUPTED', CastFail)
 		self:UnregisterEvent('UNIT_SPELLCAST_INTERRUPTIBLE', CastInterruptible)
