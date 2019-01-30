@@ -115,8 +115,8 @@ local function CastStart(self, event, unit)
 		return
 	end
 
-	endTime = endTime / 1e3
-	startTime = startTime / 1e3
+	endTime = endTime / 1000
+	startTime = startTime / 1000
 
 	element.max = endTime - startTime
 	element.startTime = startTime
@@ -157,7 +157,7 @@ local function CastStart(self, event, unit)
 			safeZone:SetPoint(element:GetReverseFill() and (isHoriz and 'RIGHT' or 'TOP') or (isHoriz and 'LEFT' or 'BOTTOM'))
 		end
 
-		local ratio = (select(4, GetNetStats()) / 1e3) / element.max
+		local ratio = (select(4, GetNetStats()) / 1000) / element.max
 		if(ratio > 1) then
 			ratio = 1
 		end
@@ -219,8 +219,8 @@ local function CastDelay(self, event, unit, castID, spellID)
 
 	if(not name) then return end
 
-	endTime = endTime / 1e3
-	startTime = startTime / 1e3
+	endTime = endTime / 1000
+	startTime = startTime / 1000
 
 	local delta
 	if(element.casting) then
