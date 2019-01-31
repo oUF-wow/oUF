@@ -41,8 +41,15 @@ function Private.UpdateUnits(frame, unit, realUnit)
 	end
 end
 
+-- Used for updating active units
+local controlEvents = {
+	UNIT_ENTERED_VEHICLE = true,
+	UNIT_EXITED_VEHICLE = true,
+	UNIT_PET = true,
+}
+
 local function onEvent(self, event, ...)
-	if(self:IsVisible()) then
+	if(self:IsVisible() or controlEvents[event]) then
 		return self[event](self, event, ...)
 	end
 end
