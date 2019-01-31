@@ -271,7 +271,7 @@ local function initObject(unit, style, styleFunc, header, ...)
 			objectUnit = objectUnit .. suffix
 		end
 
-		if(not (header or suffix == 'target' or objectUnit and objectUnit:match('target'))) then
+		if(not (suffix == 'target' or objectUnit and objectUnit:match('target'))) then
 			object:RegisterEvent('UNIT_ENTERED_VEHICLE', updateActiveUnit)
 			object:RegisterEvent('UNIT_EXITED_VEHICLE', updateActiveUnit)
 
