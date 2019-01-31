@@ -67,7 +67,7 @@ function Private.UpdateUnits(frame, unit, realUnit)
 end
 
 local function onEvent(self, event, ...)
-	if(self:IsVisible() or controlEvents[event]) then
+	if(self:IsVisible()) then
 		return self[event](self, event, ...)
 	end
 end
