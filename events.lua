@@ -19,7 +19,7 @@ function Private.UpdateUnits(frame, unit, realUnit)
 	end
 
 	if(frame.unit ~= unit or frame.realUnit ~= realUnit) then
-		if(frame.unitEvents) then
+		if(frame.unitEvents and validateUnit(unit)) then
 			for event in next, frame.unitEvents do
 				local registered, unit1 = isEventRegistered(frame, event)
 				-- unit event registration for header units is postponed until
