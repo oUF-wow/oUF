@@ -165,7 +165,7 @@ local function CastStart(self, event, unit)
 			ratio = 1
 		end
 
-		safeZone:SetWidth(element[isHoriz and 'GetWidth' or 'GetHeight'](element) * ratio)
+		safeZone[isHoriz and 'SetWidth' or 'SetHeight'](safeZone, element[isHoriz and 'GetWidth' or 'GetHeight'](element) * ratio)
 	end
 
 	--[[ Callback: Castbar:PostCastStart(unit)
