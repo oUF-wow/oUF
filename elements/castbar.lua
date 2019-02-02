@@ -23,7 +23,7 @@ A default texture will be applied to the StatusBar and Texture widgets if they d
 
 .timeToHold      - indicates for how many seconds the castbar should be visible after a _FAILED or _INTERRUPTED
                    event. Defaults to 0 (number)
-.hideTradeSkills - makes the element ignore casts related to crafted professions (boolean)
+.hideTradeSkills - makes the element ignore casts related to crafting professions (boolean)
 
 ## Attributes
 
