@@ -2,7 +2,6 @@
 # Element: Castbar
 
 Handles the visibility and updating of spell castbars.
-Based upon oUF_Castbar by starlon.
 
 ## Widget
 
