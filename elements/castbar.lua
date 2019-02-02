@@ -89,6 +89,8 @@ A default texture will be applied to the StatusBar and Texture widgets if they d
 local _, ns = ...
 local oUF = ns.oUF
 
+local DEFAULT_ICON = [[Interface\ICONS\INV_Misc_QuestionMark]]
+
 local function resetAttributes(self)
 	self.castID = nil
 	self.casting = nil
@@ -138,7 +140,7 @@ local function CastStart(self, event, unit)
 	element:SetMinMaxValues(0, element.max)
 	element:SetValue(0)
 
-	if(element.Icon) then element.Icon:SetTexture(texture or [[Interface\ICONS\INV_Misc_QuestionMark]]) end
+	if(element.Icon) then element.Icon:SetTexture(texture or DEFAULT_ICON) end
 	if(element.Shield) then element.Shield:SetShown(notInterruptible) end
 	if(element.Spark) then element.Spark:Show() end
 	if(element.Text) then element.Text:SetText(name) end
