@@ -237,9 +237,9 @@ local function CastStop(self, event, unit, castID, spellID)
 	if(self.unit ~= unit) then return end
 
 	local element = self.Castbar
-
-	-- Channeled spells for some reason don't have castIDs
-	if(element.castID ~= castID or element.spellID ~= spellID) then return end
+	if(not element:IsShown() or element.castID ~= castID or element.spellID ~= spellID) then
+		return
+	end
 
 	if(element.Spark) then element.Spark:Hide() end
 
