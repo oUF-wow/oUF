@@ -138,7 +138,7 @@ local function CastStart(self, event, unit)
 	end
 
 	element:SetMinMaxValues(0, element.max)
-	element:SetValue(0)
+	element:SetValue(element.duration)
 
 	if(element.Icon) then element.Icon:SetTexture(texture or DEFAULT_ICON) end
 	if(element.Shield) then element.Shield:SetShown(notInterruptible) end
