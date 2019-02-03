@@ -242,10 +242,7 @@ local function CastStop(self, event, unit, castID, spellID)
 		return
 	end
 
-	if(element.Spark) then element.Spark:Hide() end
-
 	resetAttributes(element)
-	element:SetValue(element.max)
 
 	--[[ Callback: Castbar:PostCastStop(unit, spellID)
 	Called after the element has been updated when a spell cast has stopped.
