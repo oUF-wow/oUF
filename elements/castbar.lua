@@ -9,11 +9,12 @@ Castbar - A `StatusBar` to represent spell cast/channel progress.
 
 ## Sub-Widgets
 
-.Text     - A `FontString` to represent spell name.
 .Icon     - A `Texture` to represent spell icon.
-.Time     - A `FontString` to represent spell duration.
-.Shield   - A `Texture` to represent if it's possible to interrupt or spell steal.
 .SafeZone - A `Texture` to represent latency.
+.Shield   - A `Texture` to represent if it's possible to interrupt or spell steal.
+.Spark    - A `Texture` to represent the castbar's edge.
+.Text     - A `FontString` to represent spell name.
+.Time     - A `FontString` to represent spell duration.
 
 ## Notes
 
