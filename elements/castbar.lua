@@ -394,11 +394,8 @@ local function Enable(self, unit)
 		element:SetScript('OnUpdate', element.OnUpdate or onUpdate)
 
 		if(self.unit == 'player') then
-			CastingBarFrame:UnregisterAllEvents()
-			CastingBarFrame:Hide()
-
-			PetCastingBarFrame:UnregisterAllEvents()
-			PetCastingBarFrame:Hide()
+			CastingBarFrame_SetUnit(CastingBarFrame, nil)
+			CastingBarFrame_SetUnit(PetCastingBarFrame, nil)
 		end
 
 		if(element:IsObjectType('StatusBar') and not element:GetStatusBarTexture()) then
