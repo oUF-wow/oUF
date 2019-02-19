@@ -14,7 +14,7 @@ local unregisterEvent = frame_metatable.__index.UnregisterEvent
 local isEventRegistered = frame_metatable.__index.IsEventRegistered
 
 -- to update unit frames correctly, some events need to be registered for
--- an addition unit
+-- a specific combination of primary and secondary units
 local secondaryUnits = {
 	UNIT_ENTERED_VEHICLE = {
 		pet = 'player',
