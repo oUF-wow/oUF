@@ -14,7 +14,7 @@ local unregisterEvent = frame_metatable.__index.UnregisterEvent
 local isEventRegistered = frame_metatable.__index.IsEventRegistered
 
 -- Used for updating active units
-local controlEvents = {
+local secondaryUnits = {
 	UNIT_ENTERED_VEHICLE = {
 		pet = 'player',
 	},
@@ -36,8 +36,8 @@ function Private.UpdateUnits(frame, unit, realUnit)
 	if(frame.unit ~= unit or frame.realUnit ~= realUnit) then
 		if(frame.unitEvents and validateUnit(unit)) then
 			for event in next, frame.unitEvents do
-				if(not realUnit and controlEvents[event]) then
-					realUnit = controlEvents[event][unit]
+				if(not realUnit and secondaryUnits[event]) then
+					realUnit = secondaryUnits[event][unit]
 					resetRealUnit = true
 				end
 
@@ -136,8 +136,8 @@ function frame_metatable.__index:RegisterEvent(event, func, unitless)
 			-- units in case we don't have a valid unit yet
 			local unit1, unit2 = self.unit
 			if(unit1 and validateUnit(unit1)) then
-				if(controlEvents[event]) then
-					unit2 = controlEvents[event][unit1]
+				if(secondaryUnits[event]) then
+					unit2 = secondaryUnits[event][unit1]
 				end
 
 				registerUnitEvent(self, event, unit1, unit2 or '')
