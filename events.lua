@@ -64,6 +64,7 @@ function Private.UpdateUnits(frame, unit, realUnit)
 		frame.unit = unit
 		frame.realUnit = realUnit
 		frame.id = unit:match('^.-(%d+)')
+
 		return true
 	end
 end
@@ -165,6 +166,7 @@ function frame_metatable.__index:UnregisterEvent(event, func)
 		for k, infunc in next, curev do
 			if(infunc == func) then
 				curev[k] = nil
+
 				break
 			end
 		end
@@ -179,6 +181,7 @@ function frame_metatable.__index:UnregisterEvent(event, func)
 		if(self.unitEvents) then
 			self.unitEvents[event] = nil
 		end
+
 		unregisterEvent(self, event)
 	end
 end
