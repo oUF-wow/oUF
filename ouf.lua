@@ -248,6 +248,15 @@ local function updatePet(self, event, unit)
 	end
 end
 
+local function updateRaid(self, event)
+	local unitGUID = UnitGUID(self.unit)
+	if unitGUID and unitGUID ~= self.unitGUID then
+		self.unitGUID = unitGUID
+
+		self:UpdateAllElements(event)
+	end
+end
+
 local function initObject(unit, style, styleFunc, header, ...)
 	local num = select('#', ...)
 	for i = 1, num do
@@ -300,8 +309,9 @@ local function initObject(unit, style, styleFunc, header, ...)
 				oUF:HandleUnit(object)
 			end
 		else
-			-- Used to update frames when they change position in a group.
-			object:RegisterEvent('GROUP_ROSTER_UPDATE', object.UpdateAllElements, true)
+			-- update the frame when its prev unit is replaced with a new one
+			-- updateRaid relies on UnitGUID to detect the unit change
+			object:RegisterEvent('GROUP_ROSTER_UPDATE', updateRaid, true)
 
 			if(num > 1) then
 				if(object:GetParent() == header) then
