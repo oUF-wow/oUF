@@ -13,7 +13,8 @@ local registerUnitEvent = frame_metatable.__index.RegisterUnitEvent
 local unregisterEvent = frame_metatable.__index.UnregisterEvent
 local isEventRegistered = frame_metatable.__index.IsEventRegistered
 
--- Used for updating active units
+-- to update unit frames correctly, some events need to be registered for
+-- an addition unit
 local secondaryUnits = {
 	UNIT_ENTERED_VEHICLE = {
 		pet = 'player',
@@ -34,6 +35,8 @@ function Private.UpdateUnits(frame, unit, realUnit)
 	local resetRealUnit = false
 
 	if(frame.unit ~= unit or frame.realUnit ~= realUnit) then
+		-- don't let invalid units in, otherwise unit events will end up being
+		-- registered as unitless
 		if(frame.unitEvents and validateUnit(unit)) then
 			for event in next, frame.unitEvents do
 				if(not realUnit and secondaryUnits[event]) then
@@ -42,13 +45,12 @@ function Private.UpdateUnits(frame, unit, realUnit)
 				end
 
 				local registered, unit1, unit2 = isEventRegistered(frame, event)
-				-- unit event registration for header units is postponed until
-				-- the frame units are known
 				-- we don't want to re-register unitless/shared events in case
 				-- someone added them by hand to the unitEvents table
 				if(not registered or unit1 and (unit1 ~= unit or unit2 ~= realUnit)) then
 					-- BUG: passing explicit nil units to RegisterUnitEvent
-					-- makes it silently fall back to RegisterEvent
+					-- makes it silently fall back to RegisterEvent, using ''
+					-- instead of explicit nils doesn't cause this behaviour
 					registerUnitEvent(frame, event, unit, realUnit or '')
 				end
 
