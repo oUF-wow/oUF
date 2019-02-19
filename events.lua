@@ -32,12 +32,12 @@ function Private.UpdateUnits(frame, unit, realUnit)
 		realUnit = nil
 	end
 
-	local resetRealUnit = false
-
 	if(frame.unit ~= unit or frame.realUnit ~= realUnit) then
 		-- don't let invalid units in, otherwise unit events will end up being
 		-- registered as unitless
 		if(frame.unitEvents and validateUnit(unit)) then
+			local resetRealUnit = false
+
 			for event in next, frame.unitEvents do
 				if(not realUnit and secondaryUnits[event]) then
 					realUnit = secondaryUnits[event][unit]
