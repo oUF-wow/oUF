@@ -300,9 +300,6 @@ local function initObject(unit, style, styleFunc, header, ...)
 				oUF:HandleUnit(object)
 			end
 		else
-			-- Used to update frames when they change position in a group.
-			object:RegisterEvent('GROUP_ROSTER_UPDATE', object.UpdateAllElements, true)
-
 			if(num > 1) then
 				if(object:GetParent() == header) then
 					object.hasChildren = true
