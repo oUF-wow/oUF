@@ -137,7 +137,7 @@ function frame_metatable.__index:RegisterEvent(event, func, unitless)
 			local unit1, unit2 = self.unit
 			if(unit1 and validateUnit(unit1)) then
 				if(controlEvents[event]) then
-					unit2 = controlEvents[event]
+					unit2 = controlEvents[event][unit1]
 				end
 
 				registerUnitEvent(self, event, unit1, unit2 or '')
