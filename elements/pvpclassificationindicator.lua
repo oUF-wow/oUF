@@ -11,6 +11,10 @@ PvPClassificationIndicator - A `Texture` used to display PvP classification.
 
 This element updates by changing the texture.
 
+## Options
+
+.useAtlasSize - Makes the element use preprogrammed atlas' size instead of its set dimensions (boolean)
+
 ## Examples
 
     -- Position and size
@@ -58,7 +62,7 @@ local function Update(self, event, unit)
 	local class = UnitPvpClassification(unit)
 	local icon = ICONS[class]
 	if(icon) then
-		element:SetAtlas(icon)
+		element:SetAtlas(icon, element.useAtlasSize)
 		element:Show()
 	else
 		element:Hide()
