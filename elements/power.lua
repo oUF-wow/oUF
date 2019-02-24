@@ -91,6 +91,9 @@ The following options are listed by priority. The first check that returns true 
 
 local _, ns = ...
 local oUF = ns.oUF
+local Private = oUF.Private
+
+local UnitSelectionType = Private.UnitSelectionType
 
 -- sourced from FrameXML/UnitPowerBarAlt.lua
 local ALTERNATE_POWER_INDEX = Enum.PowerType.Alternate or 10
@@ -134,8 +137,8 @@ local function UpdateColor(element, unit, cur, min, max, displayType)
 		(element.colorClassPet and UnitPlayerControlled(unit) and not UnitIsPlayer(unit)) then
 		local _, class = UnitClass(unit)
 		t = parent.colors.class[class]
-	elseif(element.colorSelection) then
-		t = parent.colors.selection[UnitSelectionType(unit, true)]
+	elseif(element.colorSelection and UnitSelectionType(unit)) then
+		t = parent.colors.selection[UnitSelectionType(unit)]
 	elseif(element.colorReaction and UnitReaction(unit, 'player')) then
 		t = parent.colors.reaction[UnitReaction(unit, 'player')]
 	elseif(element.colorSmooth) then

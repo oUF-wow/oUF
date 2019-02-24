@@ -36,3 +36,24 @@ function Private.validateUnit(unit)
 		return not not unit
 	end
 end
+
+local selectionTypes = {
+	[ 0] = 0,
+	[ 1] = 1,
+	[ 2] = 2,
+	[ 3] = 3,
+	[ 4] = 4,
+	[ 5] = 5,
+	[ 6] = 6,
+	[ 7] = 7,
+	[ 8] = 8,
+	[ 9] = 9,
+	-- [10] = 10, -- unavailable to players
+	-- [11] = 11, -- unavailable to players
+	-- [12] = 12, -- buggy
+	[13] = 13,
+}
+
+function Private.UnitSelectionType(unit)
+	return selectionTypes[UnitSelectionType(unit, true)]
+end
