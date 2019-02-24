@@ -2,8 +2,6 @@ local parent, ns = ...
 local oUF = ns.oUF
 local Private = oUF.Private
 
-local print = Private.print
-
 local frame_metatable = Private.frame_metatable
 
 local colors = {
@@ -263,4 +261,3 @@ oUF.useHCYColorGradient = false
 
 frame_metatable.__index.colors = colors
 frame_metatable.__index.ColorGradient = oUF.ColorGradient
-frame_metatable.__index.UnitSelectionColor = oUF.UnitSelectionColor
