@@ -135,7 +135,7 @@ local function UpdateColor(element, unit, cur, min, max, displayType)
 		local _, class = UnitClass(unit)
 		t = parent.colors.class[class]
 	elseif(element.colorSelection) then
-		r, g, b = parent:UnitSelectionColor(unit)
+		t = parent.colors.selection[UnitSelectionType(unit, true)]
 	elseif(element.colorReaction and UnitReaction(unit, 'player')) then
 		t = parent.colors.reaction[UnitReaction(unit, 'player')]
 	elseif(element.colorSmooth) then
