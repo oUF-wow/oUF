@@ -11,17 +11,13 @@ local colors = {
 		0, 1, 0
 	},
 	health = {49 / 255, 207 / 255, 37 / 255},
-	disconnected = {.6, .6, .6},
-	tapped = {.6, .6, .6},
+	disconnected = {0.6, 0.6, 0.6},
+	tapped = {0.6, 0.6, 0.6},
 	runes = {
 		{247 / 255, 65 / 255, 57 / 255}, -- blood
 		{148 / 255, 203 / 255, 247 / 255}, -- frost
 		{173 / 255, 235 / 255, 66 / 255}, -- unholy
 	},
-	class = {},
-	debuff = {},
-	reaction = {},
-	power = {},
 	selection = {
 		[ 0] = {255 / 255, 0 / 255, 0 / 255}, -- HOSTILE
 		[ 1] = {255 / 255, 129 / 255, 0 / 255}, -- UNFRIENDLY
@@ -38,6 +34,10 @@ local colors = {
 		-- [12] = {255 / 255, 255 / 255, 139 / 255}, -- SELF, buggy
 		[13] = {0 / 255, 153 / 255, 0 / 255}, -- BATTLEGROUND_FRIENDLY_PVP
 	},
+	class = {},
+	debuff = {},
+	reaction = {},
+	power = {},
 }
 
 -- We do this because people edit the vars directly, and changing the default
