@@ -54,6 +54,10 @@ local selectionTypes = {
 	[13] = 13,
 }
 
-function Private.UnitSelectionType(unit)
-	return selectionTypes[UnitSelectionType(unit, true)]
+function Private.UnitSelectionType(unit, considerHostile)
+	if(considerHostile and UnitThreatSituation("player", unit)) then
+		return 0
+	else
+		return selectionTypes[UnitSelectionType(unit, true)]
+	end
 end
