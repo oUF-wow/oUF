@@ -50,7 +50,7 @@ local selectionTypes = {
 	[ 9] = 9,
 	-- [10] = 10, -- unavailable to players
 	-- [11] = 11, -- unavailable to players
-	-- [12] = 12, -- buggy
+	-- [12] = 12, -- inconsistent due to bugs and its reliance on cvars
 	[13] = 13,
 }
 
