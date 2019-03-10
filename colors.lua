@@ -31,7 +31,7 @@ local colors = {
 		[ 9] = {128 / 255, 128 / 255, 128 / 255}, -- DEAD
 		-- [10] = {}, -- COMMENTATOR_TEAM_1, unavailable to players
 		-- [11] = {}, -- COMMENTATOR_TEAM_2, unavailable to players
-		-- [12] = {255 / 255, 255 / 255, 139 / 255}, -- SELF, buggy
+		[12] = {255 / 255, 255 / 255, 139 / 255}, -- SELF, buggy
 		[13] = {0 / 255, 153 / 255, 0 / 255}, -- BATTLEGROUND_FRIENDLY_PVP
 	},
 	class = {},
