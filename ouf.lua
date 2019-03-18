@@ -334,7 +334,7 @@ local function initObject(unit, style, styleFunc, header, ...)
 
 		-- NAME_PLATE_UNIT_ADDED fires after the frame is shown, so there's no
 		-- need to call UAE multiple times
-		if not object.isNamePlate then
+		if(not object.isNamePlate) then
 			object:SetScript('OnShow', onShow)
 		end
 
@@ -348,7 +348,7 @@ local function initObject(unit, style, styleFunc, header, ...)
 		end
 
 		-- Make Clique kinda happy
-		if not object.isNamePlate then
+		if(not object.isNamePlate) then
 			_G.ClickCastFrames = ClickCastFrames or {}
 			ClickCastFrames[object] = true
 		end
