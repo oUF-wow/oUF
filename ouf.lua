@@ -761,7 +761,7 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 		end
 	end)
 
-	local eventHandler = CreateFrame('Frame', 'oUF_NamePlateDriver')
+	local eventHandler = CreateFrame('Frame', (global or parent) .. '_NamePlateDriver')
 	eventHandler:RegisterEvent('NAME_PLATE_UNIT_ADDED')
 	eventHandler:RegisterEvent('NAME_PLATE_UNIT_REMOVED')
 	eventHandler:RegisterEvent('PLAYER_TARGET_CHANGED')
