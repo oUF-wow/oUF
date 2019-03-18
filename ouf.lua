@@ -332,6 +332,8 @@ local function initObject(unit, style, styleFunc, header, ...)
 
 		object:HookScript('OnAttributeChanged', onAttributeChanged)
 
+		-- NAME_PLATE_UNIT_ADDED fires after the frame is shown, so there's no
+		-- need to call UAE multiple times
 		if not object.isNamePlate then
 			object:SetScript('OnShow', onShow)
 		end
@@ -787,6 +789,8 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 				nameplateCallback(nameplate and nameplate.unitFrame, event, 'target')
 			end
 
+			-- UAE is called after the callback to reduse the number of
+			-- ForceUpdate calls layout devs have to do themselves
 			if(nameplate) then
 				nameplate.unitFrame:UpdateAllElements(event)
 			end
@@ -814,6 +818,8 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 				nameplateCallback(nameplate.unitFrame, event, unit)
 			end
 
+			-- UAE is called after the callback to reduse the number of
+			-- ForceUpdate calls layout devs have to do themselves
 			nameplate.unitFrame:UpdateAllElements(event)
 		elseif(event == 'NAME_PLATE_UNIT_REMOVED' and unit) then
 			local nameplate = C_NamePlate.GetNamePlateForUnit(unit)
