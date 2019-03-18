@@ -733,7 +733,7 @@ function oUF:Spawn(unit, overrideName)
 	return object
 end
 
-local isNPDInit = false
+local isNamePlateDriverInit = false
 
 --[[ oUF:SpawnNamePlates(prefix, callback, variables)
 Used to create nameplates and apply the currently active style to them.
@@ -749,7 +749,7 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 	argcheck(nameplateCallback, 3, 'function', 'nil')
 	argcheck(nameplateCVars, 4, 'table', 'nil')
 	if(not style) then return error('Unable to create frame. No styles have been registered.') end
-	if(isNPDInit) then return error('oUF nameplate driver has already been initialized.') end
+	if(isNamePlateDriverInit) then return error('oUF nameplate driver has already been initialized.') end
 
 	local style = style
 	local prefix = namePrefix or generateName()
@@ -836,7 +836,7 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 		end
 	end)
 
-	isNPDInit = true
+	isNamePlateDriverInit = true
 end
 
 --[[ oUF:AddElement(name, update, enable, disable)
