@@ -789,7 +789,7 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 				nameplateCallback(nameplate and nameplate.unitFrame, event, 'target')
 			end
 
-			-- UAE is called after the callback to reduse the number of
+			-- UAE is called after the callback to reduce the number of
 			-- ForceUpdate calls layout devs have to do themselves
 			if(nameplate) then
 				nameplate.unitFrame:UpdateAllElements(event)
@@ -818,7 +818,7 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 				nameplateCallback(nameplate.unitFrame, event, unit)
 			end
 
-			-- UAE is called after the callback to reduse the number of
+			-- UAE is called after the callback to reduce the number of
 			-- ForceUpdate calls layout devs have to do themselves
 			nameplate.unitFrame:UpdateAllElements(event)
 		elseif(event == 'NAME_PLATE_UNIT_REMOVED' and unit) then
