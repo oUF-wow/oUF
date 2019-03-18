@@ -747,6 +747,7 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 	argcheck(nameplateCallback, 3, 'function', 'nil')
 	argcheck(nameplateCVars, 4, 'table', 'nil')
 	if(not style) then return error('Unable to create frame. No styles have been registered.') end
+	if(oUF_NamePlateDriver) then return error('oUF nameplate driver has already been initialized.') end
 
 	local style = style
 	local prefix = namePrefix or generateName()
@@ -789,7 +790,7 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 				nameplateCallback(nameplate and nameplate.unitFrame, event, 'target')
 			end
 
-			-- UAE is called after the callback to reduse the number of
+			-- UAE is called after the callback to reduce the number of
 			-- ForceUpdate calls layout devs have to do themselves
 			if(nameplate) then
 				nameplate.unitFrame:UpdateAllElements(event)
@@ -818,7 +819,7 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 				nameplateCallback(nameplate.unitFrame, event, unit)
 			end
 
-			-- UAE is called after the callback to reduse the number of
+			-- UAE is called after the callback to reduce the number of
 			-- ForceUpdate calls layout devs have to do themselves
 			nameplate.unitFrame:UpdateAllElements(event)
 		elseif(event == 'NAME_PLATE_UNIT_REMOVED' and unit) then
