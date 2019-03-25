@@ -71,8 +71,7 @@ local function Update(self, event, unit)
 
 	if(event == 'UNIT_SPELLCAST_START' and startTime ~= endTime) then
 		local costTable = GetSpellPowerCost(spellID)
-
-		for _, costInfo in pairs(costTable) do
+		for _, costInfo in next, costTable do
 			-- costInfo content:
 			-- - name: string (powerToken)
 			-- - type: number (powerType)
