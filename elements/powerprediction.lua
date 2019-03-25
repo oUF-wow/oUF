@@ -69,7 +69,7 @@ local function Update(self, event, unit)
 	local hasAltManaBar = ALT_MANA_BAR_PAIR_DISPLAY_INFO[playerClass] and ALT_MANA_BAR_PAIR_DISPLAY_INFO[playerClass][mainPowerType]
 	local mainCost, altCost = 0, 0
 
-	if(event == 'UNIT_SPELLCAST_START' or startTime ~= endTime) then
+	if(event == 'UNIT_SPELLCAST_START' and startTime ~= endTime) then
 		local costTable = GetSpellPowerCost(spellID)
 
 		for _, costInfo in pairs(costTable) do
