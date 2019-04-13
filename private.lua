@@ -54,7 +54,7 @@ local selectionTypes = {
 	[13] = 13,
 }
 
-function Private.UnitSelectionType(unit, considerHostile)
+function Private.unitSelectionType(unit, considerHostile)
 	if(considerHostile and UnitThreatSituation('player', unit)) then
 		return 0
 	else
