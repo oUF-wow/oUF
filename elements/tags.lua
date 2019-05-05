@@ -601,6 +601,7 @@ end
 
 local tagPool = {}
 local funcPool = {}
+local fsPool = {}
 local tmp = {}
 
 local function getTagName(tag)
@@ -827,6 +828,7 @@ local function Tag(self, fs, tagstr, ...)
 		end
 	end
 
+	fsPool[fs] = tagstr
 	self.__tags[fs] = true
 end
 
@@ -850,6 +852,7 @@ local function Untag(self, fs)
 
 	fs.UpdateTag = nil
 
+	fsPool[fs] = nil
 	self.__tags[fs] = nil
 end
 
@@ -858,6 +861,28 @@ oUF.Tags = {
 	Events = tagEvents,
 	SharedEvents = unitlessEvents,
 	Vars = vars,
+	RefreshMethods = function(self, tag)
+		if(not tag) then return end
+
+		funcPool['[' .. tag .. ']'] = nil
+
+		tag = '%[' .. tag .. '%]'
+		for tagstr, func in next, tagPool do
+			if(tagstr:match(tag)) then
+				tagPool[tagstr] = nil
+
+				for fs in next, fsPool do
+					if(fs.UpdateTag == func) then
+						fs.UpdateTag = getTagFunc(tagstr)
+
+						if(fs:IsVisible()) then
+							fs:UpdateTag()
+						end
+					end
+				end
+			end
+		end
+	end,
 }
 
 oUF:RegisterMetaFunction('Tag', Tag)
