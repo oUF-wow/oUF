@@ -478,6 +478,21 @@ local tags = setmetatable(
 
 _ENV._TAGS = tags
 
+local vars = setmetatable({}, {
+	__newindex = function(self, key, val)
+		if(type(val) == 'string') then
+			local func = loadstring('return ' .. val)
+			if(func) then
+				val = func() or val
+			end
+		end
+
+		rawset(self, key, val)
+	end,
+})
+
+_ENV._VARS = vars
+
 local tagEvents = {
 	['affix']               = 'UNIT_CLASSIFICATION_CHANGED',
 	['arcanecharges']       = 'UNIT_POWER_UPDATE PLAYER_TALENT_UPDATE',
@@ -842,6 +857,7 @@ oUF.Tags = {
 	Methods = tags,
 	Events = tagEvents,
 	SharedEvents = unitlessEvents,
+	Vars = vars,
 }
 
 oUF:RegisterMetaFunction('Tag', Tag)
