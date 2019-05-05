@@ -883,6 +883,21 @@ oUF.Tags = {
 			end
 		end
 	end,
+	RefreshEvents = function(self, tag)
+		if(not tag) then return end
+
+		tag = '%[' .. tag .. '%]'
+		for tagstr in next, tagPool do
+			if(tagstr:match(tag)) then
+				for fs, ts in next, fsPool do
+					if(ts == tagstr) then
+						unregisterEvents(fs)
+						registerEvents(fs, tagstr)
+					end
+				end
+			end
+		end
+	end,
 }
 
 oUF:RegisterMetaFunction('Tag', Tag)
