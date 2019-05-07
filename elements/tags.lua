@@ -445,33 +445,33 @@ local tags = setmetatable(
 	},
 	{
 		__index = function(self, key)
-			local tagFunc = tagStrings[key]
-			if(tagFunc) then
-				local func, err = loadstring('return ' .. tagFunc)
+			local tagString = tagStrings[key]
+			if(tagString) then
+				self[key] = tagString
+				tagStrings[key] = nil
+			end
+
+			return rawget(self, key)
+		end,
+		__newindex = function(self, key, val)
+			if(type(val) == 'string') then
+				local func, err = loadstring('return ' .. val)
 				if(func) then
-					func = func()
-
-					-- Want to trigger __newindex, so no rawset.
-					self[key] = func
-					tagStrings[key] = nil
-
-					return func
+					val = func()
 				else
 					error(err, 3)
 				end
 			end
-		end,
-		__newindex = function(self, key, val)
-			if(type(val) == 'string') then
-				tagStrings[key] = val
-			elseif(type(val) == 'function') then
-				-- So we don't clash with any custom envs.
-				if(getfenv(val) == _G) then
-					setfenv(val, _PROXY)
-				end
 
-				rawset(self, key, val)
+			-- We don't want to clash with any custom envs
+			if(getfenv(val) == _G) then
+				-- pcall is needed for cases when Blizz functions are passed as
+				-- strings, for intance, 'UnitPowerMax', an attempt to set a
+				-- custom env will result in an error
+				pcall(setfenv, val, _PROXY)
 			end
+
+			rawset(self, key, val)
 		end,
 	}
 )
