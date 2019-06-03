@@ -463,6 +463,8 @@ local tags = setmetatable(
 				end
 			end
 
+			assert(type(val) == 'function', 'Tag function must be a function or a string that evaluates to a function.')
+
 			-- We don't want to clash with any custom envs
 			if(getfenv(val) == _G) then
 				-- pcall is needed for cases when Blizz functions are passed as
