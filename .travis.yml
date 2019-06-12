@@ -17,7 +17,7 @@ env:
   - secure: mbIhu/gxl1XmTjBArVwvsfn6BOazK/sUAl96wQmayWyOwM1ZCKqo0o6ENSxJi+rKtsguIydM6ncdla+OTjRO1ewoZdvnkeSxLFCcfWCEKciRLk836qF2lpyAFF5LiZhSmEJyVMzqpZ2/l8T5CPtEwhLaNfZ2PuMsF+UiCJlVRJ5fcPrDYx/H6mj80t01pHW7jZq8t/mFlqGVEfLe++qnozSRlKOc0UC7EypOUeIotGMbh08cGNWQlOdL6g9i+aexkX1K9SN4aXErGggjn5cn5HCHTSxzwrxc0n7tLmhooPilQbwjl5d+ssjg251t7ugUM89h/D1kPMhtkDEEp7uqjZcOQwjBSrNIX+Oc35TxzM3JpqdArZGRfyhOD3F9rCMGGHJhz4Rn+iUNrsvV28SsMW/iuc80JP/z+GXf1Qlq0IccWdR7qLH80aWbD56XpRjiQ+9BFEq+lFYV6L/nuuJjx9wa7lzba6hw5FWjkd4sLVPOA3L3sLzyaOEApfvBr+QchHOb7EeUBjxjjrq+uTh5dJ1XN/6PtfeXjjsqhBzll588WZxhIPV8hbijXhOtjl27PkZ5vMoLZYgjBoKlK1aEC0rmavvNnzktpAV5vjPV3MzmWlTqopMukZOI6ghRctfJKg83u32/MPyFpwFjlIcIPOr5b9Tf62AjhYWN2pH1dCw=
 
 before_script: "./utils/changelog > CHANGELOG.md"
-script: curl -s https://raw.githubusercontent.com/oUF-wow/packager/master/release.sh | bash
+script: curl -s https://raw.githubusercontent.com/BigWigsMods/packager/master/release.sh | bash
 
 notifications:
   email: false
