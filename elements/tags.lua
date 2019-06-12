@@ -549,8 +549,8 @@ local unitlessEvents = {
 }
 
 local events = {}
-local frame = CreateFrame('Frame')
-frame:SetScript('OnEvent', function(self, event, unit)
+local eventFrame = CreateFrame('Frame')
+eventFrame:SetScript('OnEvent', function(self, event, unit)
 	local strings = events[event]
 	if(strings) then
 		for _, fs in next, strings do
@@ -603,7 +603,6 @@ end
 
 local tagPool = {}
 local funcPool = {}
-local fsPool = {}
 local tmp = {}
 
 local function getTagName(tag)
@@ -750,7 +749,7 @@ end
 local function registerEvent(fontstr, event)
 	if(not events[event]) then events[event] = {} end
 
-	frame:RegisterEvent(event)
+	eventFrame:RegisterEvent(event)
 	table.insert(events[event], fontstr)
 end
 
@@ -771,7 +770,7 @@ local function unregisterEvents(fontstr)
 		for i, tagfsstr in next, data do
 			if(tagfsstr == fontstr) then
 				if(#data == 1) then
-					frame:UnregisterEvent(event)
+					eventFrame:UnregisterEvent(event)
 				end
 
 				table.remove(data, i)
@@ -779,6 +778,8 @@ local function unregisterEvents(fontstr)
 		end
 	end
 end
+
+local taggedFS = {}
 
 --[[ Tags: frame:Tag(fs, tagstr, ...)
 Used to register a tag on a unit frame.
@@ -803,7 +804,6 @@ local function Tag(self, fs, tagstr, ...)
 	fs.parent = self
 	fs.UpdateTag = getTagFunc(tagstr)
 
-	local unit = self.unit
 	if(self.__eventless or fs.frequentUpdates) then
 		local timer
 		if(type(fs.frequentUpdates) == 'number') then
@@ -830,7 +830,7 @@ local function Tag(self, fs, tagstr, ...)
 		end
 	end
 
-	fsPool[fs] = tagstr
+	taggedFS[fs] = tagstr
 	self.__tags[fs] = true
 end
 
@@ -854,7 +854,7 @@ local function Untag(self, fs)
 
 	fs.UpdateTag = nil
 
-	fsPool[fs] = nil
+	taggedFS[fs] = nil
 	self.__tags[fs] = nil
 end
 
@@ -873,7 +873,7 @@ oUF.Tags = {
 			if(tagstr:match(tag)) then
 				tagPool[tagstr] = nil
 
-				for fs in next, fsPool do
+				for fs in next, taggedFS do
 					if(fs.UpdateTag == func) then
 						fs.UpdateTag = getTagFunc(tagstr)
 
@@ -891,7 +891,7 @@ oUF.Tags = {
 		tag = '%[' .. tag .. '%]'
 		for tagstr in next, tagPool do
 			if(tagstr:match(tag)) then
-				for fs, ts in next, fsPool do
+				for fs, ts in next, taggedFS do
 					if(ts == tagstr) then
 						unregisterEvents(fs)
 						registerEvents(fs, tagstr)
