@@ -78,7 +78,7 @@ end
 local function onEnter(self)
 	if(not self:IsVisible()) then return end
 
-	GameTooltip:SetOwner(self, 'ANCHOR_BOTTOMRIGHT')
+	GameTooltip:SetOwner(self, 'ANCHOR_CURSOR')
 	self:UpdateTooltip()
 end
 
