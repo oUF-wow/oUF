@@ -80,7 +80,7 @@ end
 local function onEnter(self)
 	if(not self:IsVisible()) then return end
 
-	GameTooltip:SetOwner(self, self:GetParent().__owner.tooltipAnchor)
+	GameTooltip:SetOwner(self, self:GetParent().tooltipAnchor)
 	self:UpdateTooltip()
 end
 
