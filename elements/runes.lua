@@ -192,6 +192,8 @@ local function Enable(self, unit)
 			end
 		end
 
+		element:Show()
+
 		self:RegisterEvent('PLAYER_SPECIALIZATION_CHANGED', Path)
 		self:RegisterEvent('RUNE_POWER_UPDATE', Path, true)
 
@@ -205,6 +207,8 @@ local function Disable(self)
 		for i = 1, #element do
 			element[i]:Hide()
 		end
+
+		element:Hide()
 
 		self:UnregisterEvent('PLAYER_SPECIALIZATION_CHANGED', Path)
 		self:UnregisterEvent('RUNE_POWER_UPDATE', Path)
