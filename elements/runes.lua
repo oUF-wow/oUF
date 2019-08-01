@@ -192,7 +192,9 @@ local function Enable(self, unit)
 			end
 		end
 
-		element:Show()
+		if element.IsObjectType and element:IsObjectType("Frame") then
+			element:Show()
+		end
 
 		self:RegisterEvent('PLAYER_SPECIALIZATION_CHANGED', Path)
 		self:RegisterEvent('RUNE_POWER_UPDATE', Path, true)
@@ -208,7 +210,9 @@ local function Disable(self)
 			element[i]:Hide()
 		end
 
-		element:Hide()
+		if element.IsObjectType and element:IsObjectType("Frame") then
+			element:Hide()
+		end
 
 		self:UnregisterEvent('PLAYER_SPECIALIZATION_CHANGED', Path)
 		self:UnregisterEvent('RUNE_POWER_UPDATE', Path)
