@@ -192,7 +192,7 @@ local function Enable(self, unit)
 			end
 		end
 
-		if element.IsObjectType and element:IsObjectType("Frame") then
+		if element.Show then
 			element:Show()
 		end
 
@@ -210,7 +210,7 @@ local function Disable(self)
 			element[i]:Hide()
 		end
 
-		if element.IsObjectType and element:IsObjectType("Frame") then
+		if element.Hide then
 			element:Hide()
 		end
 
