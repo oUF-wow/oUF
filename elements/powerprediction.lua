@@ -42,12 +42,14 @@ A default texture will be applied if the widget is a StatusBar and doesn't have 
 
 local _, ns = ...
 local oUF = ns.oUF
+local isRetail = oUF.isRetail
 
 -- sourced from FrameXML/AlternatePowerBar.lua
 local ADDITIONAL_POWER_BAR_INDEX = ADDITIONAL_POWER_BAR_INDEX or 0
-local ALT_MANA_BAR_PAIR_DISPLAY_INFO = ALT_MANA_BAR_PAIR_DISPLAY_INFO
+local ALT_MANA_BAR_PAIR_DISPLAY_INFO = ALT_MANA_BAR_PAIR_DISPLAY_INFO or {}
 
 local _, playerClass = UnitClass('player')
+local UnitCastingInfo = isRetail and UnitCastingInfo or CastingInfo
 
 local function Update(self, event, unit)
 	if(self.unit ~= unit) then return end
@@ -135,9 +137,9 @@ local function ForceUpdate(element)
 	return Path(element.__owner, 'ForceUpdate', element.__owner.unit)
 end
 
-local function Enable(self)
+local function Enable(self, unit)
 	local element = self.PowerPrediction
-	if(element) then
+	if(element and (isRetail or unit == 'player')) then
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
 
