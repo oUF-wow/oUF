@@ -42,7 +42,8 @@ local function Update(self, event)
 	end
 
 	local role, isShown
-	if(UnitInRaid(unit) and not UnitHasVehicleUI(unit)) then
+	-- UnitHasVehicleUI is not available on Classic
+	if(UnitInRaid(unit) and UnitHasVehicleUI and not UnitHasVehicleUI(unit)) then
 		if(GetPartyAssignment('MAINTANK', unit)) then
 			isShown = true
 			element:SetTexture(MAINTANK_ICON)
