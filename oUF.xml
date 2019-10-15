@@ -17,6 +17,7 @@
 	<Script file="elements\combatindicator.lua"/>
 	<Script file="elements\combopoints.lua"/>
 	<Script file="elements\grouproleindicator.lua"/>
+	<Script file="elements\happinessindicator.lua"/>
 	<Script file="elements\health.lua"/>
 	<Script file="elements\healthprediction.lua"/>
 	<Script file="elements\leaderindicator.lua"/>
