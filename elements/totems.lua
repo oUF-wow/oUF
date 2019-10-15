@@ -27,7 +27,7 @@ OnEnter and OnLeave script handlers will be set to display a Tooltip if the `Tot
         -- Position and size of the totem indicator
         local Totem = CreateFrame('Button', nil, self)
         Totem:SetSize(40, 40)
-        Totem:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', index * Totem:GetWidth(), 0)
+        Totem:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', (index - 1) * Totem:GetWidth(), 0)
 
         local Icon = Totem:CreateTexture(nil, 'OVERLAY')
         Icon:SetAllPoints()
@@ -47,9 +47,34 @@ OnEnter and OnLeave script handlers will be set to display a Tooltip if the `Tot
 
 local _, ns = ...
 local oUF = ns.oUF
+local isClassic = oUF.isClassic
 
-local function UpdateTooltip(self)
-	GameTooltip:SetTotem(self:GetID())
+local _, playerClass = UnitClass('player')
+local priorities = playerClass == 'SHAMAN' and SHAMAN_TOTEM_PRIORITIES or STANDARD_TOTEM_PRIORITIES or {}
+
+local UpdateTooltip
+if(isClassic) then
+	UpdateTooltip = function(self)
+		local timeLeft = self.expiration - GetTime()
+		if(timeLeft <= 0) then return end
+
+		local fmt, value = SecondsToTimeAbbrev(timeLeft)
+
+		local time
+		if(fmt == MINUTE_ONELETTER_ABBR) then
+			time = SPELL_TIME_REMAINING_MIN:format(value)
+		else
+			time = SPELL_TIME_REMAINING_SEC:format(timeLeft)
+		end
+
+		GameTooltip:SetText(self.name)
+		GameTooltip:AddLine(time, 1, 1, 1)
+		GameTooltip:Show()
+	end
+else
+	UpdateTooltip = function(self)
+		GameTooltip:SetTotem(self:GetID())
+	end
 end
 
 local function OnEnter(self)
@@ -63,8 +88,9 @@ local function OnLeave()
 	GameTooltip:Hide()
 end
 
-local function UpdateTotem(self, event, slot)
+local function UpdateTotem(self, event, realSlot)
 	local element = self.Totems
+	local slot = priorities[realSlot] or realSlot
 	if(slot > #element) then return end
 
 	--[[ Callback: Totems:PreUpdate(slot)
@@ -76,7 +102,7 @@ local function UpdateTotem(self, event, slot)
 	if(element.PreUpdate) then element:PreUpdate(slot) end
 
 	local totem = element[slot]
-	local haveTotem, name, start, duration, icon = GetTotemInfo(slot)
+	local haveTotem, name, start, duration, icon = GetTotemInfo(realSlot)
 	if(haveTotem and duration > 0) then
 		if(totem.Icon) then
 			totem.Icon:SetTexture(icon)
@@ -86,6 +112,8 @@ local function UpdateTotem(self, event, slot)
 			totem.Cooldown:SetCooldown(start, duration)
 		end
 
+		totem.name = name
+		totem.expiration = start + duration
 		totem:Show()
 	else
 		totem:Hide()
@@ -118,9 +146,13 @@ local function Path(self, ...)
 	return (self.Totems.Override or UpdateTotem) (self, ...)
 end
 
-local function Update(self, event)
-	for i = 1, #self.Totems do
-		Path(self, event, i)
+local function Update(self, event, slot)
+	if(tonumber(slot)) then
+		Path(self, event, slot)
+	else
+		for i = 1, #self.Totems do
+			Path(self, event, i)
+		end
 	end
 end
 
@@ -137,7 +169,7 @@ local function Enable(self)
 		for i = 1, #element do
 			local totem = element[i]
 
-			totem:SetID(i)
+			totem:SetID(priorities[i] or i)
 
 			if(totem:IsMouseEnabled()) then
 				totem:SetScript('OnEnter', OnEnter)
@@ -156,10 +188,12 @@ local function Enable(self)
 
 		self:RegisterEvent('PLAYER_TOTEM_UPDATE', Path, true)
 
-		TotemFrame:UnregisterEvent('PLAYER_TOTEM_UPDATE')
-		TotemFrame:UnregisterEvent('PLAYER_ENTERING_WORLD')
-		TotemFrame:UnregisterEvent('UPDATE_SHAPESHIFT_FORM')
-		TotemFrame:UnregisterEvent('PLAYER_TALENT_UPDATE')
+		if(not isClassic) then
+			TotemFrame:UnregisterEvent('PLAYER_TOTEM_UPDATE')
+			TotemFrame:UnregisterEvent('PLAYER_ENTERING_WORLD')
+			TotemFrame:UnregisterEvent('UPDATE_SHAPESHIFT_FORM')
+			TotemFrame:UnregisterEvent('PLAYER_TALENT_UPDATE')
+		end
 
 		return true
 	end
@@ -172,10 +206,12 @@ local function Disable(self)
 			element[i]:Hide()
 		end
 
-		TotemFrame:RegisterEvent('PLAYER_TOTEM_UPDATE')
-		TotemFrame:RegisterEvent('PLAYER_ENTERING_WORLD')
-		TotemFrame:RegisterEvent('UPDATE_SHAPESHIFT_FORM')
-		TotemFrame:RegisterEvent('PLAYER_TALENT_UPDATE')
+		if(not isClassic) then
+			TotemFrame:RegisterEvent('PLAYER_TOTEM_UPDATE')
+			TotemFrame:RegisterEvent('PLAYER_ENTERING_WORLD')
+			TotemFrame:RegisterEvent('UPDATE_SHAPESHIFT_FORM')
+			TotemFrame:RegisterEvent('PLAYER_TALENT_UPDATE')
+		end
 
 		self:UnregisterEvent('PLAYER_TOTEM_UPDATE', Path)
 	end
