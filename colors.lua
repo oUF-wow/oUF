@@ -116,6 +116,11 @@ colors.power[16] = colors.power.ARCANE_CHARGES
 colors.power[17] = colors.power.FURY
 colors.power[18] = colors.power.PAIN
 
+if(oUF.isClassic) then
+	colors.power[4] = colors.power.HAPPINESS
+	colors.power[14] = colors.power.COMBO_POINTS
+end
+
 local function colorsAndPercent(a, b, ...)
 	if(a <= 0 or b == 0) then
 		return nil, ...
