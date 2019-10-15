@@ -1,5 +1,6 @@
 local parent, ns = ...
 local oUF = ns.oUF
+local isClassic = oUF.isClassic
 
 -- sourced from Blizzard_ArenaUI/Blizzard_ArenaUI.lua
 local MAX_ARENA_ENEMIES = MAX_ARENA_ENEMIES or 5
@@ -67,12 +68,14 @@ function oUF:DisableBlizzard(unit)
 	if(unit == 'player') then
 		handleFrame(PlayerFrame)
 
-		-- For the damn vehicle support:
-		PlayerFrame:RegisterEvent('PLAYER_ENTERING_WORLD')
-		PlayerFrame:RegisterEvent('UNIT_ENTERING_VEHICLE')
-		PlayerFrame:RegisterEvent('UNIT_ENTERED_VEHICLE')
-		PlayerFrame:RegisterEvent('UNIT_EXITING_VEHICLE')
-		PlayerFrame:RegisterEvent('UNIT_EXITED_VEHICLE')
+		if(not isClassic) then
+			-- For the damn vehicle support:
+			PlayerFrame:RegisterEvent('PLAYER_ENTERING_WORLD')
+			PlayerFrame:RegisterEvent('UNIT_ENTERING_VEHICLE')
+			PlayerFrame:RegisterEvent('UNIT_ENTERED_VEHICLE')
+			PlayerFrame:RegisterEvent('UNIT_EXITING_VEHICLE')
+			PlayerFrame:RegisterEvent('UNIT_EXITED_VEHICLE')
+		end
 
 		-- User placed frames don't animate
 		PlayerFrame:SetUserPlaced(true)
@@ -82,12 +85,12 @@ function oUF:DisableBlizzard(unit)
 	elseif(unit == 'target') then
 		handleFrame(TargetFrame)
 		handleFrame(ComboFrame)
-	elseif(unit == 'focus') then
+	elseif(unit == 'focus' and not isClassic) then
 		handleFrame(FocusFrame)
 		handleFrame(TargetofFocusFrame)
 	elseif(unit == 'targettarget') then
 		handleFrame(TargetFrameToT)
-	elseif(unit:match('boss%d?$')) then
+	elseif(unit:match('boss%d?$') and not isClassic) then
 		local id = unit:match('boss(%d)')
 		if(id) then
 			handleFrame('Boss' .. id .. 'TargetFrame')
@@ -105,7 +108,7 @@ function oUF:DisableBlizzard(unit)
 				handleFrame(string.format('PartyMemberFrame%d', i))
 			end
 		end
-	elseif(unit:match('arena%d?$')) then
+	elseif(unit:match('arena%d?$') and not isClassic) then
 		local id = unit:match('arena(%d)')
 		if(id) then
 			handleFrame('ArenaEnemyFrame' .. id)
