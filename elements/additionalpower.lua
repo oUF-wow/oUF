@@ -54,6 +54,8 @@ The following options are listed by priority. The first check that returns true 
 local _, ns = ...
 local oUF = ns.oUF
 
+if(oUF.isClassic) then return end
+
 local _, playerClass = UnitClass('player')
 
 -- sourced from FrameXML/AlternatePowerBar.lua

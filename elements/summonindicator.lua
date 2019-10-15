@@ -25,6 +25,8 @@ This element updates by changing the texture.
 local _, ns = ...
 local oUF = ns.oUF
 
+if(oUF.isClassic) then return end
+
 -- sourced from Blizzard_APIDocumentation/IncomingSummonDocumentation.lua
 local SUMMON_STATUS_NONE = Enum.SummonStatus.None or 0
 local SUMMON_STATUS_PENDING = Enum.SummonStatus.Pending or 1
