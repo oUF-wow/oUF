@@ -55,7 +55,7 @@ local function updateActiveUnit(self, event, unit)
 		realUnit = 'target'
 	end
 
-	if(modUnit == 'pet' and realUnit ~= 'pet' and isRetail) then
+	if(isRetail and modUnit == 'pet' and realUnit ~= 'pet') then
 		modUnit = 'vehicle'
 	end
 
@@ -281,7 +281,7 @@ local function initObject(unit, style, styleFunc, header, ...)
 			objectUnit = objectUnit .. suffix
 		end
 
-		if(not (suffix == 'target' or objectUnit and objectUnit:match('target')) and isRetail) then
+		if(isRetail and not (suffix == 'target' or objectUnit and objectUnit:match('target'))) then
 			object:RegisterEvent('UNIT_ENTERED_VEHICLE', updateActiveUnit)
 			object:RegisterEvent('UNIT_EXITED_VEHICLE', updateActiveUnit)
 
@@ -299,7 +299,7 @@ local function initObject(unit, style, styleFunc, header, ...)
 			object:SetAttribute('*type2', 'togglemenu')
 
 			-- No need to enable this for *target frames.
-			if(not (unit:match('target') or suffix == 'target') and isRetail) then
+			if(isRetail and not (unit:match('target') or suffix == 'target')) then
 				object:SetAttribute('toggleForVehicle', true)
 			end
 

@@ -2,7 +2,7 @@ local parent, ns = ...
 local oUF = ns.oUF
 local Private = oUF.Private
 
-local isClassic = oUF.isClassic
+local isRetail = oUF.isRetail
 local enableTargetUpdate = Private.enableTargetUpdate
 
 local function updateArenaPreparationElements(self, event, elementName, specID)
@@ -170,12 +170,12 @@ function oUF:HandleUnit(object, unit)
 		object:RegisterEvent('PLAYER_TARGET_CHANGED', object.UpdateAllElements, true)
 	elseif(unit == 'mouseover') then
 		object:RegisterEvent('UPDATE_MOUSEOVER_UNIT', object.UpdateAllElements, true)
-	elseif(unit == 'focus' and not isClassic) then
+	elseif(isRetail and unit == 'focus') then
 		object:RegisterEvent('PLAYER_FOCUS_CHANGED', object.UpdateAllElements, true)
-	elseif(unit:match('boss%d?$') and not isClassic) then
+	elseif(isRetail and unit:match('boss%d?$')) then
 		object:RegisterEvent('INSTANCE_ENCOUNTER_ENGAGE_UNIT', object.UpdateAllElements, true)
 		object:RegisterEvent('UNIT_TARGETABLE_CHANGED', object.UpdateAllElements)
-	elseif(unit:match('arena%d?$') and not isClassic) then
+	elseif(isRetail and unit:match('arena%d?$')) then
 		object:RegisterEvent('ARENA_OPPONENT_UPDATE', object.UpdateAllElements, true)
 		object:RegisterEvent('ARENA_PREP_OPPONENT_SPECIALIZATIONS', updateArenaPreparation, true)
 		object:SetAttribute('oUF-enableArenaPrep', true)

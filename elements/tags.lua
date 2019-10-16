@@ -67,6 +67,7 @@ in the `oUF.Tags.SharedEvents` table as follows: `oUF.Tags.SharedEvents.EVENT_NA
 
 local _, ns = ...
 local oUF = ns.oUF
+local isRetail = oUF.isRetail
 local Private = oUF.Private
 
 local unitExists = Private.unitExists
