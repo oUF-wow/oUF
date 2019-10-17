@@ -1,3 +1,36 @@
+--[[
+# Element: Combo Points
+
+Toggles visibility of the player's combo points.
+
+## Widget
+
+ComboPoints - A `table` holding five UI widgets.
+
+## Notes
+
+The default combo point texture will be applied if the widgets are of type `Texture` and don't have a texture or color
+defined.
+
+## Examples
+
+    local ComboPoints = {}
+    for index = 1, MAX_COMBO_POINTS do
+        local CPoint = self:CreateTexture(nil, 'BACKGROUND')
+
+        -- Position and size of the combo point.
+        CPoint:SetSize(12, 16)
+        CPoint:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', index * CPoint:GetWidth(), 0)
+
+        ComboPoints[index] = CPoint
+    end
+
+   -- Register with oUF
+   self.ComboPoints = ComboPoints
+
+
+--]]
+
 local _, ns = ...
 local oUF = ns.oUF
 
@@ -6,8 +39,8 @@ if(not oUF.isClassic) then return end
 local _, playerClass = UnitClass('player')
 
 local CAT_FORM = 768
-local SPELL_POWER_ENERGY = Enum.PowerType.Energy or 3
-local SPELL_POWER_COMBO_POINTS = Enum.PowerType.ComboPoints or 14
+local SPELL_POWER_ENERGY = Enum and Enum.PowerType.Energy or 3
+local SPELL_POWER_COMBO_POINTS = Enum and Enum.PowerType.ComboPoints or 14
 
 local function Update(self, event, unit, powerType)
 	if (not UnitIsUnit(unit, 'player') or powerType and powerType ~= 'COMBO_POINTS') then
@@ -16,6 +49,11 @@ local function Update(self, event, unit, powerType)
 
 	local element = self.ComboPoints
 	if(element.PreUpdate) then
+		--[[ Callback: ComboPoints:PostUpdate()
+		Called before the element has been updated.
+
+		* self - the ComboPoints element
+		--]]
 		element:PreUpdate()
 	end
 
@@ -34,11 +72,24 @@ local function Update(self, event, unit, powerType)
 	end
 
 	if(element.PostUpdate) then
+		--[[ Callback: ComboPoints:PostUpdate(cur)
+		Called after the element has been updated.
+
+		* self - the ComboPoints element
+		* cur  - the amount of combo points on the current target (number)
+		--]]
 		element:PostUpdate(cur)
 	end
 end
 
 local function Path(self, ...)
+	--[[ Override: ComboPoints.Override(self, event, ...)
+	Used to completely override the internal update function.
+
+	* self  - the parent object
+	* event - the event triggering the update (string)
+	* ...   - the arguments accompanying the event
+	--]]
 	return (self.ComboPoints.Override or Update) (self, ...)
 end
 
@@ -83,6 +134,13 @@ local function Visibility(self, event, unit)
 end
 
 local function VisibilityPath(self, ...)
+	--[[ Override: ComboPoints.OverrideVisibility(self, event, ...)
+	Used to completely override the internal visibility function.
+
+	* self  - the parent object
+	* event - the event triggering the update (string)
+	* ...   - the arguments accompanying the event (string)
+	--]]
 	return (self.ComboPoints.VisibilityOverride or Visibility) (self, ...)
 end
 
