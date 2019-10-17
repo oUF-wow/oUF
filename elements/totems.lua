@@ -52,6 +52,10 @@ local isClassic = oUF.isClassic
 local _, playerClass = UnitClass('player')
 local priorities = playerClass == 'SHAMAN' and SHAMAN_TOTEM_PRIORITIES or STANDARD_TOTEM_PRIORITIES or {}
 
+local MINUTE_ONELETTER_ABBR = MINUTE_ONELETTER_ABBR or '%d m'
+local SPELL_TIME_REMAINING_MIN = SPELL_TIME_REMAINING_MIN or '%d minutes remaining'
+local SPELL_TIME_REMAINING_SEC = SPELL_TIME_REMAINING_SEC or '%d seconds remaining'
+
 local UpdateTooltip
 if(isClassic) then
 	UpdateTooltip = function(self)
