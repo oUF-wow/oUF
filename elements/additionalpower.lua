@@ -53,6 +53,7 @@ The following options are listed by priority. The first check that returns true 
 
 local _, ns = ...
 local oUF = ns.oUF
+local isClassic = oUF.isClassic
 
 local _, playerClass = UnitClass('player')
 
@@ -61,7 +62,7 @@ local ADDITIONAL_POWER_BAR_NAME = ADDITIONAL_POWER_BAR_NAME or 'MANA'
 local ADDITIONAL_POWER_BAR_INDEX = ADDITIONAL_POWER_BAR_INDEX or 0
 local ALT_MANA_BAR_PAIR_DISPLAY_INFO = ALT_MANA_BAR_PAIR_DISPLAY_INFO or {}
 
-if(oUF.isClassic) then
+if(isClassic) then
 	ALT_MANA_BAR_PAIR_DISPLAY_INFO = {
 		DRUID = {
 			[Enum.PowerType.Rage] = true,
@@ -170,7 +171,7 @@ local function Visibility(self, event, unit)
 	local element = self.AdditionalPower
 	local shouldEnable
 
-	if(not UnitHasVehicleUI('player')) then
+	if(isClassic or not UnitHasVehicleUI('player')) then
 		if(UnitPowerMax(unit, ADDITIONAL_POWER_BAR_INDEX) ~= 0) then
 			if(element.displayPairs[playerClass]) then
 				local powerType = UnitPowerType(unit)
