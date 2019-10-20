@@ -54,14 +54,21 @@ The following options are listed by priority. The first check that returns true 
 local _, ns = ...
 local oUF = ns.oUF
 
-if(oUF.isClassic) then return end
-
 local _, playerClass = UnitClass('player')
 
 -- sourced from FrameXML/AlternatePowerBar.lua
 local ADDITIONAL_POWER_BAR_NAME = ADDITIONAL_POWER_BAR_NAME or 'MANA'
 local ADDITIONAL_POWER_BAR_INDEX = ADDITIONAL_POWER_BAR_INDEX or 0
-local ALT_MANA_BAR_PAIR_DISPLAY_INFO = ALT_MANA_BAR_PAIR_DISPLAY_INFO
+local ALT_MANA_BAR_PAIR_DISPLAY_INFO = ALT_MANA_BAR_PAIR_DISPLAY_INFO or {}
+
+if(oUF.isClassic) then
+	ALT_MANA_BAR_PAIR_DISPLAY_INFO = {
+		DRUID = {
+			[Enum.PowerType.Rage] = true,
+			[Enum.PowerType.Energy] = true,
+		}
+	}
+end
 
 local function UpdateColor(element, cur, max)
 	local parent = element.__owner
