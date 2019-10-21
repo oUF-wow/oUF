@@ -28,13 +28,14 @@ local self_metatable = {
 local listener = CreateFrame('Frame')
 listener.activeEvents = 0
 
-listener:SetScript('OnEvent', function(self, event)
-	local eventInfo = { CombatLogGetCurrentEventInfo() }
-	local combatEvent = eventInfo[2]
-
-	if(self[combatEvent]) then
-		self[combatEvent](combatEvent, eventInfo)
+local function filter(_, event, ...)
+	if(listener[event]) then
+		listener[event](event, ...)
 	end
+end
+
+listener:SetScript('OnEvent', function(self, event)
+	filter(CombatLogGetCurrentEventInfo())
 end)
 
 function frame_metatable.__index:RegisterCombatEvent(event, handler)
