@@ -38,6 +38,14 @@ listener:SetScript('OnEvent', function(self, event)
 	filter(CombatLogGetCurrentEventInfo())
 end)
 
+--[[ CombatEvents: frame:RegisterCombatEvent(event, handler)
+Used to register a frame for a combat log event and add an event handler.
+
+* self     - frame that will be registered for the given event
+* event    - name of the combat log event to register (string)
+* handler  - function which will be executed when the combat log event fires. Multiple handlers can be added for the
+             same frame and event (function)
+--]]
 function frame_metatable.__index:RegisterCombatEvent(event, handler)
 	argcheck(event, 2, 'string')
 	argcheck(handler, 3, 'function')
@@ -65,6 +73,13 @@ function frame_metatable.__index:RegisterCombatEvent(event, handler)
 	end
 end
 
+--[[ CombatEvents: frame:UnregisterCombatEvent(event, handler)
+Used to remove a function from the event handler list for a combat log event.
+
+* self    - the frame registered for the event
+* event   - name of the registered combat log event (string)
+* handler - function to be removed from the list of event handlers
+--]]
 function frame_metatable.__index.UnregisterCombatEvent(event, handler)
 	argcheck(event, 2, 'string')
 
