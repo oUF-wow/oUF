@@ -42,6 +42,7 @@ if(not oUF.isClassic) then return end
 local _, playerClass = UnitClass('player')
 
 local CAT_FORM = 768
+local MAX_COMBO_POINTS = MAX_COMBO_POINTS or 5
 local SPELL_POWER_ENERGY = Enum and Enum.PowerType.Energy or 3
 local SPELL_POWER_COMBO_POINTS = Enum and Enum.PowerType.ComboPoints or 14
 
@@ -62,7 +63,7 @@ local function Update(self, event, unit, powerType)
 
 	local cur
 
-	if(event ~= 'ElementDisable') then
+	if(event ~= 'ClassPowerDisable') then
 		cur = UnitPower('player', SPELL_POWER_COMBO_POINTS)
 
 		for i = 1, #element do
@@ -75,13 +76,16 @@ local function Update(self, event, unit, powerType)
 	end
 
 	if(element.PostUpdate) then
-		--[[ Callback: ClassPower:PostUpdate(cur)
+		--[[ Callback: ClassPower:PostUpdate(cur, max, hasMaxChanged, powerType)
 		Called after the element has been updated.
 
-		* self - the ClassPower element
-		* cur  - the amount of combo points on the current target (number)
+		* self          - the ClassPower element
+		* cur           - the amount of combo points on the current target (number?)
+		* max           - the maximum amount of combo points (number)
+		* hasMaxChanged - indicates whether the maximum amount has changed since the last update (boolean)
+		* powerType     - the active power type (string)
 		--]]
-		element:PostUpdate(cur)
+		element:PostUpdate(cur, MAX_COMBO_POINTS, false, powerType)
 	end
 end
 
@@ -120,7 +124,7 @@ local function Visibility(self, event, unit)
 			element.isEnabled = true
 		end
 
-		Path(self, event, 'player')
+		Path(self, 'ClassPowerEnable', 'player')
 	else
 		if(element.isEnabled or element.isEnabled == nil) then
 			self:UnregisterEvent('UNIT_POWER_UPDATE', Path)
@@ -132,7 +136,7 @@ local function Visibility(self, event, unit)
 			element.isEnabled = false
 		end
 
-		Path(self, 'ElementDisable', 'player')
+		Path(self, 'ClassPowerDisable', 'player')
 	end
 end
 
