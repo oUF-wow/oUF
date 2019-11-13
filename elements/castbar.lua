@@ -531,7 +531,7 @@ end
 
 local function Enable(self, unit)
 	local element = self.Castbar
-	if(element) then
+	if(element and (not isClassic or unit == 'player')) then
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
 
