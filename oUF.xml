@@ -44,7 +44,7 @@
 	<!--@end-retail@-->
 
 	<!--@non-retail@-->
-	<Script file="elements\combopoints.lua"/>
+	<Script file="elements\classpowerclassic.lua"/>
 	<Script file="elements\happinessindicator.lua"/>
 	<Script file="elements\masterlooterindicator.lua"/>
 	<!--@end-non-retail@-->
