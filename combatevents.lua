@@ -34,7 +34,7 @@ local function filter(_, event, ...)
 	end
 end
 
-listener:SetScript('OnEvent', function(self, event)
+listener:SetScript('OnEvent', function()
 	filter(CombatLogGetCurrentEventInfo())
 end)
 
@@ -80,7 +80,7 @@ Used to remove a function from the event handler list for a combat log event.
 * event   - name of the registered combat log event (string)
 * handler - function to be removed from the list of event handlers
 --]]
-function frame_metatable.__index.UnregisterCombatEvent(event, handler)
+function frame_metatable.__index:UnregisterCombatEvent(event, handler)
 	argcheck(event, 2, 'string')
 
 	if(not listener[event]) then return end
