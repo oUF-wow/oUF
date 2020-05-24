@@ -381,7 +381,6 @@ local function UNIT_SPELLCAST_CHANNEL_START(self, event, unit, _, spellID)
 		updateSafeZone(element)
 	end
 
-
 	--[[ Callback: Castbar:PostChannelStart(unit, name)
 	Called after the element has been updated upon a spell channel start.
 
