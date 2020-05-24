@@ -107,16 +107,26 @@ local function updateSafeZone(self)
 	sz[horiz and 'SetWidth' or 'SetHeight'](sz, width * safeZoneRatio)
 end
 
-local function positionSafeZone(self)
+local function positionSafeZone(self, isChanneling)
 	local sz = self.SafeZone
 	local horiz = self.horizontal
 
 	sz:ClearAllPoints()
-	sz:SetPoint(
-		self:GetReverseFill() and
-		(horiz and 'LEFT' or 'BOTTOM') or
-		(horiz and 'RIGHT' or 'TOP')
-	)
+
+	if (not isChanneling) then
+		sz:SetPoint(
+			self:GetReverseFill() and
+			(horiz and 'LEFT' or 'BOTTOM') or
+			(horiz and 'RIGHT' or 'TOP')
+		)
+	else
+		sz:SetPoint(
+			self:GetReverseFill() and
+			(horiz and 'RIGHT' or 'TOP') or
+			(horiz and 'LEFT' or 'BOTTOM')
+		)
+	end
+
 	sz:SetPoint(horiz and 'TOP' or 'LEFT')
 	sz:SetPoint(horiz and 'BOTTOM' or 'RIGHT')
 end
@@ -367,7 +377,7 @@ local function UNIT_SPELLCAST_CHANNEL_START(self, event, unit, _, spellID)
 	end
 
 	if(element.SafeZone) then
-		positionSafeZone(element)
+		positionSafeZone(element, true)
 		updateSafeZone(element)
 	end
 
