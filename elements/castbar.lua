@@ -121,9 +121,9 @@ local function positionSafeZone(self, isChanneling)
 		)
 	else
 		sz:SetPoint(
-			self:GetReverseFill() and
-			(horiz and 'RIGHT' or 'TOP') or
-			(horiz and 'LEFT' or 'BOTTOM')
+			self:GetReverseFill()
+			and (horiz and 'RIGHT' or 'TOP')
+			or (horiz and 'LEFT' or 'BOTTOM')
 		)
 	end
 
