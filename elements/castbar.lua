@@ -113,7 +113,7 @@ local function positionSafeZone(self, isChanneling)
 
 	sz:ClearAllPoints()
 
-	if (not isChanneling) then
+	if(not isChanneling) then
 		sz:SetPoint(
 			self:GetReverseFill()
 			and (horiz and 'LEFT' or 'BOTTOM')
@@ -167,7 +167,7 @@ local function UNIT_SPELLCAST_START(self, event, unit)
 		shield:Hide()
 	end
 
-	if (element.SafeZone) then
+	if(element.SafeZone) then
 		positionSafeZone(element)
 		updateSafeZone(element)
 	end
