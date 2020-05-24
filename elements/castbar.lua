@@ -168,8 +168,8 @@ local function UNIT_SPELLCAST_START(self, event, unit)
 	end
 
 	if (element.SafeZone) then
-		positionSafeZone(element);
-		updateSafeZone(element);
+		positionSafeZone(element)
+		updateSafeZone(element)
 	end
 
 	--[[ Callback: Castbar:PostCastStart(unit, name)
