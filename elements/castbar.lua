@@ -32,6 +32,7 @@ A default texture will be applied to the StatusBar and Texture widgets if they d
 .channeling       - indicates whether the current spell is a channeled cast (boolean)
 .notInterruptible - indicates whether the current spell is interruptible (boolean)
 .spellID          - the spell identifier of the currently cast/channeled spell (number)
+.currentTarget    - the name of the target of the currently cast spell
 
 ## Examples
 
@@ -444,6 +445,10 @@ local function UNIT_SPELLCAST_CHANNEL_STOP(self, event, unit)
 	end
 end
 
+local function UNIT_SPELLCAST_SENT(self, event, unit, target, castID, spellID)
+    self.Castbar.currentTarget = ((target and target ~= "") and target) or nil
+end
+
 local function onUpdate(self, elapsed)
 	if(self.casting) then
 		local duration = self.duration + elapsed
@@ -562,6 +567,7 @@ local function Enable(self, unit)
 			self:RegisterEvent('UNIT_SPELLCAST_CHANNEL_START', UNIT_SPELLCAST_CHANNEL_START)
 			self:RegisterEvent('UNIT_SPELLCAST_CHANNEL_UPDATE', UNIT_SPELLCAST_CHANNEL_UPDATE)
 			self:RegisterEvent('UNIT_SPELLCAST_CHANNEL_STOP', UNIT_SPELLCAST_CHANNEL_STOP)
+			self:RegisterEvent('UNIT_SPELLCAST_SENT', UNIT_SPELLCAST_SENT, true)
 		end
 
 		element.horizontal = element:GetOrientation() == 'HORIZONTAL'
@@ -616,6 +622,7 @@ local function Disable(self)
 		self:UnregisterEvent('UNIT_SPELLCAST_CHANNEL_START', UNIT_SPELLCAST_CHANNEL_START)
 		self:UnregisterEvent('UNIT_SPELLCAST_CHANNEL_UPDATE', UNIT_SPELLCAST_CHANNEL_UPDATE)
 		self:UnregisterEvent('UNIT_SPELLCAST_CHANNEL_STOP', UNIT_SPELLCAST_CHANNEL_STOP)
+		self:UnregisterEvent('UNIT_SPELLCAST_SENT', UNIT_SPELLCAST_SENT)
 
 		element:SetScript('OnUpdate', nil)
 	end
