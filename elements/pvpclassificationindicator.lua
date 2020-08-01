@@ -31,17 +31,17 @@ local oUF = ns.oUF
 
 -- sourced from FrameXML/CompactUnitFrame.lua
 local ICONS = {
-	[Enum.PvpUnitClassification.FlagCarrierHorde or 0] = "nameplates-icon-flag-horde",
-	[Enum.PvpUnitClassification.FlagCarrierAlliance or 1] = "nameplates-icon-flag-alliance",
-	[Enum.PvpUnitClassification.FlagCarrierNeutral or 2] = "nameplates-icon-flag-neutral",
-	[Enum.PvpUnitClassification.CartRunnerHorde or 3] = "nameplates-icon-cart-horde",
-	[Enum.PvpUnitClassification.CartRunnerAlliance or 4] = "nameplates-icon-cart-alliance",
-	[Enum.PvpUnitClassification.AssassinHorde or 5] = "nameplates-icon-bounty-horde",
-	[Enum.PvpUnitClassification.AssassinAlliance or 6] = "nameplates-icon-bounty-alliance",
-	[Enum.PvpUnitClassification.OrbCarrierBlue or 7] = "nameplates-icon-orb-blue",
-	[Enum.PvpUnitClassification.OrbCarrierGreen or 8] = "nameplates-icon-orb-green",
-	[Enum.PvpUnitClassification.OrbCarrierOrange or 9] = "nameplates-icon-orb-orange",
-	[Enum.PvpUnitClassification.OrbCarrierPurple or 10] = "nameplates-icon-orb-purple",
+	[(Enum.PvpUnitClassification or Enum.PvPUnitClassification).FlagCarrierHorde or 0] = "nameplates-icon-flag-horde",
+	[(Enum.PvpUnitClassification or Enum.PvPUnitClassification).FlagCarrierAlliance or 1] = "nameplates-icon-flag-alliance",
+	[(Enum.PvpUnitClassification or Enum.PvPUnitClassification).FlagCarrierNeutral or 2] = "nameplates-icon-flag-neutral",
+	[(Enum.PvpUnitClassification or Enum.PvPUnitClassification).CartRunnerHorde or 3] = "nameplates-icon-cart-horde",
+	[(Enum.PvpUnitClassification or Enum.PvPUnitClassification).CartRunnerAlliance or 4] = "nameplates-icon-cart-alliance",
+	[(Enum.PvpUnitClassification or Enum.PvPUnitClassification).AssassinHorde or 5] = "nameplates-icon-bounty-horde",
+	[(Enum.PvpUnitClassification or Enum.PvPUnitClassification).AssassinAlliance or 6] = "nameplates-icon-bounty-alliance",
+	[(Enum.PvpUnitClassification or Enum.PvPUnitClassification).OrbCarrierBlue or 7] = "nameplates-icon-orb-blue",
+	[(Enum.PvpUnitClassification or Enum.PvPUnitClassification).OrbCarrierGreen or 8] = "nameplates-icon-orb-green",
+	[(Enum.PvpUnitClassification or Enum.PvPUnitClassification).OrbCarrierOrange or 9] = "nameplates-icon-orb-orange",
+	[(Enum.PvpUnitClassification or Enum.PvPUnitClassification).OrbCarrierPurple or 10] = "nameplates-icon-orb-purple",
 }
 
 local function Update(self, event, unit)
