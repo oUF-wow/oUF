@@ -20,7 +20,7 @@ OnEnter and/or OnLeave handlers.
 ## Examples
 
     -- Position and size
-    local PhaseIndicator = CreateTexture('Frame', nil, self)
+    local PhaseIndicator = CreateFrame('Frame', nil, self)
     PhaseIndicator:SetSize(16, 16)
     PhaseIndicator:SetPoint('TOPLEFT', self)
     PhaseIndicator:EnableMouse(true)
