@@ -17,5 +17,6 @@ jobs:
       - name: Dump
         run: |
           cat CHANGELOG.md
+          git log -3
           git tag
           ls -la
