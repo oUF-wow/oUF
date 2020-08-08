@@ -18,3 +18,4 @@ jobs:
         run: |
           ls -la CHANGELOG.md
           cat CHANGELOG.md
+          git tag
