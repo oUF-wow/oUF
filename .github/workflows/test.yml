@@ -12,7 +12,9 @@ jobs:
         run: |
           sudo apt update && sudo apt install -y luarocks
           ./utils/changelog > CHANGELOG.md
+          pwd
 
       - name: Dump
         run: |
+          ls -la CHANGELOG.md
           cat CHANGELOG.md
