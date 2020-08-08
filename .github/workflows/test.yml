@@ -7,6 +7,8 @@ jobs:
     steps:
       - name: Clone project
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # we need to get all the history and refs
 
       - name: Generate changelog
         run: |
