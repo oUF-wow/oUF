@@ -13,7 +13,7 @@ jobs:
       - name: Generate changelog
         run: |
           sudo apt-get -q update
-          sudo apt-get -qy install lua5.1 luarocks
+          sudo apt-get -qy install lua5.1
           lua utils/changelog > CHANGELOG.md
 
       - name: Dump
