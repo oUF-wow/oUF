@@ -1,0 +1,14 @@
+name: test
+on: push
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone project
+        uses: actions/checkout@v2
+
+      - name: Generate changelog
+        run: |
+          apt update && apt install -y luarocks
+          ./utils/changelog
