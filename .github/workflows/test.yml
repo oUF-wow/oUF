@@ -11,4 +11,8 @@ jobs:
       - name: Generate changelog
         run: |
           sudo apt update && sudo apt install -y luarocks
-          ./utils/changelog
+          ./utils/changelog > CHANGELOG.md
+
+      - name: Dump
+        run: |
+          cat CHANGELOG.md
