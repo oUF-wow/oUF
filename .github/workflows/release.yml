@@ -11,6 +11,12 @@ jobs:
       - name: Clone project
         uses: actions/checkout@v2
 
+      - name: Generate changelog
+        uses: docker://alpine:3.12
+        run: |
+          apk add --no-cache git lua
+          ./utils/changelog > CHANGELOG.md
+
       - name: Package and release
         uses: BigWigsMods/packager@064e524
     env:
