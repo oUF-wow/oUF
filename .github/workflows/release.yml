@@ -12,9 +12,8 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Generate changelog
-        uses: docker://alpine:3.12
         run: |
-          apk add --no-cache git lua
+          apt update && apt install -y luarocks
           ./utils/changelog > CHANGELOG.md
 
       - name: Package and release
