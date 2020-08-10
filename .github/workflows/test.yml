@@ -1,0 +1,29 @@
+name: Package and release
+on:
+  push:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone project
+        uses: actions/checkout@v2
+        with:
+          # this fetches everything, we'll need it to generate changelogs
+          fetch-depth: 0
+
+      - name: Install Lua
+        run: |
+          sudo apt-get install -qy lua5.1
+
+      - name: Generate changelog
+        run: |
+          lua utils/changelog > CHANGELOG.md
+
+      - name: Package and release
+        uses: BigWigsMods/packager@064e524
+        with:
+          args: -d
+        env:
+          CF_API_KEY: ${{ secrets.CF_API_KEY }}
+          WOWI_API_TOKEN: ${{ secrets.WOWI_API_TOKEN }}
