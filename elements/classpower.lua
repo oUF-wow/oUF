@@ -144,9 +144,10 @@ local function Update(self, event, unit, powerType)
 	* max           - the maximum amount of power (number)
 	* hasMaxChanged - indicates whether the maximum amount has changed since the last update (boolean)
 	* powerType     - the active power type (string)
+	* isVisible     - whether the element is visible (boolean?)
 	--]]
 	if(element.PostUpdate) then
-		return element:PostUpdate(cur, max, oldMax ~= max, powerType)
+		return element:PostUpdate(cur, max, oldMax ~= max, powerType, element.__isEnabled)
 	end
 end
 
@@ -184,7 +185,7 @@ local function Visibility(self, event, unit)
 		end
 	end
 
-	local isEnabled = element.isEnabled
+	local isEnabled = element.__isEnabled
 	local powerType = unit == 'vehicle' and 'COMBO_POINTS' or ClassPowerType
 
 	if(shouldEnable) then
@@ -226,7 +227,7 @@ do
 		self:RegisterEvent('UNIT_POWER_FREQUENT', Path)
 		self:RegisterEvent('UNIT_MAXPOWER', Path)
 
-		self.ClassPower.isEnabled = true
+		self.ClassPower.__isEnabled = true
 
 		if(UnitHasVehicleUI('player')) then
 			Path(self, 'ClassPowerEnable', 'vehicle', 'COMBO_POINTS')
@@ -244,7 +245,7 @@ do
 			element[i]:Hide()
 		end
 
-		self.ClassPower.isEnabled = false
+		element.__isEnabled = false
 		Path(self, 'ClassPowerDisable', 'player', ClassPowerType)
 	end
 
