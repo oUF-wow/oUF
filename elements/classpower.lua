@@ -144,10 +144,9 @@ local function Update(self, event, unit, powerType)
 	* max           - the maximum amount of power (number)
 	* hasMaxChanged - indicates whether the maximum amount has changed since the last update (boolean)
 	* powerType     - the active power type (string)
-	* isVisible     - whether the element is visible (boolean?)
 	--]]
 	if(element.PostUpdate) then
-		return element:PostUpdate(cur, max, oldMax ~= max, powerType, element.__isEnabled)
+		return element:PostUpdate(cur, max, oldMax ~= max, powerType)
 	end
 end
 
@@ -200,8 +199,22 @@ local function Visibility(self, event, unit)
 
 	if(shouldEnable and not isEnabled) then
 		ClassPowerEnable(self)
+
+		--[[ Callback: ClassPower:PostVisibility(isVisible)
+		Called after the element's visibility has been changed.
+
+		* self      - the ClassPower element
+		* isVisible - the current visibility state of the element (boolean)
+		--]]
+		if(element.PostVisibility) then
+			element:PostVisibility(true)
+		end
 	elseif(not shouldEnable and (isEnabled or isEnabled == nil)) then
 		ClassPowerDisable(self)
+
+		if(element.PostVisibility) then
+			element:PostVisibility(false)
+		end
 	elseif(shouldEnable and isEnabled) then
 		Path(self, event, unit, powerType)
 	end
