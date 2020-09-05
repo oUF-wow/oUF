@@ -605,11 +605,25 @@ local tagPool = {}
 local funcPool = {}
 local tmp = {}
 
-local function getTagName(tag)
-	local tagStart = tag:match('>+()') or 2
-	local tagEnd = (tag:match('.-()<') or -1) - 1
+local function getBracketData(tag)
+	local suffixEnd = (tag:match('(){') or -1) - 1
 
-	return tag:sub(tagStart, tagEnd), tagStart, tagEnd
+	local prefixEnd, prefixOffset = tag:match('()%$>'), 1
+	if(not prefixEnd) then
+		prefixEnd = 1
+	else
+		prefixEnd = prefixEnd - 1
+		prefixOffset = 3
+	end
+
+	local suffixStart, suffixOffset = tag:match('%$<()', prefixEnd), 1
+	if(not suffixStart) then
+		suffixStart = suffixEnd + 1
+	else
+		suffixOffset = 3
+	end
+
+	return tag:sub(prefixEnd + prefixOffset, suffixStart - suffixOffset), prefixEnd, suffixStart, suffixEnd, tag:match('{(%d+)}%]')
 end
 
 local function getTagFunc(tagstr)
@@ -621,39 +635,35 @@ local function getTagFunc(tagstr)
 		for bracket in tagstr:gmatch(_PATTERN) do
 			local tagFunc = funcPool[bracket] or tags[bracket:sub(2, -2)]
 			if(not tagFunc) then
-				local tagName, tagStart, tagEnd = getTagName(bracket)
-
+				local tagName, prefixEnd, suffixStart, suffixEnd, outputLength = getBracketData(bracket)
 				local tag = tags[tagName]
 				if(tag) then
-					tagStart = tagStart - 2
-					tagEnd = tagEnd + 2
-
-					if(tagStart ~= 0 and tagEnd ~= 0) then
-						local prefix = bracket:sub(2, tagStart)
-						local suffix = bracket:sub(tagEnd, -2)
+					if(prefixEnd ~= 0 and suffixStart ~= 0) then
+						local prefix = bracket:sub(2, prefixEnd)
+						local suffix = bracket:sub(suffixStart, suffixEnd)
 
 						tagFunc = function(unit, realUnit)
 							local str = tag(unit, realUnit)
 							if(str) then
-								return prefix .. str .. suffix
+								return prefix .. str:sub(1, outputLength) .. suffix
 							end
 						end
-					elseif(tagStart ~= 0) then
-						local prefix = bracket:sub(2, tagStart)
+					elseif(prefixEnd ~= 0) then
+						local prefix = bracket:sub(2, prefixEnd)
 
 						tagFunc = function(unit, realUnit)
 							local str = tag(unit, realUnit)
 							if(str) then
-								return prefix .. str
+								return prefix .. str:sub(1, outputLength)
 							end
 						end
-					elseif(tagEnd ~= 0) then
-						local suffix = bracket:sub(tagEnd, -2)
+					elseif(suffixStart ~= 0) then
+						local suffix = bracket:sub(suffixStart, -2)
 
 						tagFunc = function(unit, realUnit)
 							local str = tag(unit, realUnit)
 							if(str) then
-								return str .. suffix
+								return str:sub(1, outputLength) .. suffix
 							end
 						end
 					end
@@ -754,7 +764,7 @@ end
 
 local function registerEvents(fontstr, tagstr)
 	for tag in tagstr:gmatch(_PATTERN) do
-		tag = getTagName(tag)
+		tag = getBracketData(tag)
 		local tagevents = tagEvents[tag]
 		if(tagevents) then
 			for event in tagevents:gmatch('%S+') do
