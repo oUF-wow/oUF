@@ -875,6 +875,11 @@ local function Untag(self, fs)
 	self.__tags[fs] = nil
 end
 
+local function strip(tag)
+	-- remove prefix, output length, custom args, and suffix
+	return tag:gsub("%[.-%$>", "["):gsub("{.-}%]", "]"):gsub("%(.-%)%]", "]"):gsub("$<.-%]", "]")
+end
+
 oUF.Tags = {
 	Methods = tags,
 	Events = tagEvents,
@@ -883,11 +888,18 @@ oUF.Tags = {
 	RefreshMethods = function(self, tag)
 		if(not tag) then return end
 
-		funcPool['[' .. tag .. ']'] = nil
+		-- If a tag's name contains magic chars, there's a chance that
+		-- string.match will fail to find the match.
+		tag = '%[' .. tag:gsub('[%^%$%(%)%%%.%*%+%-%?]', '%%%1') .. '%]'
 
-		tag = '%[' .. tag .. '%]'
+		for func in next, funcPool do
+			if(strip(func):match(tag)) then
+				funcPool[func] = nil
+			end
+		end
+
 		for tagstr, func in next, tagPool do
-			if(tagstr:match(tag)) then
+			if(strip(tagstr):match(tag)) then
 				tagPool[tagstr] = nil
 
 				for fs in next, taggedFS do
@@ -905,9 +917,11 @@ oUF.Tags = {
 	RefreshEvents = function(self, tag)
 		if(not tag) then return end
 
-		tag = '%[' .. tag .. '%]'
+		-- If a tag's name contains magic chars, there's a chance that
+		-- string.match will fail to find the match.
+		tag = '%[' .. tag:gsub('[%^%$%(%)%%%.%*%+%-%?]', '%%%1') .. '%]'
 		for tagstr in next, tagPool do
-			if(tagstr:match(tag)) then
+			if(strip(tagstr):match(tag)) then
 				for fs, ts in next, taggedFS do
 					if(ts == tagstr) then
 						unregisterEvents(fs)
