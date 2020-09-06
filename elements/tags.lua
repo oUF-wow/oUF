@@ -644,7 +644,7 @@ local function getTagFunc(tagstr)
 
 						tagFunc = function(unit, realUnit)
 							local str = tag(unit, realUnit)
-							if(str) then
+							if(str and str ~= "") then
 								return prefix .. str:sub(1, outputLength) .. suffix
 							end
 						end
@@ -653,7 +653,7 @@ local function getTagFunc(tagstr)
 
 						tagFunc = function(unit, realUnit)
 							local str = tag(unit, realUnit)
-							if(str) then
+							if(str and str ~= "") then
 								return prefix .. str:sub(1, outputLength)
 							end
 						end
@@ -662,14 +662,14 @@ local function getTagFunc(tagstr)
 
 						tagFunc = function(unit, realUnit)
 							local str = tag(unit, realUnit)
-							if(str) then
+							if(str and str ~= "") then
 								return str:sub(1, outputLength) .. suffix
 							end
 						end
 					else
 						tagFunc = function(unit, realUnit)
 							local str = tag(unit, realUnit)
-							if(str) then
+							if(str and str ~= "") then
 								return str:sub(1, outputLength)
 							end
 						end
