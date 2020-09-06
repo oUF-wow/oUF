@@ -624,7 +624,7 @@ local function getBracketData(tag)
 		suffixOffset = 3
 	end
 
-	return tag:sub(prefixEnd + prefixOffset, suffixStart - suffixOffset), prefixEnd, suffixStart, suffixEnd, tag:match('%((.-)%)') or "", tag:match('{(%d+)}')
+	return tag:sub(prefixEnd + prefixOffset, suffixStart - suffixOffset), prefixEnd, suffixStart, suffixEnd, tag:match('%((.-)%)') or '', tag:match('{(%d+)}')
 end
 
 local function getTagFunc(tagstr)
@@ -645,7 +645,7 @@ local function getTagFunc(tagstr)
 
 						tagFunc = function(unit, realUnit)
 							local str = tag(unit, realUnit, string.split(',', customArgs))
-							if(str and str ~= "") then
+							if(str and str ~= '') then
 								return prefix .. (outputLength and str:sub(1, outputLength) or str) .. suffix
 							end
 						end
@@ -654,7 +654,7 @@ local function getTagFunc(tagstr)
 
 						tagFunc = function(unit, realUnit)
 							local str = tag(unit, realUnit, string.split(',', customArgs))
-							if(str and str ~= "") then
+							if(str and str ~= '') then
 								return prefix .. (outputLength and str:sub(1, outputLength) or str)
 							end
 						end
@@ -663,14 +663,14 @@ local function getTagFunc(tagstr)
 
 						tagFunc = function(unit, realUnit)
 							local str = tag(unit, realUnit, string.split(',', customArgs))
-							if(str and str ~= "") then
+							if(str and str ~= '') then
 								return (outputLength and str:sub(1, outputLength) or str) .. suffix
 							end
 						end
 					else
 						tagFunc = function(unit, realUnit)
 							local str = tag(unit, realUnit, string.split(',', customArgs))
-							if(str and str ~= "") then
+							if(str and str ~= '') then
 								return (outputLength and str:sub(1, outputLength) or str)
 							end
 						end
@@ -877,7 +877,7 @@ end
 
 local function strip(tag)
 	-- remove prefix, output length, custom args, and suffix
-	return tag:gsub("%[.-%$>", "["):gsub("{.-}%]", "]"):gsub("%(.-%)%]", "]"):gsub("$<.-%]", "]")
+	return tag:gsub('%[.-%$>', '['):gsub('{.-}%]', ']'):gsub('%(.-%)%]', ']'):gsub('$<.-%]', ']')
 end
 
 oUF.Tags = {
