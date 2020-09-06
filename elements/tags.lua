@@ -624,7 +624,23 @@ local function getBracketData(tag)
 		suffixOffset = 3
 	end
 
-	return tag:sub(prefixEnd + prefixOffset, suffixStart - suffixOffset), prefixEnd, suffixStart, suffixEnd, tag:match('%((.-)%)') or '', tag:match('{(%d+)}')
+	return tag:sub(prefixEnd + prefixOffset, suffixStart - suffixOffset), prefixEnd, suffixStart, suffixEnd, tag:match('%((.-)%)') or '', tonumber(tag:match('{(%d+)}'))
+end
+
+local function utf8shorten(str, length)
+	if(strlenutf8(str) <= length) then
+		return str
+	end
+
+	local index, output = 1, ""
+	for char in str:gmatch('[%z\1-\127\194-\244][\128-\191]*') do
+		if(index <= length) then
+			output = output .. char
+			index = index + 1
+		else
+			return output
+		end
+	end
 end
 
 local function getTagFunc(tagstr)
@@ -646,7 +662,7 @@ local function getTagFunc(tagstr)
 						tagFunc = function(unit, realUnit)
 							local str = tag(unit, realUnit, string.split(',', customArgs))
 							if(str and str ~= '') then
-								return prefix .. (outputLength and str:sub(1, outputLength) or str) .. suffix
+								return prefix .. (outputLength and utf8shorten(str, outputLength) or str) .. suffix
 							end
 						end
 					elseif(2 - prefixEnd ~= 1) then
@@ -655,7 +671,7 @@ local function getTagFunc(tagstr)
 						tagFunc = function(unit, realUnit)
 							local str = tag(unit, realUnit, string.split(',', customArgs))
 							if(str and str ~= '') then
-								return prefix .. (outputLength and str:sub(1, outputLength) or str)
+								return prefix .. (outputLength and utf8shorten(str, outputLength) or str)
 							end
 						end
 					elseif(suffixStart - suffixEnd ~= 1) then
@@ -664,14 +680,14 @@ local function getTagFunc(tagstr)
 						tagFunc = function(unit, realUnit)
 							local str = tag(unit, realUnit, string.split(',', customArgs))
 							if(str and str ~= '') then
-								return (outputLength and str:sub(1, outputLength) or str) .. suffix
+								return (outputLength and utf8shorten(str, outputLength) or str) .. suffix
 							end
 						end
 					else
 						tagFunc = function(unit, realUnit)
 							local str = tag(unit, realUnit, string.split(',', customArgs))
 							if(str and str ~= '') then
-								return (outputLength and str:sub(1, outputLength) or str)
+								return (outputLength and utf8shorten(str, outputLength) or str)
 							end
 						end
 					end
