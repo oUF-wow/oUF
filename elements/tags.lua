@@ -639,7 +639,7 @@ local function getTagFunc(tagstr)
 				local tagName, prefixEnd, suffixStart, suffixEnd, customArgs = getBracketData(bracket)
 				local tag = tags[tagName]
 				if(tag) then
-					if(2 - prefixEnd ~= 1 and suffixStart - suffixEnd ~= 1) then
+					if(prefixEnd ~= 1 and suffixStart - suffixEnd ~= 1) then
 						local prefix = bracket:sub(2, prefixEnd)
 						local suffix = bracket:sub(suffixStart, suffixEnd)
 
@@ -649,7 +649,7 @@ local function getTagFunc(tagstr)
 								return prefix .. str .. suffix
 							end
 						end
-					elseif(2 - prefixEnd ~= 1) then
+					elseif(prefixEnd ~= 1) then
 						local prefix = bracket:sub(2, prefixEnd)
 
 						tagFunc = function(unit, realUnit)
