@@ -606,8 +606,8 @@ local funcPool = {}
 local tmp = {}
 
 local function getBracketData(tag)
-	-- full tag syntax: '[prefix$>tag-name$<suffix(a,r,g,s){output-length}]'
-	local suffixEnd = (tag:match('()%(') or tag:match('(){') or -1) - 1
+	-- full tag syntax: '[prefix$>tag-name$<suffix(a,r,g,s)]'
+	local suffixEnd = (tag:match('()%(') or -1) - 1
 
 	local prefixEnd, prefixOffset = tag:match('()%$>'), 1
 	if(not prefixEnd) then
@@ -624,23 +624,7 @@ local function getBracketData(tag)
 		suffixOffset = 3
 	end
 
-	return tag:sub(prefixEnd + prefixOffset, suffixStart - suffixOffset), prefixEnd, suffixStart, suffixEnd, tag:match('%((.-)%)') or '', tonumber(tag:match('{(%d+)}'))
-end
-
-local function utf8shorten(str, length)
-	if(strlenutf8(str) <= length) then
-		return str
-	end
-
-	local index, output = 1, ""
-	for char in str:gmatch('[%z\1-\127\194-\244][\128-\191]*') do
-		if(index <= length) then
-			output = output .. char
-			index = index + 1
-		else
-			return output
-		end
-	end
+	return tag:sub(prefixEnd + prefixOffset, suffixStart - suffixOffset), prefixEnd, suffixStart, suffixEnd, tag:match('%((.-)%)') or ''
 end
 
 local function getTagFunc(tagstr)
@@ -652,7 +636,7 @@ local function getTagFunc(tagstr)
 		for bracket in tagstr:gmatch(_PATTERN) do
 			local tagFunc = funcPool[bracket] or tags[bracket:sub(2, -2)]
 			if(not tagFunc) then
-				local tagName, prefixEnd, suffixStart, suffixEnd, customArgs, outputLength = getBracketData(bracket)
+				local tagName, prefixEnd, suffixStart, suffixEnd, customArgs = getBracketData(bracket)
 				local tag = tags[tagName]
 				if(tag) then
 					if(2 - prefixEnd ~= 1 and suffixStart - suffixEnd ~= 1) then
@@ -662,7 +646,7 @@ local function getTagFunc(tagstr)
 						tagFunc = function(unit, realUnit)
 							local str = tag(unit, realUnit, string.split(',', customArgs))
 							if(str and str ~= '') then
-								return prefix .. (outputLength and utf8shorten(str, outputLength) or str) .. suffix
+								return prefix .. str .. suffix
 							end
 						end
 					elseif(2 - prefixEnd ~= 1) then
@@ -671,7 +655,7 @@ local function getTagFunc(tagstr)
 						tagFunc = function(unit, realUnit)
 							local str = tag(unit, realUnit, string.split(',', customArgs))
 							if(str and str ~= '') then
-								return prefix .. (outputLength and utf8shorten(str, outputLength) or str)
+								return prefix .. str
 							end
 						end
 					elseif(suffixStart - suffixEnd ~= 1) then
@@ -680,14 +664,14 @@ local function getTagFunc(tagstr)
 						tagFunc = function(unit, realUnit)
 							local str = tag(unit, realUnit, string.split(',', customArgs))
 							if(str and str ~= '') then
-								return (outputLength and utf8shorten(str, outputLength) or str) .. suffix
+								return str .. suffix
 							end
 						end
 					else
 						tagFunc = function(unit, realUnit)
 							local str = tag(unit, realUnit, string.split(',', customArgs))
 							if(str and str ~= '') then
-								return (outputLength and utf8shorten(str, outputLength) or str)
+								return str
 							end
 						end
 					end
@@ -892,8 +876,8 @@ local function Untag(self, fs)
 end
 
 local function strip(tag)
-	-- remove prefix, output length, custom args, and suffix
-	return tag:gsub('%[.-%$>', '['):gsub('{.-}%]', ']'):gsub('%(.-%)%]', ']'):gsub('$<.-%]', ']')
+	-- remove prefix, custom args, and suffix
+	return tag:gsub('%[.-%$>', '['):gsub('%(.-%)%]', ']'):gsub('$<.-%]', ']')
 end
 
 oUF.Tags = {
