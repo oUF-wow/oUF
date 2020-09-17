@@ -687,74 +687,22 @@ local function getTagFunc(tagstr)
 			end
 		end
 
-		if(numTags == 1) then
-			func = function(self)
-				local parent = self.parent
-				local realUnit
-				if(self.overrideUnit) then
-					realUnit = parent.realUnit
-				end
-
-				_ENV._COLORS = parent.colors
-				_ENV._FRAME = parent
-				return self:SetFormattedText(
-					format,
-					args[1](parent.unit, realUnit) or ''
-				)
+		func = function(self)
+			local parent = self.parent
+			local unit = parent.unit
+			local realUnit
+			if(self.overrideUnit) then
+				realUnit = parent.realUnit
 			end
-		elseif(numTags == 2) then
-			func = function(self)
-				local parent = self.parent
-				local unit = parent.unit
-				local realUnit
-				if(self.overrideUnit) then
-					realUnit = parent.realUnit
-				end
 
-				_ENV._COLORS = parent.colors
-				_ENV._FRAME = parent
-				return self:SetFormattedText(
-					format,
-					args[1](unit, realUnit) or '',
-					args[2](unit, realUnit) or ''
-				)
+			_ENV._COLORS = parent.colors
+			_ENV._FRAME = parent
+			for i, f in next, args do
+				tmp[i] = f(unit, realUnit) or ''
 			end
-		elseif(numTags == 3) then
-			func = function(self)
-				local parent = self.parent
-				local unit = parent.unit
-				local realUnit
-				if(self.overrideUnit) then
-					realUnit = parent.realUnit
-				end
 
-				_ENV._COLORS = parent.colors
-				_ENV._FRAME = parent
-				return self:SetFormattedText(
-					format,
-					args[1](unit, realUnit) or '',
-					args[2](unit, realUnit) or '',
-					args[3](unit, realUnit) or ''
-				)
-			end
-		else
-			func = function(self)
-				local parent = self.parent
-				local unit = parent.unit
-				local realUnit
-				if(self.overrideUnit) then
-					realUnit = parent.realUnit
-				end
-
-				_ENV._COLORS = parent.colors
-				_ENV._FRAME = parent
-				for i, func in next, args do
-					tmp[i] = func(unit, realUnit) or ''
-				end
-
-				-- We do 1, numTags because tmp can hold several unneeded variables.
-				return self:SetFormattedText(format, unpack(tmp, 1, numTags))
-			end
+			-- We do 1, numTags because tmp can hold several unneeded variables.
+			return self:SetFormattedText(format, unpack(tmp, 1, numTags))
 		end
 
 		tagPool[tagstr] = func
