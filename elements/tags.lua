@@ -624,7 +624,7 @@ local function getBracketData(tag)
 		suffixOffset = 3
 	end
 
-	return tag:sub(prefixEnd + prefixOffset, suffixStart - suffixOffset), prefixEnd, suffixStart, suffixEnd, tag:match('%((.-)%)') or ''
+	return tag:sub(prefixEnd + prefixOffset, suffixStart - suffixOffset), prefixEnd, suffixStart, suffixEnd, tag:match('%((.-)%)')
 end
 
 local function getTagFunc(tagstr)
@@ -644,7 +644,13 @@ local function getTagFunc(tagstr)
 						local suffix = bracket:sub(suffixStart, suffixEnd)
 
 						tagFunc = function(unit, realUnit)
-							local str = tag(unit, realUnit, string.split(',', customArgs))
+							local str
+							if(customArgs) then
+								str = tag(unit, realUnit, strsplit(',', customArgs))
+							else
+								str = tag(unit, realUnit)
+							end
+
 							if(str and str ~= '') then
 								return prefix .. str .. suffix
 							end
@@ -653,7 +659,13 @@ local function getTagFunc(tagstr)
 						local prefix = bracket:sub(2, prefixEnd)
 
 						tagFunc = function(unit, realUnit)
-							local str = tag(unit, realUnit, string.split(',', customArgs))
+							local str
+							if(customArgs) then
+								str = tag(unit, realUnit, strsplit(',', customArgs))
+							else
+								str = tag(unit, realUnit)
+							end
+
 							if(str and str ~= '') then
 								return prefix .. str
 							end
@@ -662,14 +674,26 @@ local function getTagFunc(tagstr)
 						local suffix = bracket:sub(suffixStart, -2)
 
 						tagFunc = function(unit, realUnit)
-							local str = tag(unit, realUnit, string.split(',', customArgs))
+							local str
+							if(customArgs) then
+								str = tag(unit, realUnit, strsplit(',', customArgs))
+							else
+								str = tag(unit, realUnit)
+							end
+
 							if(str and str ~= '') then
 								return str .. suffix
 							end
 						end
 					else
 						tagFunc = function(unit, realUnit)
-							local str = tag(unit, realUnit, string.split(',', customArgs))
+							local str
+							if(customArgs) then
+								str = tag(unit, realUnit, strsplit(',', customArgs))
+							else
+								str = tag(unit, realUnit)
+							end
+
 							if(str and str ~= '') then
 								return str
 							end
