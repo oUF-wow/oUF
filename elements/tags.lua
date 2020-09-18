@@ -12,15 +12,25 @@ A FontString to hold a tag string. Unlike other elements, this widget must not h
 ## Notes
 
 A `Tag` is a Lua string consisting of a function name surrounded by square brackets. The tag will be replaced by the
-output of the function and displayed as text on the font string widget with that the tag has been registered. Literals
-can be pre- or appended by separating them with a `>` before or `<` after the function name. The literals will be only
-displayed when the function returns a non-nil value. I.e. `"[perhp<%]"` will display the current health as a percentage
-of the maximum health followed by the % sign.
+output of the function and displayed as text on the font string widget with that the tag has been registered.
 
-A `Tag String` is a Lua string consisting of one or multiple tags with optional literals between them. Each tag will be
-updated individually and the output will follow the tags order. Literals will be displayed in the output string
-regardless of whether the surrounding tag functions return a value. I.e. `"[curhp]/[maxhp]"` will resolve to something
-like `2453/5000`.
+A `Tag String` is a Lua string consisting of one or multiple tags with optional literals and parameters around them.
+Each tag will be updated individually and the output will follow the tags order. Literals will be displayed in the
+output string regardless of whether the surrounding tag functions return a value. I.e. `"[curhp]/[maxhp]"` will resolve
+to something like `2453/5000`.
+
+There's also an optional prefix and suffix that are separated from the tag name by `$>` and `$<` respectively,
+for example, `"[==$>name<$==]"` will resolve to `==Thrall==`, and `"[perhp$<%]"` will resole to `100%`, however, said
+affixes will only be added if the tag function returns a non-empty string, if it returns `nil` or `""` affixes will be
+omitted.
+
+Additionally, it's possible to pass optional arguments to a tag function to alter its behaviour. Optional arguments are
+defined via `()` at the end of a tag and separated by commas (`,`). For example, `"[name(a,r,g,s)]"`, in this case 4
+additional arguments, `"a"`, `"r"`, `"g"`, and `"s"` will be passed to the name tag function, what to do with them,
+however, is up to a developer to decide.
+
+The full tag syntax looks like this: `"[prefix$>tag$<suffix(a,r,g,s)]"`. The order of optional elements is important,
+while they can be independently omitted, they can't be reordered.
 
 A `Tag Function` is used to replace a single tag in a tag string by its output. A tag function receives only two
 arguments - the unit and the realUnit of the unit frame used to register the tag (see Options for further details). The
@@ -37,15 +47,17 @@ in the `oUF.Tags.SharedEvents` table as follows: `oUF.Tags.SharedEvents.EVENT_NA
 .overrideUnit    - if specified on the font string widget, the frame's realUnit will be passed as the second argument to
                    every tag function whose name is contained in the relevant tag string. Otherwise the second argument
                    is always nil (boolean)
-.frequentUpdates - defines how often the correspondig tag function(s) should be called. This will override the events for
-                   the tag(s), if any. If the value is a number, it is taken as a time interval in seconds. If the value
-                   is a boolean, the time interval is set to 0.5 seconds (number or boolean)
+.frequentUpdates - defines how often the corresponding tag function(s) should be called. This will override the events
+                   for the tag(s), if any. If the value is a number, it is taken as a time interval in seconds. If the
+                   value is a boolean, the time interval is set to 0.5 seconds (number or boolean)
 
 ## Attributes
 
 .parent - the unit frame on which the tag has been registered
 
 ## Examples
+
+### Example 1
 
     -- define the tag function
     oUF.Tags.Methods['mylayout:threatname'] = function(unit, realUnit)
@@ -63,6 +75,31 @@ in the `oUF.Tags.SharedEvents` table as follows: `oUF.Tags.SharedEvents.EVENT_NA
 
     -- register the tag on the text widget with oUF
     self:Tag(info, '[mylayout:threatname]')
+
+### Example 2
+
+    -- define the tag function that accepts optional arguments
+    oUF.Tags.Methods['mylayout:name'] = function(unit, realUnit, ...)
+        local name = _TAGS['name'](unit, realUnit)
+        local length = tonumber(...)
+        if(length) then
+            return name:sub(1, length) -- please note, this code doesn't support UTF-8 chars
+        else
+            return name
+        end
+    end
+
+    -- add the events
+    oUF.Tags.Events['mylayout:name'] = 'UNIT_NAME_UPDATE'
+
+    -- create the text widget
+    local info = self.Health:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
+    info:SetPoint('LEFT')
+
+    -- register the tag on the text widget with oUF
+    self:Tag(info, '[mylayout:name(5)]') -- the output will be shortened to 5 characters
+    -- self:Tag(info, '[mylayout:name]') -- alternative, the output won't be adjusted
+    -- self:Tag(info, '[mylayout:name(10)]') -- alternative, the output will be shortened to 10 characters
 --]]
 
 local _, ns = ...
