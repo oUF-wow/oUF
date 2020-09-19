@@ -169,7 +169,7 @@ local function CastStart(self, event, unit)
 	end
 
 	--[[ Callback: Castbar:PostCastStart(unit)
-	Called after the element has been updated upon a spell cast start.
+	Called after the element has been updated upon a spell cast or channel start.
 
 	* self - the Castbar widget
 	* unit - the unit for which the update has been triggered (string)
@@ -224,7 +224,7 @@ local function CastUpdate(self, event, unit, castID, spellID)
 	element:SetValue(element.duration)
 
 	--[[ Callback: Castbar:PostCastUpdate(unit)
-	Called after the element has been updated when a spell cast has been updated.
+	Called after the element has been updated when a spell cast or channel has been updated.
 
 	* self - the Castbar widget
 	* unit - the unit that the update has been triggered (string)
@@ -245,7 +245,7 @@ local function CastStop(self, event, unit, castID, spellID)
 	resetAttributes(element)
 
 	--[[ Callback: Castbar:PostCastStop(unit, spellID)
-	Called after the element has been updated when a spell cast has stopped.
+	Called after the element has been updated when a spell cast or channel has stopped.
 
 	* self    - the Castbar widget
 	* unit    - the unit for which the update has been triggered (string)
@@ -276,7 +276,7 @@ local function CastFail(self, event, unit, castID, spellID)
 	element:SetValue(element.max)
 
 	--[[ Callback: Castbar:PostCastFail(unit, spellID)
-	Called after the element has been updated upon a failed spell cast.
+	Called after the element has been updated upon a failed or interrupted spell cast.
 
 	* self    - the Castbar widget
 	* unit    - the unit for which the update has been triggered (string)
