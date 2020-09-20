@@ -302,6 +302,18 @@ local function Enable(self, unit)
 			self:RegisterEvent('UNIT_DISPLAYPOWER', VisibilityPath)
 		end
 
+		--[[ Callback: ClassPower.UpdateCharged(self, event, unit)
+		Used to update charged combo points.
+		While optional, this is solely in the responsibility of the layout.
+
+		* self  - the parent object
+		* event - the event triggering the update (string)
+		* unit  - the unit accompanying the event (string)
+		--]]
+		if(element.UpdateCharged and PlayerClass == 'ROGUE') then
+			self:RegisterEvent('UNIT_POWER_POINT_CHARGE', element.UpdateCharged)
+		end
+
 		element.ClassPowerEnable = ClassPowerEnable
 		element.ClassPowerDisable = ClassPowerDisable
 
@@ -321,12 +333,17 @@ local function Enable(self, unit)
 end
 
 local function Disable(self)
-	if(self.ClassPower) then
+	local element = self.ClassPower
+	if(element) then
 		ClassPowerDisable(self)
 
 		self:UnregisterEvent('PLAYER_TALENT_UPDATE', VisibilityPath)
 		self:UnregisterEvent('UNIT_DISPLAYPOWER', VisibilityPath)
 		self:UnregisterEvent('SPELLS_CHANGED', Visibility)
+
+		if(element.UpdateCharged) then
+			self:UnregisterEvent('UNIT_POWER_POINT_CHARGE', element.UpdateCharged)
+		end
 	end
 end
 
