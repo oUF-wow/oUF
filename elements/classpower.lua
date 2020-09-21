@@ -82,7 +82,7 @@ local function UpdateColor(element, powerType)
 end
 
 local function Update(self, event, unit, powerType)
-	if(not (unit and (UnitIsUnit(unit, 'player') and powerType == ClassPowerType
+	if(not (unit and (UnitIsUnit(unit, 'player') and (not powerType or powerType == ClassPowerType)
 		or unit == 'vehicle' and powerType == 'COMBO_POINTS'))) then
 		return
 	end
@@ -240,6 +240,10 @@ do
 		self:RegisterEvent('UNIT_POWER_FREQUENT', Path)
 		self:RegisterEvent('UNIT_MAXPOWER', Path)
 
+		if(PlayerClass == 'ROGUE') then
+			self:RegisterEvent('UNIT_POWER_POINT_CHARGE', Path)
+		end
+
 		self.ClassPower.__isEnabled = true
 
 		if(UnitHasVehicleUI('player')) then
@@ -252,6 +256,7 @@ do
 	function ClassPowerDisable(self)
 		self:UnregisterEvent('UNIT_POWER_FREQUENT', Path)
 		self:UnregisterEvent('UNIT_MAXPOWER', Path)
+		self:UnregisterEvent('UNIT_POWER_POINT_CHARGE', Path)
 
 		local element = self.ClassPower
 		for i = 1, #element do
@@ -302,18 +307,6 @@ local function Enable(self, unit)
 			self:RegisterEvent('UNIT_DISPLAYPOWER', VisibilityPath)
 		end
 
-		--[[ Callback: ClassPower.UpdateCharged(self, event, unit)
-		Used to update charged combo points.
-		While optional, this is solely in the responsibility of the layout.
-
-		* self  - the parent object
-		* event - the event triggering the update (string)
-		* unit  - the unit accompanying the event (string)
-		--]]
-		if(element.UpdateCharged and PlayerClass == 'ROGUE') then
-			self:RegisterEvent('UNIT_POWER_POINT_CHARGE', element.UpdateCharged)
-		end
-
 		element.ClassPowerEnable = ClassPowerEnable
 		element.ClassPowerDisable = ClassPowerDisable
 
@@ -333,17 +326,12 @@ local function Enable(self, unit)
 end
 
 local function Disable(self)
-	local element = self.ClassPower
-	if(element) then
+	if(self.ClassPower) then
 		ClassPowerDisable(self)
 
 		self:UnregisterEvent('PLAYER_TALENT_UPDATE', VisibilityPath)
 		self:UnregisterEvent('UNIT_DISPLAYPOWER', VisibilityPath)
 		self:UnregisterEvent('SPELLS_CHANGED', Visibility)
-
-		if(element.UpdateCharged) then
-			self:UnregisterEvent('UNIT_POWER_POINT_CHARGE', element.UpdateCharged)
-		end
 	end
 end
 
