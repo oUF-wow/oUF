@@ -178,16 +178,20 @@ local function ElementEnable(self)
 
 	element:Show()
 
+	element.__isEnabled = true
 	Path(self, 'ElementEnable', 'player', ADDITIONAL_POWER_BAR_NAME)
 end
 
 local function ElementDisable(self)
+	local element = self.AdditionalPower
+
 	self:UnregisterEvent('UNIT_MAXPOWER', Path)
 	self:UnregisterEvent('UNIT_POWER_FREQUENT', Path)
 	self:UnregisterEvent('UNIT_POWER_UPDATE', Path)
 
-	self.AdditionalPower:Hide()
+	element:Hide()
 
+	element.__isEnabled = false
 	Path(self, 'ElementDisable', 'player', ADDITIONAL_POWER_BAR_NAME)
 end
 
@@ -204,10 +208,28 @@ local function Visibility(self, event, unit)
 		end
 	end
 
-	if(shouldEnable) then
+	local isEnabled = element.__isEnabled
+
+	if(shouldEnable and not isEnabled) then
 		ElementEnable(self)
-	else
+
+		--[[ Callback: AdditionalPower:PostVisibility(isVisible)
+		Called after the element's visibility has been changed.
+
+		* self      - the AdditionalPower element
+		* isVisible - the current visibility state of the element (boolean)
+		--]]
+		if(element.PostVisibility) then
+			element:PostVisibility(true)
+		end
+	elseif(not shouldEnable and (isEnabled or isEnabled == nil)) then
 		ElementDisable(self)
+
+		if(element.PostVisibility) then
+			element:PostVisibility(false)
+		end
+	elseif(shouldEnable and isEnabled) then
+		Path(self, event, unit, ADDITIONAL_POWER_BAR_NAME)
 	end
 end
 
