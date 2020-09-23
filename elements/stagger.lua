@@ -173,7 +173,7 @@ end
 
 local function Enable(self)
 	local element = self.Stagger
-	if(element) then
+	if(element and UnitIsUnit(unit, 'player')) then
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
 
