@@ -15,8 +15,6 @@ A default texture will be applied if the widget is a StatusBar and doesn't have 
 
 ## Options
 
-.useAtlas                         - Use this to let the widget use an atlas for its texture if an atlas is present in
-                                    `self.colors.power` for the alternative power type (boolean)
 .smoothGradient                   - 9 color values to be used with the .colorSmooth option (table)
 .considerSelectionInCombatHostile - Indicates whether selection should be considered hostile while the unit is in
                                     combat with the player (boolean)
@@ -84,15 +82,11 @@ local function UpdateColor(self, event, unit, powerType)
 	if(self.unit ~= unit or powerType ~= ALTERNATE_POWER_NAME) then return end
 	local element = self.AlternativePower
 
-	local r, g, b, t, atlas
+	local r, g, b, t
 	if(element.colorThreat and not UnitPlayerControlled(unit) and UnitThreatSituation('player', unit)) then
 		t =  self.colors.threat[UnitThreatSituation('player', unit)]
 	elseif(element.colorPower) then
 		t = self.colors.power[ALTERNATE_POWER_INDEX]
-
-		if(element.useAtlas and t and t.atlas) then
-			atlas = t.atlas
-		end
 	elseif(element.colorClass and UnitIsPlayer(unit)) or
 		(element.colorClassNPC and not UnitIsPlayer(unit)) then
 		local _, class = UnitClass(unit)
@@ -110,22 +104,16 @@ local function UpdateColor(self, event, unit, powerType)
 		r, g, b = t[1], t[2], t[3]
 	end
 
-	if(atlas) then
-		element:SetStatusBarAtlas(atlas)
-		element:SetStatusBarColor(1, 1, 1)
-	else
-		element:SetStatusBarTexture(element.texture)
+	if(b) then
+		element:SetStatusBarColor(r, g, b)
 
-		if(b) then
-			element:SetStatusBarColor(r, g, b)
+		local bg = element.bg
+		if(bg) then
+			local mu = bg.multiplier or 1
+			bg:SetVertexColor(r * mu, g * mu, b * mu)
 		end
 	end
 
-	local bg = element.bg
-	if(bg and b) then
-		local mu = bg.multiplier or 1
-		bg:SetVertexColor(r * mu, g * mu, b * mu)
-	end
 
 	if(element.PostUpdateColor) then
 		element:PostUpdateColor(unit, r, g, b)
@@ -246,9 +234,8 @@ local function Enable(self, unit)
 		self:RegisterEvent('UNIT_POWER_BAR_SHOW', VisibilityPath)
 		self:RegisterEvent('UNIT_POWER_BAR_HIDE', VisibilityPath)
 
-		if(element:IsObjectType('StatusBar')) then
-			element.texture = element:GetStatusBarTexture() and element:GetStatusBarTexture():GetTexture() or [[Interface\TargetingFrame\UI-StatusBar]]
-			element:SetStatusBarTexture(element.texture)
+		if(element:IsObjectType('StatusBar') and not (element:GetStatusBarTexture() or element:GetStatusBarAtlas())) then
+			element:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 		end
 
 		if(element:IsMouseEnabled()) then
