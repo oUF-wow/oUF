@@ -105,7 +105,7 @@ local function UpdateColor(self, event, unit, powerType)
 	end
 
 	if(element.PostUpdateColor) then
-		element:PostUpdateColor(unit, r, g, b)
+		element:PostUpdateColor(r, g, b)
 	end
 end
 
@@ -134,12 +134,11 @@ local function Update(self, event, unit, powerType)
 	Called after the element has been updated.
 
 	* self - the AdditionalPower element
-	* unit - the unit for which the update has been triggered (string)
 	* cur  - the current value of the player's additional power (number)
 	* max  - the maximum value of the player's additional power (number)
 	--]]
 	if(element.PostUpdate) then
-		return element:PostUpdate(unit, cur, max)
+		return element:PostUpdate(cur, max)
 	end
 end
 
