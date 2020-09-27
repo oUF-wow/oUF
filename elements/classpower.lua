@@ -312,7 +312,7 @@ local function Enable(self, unit)
 		for i = 1, #element do
 			local bar = element[i]
 			if(bar:IsObjectType('StatusBar')) then
-				if(not bar:GetStatusBarTexture()) then
+				if(not (bar:GetStatusBarTexture() or bar:GetStatusBarAtlas())) then
 					bar:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 				end
 

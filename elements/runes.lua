@@ -86,7 +86,7 @@ local function UpdateColor(self, event)
 	local spec = GetSpecialization() or 0
 
 	local color
-	if(spec  > 0 and spec < 4 and element.colorSpec) then
+	if(spec > 0 and spec < 4 and element.colorSpec) then
 		color = self.colors.runes[spec]
 	else
 		color = self.colors.power.RUNES
@@ -193,7 +193,7 @@ local function Enable(self, unit)
 
 		for i = 1, #element do
 			local rune = element[i]
-			if(rune:IsObjectType('StatusBar') and not rune:GetStatusBarTexture()) then
+			if(rune:IsObjectType('StatusBar') and not (rune:GetStatusBarTexture() or rune:GetStatusBarAtlas())) then
 				rune:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 			end
 		end

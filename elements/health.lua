@@ -301,7 +301,7 @@ local function Enable(self, unit)
 		self:RegisterEvent('UNIT_HEALTH', Path)
 		self:RegisterEvent('UNIT_MAXHEALTH', Path)
 
-		if(element:IsObjectType('StatusBar') and not element:GetStatusBarTexture()) then
+		if(element:IsObjectType('StatusBar') and not (element:GetStatusBarTexture() or element:GetStatusBarAtlas())) then
 			element:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 		end
 
