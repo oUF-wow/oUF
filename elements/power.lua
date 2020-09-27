@@ -135,9 +135,9 @@ local function UpdateColor(self, event, unit)
 		else
 			t = self.colors.power[ALTERNATE_POWER_INDEX]
 		end
-	elseif(element.colorClass and UnitIsPlayer(unit)) or
-		(element.colorClassNPC and not UnitIsPlayer(unit)) or
-		(element.colorClassPet and UnitPlayerControlled(unit) and not UnitIsPlayer(unit)) then
+	elseif(element.colorClass and UnitIsPlayer(unit))
+		or (element.colorClassNPC and not UnitIsPlayer(unit))
+		or (element.colorClassPet and UnitPlayerControlled(unit) and not UnitIsPlayer(unit)) then
 		local _, class = UnitClass(unit)
 		t = self.colors.class[class]
 	elseif(element.colorSelection and unitSelectionType(unit, element.considerSelectionInCombatHostile)) then

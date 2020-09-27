@@ -87,8 +87,8 @@ local function UpdateColor(self, event, unit, powerType)
 		t =  self.colors.threat[UnitThreatSituation('player', unit)]
 	elseif(element.colorPower) then
 		t = self.colors.power[ALTERNATE_POWER_INDEX]
-	elseif(element.colorClass and UnitIsPlayer(unit)) or
-		(element.colorClassNPC and not UnitIsPlayer(unit)) then
+	elseif(element.colorClass and UnitIsPlayer(unit))
+		or (element.colorClassNPC and not UnitIsPlayer(unit)) then
 		local _, class = UnitClass(unit)
 		t = self.colors.class[class]
 	elseif(element.colorSelection and unitSelectionType(unit, element.considerSelectionInCombatHostile)) then
