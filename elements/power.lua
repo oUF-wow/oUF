@@ -19,8 +19,9 @@ A default texture will be applied if the widget is a StatusBar and doesn't have 
 
 .frequentUpdates                  - Indicates whether to use UNIT_POWER_FREQUENT instead UNIT_POWER_UPDATE to update the
                                     bar (boolean)
-.displayAltPower                  - Use this to let the widget display alternate power if the unit has one. If no
-                                    alternate power the display will fall back to primary power (boolean)
+.displayAltPower                  - Use this to let the widget display alternative power, if the unit has one.
+                                    By default, it does so only for raid and party units. If none, the display will fall
+                                    back to the primary power (boolean)
 .smoothGradient                   - 9 color values to be used with the .colorSmooth option (table)
 .considerSelectionInCombatHostile - Indicates whether selection should be considered hostile while the unit is in
                                     combat with the player (boolean)
@@ -98,10 +99,11 @@ local unitSelectionType = Private.unitSelectionType
 -- sourced from FrameXML/UnitPowerBarAlt.lua
 local ALTERNATE_POWER_INDEX = Enum.PowerType.Alternate or 10
 
-local function getDisplayPower(unit)
-	local _, min, _, _, _, _, showOnRaid = UnitAlternatePowerInfo(unit)
-	if(showOnRaid) then
-		return ALTERNATE_POWER_INDEX, min
+local function GetDisplayPower(self)
+	local unit = self.__owner.unit
+	local barInfo = GetUnitPowerBarInfo(unit)
+	if(barInfo and barInfo.showOnRaid and (UnitInParty(unit) or UnitInRaid(unit))) then
+		return ALTERNATE_POWER_INDEX, barInfo.minPower
 	end
 end
 
@@ -195,7 +197,7 @@ local function Update(self, event, unit)
 
 	local displayType, min
 	if(element.displayAltPower) then
-		displayType, min = getDisplayPower(unit)
+		displayType, min = element:GetDisplayPower()
 	end
 
 	local cur, max = UnitPower(unit, displayType), UnitPowerMax(unit, displayType)
@@ -378,6 +380,15 @@ local function Enable(self)
 
 		if(element:IsObjectType('StatusBar') and not (element:GetStatusBarTexture() or element:GetStatusBarAtlas())) then
 			element:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+		end
+
+		--[[ Override: Power:GetDisplayPower()
+		Used to get info on the unit's alternative power, if any.
+
+		* self - the Power element
+		--]]
+		if(not element.GetDisplayPower) then
+			element.GetDisplayPower = GetDisplayPower
 		end
 
 		element:Show()
