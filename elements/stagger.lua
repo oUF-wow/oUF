@@ -180,7 +180,7 @@ local function ForceUpdate(element)
 	VisibilityPath(element.__owner, 'ForceUpdate', element.__owner.unit)
 end
 
-local function Enable(self)
+local function Enable(self, unit)
 	local element = self.Stagger
 	if(element and UnitIsUnit(unit, 'player')) then
 		element.__owner = self
