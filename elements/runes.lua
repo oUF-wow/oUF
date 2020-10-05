@@ -189,9 +189,14 @@ local function Path(self, ...)
 	(self.Runes.Override or Update) (self, ...)
 end
 
-local function ForceUpdate(element, event, ...)
-	Path(element.__owner, event or 'ForceUpdate', ...)
-	ColorPath(element.__owner, event or 'ForceUpdate', ...)
+local function AllPath(...)
+	Path(...)
+	ColorPath(...)
+end
+
+local function ForceUpdate(element)
+	Path(element.__owner, 'ForceUpdate')
+	ColorPath(element.__owner, 'ForceUpdate')
 end
 
 local function Enable(self, unit)
@@ -226,4 +231,4 @@ local function Disable(self)
 	end
 end
 
-oUF:AddElement('Runes', ForceUpdate, Enable, Disable)
+oUF:AddElement('Runes', AllPath, Enable, Disable)
