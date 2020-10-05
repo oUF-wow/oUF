@@ -91,11 +91,10 @@ local function UpdateColor(self, event, unit, powerType)
 		end
 	end
 
-	--[[ Callback: AdditionalPower:PostUpdateColor(unit, r, g, b)
+	--[[ Callback: AdditionalPower:PostUpdateColor(r, g, b)
 	Called after the element color has been updated.
 
 	* self - the AdditionalPower element
-	* unit - the unit for which the update has been triggered (string)
 	* r    - the red component of the used color (number)[0-1]
 	* g    - the green component of the used color (number)[0-1]
 	* b    - the blue component of the used color (number)[0-1]

@@ -80,11 +80,10 @@ local function UpdateColor(element, powerType)
 		end
 	end
 
-	--[[ Callback: ClassPower:PostUpdateColor(unit, r, g, b)
+	--[[ Callback: ClassPower:PostUpdateColor(r, g, b)
 	Called after the element color has been updated.
 
 	* self - the ClassPower element
-	* unit - the unit for which the update has been triggered (string)
 	* r    - the red component of the used color (number)[0-1]
 	* g    - the green component of the used color (number)[0-1]
 	* b    - the blue component of the used color (number)[0-1]

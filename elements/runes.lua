@@ -104,11 +104,10 @@ local function UpdateColor(self, event)
 		end
 	end
 
-	--[[ Callback: Runes:PostUpdateColor(unit, r, g, b)
+	--[[ Callback: Runes:PostUpdateColor(r, g, b)
 	Called after the element color has been updated.
 
 	* self - the Runes element
-	* unit - the unit for which the update has been triggered (string)
 	* r    - the red component of the used color (number)[0-1]
 	* g    - the green component of the used color (number)[0-1]
 	* b    - the blue component of the used color (number)[0-1]
