@@ -125,7 +125,7 @@ local function Update(self, event, unit, powerType)
 	element.cur = cur
 	element.max = max
 
-	--[[ Callback: AdditionalPower:PostUpdate(unit, cur, max)
+	--[[ Callback: AdditionalPower:PostUpdate(cur, max)
 	Called after the element has been updated.
 
 	* self - the AdditionalPower element
@@ -242,7 +242,7 @@ local function ForceUpdate(element)
 	VisibilityPath(element.__owner, 'ForceUpdate', element.__owner.unit)
 end
 
---[[ Power:SetFrequentUpdates(state)
+--[[ Power:SetFrequentUpdates(state, isForced)
 Used to toggle frequent updates.
 
 * self  - the Power element
