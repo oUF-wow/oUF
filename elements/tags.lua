@@ -20,7 +20,7 @@ output string regardless of whether the surrounding tag functions return a value
 to something like `2453/5000`.
 
 There's also an optional prefix and suffix that are separated from the tag name by `$>` and `$<` respectively,
-for example, `"[==$>name<$==]"` will resolve to `==Thrall==`, and `"[perhp$<%]"` will resole to `100%`, however, said
+for example, `"[==$>name$<==]"` will resolve to `==Thrall==`, and `"[perhp$<%]"` will resole to `100%`, however, said
 affixes will only be added if the tag function returns a non-empty string, if it returns `nil` or `""` affixes will be
 omitted.
 
