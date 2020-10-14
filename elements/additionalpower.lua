@@ -70,7 +70,7 @@ local function UpdateColor(self, event, unit, powerType)
 
 	local r, g, b, t
 	if(element.colorPower) then
-		t = self.colors.power[ADDITIONAL_POWER_BAR_INDEX]
+		t = self.colors.power[ADDITIONAL_POWER_BAR_NAME]
 	elseif(element.colorClass) then
 		t = self.colors.class[playerClass]
 	elseif(element.colorSmooth) then
