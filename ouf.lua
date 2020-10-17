@@ -689,8 +689,8 @@ do
 		]])
 		header:SetAttribute('oUF-headerType', isPetHeader and 'pet' or 'group')
 
-		if(Clique) then
-			SecureHandlerSetFrameRef(header, 'clickcast_header', Clique.header)
+		if(_G.Clique) then
+			SecureHandlerSetFrameRef(header, 'clickcast_header', _G.Clique.header)
 		end
 
 		if(header:GetAttribute('showParty')) then
@@ -698,12 +698,12 @@ do
 		end
 
 		if(visibility) then
-			local type, list = string.split(' ', visibility, 2)
+			local type, list = strsplit(' ', visibility, 2)
 			if(list and type == 'custom') then
 				RegisterAttributeDriver(header, 'state-visibility', list)
 				header.visibility = list
 			else
-				local condition = getCondition(string.split(',', visibility))
+				local condition = getCondition(strsplit(',', visibility))
 				RegisterAttributeDriver(header, 'state-visibility', condition)
 				header.visibility = condition
 			end
