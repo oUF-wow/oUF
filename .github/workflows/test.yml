@@ -26,7 +26,7 @@ jobs:
           lua utils/changelog > CHANGELOG.md
 
       - name: Package and release
-        uses: BigWigsMods/packager@064e524
+        uses: BigWigsMods/packager@cd13fb1
         with:
           args: -d
         env:
