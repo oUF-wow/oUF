@@ -3,7 +3,7 @@
 ## Download
 
 - [WoWInterface](https://www.wowinterface.com/downloads/info9994-oUF.html)
-- [Curse](https://mods.curse.com/addons/wow/ouf)
+- [CurseForge](https://www.curseforge.com/wow/addons/ouf)
 
 ## Introduction
 
@@ -15,7 +15,7 @@ By itself oUF doesn't do much, a layout is required.
 ## Documentation
 
 All the documentation can be found in the source code (until we publish it online).  
-If you're upgrading to version 7.0, see our [upgrade guide](https://www.wowinterface.com/forums/showthread.php?t=55422).
+If you're upgrading to version 10.0, see our [upgrade guide](https://www.wowinterface.com/forums/showthread.php?t=58257).
 
 ## Embedding
 
