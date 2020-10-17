@@ -10,7 +10,7 @@ local Private = oUF.Private
 
 local argcheck = Private.argcheck
 local error = Private.error
-local print = Private.print
+local print = Private.print --luacheck: no unused
 local unitExists = Private.unitExists
 
 local styles, style = {}
@@ -43,7 +43,7 @@ local function enableTargetUpdate(object)
 end
 Private.enableTargetUpdate = enableTargetUpdate
 
-local function updateActiveUnit(self, event, unit)
+local function updateActiveUnit(self)
 	-- Calculate units to work with
 	local realUnit, modUnit = SecureButton_GetUnit(self), SecureButton_GetModifiedUnit(self)
 
@@ -549,7 +549,7 @@ local function generateName(unit, ...)
 end
 
 do
-	local function styleProxy(self, frame, ...)
+	local function styleProxy(self, frame)
 		return walkObject(_G[frame])
 	end
 
