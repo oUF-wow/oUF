@@ -14,7 +14,12 @@ jobs:
 
       - name: Install Lua
         run: |
-          sudo apt-get install -qy lua5.1
+          echo '::group::apt update'
+          sudo apt-get -qq update
+          echo '::endgroup::'
+          echo '::group::apt install lua 5.1'
+          sudo apt-get install -qq lua5.1
+          echo '::endgroup::'
 
       - name: Generate changelog
         run: |
