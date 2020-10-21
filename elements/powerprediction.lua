@@ -132,9 +132,9 @@ local function ForceUpdate(element)
 	return Path(element.__owner, 'ForceUpdate', element.__owner.unit)
 end
 
-local function Enable(self)
+local function Enable(self, unit)
 	local element = self.PowerPrediction
-	if(element) then
+	if(element and UnitIsUnit(unit, 'player')) then
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
 
