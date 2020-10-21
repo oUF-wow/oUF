@@ -66,29 +66,26 @@ local function Update(self, event, unit)
 
 	local _, _, _, startTime, endTime, _, _, _, spellID = UnitCastingInfo(unit)
 	local mainPowerType = UnitPowerType(unit)
-	local hasAltManaBar = ALT_MANA_BAR_PAIR_DISPLAY_INFO[playerClass] and ALT_MANA_BAR_PAIR_DISPLAY_INFO[playerClass][mainPowerType]
+	local hasAltManaBar = ALT_MANA_BAR_PAIR_DISPLAY_INFO[playerClass]
+		and ALT_MANA_BAR_PAIR_DISPLAY_INFO[playerClass][mainPowerType]
 	local mainCost, altCost = 0, 0
 
 	if(event == 'UNIT_SPELLCAST_START' and startTime ~= endTime) then
 		local costTable = GetSpellPowerCost(spellID)
+		-- hasRequiredAura is always false if there's only 1 subtable
+		local checkRequiredAura = #costTable > 1
+
 		for _, costInfo in next, costTable do
-			-- costInfo content:
-			-- - name: string (powerToken)
-			-- - type: number (powerType)
-			-- - cost: number
-			-- - costPercent: number
-			-- - costPerSec: number
-			-- - minCost: number
-			-- - hasRequiredAura: boolean
-			-- - requiredAuraID: number
-			if(costInfo.type == mainPowerType) then
-				mainCost = costInfo.cost
+			if(not checkRequiredAura or costInfo.hasRequiredAura) then
+				if(costInfo.type == mainPowerType) then
+					mainCost = costInfo.cost
 
-				break
-			elseif(costInfo.type == ADDITIONAL_POWER_BAR_INDEX) then
-				altCost = costInfo.cost
+					break
+				elseif(costInfo.type == ADDITIONAL_POWER_BAR_INDEX) then
+					altCost = costInfo.cost
 
-				break
+					break
+				end
 			end
 		end
 	end
