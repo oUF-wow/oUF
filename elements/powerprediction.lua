@@ -79,15 +79,25 @@ local function Update(self, event, unit)
 			if(not checkRequiredAura or costInfo.hasRequiredAura) then
 				if(costInfo.type == mainPowerType) then
 					mainCost = costInfo.cost
+					element.mainCost = mainCost
 
 					break
 				elseif(costInfo.type == ADDITIONAL_POWER_BAR_INDEX) then
 					altCost = costInfo.cost
+					element.altCost = altCost
 
 					break
 				end
 			end
 		end
+	elseif(spellID) then
+		-- if we try to cast a spell while casting another one we need to avoid
+		-- resetting the element
+		mainCost = element.mainCost or 0
+		altCost = element.altCost or 0
+	else
+		element.mainCost = mainCost
+		element.altCost = altCost
 	end
 
 	if(element.mainBar) then
