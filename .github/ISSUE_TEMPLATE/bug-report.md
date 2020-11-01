@@ -16,7 +16,7 @@ labels: bug
 <!-- A clear and concise description of what you expected to happen. -->
 
 **Error report**
-<!-- If you encountered an error, please paste it within the brackets. -->
+<!-- If you encountered an error, please paste it on a new line after the first 3 backticks. -->
 ```
 ```
 
