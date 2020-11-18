@@ -69,3 +69,12 @@ end
 function Private.xpcall(func, ...)
 	return xpcall(func, errorHandler, ...)
 end
+
+function Private.validateEvent(event)
+	local isOK = xpcall(validator.RegisterEvent, errorHandler, validator, event)
+	if(isOK) then
+		validator:UnregisterEvent(event)
+	end
+
+	return isOK
+end
