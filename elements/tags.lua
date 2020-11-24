@@ -884,7 +884,7 @@ local function Untag(self, fs)
 		local fontstr = timers[index]
 		while fontstr do
 			if(fs == fontstr) then
-				table.remove(timers, i)
+				table.remove(timers, index)
 			else
 				index = index + 1
 			end
