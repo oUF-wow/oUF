@@ -709,7 +709,7 @@ local function getTagFunc(tagstr)
 							end
 						end
 					elseif(suffixStart - suffixEnd ~= 1) then
-						local suffix = bracket:sub(suffixStart, -2)
+						local suffix = bracket:sub(suffixStart, suffixEnd)
 
 						tagFunc = function(unit, realUnit)
 							local str
