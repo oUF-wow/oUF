@@ -106,8 +106,9 @@ local _, ns = ...
 local oUF = ns.oUF
 local Private = oUF.Private
 
-local xpcall = Private.xpcall
+local nierror = Private.nierror
 local unitExists = Private.unitExists
+local xpcall = Private.xpcall
 
 local _PATTERN = '%[..-%]+'
 
@@ -671,6 +672,12 @@ local function getTagFunc(tagstr)
 	if(not func) then
 		local format, numTags = tagstr:gsub('%%', '%%%%'):gsub(_PATTERN, '%%s')
 		local args = {}
+		local idx = 1
+
+		local format_ = {}
+		for i = 1, numTags do
+			format_[i] = '%s'
+		end
 
 		for bracket in tagstr:gmatch(_PATTERN) do
 			local tagFunc = funcPool[bracket] or tags[bracket:sub(2, -2)]
@@ -745,8 +752,16 @@ local function getTagFunc(tagstr)
 
 			if(tagFunc) then
 				table.insert(args, tagFunc)
+
+				idx = idx + 1
 			else
-				return error(string.format('Attempted to use invalid tag %s.', bracket), 3)
+				nierror(string.format('Attempted to use invalid tag %s.', bracket))
+
+				format_[idx] = bracket
+				format = string.format(format, unpack(format_, 1, numTags))
+				format_[idx] = '%s'
+
+				numTags = numTags - 1
 			end
 		end
 
