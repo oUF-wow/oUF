@@ -849,15 +849,15 @@ Used to register an element with oUF.
 
 * self    - the global oUF object
 * name    - unique name of the element (string)
-* update  - used to update the element (function?)
-* enable  - used to enable the element for a given unit frame and unit (function?)
-* disable - used to disable the element for a given unit frame (function?)
+* update  - used to update the element (function)
+* enable  - used to enable the element for a given unit frame and unit (function)
+* disable - used to disable the element for a given unit frame (function)
 --]]
 function oUF:AddElement(name, update, enable, disable)
 	argcheck(name, 2, 'string')
-	argcheck(update, 3, 'function', 'nil')
-	argcheck(enable, 4, 'function', 'nil')
-	argcheck(disable, 5, 'function', 'nil')
+	argcheck(update, 3, 'function')
+	argcheck(enable, 4, 'function')
+	argcheck(disable, 5, 'function')
 
 	if(elements[name]) then return error('Element [%s] is already registered.', name) end
 	elements[name] = {
