@@ -132,10 +132,12 @@ for k, v in next, {
 		if(not enabled) then return end
 
 		local update = elements[name].update
-		for k, func in next, self.__elements do
-			if(func == update) then
-				table.remove(self.__elements, k)
-				break
+		if(update) then
+			for k, func in next, self.__elements do
+				if(func == update) then
+					table.remove(self.__elements, k)
+					break
+				end
 			end
 		end
 
@@ -855,7 +857,7 @@ Used to register an element with oUF.
 --]]
 function oUF:AddElement(name, update, enable, disable)
 	argcheck(name, 2, 'string')
-	argcheck(update, 3, 'function')
+	argcheck(update, 3, 'function', 'nil')
 	argcheck(enable, 4, 'function')
 	argcheck(disable, 5, 'function')
 
