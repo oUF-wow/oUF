@@ -728,7 +728,7 @@ local function getTagFunc(tagstr)
 				nierror(string.format('Attempted to use invalid tag %s.', bracket))
 
 				format_[idx] = bracket
-				format = string.format(format, unpack(format_, 1, numTags))
+				format = format:format(unpack(format_, 1, numTags))
 				format_[idx] = '%s'
 
 				numTags = numTags - 1
