@@ -1,0 +1,25 @@
+name: Update copyright year in license file
+
+on:
+  schedule:
+    - cron: '0 3 1 1 *'
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone project
+        uses: actions/checkout@v2
+
+      - name: Update license year
+        uses: p3lim/license-year-updater@v1
+        with:
+          files: LICENSE
+
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          title: Update license
+          commit-message: Update license
+          branch: update-license
+          delete-branch: true
