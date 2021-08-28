@@ -21,7 +21,7 @@ function factory:PLAYER_LOGIN()
 	end
 
 	-- Avoid creating dupes.
-	wipe(queue)
+	table.wipe(queue)
 end
 
 --[[ Factory: oUF:Factory(func)

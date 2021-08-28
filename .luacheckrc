@@ -5,6 +5,7 @@ quiet = 1 -- suppress report output for files without warnings
 ignore = {
 	'2/self', -- unused argument self
 	'2/event', -- unused argument event
+	-- '212', -- unused arguments
 	'3/event', -- unused value event
 	'4', -- shadowing
 	'631', -- line is too long
@@ -14,10 +15,7 @@ read_globals = {
 	'debugstack',
 	'geterrorhandler',
 	string = {fields = {'join', 'split', 'trim'}},
-	'strjoin',
-	'strsplit',
-	table = {fields = {'wipe'}},
-	'wipe',
+	table = {fields = {'removemulti', 'wipe'}},
 
 	-- FrameXML
 	'CastingBarFrame',

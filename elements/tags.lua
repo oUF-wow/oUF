@@ -692,7 +692,7 @@ local function getTagFunc(tagstr)
 						tagFunc = function(unit, realUnit)
 							local str
 							if(customArgs) then
-								str = tag(unit, realUnit, strsplit(',', customArgs))
+								str = tag(unit, realUnit, string.split(',', customArgs))
 							else
 								str = tag(unit, realUnit)
 							end
@@ -705,7 +705,7 @@ local function getTagFunc(tagstr)
 						tagFunc = function(unit, realUnit)
 							local str
 							if(customArgs) then
-								str = tag(unit, realUnit, strsplit(',', customArgs))
+								str = tag(unit, realUnit, string.split(',', customArgs))
 							else
 								str = tag(unit, realUnit)
 							end
