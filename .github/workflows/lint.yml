@@ -1,0 +1,14 @@
+name: Lint
+
+on: pull_request
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/Checkout@v2
+    - name: Run luacheck
+      uses: nebularg/actions-luacheck@v1
+      with:
+        annotate: warning
