@@ -146,7 +146,7 @@ local function createAuraIcon(element, index)
 	return button
 end
 
-local function customFilter(element, unit, button, name) --luacheck: no unused args
+local function customFilter(element, unit, button, name)
 	if((element.onlyShowPlayer and button.isPlayer) or (not element.onlyShowPlayer and name)) then
 		return true
 	end

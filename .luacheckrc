@@ -3,9 +3,11 @@ std = 'lua51'
 quiet = 1 -- suppress report output for files without warnings
 
 ignore = {
-	'2/self', -- unused argument self
-	'2/event', -- unused argument event
-	'3/event', -- unused value event
+	'212/self', -- unused argument self
+	'212/event', -- unused argument event
+	'212/unit', -- unused argument unit
+	'312/event', -- unused value of argument event
+	'312/unit', -- unused value of argument unit
 	'4', -- shadowing
 	'631', -- line is too long
 }
