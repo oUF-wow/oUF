@@ -8,7 +8,7 @@ ignore = {
 	'212/unit', -- unused argument unit
 	'312/event', -- unused value of argument event
 	'312/unit', -- unused value of argument unit
-	'4', -- shadowing
+	'431', -- shadowing
 	'631', -- line is too long
 }
 
