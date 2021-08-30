@@ -72,9 +72,6 @@ button.isPlayer - indicates if the aura caster is the player or their vehicle (b
 local _, ns = ...
 local oUF = ns.oUF
 
-local VISIBLE = 1
-local HIDDEN = 0
-
 local function UpdateTooltip(self)
 	if(GameTooltip:IsForbidden()) then return end
 
@@ -152,13 +149,10 @@ local function customFilter(element, unit, button, name)
 	end
 end
 
-local function updateIcon(element, unit, index, offset, filter, isDebuff, visible)
-	local name, texture, count, debuffType, duration, expiration, caster, isStealable,
-		nameplateShowSelf, spellID, canApply, isBossDebuff, casterIsPlayer, nameplateShowAll,
-		timeMod, effect1, effect2, effect3 = UnitAura(unit, index, filter)
-
-	if(name) then
-		local position = visible + offset + 1
+local function updateIcons(element, auraTable, unit, offset)
+	for index = 1, #auraTable do
+		local aura = auraTable[index]
+		local position = index + offset
 		local button = element[position]
 		if(not button) then
 			--[[ Override: Auras:CreateIcon(position)
@@ -177,90 +171,59 @@ local function updateIcon(element, unit, index, offset, filter, isDebuff, visibl
 			element.createdIcons = element.createdIcons + 1
 		end
 
-		button.caster = caster
-		button.filter = filter
-		button.isDebuff = isDebuff
-		button.isPlayer = caster == 'player' or caster == 'vehicle'
+		-- We might want to consider delaying the creation of an actual cooldown object to this point, but I think that
+		-- will just make things needlessly complicated.
+		if(button.cd and not element.disableCooldown) then
+			if(aura.duration and aura.duration > 0) then
+				button.cd:SetCooldown(aura.expiration - aura.duration, aura.duration)
+				button.cd:Show()
+			else
+				button.cd:Hide()
+			end
+		end
 
-		--[[ Override: Auras:CustomFilter(unit, button, ...)
-		Defines a custom filter that controls if the aura button should be shown.
+		if(button.overlay) then
+			if((auraTable.isDebuff and element.showDebuffType) or (not auraTable.isDebuff and element.showBuffType)
+				or element.showType) then
+				local color = element.__owner.colors.debuff[aura.debuffType] or element.__owner.colors.debuff.none
 
-		* self   - the widget holding the aura buttons
-		* unit   - the unit on which the aura is cast (string)
-		* button - the button displaying the aura (Button)
-		* ...    - the return values from [UnitAura](http://wowprogramming.com/docs/api/UnitAura.html)
+				button.overlay:SetVertexColor(color[1], color[2], color[3])
+				button.overlay:Show()
+			else
+				button.overlay:Hide()
+			end
+		end
 
-		## Returns
+		if(button.stealable) then
+			if(not auraTable.isDebuff and aura.isStealable and element.showStealableBuffs
+			and not UnitIsUnit('player', unit)) then
+				button.stealable:Show()
+			else
+				button.stealable:Hide()
+			end
+		end
 
-		* show - indicates whether the aura button should be shown (boolean)
+		if(button.icon) then button.icon:SetTexture(aura.texture) end
+		if(button.count) then button.count:SetText(aura.count > 1 and aura.count) end
+
+		local width = element.width or element.size or 16
+		local height = element.height or element.size or 16
+		button:SetSize(width, height)
+
+		button:EnableMouse(not element.disableMouse)
+		button:SetID(index)
+		button:Show()
+
+		--[[ Callback: Auras:PostUpdateIcon(unit, button, index, position)
+		Called after the aura button has been updated.
+
+		* self        - the widget holding the aura buttons
+		* unit        - the unit on which the aura is cast (string)
+		* button      - the updated aura button (Button)
+		* aura        - ??? (table)
 		--]]
-		local show = (element.CustomFilter or customFilter) (element, unit, button, name, texture,
-			count, debuffType, duration, expiration, caster, isStealable, nameplateShowSelf, spellID,
-			canApply, isBossDebuff, casterIsPlayer, nameplateShowAll,timeMod, effect1, effect2, effect3)
-
-		if(show) then
-			-- We might want to consider delaying the creation of an actual cooldown
-			-- object to this point, but I think that will just make things needlessly
-			-- complicated.
-			if(button.cd and not element.disableCooldown) then
-				if(duration and duration > 0) then
-					button.cd:SetCooldown(expiration - duration, duration)
-					button.cd:Show()
-				else
-					button.cd:Hide()
-				end
-			end
-
-			if(button.overlay) then
-				if((isDebuff and element.showDebuffType) or (not isDebuff and element.showBuffType) or element.showType) then
-					local color = element.__owner.colors.debuff[debuffType] or element.__owner.colors.debuff.none
-
-					button.overlay:SetVertexColor(color[1], color[2], color[3])
-					button.overlay:Show()
-				else
-					button.overlay:Hide()
-				end
-			end
-
-			if(button.stealable) then
-				if(not isDebuff and isStealable and element.showStealableBuffs and not UnitIsUnit('player', unit)) then
-					button.stealable:Show()
-				else
-					button.stealable:Hide()
-				end
-			end
-
-			if(button.icon) then button.icon:SetTexture(texture) end
-			if(button.count) then button.count:SetText(count > 1 and count) end
-
-			local width = element.width or element.size or 16
-			local height = element.height or element.size or 16
-			button:SetSize(width, height)
-
-			button:EnableMouse(not element.disableMouse)
-			button:SetID(index)
-			button:Show()
-
-			--[[ Callback: Auras:PostUpdateIcon(unit, button, index, position)
-			Called after the aura button has been updated.
-
-			* self        - the widget holding the aura buttons
-			* unit        - the unit on which the aura is cast (string)
-			* button      - the updated aura button (Button)
-			* index       - the index of the aura (number)
-			* position    - the actual position of the aura button (number)
-			* duration    - the aura duration in seconds (number?)
-			* expiration  - the point in time when the aura will expire. Comparable to GetTime() (number)
-			* debuffType  - the debuff type of the aura (string?)['Curse', 'Disease', 'Magic', 'Poison']
-			* isStealable - whether the aura can be stolen or purged (boolean)
-			--]]
-			if(element.PostUpdateIcon) then
-				element:PostUpdateIcon(unit, button, index, position, duration, expiration, debuffType, isStealable)
-			end
-
-			return VISIBLE
-		else
-			return HIDDEN
+		if(element.PostUpdateIcon) then
+			element:PostUpdateIcon(unit, button, position, aura)
 		end
 	end
 end
@@ -288,31 +251,52 @@ local function SetPosition(element, from, to)
 	end
 end
 
-local function filterIcons(element, unit, filter, limit, isDebuff, offset, dontHide)
-	if(not offset) then offset = 0 end
-	local index = 1
-	local visible = 0
-	local hidden = 0
-	while(visible < limit) do
-		local result = updateIcon(element, unit, index, offset, filter, isDebuff, visible)
-		if(not result) then
+
+local function filterIcons(element, auraTable, unit, filter, limit, isDebuff)
+	table.wipe(auraTable)
+
+	auraTable.filter = filter
+	auraTable.isDebuff = isDebuff
+
+	for index = 1, limit do
+		local name, texture, count, debuffType, duration, expiration, caster, isStealable, nameplateShowSelf, spellID,
+			canApply, isBossAura, casterIsPlayer, nameplateShowAll, timeMod, effect1, effect2, effect3
+			= UnitAura(unit, index, filter)
+		if(name) then
+			-- For whatever reason even Blizz don't use casterIsPlayer, but instead do this
+			local isPlayerAura = caster and (UnitIsUnit("player", caster) or UnitIsOwnerOrControllerOfUnit("player", caster))
+
+			local show = (element.CustomFilter or customFilter) (element, unit, filter, isDebuff, isPlayerAura, name,
+				texture, count, debuffType, duration, expiration, caster, isStealable, nameplateShowSelf, spellID,
+				canApply, isBossAura, casterIsPlayer, nameplateShowAll, timeMod, effect1, effect2, effect3)
+			if(show) then
+				table.insert(auraTable, {
+					index = index,
+					name = name,
+					texture = texture,
+					count = count,
+					debuffType = debuffType,
+					duration = duration,
+					expiration = expiration,
+					caster = caster,
+					isStealable = isStealable,
+					nameplateShowSelf = nameplateShowSelf,
+					spellID = spellID,
+					canApply = canApply,
+					isBossAura = isBossAura,
+					isPlayerAura = isPlayerAura,
+					casterIsPlayer = casterIsPlayer, -- use isPlayerAura instead
+					nameplateShowAll = nameplateShowAll,
+					timeMod = timeMod,
+					effect1 = effect1,
+					effect2 = effect2,
+					effect3 = effect3,
+				})
+			end
+		else
 			break
-		elseif(result == VISIBLE) then
-			visible = visible + 1
-		elseif(result == HIDDEN) then
-			hidden = hidden + 1
-		end
-
-		index = index + 1
-	end
-
-	if(not dontHide) then
-		for i = visible + offset + 1, #element do
-			element[i]:Hide()
 		end
 	end
-
-	return visible, hidden
 end
 
 local function UpdateAuras(self, event, unit)
@@ -332,16 +316,23 @@ local function UpdateAuras(self, event, unit)
 		local numDebuffs = auras.numDebuffs or 40
 		local max = auras.numTotal or numBuffs + numDebuffs
 
-		local visibleBuffs = filterIcons(auras, unit, auras.buffFilter or auras.filter or 'HELPFUL', math.min(numBuffs, max), nil, 0, true)
+		auras.visibleBuffs = auras.visibleBuffs or {}
+
+		filterIcons(auras, auras.visibleBuffs, unit, auras.buffFilter or auras.filter or 'HELPFUL',
+			math.min(numBuffs, max))
+
+		local numVisibleBuffs = #auras.visibleBuffs
+
+		updateIcons(auras, auras.visibleBuffs, unit, 0)
 
 		local hasGap
-		if(visibleBuffs ~= 0 and auras.gap) then
+		if(numVisibleBuffs ~= 0 and auras.gap) then
 			hasGap = true
-			visibleBuffs = visibleBuffs + 1
+			numVisibleBuffs = numVisibleBuffs + 1
 
-			local button = auras[visibleBuffs]
+			local button = auras[numVisibleBuffs]
 			if(not button) then
-				button = (auras.CreateIcon or createAuraIcon) (auras, visibleBuffs)
+				button = (auras.CreateIcon or createAuraIcon) (auras, numVisibleBuffs)
 				table.insert(auras, button)
 				auras.createdIcons = auras.createdIcons + 1
 			end
@@ -359,26 +350,34 @@ local function UpdateAuras(self, event, unit)
 			--[[ Callback: Auras:PostUpdateGapIcon(unit, gapButton, visibleBuffs)
 			Called after an invisible aura button has been created. Only used by Auras when the `gap` option is enabled.
 
-			* self         - the widget holding the aura buttons
-			* unit         - the unit that has the invisible aura button (string)
-			* gapButton    - the invisible aura button (Button)
-			* visibleBuffs - the number of currently visible aura buttons (number)
+			* self            - the widget holding the aura buttons
+			* unit            - the unit that has the invisible aura button (string)
+			* gapButton       - the invisible aura button (Button)
+			* numVisibleBuffs - the number of currently visible aura buttons (number)
 			--]]
 			if(auras.PostUpdateGapIcon) then
-				auras:PostUpdateGapIcon(unit, button, visibleBuffs)
+				auras:PostUpdateGapIcon(unit, button, numVisibleBuffs)
 			end
 		end
 
-		local visibleDebuffs = filterIcons(auras, unit, auras.debuffFilter or auras.filter or 'HARMFUL', math.min(numDebuffs, max - visibleBuffs), true, visibleBuffs)
-		auras.visibleDebuffs = visibleDebuffs
+		auras.visibleDebuffs = auras.visibleDebuffs or {}
 
-		if(hasGap and visibleDebuffs == 0) then
-			auras[visibleBuffs]:Hide()
-			visibleBuffs = visibleBuffs - 1
+		filterIcons(auras, auras.visibleDebuffs, unit, auras.debuffFilter or auras.filter or 'HARMFUL',
+			math.min(numDebuffs, max - numVisibleBuffs), true)
+
+		local numVisibleDebuffs = #auras.visibleDebuffs
+
+		updateIcons(auras, auras.visibleDebuffs, unit, numVisibleBuffs)
+
+		if(hasGap and numVisibleDebuffs == 0) then
+			auras[numVisibleBuffs]:Hide()
+			numVisibleBuffs = numVisibleBuffs - 1
 		end
 
-		auras.visibleBuffs = visibleBuffs
-		auras.visibleAuras = auras.visibleBuffs + auras.visibleDebuffs
+		-- Hide the rest
+		for i = numVisibleBuffs + numVisibleDebuffs + 1, #auras do
+			auras[i]:Hide()
+		end
 
 		local fromRange, toRange
 		--[[ Callback: Auras:PreSetPosition(max)
@@ -423,8 +422,19 @@ local function UpdateAuras(self, event, unit)
 		if(buffs.PreUpdate) then buffs:PreUpdate(unit) end
 
 		local numBuffs = buffs.num or 32
-		local visibleBuffs = filterIcons(buffs, unit, buffs.filter or 'HELPFUL', numBuffs)
-		buffs.visibleBuffs = visibleBuffs
+
+		buffs.visibleBuffs = buffs.visibleBuffs or {}
+
+		filterIcons(buffs, buffs.visibleBuffs, unit, buffs.filter or 'HELPFUL', numBuffs)
+
+		local numVisibleBuffs = #auras.visibleBuffs
+
+		updateIcons(buffs, buffs.visibleBuffs, unit, 0)
+
+		-- Hide the rest
+		for i = numVisibleBuffs + 1, #buffs do
+			buffs[i]:Hide()
+		end
 
 		local fromRange, toRange
 		if(buffs.PreSetPosition) then
@@ -444,8 +454,19 @@ local function UpdateAuras(self, event, unit)
 		if(debuffs.PreUpdate) then debuffs:PreUpdate(unit) end
 
 		local numDebuffs = debuffs.num or 40
-		local visibleDebuffs = filterIcons(debuffs, unit, debuffs.filter or 'HARMFUL', numDebuffs, true)
-		debuffs.visibleDebuffs = visibleDebuffs
+
+		debuffs.visibleDebuffs = debuffs.visibleDebuffs or {}
+
+		filterIcons(debuffs, debuffs.visibleDebuffs, unit, debuffs.filter or 'HARMFUL', numDebuffs, true)
+
+		local numVisibleDebuffs = #debuffs.visibleDebuffs
+
+		updateIcons(debuffs, debuffs.visibleDebuffs, unit, 0)
+
+		-- Hide the rest
+		for i = numVisibleDebuffs + 1, #debuffs do
+			debuffs[i]:Hide()
+		end
 
 		local fromRange, toRange
 		if(debuffs.PreSetPosition) then
