@@ -211,7 +211,7 @@ local function updateIcons(element, auraTable, unit, offset)
 		button:SetSize(width, height)
 
 		button:EnableMouse(not element.disableMouse)
-		button:SetID(index)
+		button:SetID(aura.index)
 		button:Show()
 
 		--[[ Callback: Auras:PostUpdateIcon(unit, button, index, position)
