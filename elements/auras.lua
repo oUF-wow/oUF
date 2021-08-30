@@ -150,7 +150,7 @@ local function customFilter(element, unit, button, name)
 end
 
 local function updateIcons(element, auraTable, unit, offset)
-	for index = 1, #auraTable do
+	for index = 1, auraTable.num do
 		local aura = auraTable[index]
 		local position = index + offset
 		local button = element[position]
@@ -253,45 +253,49 @@ end
 
 
 local function filterIcons(element, auraTable, unit, filter, limit, isDebuff)
-	table.wipe(auraTable)
-
 	auraTable.filter = filter
 	auraTable.isDebuff = isDebuff
+	auraTable.num = 0
 
 	for index = 1, limit do
 		local name, texture, count, debuffType, duration, expiration, caster, isStealable, nameplateShowSelf, spellID,
-			canApply, isBossAura, casterIsPlayer, nameplateShowAll, timeMod, effect1, effect2, effect3
-			= UnitAura(unit, index, filter)
+			canApply, isBossAura, _, nameplateShowAll, timeMod, effect1, effect2, effect3 = UnitAura(unit, index, filter) -- _ is casterIsPlayer
+
 		if(name) then
 			-- For whatever reason even Blizz don't use casterIsPlayer, but instead do this
-			local isPlayerAura = caster and (UnitIsUnit("player", caster) or UnitIsOwnerOrControllerOfUnit("player", caster))
-
-			local show = (element.CustomFilter or customFilter) (element, unit, filter, isDebuff, isPlayerAura, name,
-				texture, count, debuffType, duration, expiration, caster, isStealable, nameplateShowSelf, spellID,
-				canApply, isBossAura, casterIsPlayer, nameplateShowAll, timeMod, effect1, effect2, effect3)
+			local isPlayerAura = caster and (UnitIsUnit('player', caster) or UnitIsOwnerOrControllerOfUnit('player', caster))
+			local show = (element.CustomFilter or customFilter) (element, unit, filter, isDebuff, name, texture, count,
+				debuffType, duration, expiration, caster, isStealable, nameplateShowSelf, spellID, canApply, isBossAura,
+				isPlayerAura, nameplateShowAll, timeMod, effect1, effect2, effect3)
 			if(show) then
-				table.insert(auraTable, {
-					index = index,
-					name = name,
-					texture = texture,
-					count = count,
-					debuffType = debuffType,
-					duration = duration,
-					expiration = expiration,
-					caster = caster,
-					isStealable = isStealable,
-					nameplateShowSelf = nameplateShowSelf,
-					spellID = spellID,
-					canApply = canApply,
-					isBossAura = isBossAura,
-					isPlayerAura = isPlayerAura,
-					casterIsPlayer = casterIsPlayer, -- use isPlayerAura instead
-					nameplateShowAll = nameplateShowAll,
-					timeMod = timeMod,
-					effect1 = effect1,
-					effect2 = effect2,
-					effect3 = effect3,
-				})
+				auraTable.num = auraTable.num + 1
+
+				local aura = auraTable[auraTable.num]
+				if not aura then
+					auraTable[auraTable.num] = {}
+					aura = auraTable[auraTable.num]
+				end
+
+				aura.index = index
+				aura.name = name
+				aura.texture = texture
+				aura.count = count
+				aura.debuffType = debuffType
+				aura.duration = duration
+				aura.expiration = expiration
+				aura.caster = caster
+				aura.isStealable = isStealable
+				aura.nameplateShowSelf = nameplateShowSelf
+				aura.spellID = spellID
+				aura.canApply = canApply
+				aura.isBossAura = isBossAura
+				aura.isPlayerAura = isPlayerAura
+				-- aura.casterIsPlayer = casterIsPlayer -- use isPlayerAura instead
+				aura.nameplateShowAll = nameplateShowAll
+				aura.timeMod = timeMod
+				aura.effect1 = effect1
+				aura.effect2 = effect2
+				aura.effect3 = effect3
 			end
 		else
 			break
@@ -321,7 +325,7 @@ local function UpdateAuras(self, event, unit)
 		filterIcons(auras, auras.visibleBuffs, unit, auras.buffFilter or auras.filter or 'HELPFUL',
 			math.min(numBuffs, max))
 
-		local numVisibleBuffs = #auras.visibleBuffs
+		local numVisibleBuffs = auras.visibleBuffs.num
 
 		-- TODO: replace with sortIcons
 		if auras.CustomSort then
@@ -370,7 +374,7 @@ local function UpdateAuras(self, event, unit)
 		filterIcons(auras, auras.visibleDebuffs, unit, auras.debuffFilter or auras.filter or 'HARMFUL',
 			math.min(numDebuffs, max - numVisibleBuffs), true)
 
-		local numVisibleDebuffs = #auras.visibleDebuffs
+		local numVisibleDebuffs = auras.visibleDebuffs.num
 
 		-- TODO: replace with sortIcons
 		if auras.CustomSort then
@@ -437,7 +441,7 @@ local function UpdateAuras(self, event, unit)
 
 		filterIcons(buffs, buffs.visibleBuffs, unit, buffs.filter or 'HELPFUL', numBuffs)
 
-		local numVisibleBuffs = #auras.visibleBuffs
+		local numVisibleBuffs = auras.visibleBuffs.num
 
 		-- TODO: replace with sortIcons
 		if buffs.CustomSort then
@@ -474,7 +478,7 @@ local function UpdateAuras(self, event, unit)
 
 		filterIcons(debuffs, debuffs.visibleDebuffs, unit, debuffs.filter or 'HARMFUL', numDebuffs, true)
 
-		local numVisibleDebuffs = #debuffs.visibleDebuffs
+		local numVisibleDebuffs = debuffs.visibleDebuffs.num
 
 		-- TODO: replace with sortIcons
 		if debuffs.CustomSort then
