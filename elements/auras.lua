@@ -75,7 +75,7 @@ local oUF = ns.oUF
 local function UpdateTooltip(self)
 	if(GameTooltip:IsForbidden()) then return end
 
-	GameTooltip:SetUnitAura(self:GetParent().__owner.unit, self:GetID(), self.filter)
+	GameTooltip:SetUnitAura(self:GetParent().__owner.unit, self:GetID(), self.aura.filter)
 end
 
 local function onEnter(self)
@@ -143,12 +143,6 @@ local function createAuraIcon(element, index)
 	return button
 end
 
-local function customFilter(element, unit, button, name)
-	if((element.onlyShowPlayer and button.isPlayer) or (not element.onlyShowPlayer and name)) then
-		return true
-	end
-end
-
 local function updateIcons(element, auraTable, unit, offset)
 	for index = 1, auraTable.num do
 		local aura = auraTable[index]
@@ -171,6 +165,8 @@ local function updateIcons(element, auraTable, unit, offset)
 			element.createdIcons = element.createdIcons + 1
 		end
 
+		button.aura = aura
+
 		-- We might want to consider delaying the creation of an actual cooldown object to this point, but I think that
 		-- will just make things needlessly complicated.
 		if(button.cd and not element.disableCooldown) then
@@ -183,7 +179,7 @@ local function updateIcons(element, auraTable, unit, offset)
 		end
 
 		if(button.overlay) then
-			if((auraTable.isDebuff and element.showDebuffType) or (not auraTable.isDebuff and element.showBuffType)
+			if((aura.isDebuff and element.showDebuffType) or (not aura.isDebuff and element.showBuffType)
 				or element.showType) then
 				local color = element.__owner.colors.debuff[aura.debuffType] or element.__owner.colors.debuff.none
 
@@ -195,7 +191,7 @@ local function updateIcons(element, auraTable, unit, offset)
 		end
 
 		if(button.stealable) then
-			if(not auraTable.isDebuff and aura.isStealable and element.showStealableBuffs
+			if(not aura.isDebuff and aura.isStealable and element.showStealableBuffs
 			and not UnitIsUnit('player', unit)) then
 				button.stealable:Show()
 			else
@@ -214,13 +210,14 @@ local function updateIcons(element, auraTable, unit, offset)
 		button:SetID(aura.index)
 		button:Show()
 
-		--[[ Callback: Auras:PostUpdateIcon(unit, button, index, position)
+		--[[ Callback: Auras:PostUpdateIcon(unit, button, index, position, aura)
 		Called after the aura button has been updated.
 
-		* self        - the widget holding the aura buttons
-		* unit        - the unit on which the aura is cast (string)
-		* button      - the updated aura button (Button)
-		* aura        - ??? (table)
+		* self     - the widget holding the aura buttons
+		* unit     - the unit on which the aura is cast (string)
+		* button   - the updated aura button (Button)
+		* position - the actual position of the aura button (number)
+		* aura     - ??? (table)
 		--]]
 		if(element.PostUpdateIcon) then
 			element:PostUpdateIcon(unit, button, position, aura)
@@ -251,10 +248,13 @@ local function SetPosition(element, from, to)
 	end
 end
 
+local function customFilter(element, unit, _, _, name, _, _, _, _, _, _, _, _, _, _, _, isPlayerAura)
+	if((element.onlyShowPlayer and isPlayerAura) or (not element.onlyShowPlayer and name)) then
+		return true
+	end
+end
 
 local function filterIcons(element, auraTable, unit, filter, limit, isDebuff)
-	auraTable.filter = filter
-	auraTable.isDebuff = isDebuff
 	auraTable.num = 0
 
 	for index = 1, limit do
@@ -267,9 +267,12 @@ local function filterIcons(element, auraTable, unit, filter, limit, isDebuff)
 			local show = (element.CustomFilter or customFilter) (element, unit, filter, isDebuff, name, texture, count,
 				debuffType, duration, expiration, caster, isStealable, nameplateShowSelf, spellID, canApply, isBossAura,
 				isPlayerAura, nameplateShowAll, timeMod, effect1, effect2, effect3)
+
 			if(show) then
 				auraTable.num = auraTable.num + 1
 
+				-- Storing aura info in a table might sound like a bad idea, however, in the worst case scenario when
+				-- ALL fields have info in them it's still <2kB of data per aura
 				local aura = auraTable[auraTable.num]
 				if not aura then
 					auraTable[auraTable.num] = {}
@@ -277,6 +280,11 @@ local function filterIcons(element, auraTable, unit, filter, limit, isDebuff)
 				end
 
 				aura.index = index
+				aura.filter = filter
+				aura.isDebuff = isDebuff
+				aura.isPlayerAura = isPlayerAura
+
+				-- UnitAura returns
 				aura.name = name
 				aura.texture = texture
 				aura.count = count
@@ -289,8 +297,7 @@ local function filterIcons(element, auraTable, unit, filter, limit, isDebuff)
 				aura.spellID = spellID
 				aura.canApply = canApply
 				aura.isBossAura = isBossAura
-				aura.isPlayerAura = isPlayerAura
-				-- aura.casterIsPlayer = casterIsPlayer -- use isPlayerAura instead
+				-- aura.casterIsPlayer = casterIsPlayer -- use .isPlayerAura instead
 				aura.nameplateShowAll = nameplateShowAll
 				aura.timeMod = timeMod
 				aura.effect1 = effect1
