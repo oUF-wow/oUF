@@ -310,6 +310,10 @@ local function filterIcons(element, auraTable, unit, filter, limit, isDebuff)
 	end
 end
 
+local function customSort(element, ...)
+	-- TODO: Implement me!
+end
+
 local function UpdateAuras(self, event, unit)
 	if(self.unit ~= unit) then return end
 
@@ -334,10 +338,7 @@ local function UpdateAuras(self, event, unit)
 
 		local numVisibleBuffs = auras.visibleBuffs.num
 
-		-- TODO: replace with sortIcons
-		if auras.CustomSort then
-			auras:CustomSort(unit, auras.visibleBuffs)
-		end
+		(auras.CustomSort or customSort) (auras, auras.visibleBuffs, unit)
 
 		updateIcons(auras, auras.visibleBuffs, unit, 0)
 
@@ -383,10 +384,7 @@ local function UpdateAuras(self, event, unit)
 
 		local numVisibleDebuffs = auras.visibleDebuffs.num
 
-		-- TODO: replace with sortIcons
-		if auras.CustomSort then
-			auras:CustomSort(unit, auras.visibleDebuffs)
-		end
+		(auras.CustomSort or customSort) (auras, auras.visibleDebuffs, unit)
 
 		updateIcons(auras, auras.visibleDebuffs, unit, numVisibleBuffs)
 
@@ -450,10 +448,7 @@ local function UpdateAuras(self, event, unit)
 
 		local numVisibleBuffs = auras.visibleBuffs.num
 
-		-- TODO: replace with sortIcons
-		if buffs.CustomSort then
-			buffs:CustomSort(unit, buffs.visibleBuffs)
-		end
+		(buffs.CustomSort or customSort) (buffs, buffs.visibleBuffs, unit)
 
 		updateIcons(buffs, buffs.visibleBuffs, unit, 0)
 
@@ -487,10 +482,7 @@ local function UpdateAuras(self, event, unit)
 
 		local numVisibleDebuffs = debuffs.visibleDebuffs.num
 
-		-- TODO: replace with sortIcons
-		if debuffs.CustomSort then
-			debuffs:CustomSort(unit, debuffs.visibleDebuffs)
-		end
+		(debuffs.CustomSort or customSort) (debuffs, debuffs.visibleDebuffs, unit)
 
 		updateIcons(debuffs, debuffs.visibleDebuffs, unit, 0)
 
