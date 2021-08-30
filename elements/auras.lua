@@ -323,6 +323,11 @@ local function UpdateAuras(self, event, unit)
 
 		local numVisibleBuffs = #auras.visibleBuffs
 
+		-- TODO: replace with sortIcons
+		if auras.CustomSort then
+			auras:CustomSort(unit, auras.visibleBuffs)
+		end
+
 		updateIcons(auras, auras.visibleBuffs, unit, 0)
 
 		local hasGap
@@ -366,6 +371,11 @@ local function UpdateAuras(self, event, unit)
 			math.min(numDebuffs, max - numVisibleBuffs), true)
 
 		local numVisibleDebuffs = #auras.visibleDebuffs
+
+		-- TODO: replace with sortIcons
+		if auras.CustomSort then
+			auras:CustomSort(unit, auras.visibleDebuffs)
+		end
 
 		updateIcons(auras, auras.visibleDebuffs, unit, numVisibleBuffs)
 
@@ -429,6 +439,11 @@ local function UpdateAuras(self, event, unit)
 
 		local numVisibleBuffs = #auras.visibleBuffs
 
+		-- TODO: replace with sortIcons
+		if buffs.CustomSort then
+			buffs:CustomSort(unit, buffs.visibleBuffs)
+		end
+
 		updateIcons(buffs, buffs.visibleBuffs, unit, 0)
 
 		-- Hide the rest
@@ -460,6 +475,11 @@ local function UpdateAuras(self, event, unit)
 		filterIcons(debuffs, debuffs.visibleDebuffs, unit, debuffs.filter or 'HARMFUL', numDebuffs, true)
 
 		local numVisibleDebuffs = #debuffs.visibleDebuffs
+
+		-- TODO: replace with sortIcons
+		if debuffs.CustomSort then
+			debuffs:CustomSort(unit, debuffs.visibleDebuffs)
+		end
 
 		updateIcons(debuffs, debuffs.visibleDebuffs, unit, 0)
 
