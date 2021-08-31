@@ -336,7 +336,7 @@ local function UpdateAuras(self, event, unit)
 		filterIcons(auras, auras.visibleBuffs, unit, auras.buffFilter or auras.filter or 'HELPFUL',
 			math.min(numBuffs, max))
 
-		local numVisibleBuffs = auras.visibleBuffs.num
+		local numVisibleBuffs = auras.visibleBuffs.num;
 
 		(auras.CustomSort or customSort) (auras, auras.visibleBuffs, unit)
 
@@ -382,7 +382,7 @@ local function UpdateAuras(self, event, unit)
 		filterIcons(auras, auras.visibleDebuffs, unit, auras.debuffFilter or auras.filter or 'HARMFUL',
 			math.min(numDebuffs, max - numVisibleBuffs), true)
 
-		local numVisibleDebuffs = auras.visibleDebuffs.num
+		local numVisibleDebuffs = auras.visibleDebuffs.num;
 
 		(auras.CustomSort or customSort) (auras, auras.visibleDebuffs, unit)
 
@@ -446,7 +446,7 @@ local function UpdateAuras(self, event, unit)
 
 		filterIcons(buffs, buffs.visibleBuffs, unit, buffs.filter or 'HELPFUL', numBuffs)
 
-		local numVisibleBuffs = auras.visibleBuffs.num
+		local numVisibleBuffs = auras.visibleBuffs.num;
 
 		(buffs.CustomSort or customSort) (buffs, buffs.visibleBuffs, unit)
 
@@ -480,7 +480,7 @@ local function UpdateAuras(self, event, unit)
 
 		filterIcons(debuffs, debuffs.visibleDebuffs, unit, debuffs.filter or 'HARMFUL', numDebuffs, true)
 
-		local numVisibleDebuffs = debuffs.visibleDebuffs.num
+		local numVisibleDebuffs = debuffs.visibleDebuffs.num;
 
 		(debuffs.CustomSort or customSort) (debuffs, debuffs.visibleDebuffs, unit)
 
