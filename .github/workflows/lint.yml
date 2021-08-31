@@ -12,3 +12,4 @@ jobs:
       uses: nebularg/actions-luacheck@v1
       with:
         annotate: warning
+        args: --no-color
