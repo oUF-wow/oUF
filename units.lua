@@ -180,6 +180,8 @@ function oUF:HandleUnit(object, unit)
 		object:SetAttribute('oUF-enableArenaPrep', true)
 		-- the event handler only fires for visible frames, so we have to hook it for arena prep
 		object:HookScript('OnEvent', updateArenaPreparation)
+		-- make sure arena frames are enabled
+		SetCVar('showArenaEnemyFrames', 1)
 	elseif(unit:match('%w+target')) then
 		enableTargetUpdate(object)
 	end
