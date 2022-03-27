@@ -92,7 +92,7 @@ local function UpdateColor(self, event)
 		color = self.colors.power.RUNES
 	end
 
-	local r, g, b = color[1], color[2], color[3]
+	local r, g, b = color.r, color.g, color.b
 
 	for index = 1, #element do
 		element[index]:SetStatusBarColor(r, g, b)
