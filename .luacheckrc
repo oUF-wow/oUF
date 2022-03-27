@@ -25,6 +25,7 @@ read_globals = {
 	'CastingBarFrame_OnLoad',
 	'CastingBarFrame_SetUnit',
 	'ComboFrame',
+	'CreateColor',
 	'Enum',
 	'FocusFrame',
 	'MonkStaggerBar',
