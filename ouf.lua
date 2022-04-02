@@ -300,12 +300,11 @@ local function initObject(unit, style, styleFunc, header, ...)
 			-- No header means it's a frame created through :Spawn().
 			object:SetAttribute('*type1', 'target')
 			object:SetAttribute('*type2', 'togglemenu')
+			object:SetAttribute('toggleForVehicle', true)
 
 			if(isEventlessUnit(objectUnit)) then
 				oUF:HandleEventlessUnit(object)
 			else
-				-- No need to enable this for eventless units.
-				object:SetAttribute('toggleForVehicle', true)
 				oUF:HandleUnit(object)
 			end
 		else
