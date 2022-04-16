@@ -14,12 +14,7 @@ function oUF:CreateColor(r, g, b, a, atlas)
 end
 
 local colors = {
-	-- stylua: ignore
-	smooth = {
-		1, 0, 0,
-		1, 1, 0,
-		0, 1, 0,
-	},
+	smooth = { 1, 0, 0, 1, 1, 0, 0, 1, 0 },
 	health = oUF:CreateColor(49 / 255, 207 / 255, 37 / 255),
 	disconnected = oUF:CreateColor(0.6, 0.6, 0.6),
 	tapped = oUF:CreateColor(0.6, 0.6, 0.6),
