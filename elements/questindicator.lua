@@ -26,7 +26,9 @@ local _, ns = ...
 local oUF = ns.oUF
 
 local function Update(self, event, unit)
-	if(unit ~= self.unit) then return end
+	if unit ~= self.unit then
+		return
+	end
 
 	local element = self.QuestIndicator
 
@@ -35,12 +37,12 @@ local function Update(self, event, unit)
 
 	* self - the QuestIndicator element
 	--]]
-	if(element.PreUpdate) then
+	if element.PreUpdate then
 		element:PreUpdate()
 	end
 
 	local isQuestBoss = UnitIsQuestBoss(unit)
-	if(isQuestBoss) then
+	if isQuestBoss then
 		element:Show()
 	else
 		element:Hide()
@@ -52,7 +54,7 @@ local function Update(self, event, unit)
 	* self        - the QuestIndicator element
 	* isQuestBoss - indicates if the element is shown (boolean)
 	--]]
-	if(element.PostUpdate) then
+	if element.PostUpdate then
 		return element:PostUpdate(isQuestBoss)
 	end
 end
@@ -65,7 +67,7 @@ local function Path(self, ...)
 	* event - the event triggering the update (string)
 	* ...   - the arguments accompanying the event
 	--]]
-	return (self.QuestIndicator.Override or Update) (self, ...)
+	return (self.QuestIndicator.Override or Update)(self, ...)
 end
 
 local function ForceUpdate(element)
@@ -74,13 +76,13 @@ end
 
 local function Enable(self)
 	local element = self.QuestIndicator
-	if(element) then
+	if element then
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
 
 		self:RegisterEvent('UNIT_CLASSIFICATION_CHANGED', Path)
 
-		if(element:IsObjectType('Texture') and not element:GetTexture()) then
+		if element:IsObjectType('Texture') and not element:GetTexture() then
 			element:SetTexture([[Interface\TargetingFrame\PortraitQuestBadge]])
 		end
 
@@ -90,7 +92,7 @@ end
 
 local function Disable(self)
 	local element = self.QuestIndicator
-	if(element) then
+	if element then
 		element:Hide()
 
 		self:UnregisterEvent('UNIT_CLASSIFICATION_CHANGED', Path)

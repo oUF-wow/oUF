@@ -26,7 +26,9 @@ local _, ns = ...
 local oUF = ns.oUF
 
 local function Update(self, event, unit)
-	if(self.unit ~= unit) then return end
+	if self.unit ~= unit then
+		return
+	end
 
 	local element = self.ResurrectIndicator
 
@@ -35,12 +37,12 @@ local function Update(self, event, unit)
 
 	* self - the ResurrectIndicator element
 	--]]
-	if(element.PreUpdate) then
+	if element.PreUpdate then
 		element:PreUpdate()
 	end
 
 	local incomingResurrect = UnitHasIncomingResurrection(unit)
-	if(incomingResurrect) then
+	if incomingResurrect then
 		element:Show()
 	else
 		element:Hide()
@@ -52,7 +54,7 @@ local function Update(self, event, unit)
 	* self              - the ResurrectIndicator element
 	* incomingResurrect - indicates if the unit has an incoming resurrection (boolean)
 	--]]
-	if(element.PostUpdate) then
+	if element.PostUpdate then
 		return element:PostUpdate(incomingResurrect)
 	end
 end
@@ -65,7 +67,7 @@ local function Path(self, ...)
 	* event - the event triggering the update (string)
 	* ...   - the arguments accompanying the event
 	--]]
-	return (self.ResurrectIndicator.Override or Update) (self, ...)
+	return (self.ResurrectIndicator.Override or Update)(self, ...)
 end
 
 local function ForceUpdate(element)
@@ -74,13 +76,13 @@ end
 
 local function Enable(self)
 	local element = self.ResurrectIndicator
-	if(element) then
+	if element then
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
 
 		self:RegisterEvent('INCOMING_RESURRECT_CHANGED', Path)
 
-		if(element:IsObjectType('Texture') and not element:GetTexture()) then
+		if element:IsObjectType('Texture') and not element:GetTexture() then
 			element:SetTexture([[Interface\RaidFrame\Raid-Icon-Rez]])
 		end
 
@@ -90,7 +92,7 @@ end
 
 local function Disable(self)
 	local element = self.ResurrectIndicator
-	if(element) then
+	if element then
 		element:Hide()
 
 		self:UnregisterEvent('INCOMING_RESURRECT_CHANGED', Path)

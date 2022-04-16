@@ -32,7 +32,9 @@ local SUMMON_STATUS_ACCEPTED = Enum.SummonStatus.Accepted or 2
 local SUMMON_STATUS_DECLINED = Enum.SummonStatus.Declined or 3
 
 local function Update(self, event, unit)
-	if(self.unit ~= unit) then return end
+	if self.unit ~= unit then
+		return
+	end
 
 	local element = self.SummonIndicator
 
@@ -41,17 +43,17 @@ local function Update(self, event, unit)
 
 	* self - the SummonIndicator element
 	--]]
-	if(element.PreUpdate) then
+	if element.PreUpdate then
 		element:PreUpdate()
 	end
 
 	local status = C_IncomingSummon.IncomingSummonStatus(unit)
-	if(status ~= SUMMON_STATUS_NONE) then
-		if(status == SUMMON_STATUS_PENDING) then
+	if status ~= SUMMON_STATUS_NONE then
+		if status == SUMMON_STATUS_PENDING then
 			element:SetAtlas('Raid-Icon-SummonPending')
-		elseif(status == SUMMON_STATUS_ACCEPTED) then
+		elseif status == SUMMON_STATUS_ACCEPTED then
 			element:SetAtlas('Raid-Icon-SummonAccepted')
-		elseif(status == SUMMON_STATUS_DECLINED) then
+		elseif status == SUMMON_STATUS_DECLINED then
 			element:SetAtlas('Raid-Icon-SummonDeclined')
 		end
 
@@ -66,7 +68,7 @@ local function Update(self, event, unit)
 	* self  - the SummonIndicator element
 	* status - the unit's incoming summon status (number)[0-3]
 	--]]
-	if(element.PostUpdate) then
+	if element.PostUpdate then
 		return element:PostUpdate(status)
 	end
 end
@@ -79,7 +81,7 @@ local function Path(self, ...)
 	* event - the event triggering the update (string)
 	* ...   - the arguments accompanying the event
 	--]]
-	return (self.SummonIndicator.Override or Update) (self, ...)
+	return (self.SummonIndicator.Override or Update)(self, ...)
 end
 
 local function ForceUpdate(element)
@@ -88,7 +90,7 @@ end
 
 local function Enable(self)
 	local element = self.SummonIndicator
-	if(element) then
+	if element then
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
 
@@ -100,7 +102,7 @@ end
 
 local function Disable(self)
 	local element = self.SummonIndicator
-	if(element) then
+	if element then
 		element:Hide()
 
 		self:UnregisterEvent('INCOMING_SUMMON_CHANGED', Path)

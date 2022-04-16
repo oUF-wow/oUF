@@ -14,10 +14,11 @@ function oUF:CreateColor(r, g, b, a, atlas)
 end
 
 local colors = {
+	-- stylua: ignore
 	smooth = {
 		1, 0, 0,
 		1, 1, 0,
-		0, 1, 0
+		0, 1, 0,
 	},
 	health = oUF:CreateColor(49 / 255, 207 / 255, 37 / 255),
 	disconnected = oUF:CreateColor(0.6, 0.6, 0.6),
@@ -28,16 +29,16 @@ local colors = {
 		oUF:CreateColor(173 / 255, 235 / 255, 66 / 255), -- unholy
 	},
 	selection = {
-		[ 0] = oUF:CreateColor(255 / 255, 0 / 255, 0 / 255), -- HOSTILE
-		[ 1] = oUF:CreateColor(255 / 255, 129 / 255, 0 / 255), -- UNFRIENDLY
-		[ 2] = oUF:CreateColor(255 / 255, 255 / 255, 0 / 255), -- NEUTRAL
-		[ 3] = oUF:CreateColor(0 / 255, 255 / 255, 0 / 255), -- FRIENDLY
-		[ 4] = oUF:CreateColor(0 / 255, 0 / 255, 255 / 255), -- PLAYER_SIMPLE
-		[ 5] = oUF:CreateColor(96 / 255, 96 / 255, 255 / 255), -- PLAYER_EXTENDED
-		[ 6] = oUF:CreateColor(170 / 255, 170 / 255, 255 / 255), -- PARTY
-		[ 7] = oUF:CreateColor(170 / 255, 255 / 255, 170 / 255), -- PARTY_PVP
-		[ 8] = oUF:CreateColor(83 / 255, 201 / 255, 255 / 255), -- FRIEND
-		[ 9] = oUF:CreateColor(128 / 255, 128 / 255, 128 / 255), -- DEAD
+		[0] = oUF:CreateColor(255 / 255, 0 / 255, 0 / 255), -- HOSTILE
+		[1] = oUF:CreateColor(255 / 255, 129 / 255, 0 / 255), -- UNFRIENDLY
+		[2] = oUF:CreateColor(255 / 255, 255 / 255, 0 / 255), -- NEUTRAL
+		[3] = oUF:CreateColor(0 / 255, 255 / 255, 0 / 255), -- FRIENDLY
+		[4] = oUF:CreateColor(0 / 255, 0 / 255, 255 / 255), -- PLAYER_SIMPLE
+		[5] = oUF:CreateColor(96 / 255, 96 / 255, 255 / 255), -- PLAYER_EXTENDED
+		[6] = oUF:CreateColor(170 / 255, 170 / 255, 255 / 255), -- PARTY
+		[7] = oUF:CreateColor(170 / 255, 255 / 255, 170 / 255), -- PARTY_PVP
+		[8] = oUF:CreateColor(83 / 255, 201 / 255, 255 / 255), -- FRIEND
+		[9] = oUF:CreateColor(128 / 255, 128 / 255, 128 / 255), -- DEAD
 		-- [10] = {}, -- COMMENTATOR_TEAM_1, unavailable to players
 		-- [11] = {}, -- COMMENTATOR_TEAM_2, unavailable to players
 		[12] = oUF:CreateColor(255 / 255, 255 / 255, 139 / 255), -- SELF, buggy
@@ -53,7 +54,7 @@ local colors = {
 -- We do this because people edit the vars directly, and changing the default
 -- globals makes SPICE FLOW!
 local function customClassColors()
-	if(_G.CUSTOM_CLASS_COLORS) then
+	if _G.CUSTOM_CLASS_COLORS then
 		local function updateColors()
 			for classToken, color in next, _G.CUSTOM_CLASS_COLORS do
 				colors.class[classToken] = oUF:CreateColor(color.r, color.g, color.b)
@@ -71,7 +72,7 @@ local function customClassColors()
 	end
 end
 
-if(not customClassColors()) then
+if not customClassColors() then
 	for classToken, color in next, _G.RAID_CLASS_COLORS do
 		colors.class[classToken] = oUF:CreateColor(color.r, color.g, color.b)
 	end
@@ -79,7 +80,7 @@ if(not customClassColors()) then
 	local eventHandler = CreateFrame('Frame')
 	eventHandler:RegisterEvent('ADDON_LOADED')
 	eventHandler:SetScript('OnEvent', function(self)
-		if(customClassColors()) then
+		if customClassColors() then
 			self:UnregisterEvent('ADDON_LOADED')
 			self:SetScript('OnEvent', nil)
 		end
@@ -95,8 +96,8 @@ for eclass, color in next, _G.FACTION_BAR_COLORS do
 end
 
 for power, color in next, PowerBarColor do
-	if (type(power) == 'string') then
-		if(type(select(2, next(color))) == 'table') then
+	if type(power) == 'string' then
+		if type(select(2, next(color))) == 'table' then
 			colors.power[power] = {}
 
 			for index, color_ in next, color do
@@ -135,9 +136,9 @@ for i = 0, 3 do
 end
 
 local function colorsAndPercent(a, b, ...)
-	if(a <= 0 or b == 0) then
+	if a <= 0 or b == 0 then
 		return nil, ...
-	elseif(a >= b) then
+	elseif a >= b then
 		return nil, select(-3, ...)
 	end
 
@@ -161,7 +162,7 @@ last 3 RGB values are returned.
 --]]
 function oUF:RGBColorGradient(...)
 	local relperc, r1, g1, b1, r2, g2, b2 = colorsAndPercent(...)
-	if(relperc) then
+	if relperc then
 		return r1 + (r2 - r1) * relperc, g1 + (g2 - g1) * relperc, b1 + (b2 - b1) * relperc
 	else
 		return r1, g1, b1
@@ -177,12 +178,12 @@ local function rgbToHCY(r, g, b)
 	local min, max = math.min(r, g, b), math.max(r, g, b)
 	local chroma = max - min
 	local hue
-	if(chroma > 0) then
-		if(r == max) then
+	if chroma > 0 then
+		if r == max then
 			hue = ((g - b) / chroma) % 6
-		elseif(g == max) then
+		elseif g == max then
 			hue = (b - r) / chroma + 2
-		elseif(b == max) then
+		elseif b == max then
 			hue = (r - g) / chroma + 4
 		end
 		hue = hue / 6
@@ -192,27 +193,27 @@ end
 
 local function hcyToRGB(hue, chroma, luma)
 	local r, g, b = 0, 0, 0
-	if(hue and luma > 0) then
+	if hue and luma > 0 then
 		local h2 = hue * 6
 		local x = chroma * (1 - math.abs(h2 % 2 - 1))
-		if(h2 < 1) then
+		if h2 < 1 then
 			r, g, b = chroma, x, 0
-		elseif(h2 < 2) then
+		elseif h2 < 2 then
 			r, g, b = x, chroma, 0
-		elseif(h2 < 3) then
+		elseif h2 < 3 then
 			r, g, b = 0, chroma, x
-		elseif(h2 < 4) then
+		elseif h2 < 4 then
 			r, g, b = 0, x, chroma
-		elseif(h2 < 5) then
+		elseif h2 < 5 then
 			r, g, b = x, 0, chroma
 		else
 			r, g, b = chroma, 0, x
 		end
 
 		local y = getY(r, g, b)
-		if(luma < y) then
+		if luma < y then
 			chroma = chroma * (luma / y)
-		elseif(y < 1) then
+		elseif y < 1 then
 			chroma = chroma * (1 - luma) / (1 - y)
 		end
 
@@ -237,7 +238,7 @@ last 3 HCY values are returned.
 --]]
 function oUF:HCYColorGradient(...)
 	local relperc, r1, g1, b1, r2, g2, b2 = colorsAndPercent(...)
-	if(not relperc) then
+	if not relperc then
 		return r1, g1, b1
 	end
 
@@ -246,11 +247,11 @@ function oUF:HCYColorGradient(...)
 	local c = c1 + (c2 - c1) * relperc
 	local y = y1 + (y2 - y1) * relperc
 
-	if(h1 and h2) then
+	if h1 and h2 then
 		local dh = h2 - h1
-		if(dh < -0.5) then
+		if dh < -0.5 then
 			dh = dh + 1
-		elseif(dh > 0.5) then
+		elseif dh > 0.5 then
 			dh = dh - 1
 		end
 
@@ -258,7 +259,6 @@ function oUF:HCYColorGradient(...)
 	else
 		return hcyToRGB(h1 or h2, c, y)
 	end
-
 end
 
 --[[ Colors: oUF:ColorGradient(a, b, ...) or frame:ColorGradient(a, b, ...)

@@ -53,7 +53,9 @@ local function UpdateTooltip(self)
 end
 
 local function OnEnter(self)
-	if(not self:IsVisible()) then return end
+	if not self:IsVisible() then
+		return
+	end
 
 	GameTooltip:SetOwner(self, 'ANCHOR_BOTTOMRIGHT')
 	self:UpdateTooltip()
@@ -65,7 +67,9 @@ end
 
 local function UpdateTotem(self, event, slot)
 	local element = self.Totems
-	if(slot > #element) then return end
+	if slot > #element then
+		return
+	end
 
 	--[[ Callback: Totems:PreUpdate(slot)
 	Called before the element has been updated.
@@ -73,16 +77,18 @@ local function UpdateTotem(self, event, slot)
 	* self - the Totems element
 	* slot - the slot of the totem to be updated (number)
 	--]]
-	if(element.PreUpdate) then element:PreUpdate(slot) end
+	if element.PreUpdate then
+		element:PreUpdate(slot)
+	end
 
 	local totem = element[slot]
 	local haveTotem, name, start, duration, icon = GetTotemInfo(slot)
-	if(haveTotem and duration > 0) then
-		if(totem.Icon) then
+	if haveTotem and duration > 0 then
+		if totem.Icon then
 			totem.Icon:SetTexture(icon)
 		end
 
-		if(totem.Cooldown) then
+		if totem.Cooldown then
 			totem.Cooldown:SetCooldown(start, duration)
 		end
 
@@ -102,7 +108,7 @@ local function UpdateTotem(self, event, slot)
 	* duration  - the total duration for which the totem should last (number)
 	* icon      - the totem's icon (Texture)
 	--]]
-	if(element.PostUpdate) then
+	if element.PostUpdate then
 		return element:PostUpdate(slot, haveTotem, name, start, duration, icon)
 	end
 end
@@ -115,7 +121,7 @@ local function Path(self, ...)
 	* event - the event triggering the update (string)
 	* ...   - the arguments accompanying the event
 	--]]
-	return (self.Totems.Override or UpdateTotem) (self, ...)
+	return (self.Totems.Override or UpdateTotem)(self, ...)
 end
 
 local function Update(self, event)
@@ -130,7 +136,7 @@ end
 
 local function Enable(self)
 	local element = self.Totems
-	if(element) then
+	if element then
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
 
@@ -139,7 +145,7 @@ local function Enable(self)
 
 			totem:SetID(i)
 
-			if(totem:IsMouseEnabled()) then
+			if totem:IsMouseEnabled() then
 				totem:SetScript('OnEnter', OnEnter)
 				totem:SetScript('OnLeave', OnLeave)
 
@@ -148,7 +154,7 @@ local function Enable(self)
 
 				* self - the widget at the given slot index
 				--]]
-				if(not totem.UpdateTooltip) then
+				if not totem.UpdateTooltip then
 					totem.UpdateTooltip = UpdateTooltip
 				end
 			end
@@ -167,7 +173,7 @@ end
 
 local function Disable(self)
 	local element = self.Totems
-	if(element) then
+	if element then
 		for i = 1, #element do
 			element[i]:Hide()
 		end
