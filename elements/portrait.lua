@@ -50,7 +50,8 @@ local function Update(self, event, unit)
 
 	local guid = UnitGUID(unit)
 	local isAvailable = UnitIsConnected(unit) and UnitIsVisible(unit)
-	if(event ~= 'OnUpdate' or element.guid ~= guid or element.state ~= isAvailable) then
+	local hasStateChanged = event ~= 'OnUpdate' or element.guid ~= guid or element.state ~= isAvailable
+	if(hasStateChanged) then
 		if(element:IsObjectType('PlayerModel')) then
 			if(not isAvailable) then
 				element:SetCamDistanceScale(0.25)
@@ -76,11 +77,12 @@ local function Update(self, event, unit)
 	--[[ Callback: Portrait:PostUpdate(unit)
 	Called after the element has been updated.
 
-	* self - the Portrait element
-	* unit - the unit for which the update has been triggered (string)
+	* self            - the Portrait element
+	* unit            - the unit for which the update has been triggered (string)
+	* hasStateChanged - indicates whether the state has changed since the last update (boolean)
 	--]]
 	if(element.PostUpdate) then
-		return element:PostUpdate(unit)
+		return element:PostUpdate(unit, hasStateChanged)
 	end
 end
 
