@@ -12,6 +12,10 @@ Portrait - A `PlayerModel` or a `Texture` used to represent the unit's portrait.
 A question mark model will be used if the widget is a PlayerModel and the client doesn't have the model information for
 the unit.
 
+## Options
+
+.showClass - Displays the unit's class in the portrait (boolean)
+
 ## Examples
 
     -- 3D Portrait
@@ -67,7 +71,12 @@ local function Update(self, event, unit)
 				element:SetUnit(unit)
 			end
 		else
-			SetPortraitTexture(element, unit)
+			local class = element.showClass and UnitClassBase(unit)
+			if(class) then
+				element:SetAtlas('classicon-' .. class)
+			else
+				SetPortraitTexture(element, unit)
+			end
 		end
 
 		element.guid = guid
