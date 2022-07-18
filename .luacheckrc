@@ -92,6 +92,7 @@ read_globals = {
 	'UnitCastingInfo',
 	'UnitChannelInfo',
 	'UnitClass',
+	'UnitClassBase',
 	'UnitExists',
 	'UnitFactionGroup',
 	'UnitGUID',
