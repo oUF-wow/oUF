@@ -113,7 +113,6 @@ read_globals = {
 	'UnitIsConnected',
 	'UnitIsGroupAssistant',
 	'UnitIsGroupLeader',
-	'UnitLeadsAnyGroup',
 	'UnitIsMercenary',
 	'UnitIsPVP',
 	'UnitIsPVPFreeForAll',

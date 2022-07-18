@@ -99,11 +99,6 @@ local function Enable(self)
 		self:RegisterEvent('PARTY_LEADER_CHANGED', Path, true)
 		self:RegisterEvent('GROUP_ROSTER_UPDATE', Path, true)
 
-		-- Remove compat mode with the next major
-		if(not element:IsObjectType('Texture') or (element:IsObjectType('Texture') and element:GetTexture())) then
-			element.compatMode = true
-		end
-
 		return true
 	end
 end
