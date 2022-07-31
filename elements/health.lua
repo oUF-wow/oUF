@@ -87,6 +87,7 @@ local function UpdateColor(self, event, unit)
 	local element = self.Health
 
 	local r, g, b, color
+	local _, _, _, a = self.Health:GetStatusBarColor()
 	if(element.colorDisconnected and not UnitIsConnected(unit)) then
 		color = self.colors.disconnected
 	elseif(element.colorTapping and not UnitPlayerControlled(unit) and UnitIsTapDenied(unit)) then
@@ -113,7 +114,7 @@ local function UpdateColor(self, event, unit)
 	end
 
 	if(b) then
-		element:SetStatusBarColor(r, g, b)
+		element:SetStatusBarColor(r, g, b, a)
 
 		local bg = element.bg
 		if(bg) then
