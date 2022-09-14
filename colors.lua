@@ -126,6 +126,11 @@ colors.power[16] = colors.power.ARCANE_CHARGES
 colors.power[17] = colors.power.FURY
 colors.power[18] = colors.power.PAIN
 
+-- there's no official colour for evoker's essence
+-- use the average colour of the essence texture instead
+colors.power.ESSENCE = oUF:CreateColor(100 / 255, 173 / 255, 206 / 255)
+colors.power[19] = colors.power.ESSENCE
+
 -- alternate power, sourced from FrameXML/CompactUnitFrame.lua
 colors.power.ALTERNATE = oUF:CreateColor(0.7, 0.7, 0.6)
 colors.power[10] = colors.power.ALTERNATE
