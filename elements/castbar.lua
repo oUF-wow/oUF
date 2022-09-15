@@ -97,6 +97,7 @@ local function resetAttributes(self)
 	self.castID = nil
 	self.casting = nil
 	self.channeling = nil
+	self.empowering = nil
 	self.notInterruptible = nil
 	self.spellID = nil
 end
@@ -106,11 +107,12 @@ local function CastStart(self, event, unit)
 
 	local element = self.Castbar
 
+	local numStages, _
 	local name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible, spellID = UnitCastingInfo(unit)
 	event = 'UNIT_SPELLCAST_START'
 	if(not name) then
-		name, text, texture, startTime, endTime, isTradeSkill, notInterruptible, spellID = UnitChannelInfo(unit)
-		event = 'UNIT_SPELLCAST_CHANNEL_START'
+		name, text, texture, startTime, endTime, isTradeSkill, notInterruptible, spellID, _, numStages = UnitChannelInfo(unit)
+		event = (numStages and numStages > 0) and 'UNIT_SPELLCAST_EMPOWER_START' or 'UNIT_SPELLCAST_CHANNEL_START'
 	end
 
 	if(not name or (isTradeSkill and element.hideTradeSkills)) then
@@ -120,23 +122,29 @@ local function CastStart(self, event, unit)
 		return
 	end
 
+	element.casting = event == 'UNIT_SPELLCAST_START'
+	element.channeling = event == 'UNIT_SPELLCAST_CHANNEL_START'
+	element.empowering = event == 'UNIT_SPELLCAST_EMPOWER_START'
+
+	if(element.empowering) then
+		endTime = endTime + GetUnitEmpowerHoldAtMaxTime(unit)
+	end
+
 	endTime = endTime / 1000
 	startTime = startTime / 1000
 
 	element.max = endTime - startTime
 	element.startTime = startTime
 	element.delay = 0
-	element.casting = event == 'UNIT_SPELLCAST_START'
-	element.channeling = event == 'UNIT_SPELLCAST_CHANNEL_START'
 	element.notInterruptible = notInterruptible
 	element.holdTime = 0
 	element.castID = castID
 	element.spellID = spellID
 
-	if(element.casting) then
-		element.duration = GetTime() - startTime
-	else
+	if(element.channeling) then
 		element.duration = endTime - GetTime()
+	else
+		element.duration = GetTime() - startTime
 	end
 
 	element:SetMinMaxValues(0, element.max)
@@ -156,10 +164,10 @@ local function CastStart(self, event, unit)
 		safeZone:SetPoint(isHoriz and 'TOP' or 'LEFT')
 		safeZone:SetPoint(isHoriz and 'BOTTOM' or 'RIGHT')
 
-		if(element.casting) then
-			safeZone:SetPoint(element:GetReverseFill() and (isHoriz and 'LEFT' or 'BOTTOM') or (isHoriz and 'RIGHT' or 'TOP'))
-		else
+		if(element.channeling) then
 			safeZone:SetPoint(element:GetReverseFill() and (isHoriz and 'RIGHT' or 'TOP') or (isHoriz and 'LEFT' or 'BOTTOM'))
+		else
+			safeZone:SetPoint(element:GetReverseFill() and (isHoriz and 'LEFT' or 'BOTTOM') or (isHoriz and 'RIGHT' or 'TOP'))
 		end
 
 		local ratio = (select(4, GetNetStats()) / 1000) / element.max
@@ -200,18 +208,22 @@ local function CastUpdate(self, event, unit, castID, spellID)
 
 	if(not name) then return end
 
+	if(element.empowering) then
+		endTime = endTime + GetUnitEmpowerHoldAtMaxTime(unit)
+	end
+
 	endTime = endTime / 1000
 	startTime = startTime / 1000
 
 	local delta
-	if(element.casting) then
-		delta = startTime - element.startTime
-
-		element.duration = GetTime() - startTime
-	else
+	if(element.channeling) then
 		delta = element.startTime - startTime
 
 		element.duration = endTime - GetTime()
+	else
+		delta = startTime - element.startTime
+
+		element.duration = GetTime() - startTime
 	end
 
 	if(delta < 0) then
@@ -311,8 +323,8 @@ local function CastInterruptible(self, event, unit)
 end
 
 local function onUpdate(self, elapsed)
-	if(self.casting or self.channeling) then
-		local isCasting = self.casting
+	if(self.casting or self.channeling or self.empowering) then
+		local isCasting = self.casting or self.empowering
 		if(isCasting) then
 			self.duration = self.duration + elapsed
 			if(self.duration >= self.max) then
@@ -384,10 +396,13 @@ local function Enable(self, unit)
 
 		self:RegisterEvent('UNIT_SPELLCAST_START', CastStart)
 		self:RegisterEvent('UNIT_SPELLCAST_CHANNEL_START', CastStart)
+		self:RegisterEvent('UNIT_SPELLCAST_EMPOWER_START', CastStart)
 		self:RegisterEvent('UNIT_SPELLCAST_STOP', CastStop)
 		self:RegisterEvent('UNIT_SPELLCAST_CHANNEL_STOP', CastStop)
+		self:RegisterEvent('UNIT_SPELLCAST_EMPOWER_STOP', CastStop)
 		self:RegisterEvent('UNIT_SPELLCAST_DELAYED', CastUpdate)
 		self:RegisterEvent('UNIT_SPELLCAST_CHANNEL_UPDATE', CastUpdate)
+		self:RegisterEvent('UNIT_SPELLCAST_EMPOWER_UPDATE', CastUpdate)
 		self:RegisterEvent('UNIT_SPELLCAST_FAILED', CastFail)
 		self:RegisterEvent('UNIT_SPELLCAST_INTERRUPTED', CastFail)
 		self:RegisterEvent('UNIT_SPELLCAST_INTERRUPTIBLE', CastInterruptible)
@@ -434,10 +449,13 @@ local function Disable(self)
 
 		self:UnregisterEvent('UNIT_SPELLCAST_START', CastStart)
 		self:UnregisterEvent('UNIT_SPELLCAST_CHANNEL_START', CastStart)
-		self:UnregisterEvent('UNIT_SPELLCAST_DELAYED', CastUpdate)
-		self:UnregisterEvent('UNIT_SPELLCAST_CHANNEL_UPDATE', CastUpdate)
+		self:UnregisterEvent('UNIT_SPELLCAST_EMPOWER_START', CastStart)
 		self:UnregisterEvent('UNIT_SPELLCAST_STOP', CastStop)
 		self:UnregisterEvent('UNIT_SPELLCAST_CHANNEL_STOP', CastStop)
+		self:UnregisterEvent('UNIT_SPELLCAST_EMPOWER_STOP', CastStop)
+		self:UnregisterEvent('UNIT_SPELLCAST_DELAYED', CastUpdate)
+		self:UnregisterEvent('UNIT_SPELLCAST_CHANNEL_UPDATE', CastUpdate)
+		self:UnregisterEvent('UNIT_SPELLCAST_EMPOWER_UPDATE', CastUpdate)
 		self:UnregisterEvent('UNIT_SPELLCAST_FAILED', CastFail)
 		self:UnregisterEvent('UNIT_SPELLCAST_INTERRUPTED', CastFail)
 		self:UnregisterEvent('UNIT_SPELLCAST_INTERRUPTIBLE', CastInterruptible)
