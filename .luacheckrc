@@ -47,6 +47,7 @@ read_globals = {
 	'C_IncomingSummon',
 	'C_NamePlate',
 	'C_PvP',
+	'C_UnitAuras',
 
 	-- API
 	'CopyTable',
@@ -88,7 +89,7 @@ read_globals = {
 	'SetRaidTargetIconTexture',
 	'ShowBossFrameWhenUninteractable',
 	'UnitAffectingCombat',
-	'UnitAura',
+	'UnitAuraSlots',
 	'UnitCastingInfo',
 	'UnitChannelInfo',
 	'UnitClass',
