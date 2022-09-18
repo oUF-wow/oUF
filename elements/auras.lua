@@ -100,7 +100,6 @@ end
 
 local function CreateIcon(element, index)
 	local button = CreateFrame('Button', element:GetDebugName() .. 'Button' .. index, element)
-	button:RegisterForClicks('RightButtonUp')
 
 	local cd = CreateFrame('Cooldown', '$parentCooldown', button, 'CooldownFrameTemplate')
 	cd:SetAllPoints()
