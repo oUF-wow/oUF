@@ -21,9 +21,6 @@ read_globals = {
 	table = {fields = {'removemulti', 'wipe'}},
 
 	-- FrameXML
-	'CastingBarFrame',
-	'CastingBarFrame_OnLoad',
-	'CastingBarFrame_SetUnit',
 	'ComboFrame',
 	'CreateColor',
 	'Enum',
@@ -32,6 +29,7 @@ read_globals = {
 	'NamePlateDriverFrame',
 	'PetCastingBarFrame',
 	'PetCastingBarFrame_OnLoad',
+	'PlayerCastingBarFrame',
 	'PetFrame',
 	'PlayerFrame',
 	'PlayerPowerBarAlt',
@@ -68,6 +66,7 @@ read_globals = {
 	'GetTime',
 	'GetTotemInfo',
 	'GetUnitChargedPowerPoints',
+	'GetUnitEmpowerHoldAtMaxTime',
 	'GetUnitPowerBarInfo',
 	'GetUnitPowerBarInfoByID',
 	'GetUnitPowerBarStringsByID',
