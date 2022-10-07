@@ -120,7 +120,7 @@ local function updateChannelPips(element, numStages)
 
 	for stage = 1, numStages do
 		local duration
-		if(stage == numStages) then
+		if(stage > numStages) then
 			duration = GetUnitEmpowerHoldAtMaxTime(element.__owner.unit)
 		else
 			duration = GetUnitEmpowerStageDuration(element.__owner.unit, stage - 1)
