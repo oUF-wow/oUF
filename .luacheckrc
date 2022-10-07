@@ -67,6 +67,7 @@ read_globals = {
 	'GetTotemInfo',
 	'GetUnitChargedPowerPoints',
 	'GetUnitEmpowerHoldAtMaxTime',
+	'GetUnitEmpowerStageDuration',
 	'GetUnitPowerBarInfo',
 	'GetUnitPowerBarInfoByID',
 	'GetUnitPowerBarStringsByID',
