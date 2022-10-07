@@ -31,8 +31,9 @@ A default texture will be applied to the StatusBar and Texture widgets if they d
 .castID           - A globally unique identifier of the currently cast spell (string?)
 .casting          - Indicates whether the current spell is an ordinary cast (boolean)
 .channeling       - Indicates whether the current spell is a channeled cast (boolean)
+.empowering       - Indicates whether the current spell is an empowering cast (boolean)
 .notInterruptible - Indicates whether the current spell is interruptible (boolean)
-.spellID          - The spell identifier of the currently cast/channeled spell (number)
+.spellID          - The spell identifier of the currently cast/channeled/empowering spell (number)
 
 ## Examples
 
@@ -92,6 +93,7 @@ local oUF = ns.oUF
 local FALLBACK_ICON = 136243 -- Interface\ICONS\Trade_Engineering
 local FAILED = _G.FAILED or 'Failed'
 local INTERRUPTED = _G.INTERRUPTED or 'Interrupted'
+local CASTBAR_STAGE_DURATION_INVALID = CASTBAR_STAGE_DURATION_INVALID or -1
 
 local function resetAttributes(self)
 	self.castID = nil
@@ -100,6 +102,51 @@ local function resetAttributes(self)
 	self.empowering = nil
 	self.notInterruptible = nil
 	self.spellID = nil
+
+	for _, pip in ipairs(self.pips) do
+		pip:Hide()
+	end
+end
+
+local function createChannelPip(element, index)
+	-- TODO
+	return CreateFrame('Frame', nil, element, 'CastingBarFrameStagePipTemplate')
+end
+
+local function updateChannelPips(element, numStages)
+	local stageTotalDuration
+	local stageMaxValue = element.max * 1000
+	local elementWidth = element:GetRight() - element:GetLeft()
+
+	for stage = 1, numStages do
+		local duration
+		if stage == numStages then
+			duration = GetUnitEmpowerHoldAtMaxTime(element.__owner.unit)
+		else
+			duration = GetUnitEmpowerStageDuration(element.__owner.unit, stage - 1)
+		end
+
+		if duration > CASTBAR_STAGE_DURATION_INVALID then
+			stageTotalDuration = stageTotalDuration + duration
+
+			local portion = stageTotalDuration / stageMaxValue
+			local offset = elementWidth * portion
+
+			local pip = element.pips[stage]
+			if not pip then
+				--[[ Override: Castbar:CreatePip(index)
+				TODO
+				--]]
+				pip = (element.CreatePip or createChannelPip)(element, stage)
+				element.pips[stage] = pip
+			end
+
+			pip:ClearAllPoints()
+			pip:SetPoint('TOP', element, 'TOPLEFT', offset, -1)
+			pip:SetPoint('BOTTOM', element, 'BOTTOMLEFT', offset, 1)
+			pip:Show()
+		end
+	end
 end
 
 local function CastStart(self, event, unit)
@@ -176,6 +223,13 @@ local function CastStart(self, event, unit)
 		end
 
 		safeZone[isHoriz and 'SetWidth' or 'SetHeight'](safeZone, element[isHoriz and 'GetWidth' or 'GetHeight'](element) * ratio)
+	end
+
+	if element.empowering then
+		--[[ Override: Castbar:UpdatePips(numStages)
+		TODO
+		--]]
+		(element.UpdatePips or updateChannelPips)(element, numStages)
 	end
 
 	--[[ Callback: Castbar:PostCastStart(unit)
@@ -409,6 +463,7 @@ local function Enable(self, unit)
 		self:RegisterEvent('UNIT_SPELLCAST_NOT_INTERRUPTIBLE', CastInterruptible)
 
 		element.holdTime = 0
+		element.pips = {}
 
 		element:SetScript('OnUpdate', element.OnUpdate or onUpdate)
 
