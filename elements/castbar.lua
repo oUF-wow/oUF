@@ -114,7 +114,7 @@ local function createChannelPip(element)
 end
 
 local function updateChannelPips(element, numStages)
-	local stageTotalDuration
+	local stageTotalDuration = 0
 	local stageMaxValue = element.max * 1000
 	local elementWidth = element:GetRight() - element:GetLeft()
 
