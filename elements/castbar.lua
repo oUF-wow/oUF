@@ -120,20 +120,20 @@ local function updateChannelPips(element, numStages)
 
 	for stage = 1, numStages do
 		local duration
-		if stage == numStages then
+		if(stage == numStages) then
 			duration = GetUnitEmpowerHoldAtMaxTime(element.__owner.unit)
 		else
 			duration = GetUnitEmpowerStageDuration(element.__owner.unit, stage - 1)
 		end
 
-		if duration > CASTBAR_STAGE_DURATION_INVALID then
+		if(duration > CASTBAR_STAGE_DURATION_INVALID) then
 			stageTotalDuration = stageTotalDuration + duration
 
 			local portion = stageTotalDuration / stageMaxValue
 			local offset = elementWidth * portion
 
 			local pip = element.pips[stage]
-			if not pip then
+			if(not pip) then
 				--[[ Override: Castbar:CreatePip(index)
 				TODO
 				--]]
@@ -225,7 +225,7 @@ local function CastStart(self, event, unit)
 		safeZone[isHoriz and 'SetWidth' or 'SetHeight'](safeZone, element[isHoriz and 'GetWidth' or 'GetHeight'](element) * ratio)
 	end
 
-	if element.empowering then
+	if(element.empowering) then
 		--[[ Override: Castbar:UpdatePips(numStages)
 		TODO
 		--]]
