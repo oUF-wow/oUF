@@ -103,11 +103,11 @@ local function CreateIcon(element, index)
 
 	local cd = CreateFrame('Cooldown', '$parentCooldown', button, 'CooldownFrameTemplate')
 	cd:SetAllPoints()
-	button.cd = cd
+	button.Cooldown = cd
 
 	local icon = button:CreateTexture(nil, 'BORDER')
 	icon:SetAllPoints()
-	button.icon = icon
+	button.Icon = icon
 
 	local countFrame = CreateFrame('Frame', nil, button)
 	countFrame:SetAllPoints(button)
@@ -115,20 +115,20 @@ local function CreateIcon(element, index)
 
 	local count = countFrame:CreateFontString(nil, 'OVERLAY', 'NumberFontNormal')
 	count:SetPoint('BOTTOMRIGHT', countFrame, 'BOTTOMRIGHT', -1, 0)
-	button.count = count
+	button.Count = count
 
 	local overlay = button:CreateTexture(nil, 'OVERLAY')
 	overlay:SetTexture([[Interface\Buttons\UI-Debuff-Overlays]])
 	overlay:SetAllPoints()
 	overlay:SetTexCoord(0.296875, 0.5703125, 0, 0.515625)
-	button.overlay = overlay
+	button.Overlay = overlay
 
 	local stealable = button:CreateTexture(nil, 'OVERLAY')
 	stealable:SetTexture([[Interface\TargetingFrame\UI-TargetingFrame-Stealable]])
 	stealable:SetPoint('TOPLEFT', -3, 3)
 	stealable:SetPoint('BOTTOMRIGHT', 3, -3)
 	stealable:SetBlendMode('ADD')
-	button.stealable = stealable
+	button.Stealable = stealable
 
 	button.UpdateTooltip = UpdateTooltip
 	button:SetScript('OnEnter', onEnter)
@@ -192,41 +192,40 @@ local function updateAura(element, unit, data, position)
 	button.auraInstanceID = data.auraInstanceID
 	button.isHarmful = data.isHarmful
 
-	if(button.cd and not element.disableCooldown) then
+	if(button.Cooldown and not element.disableCooldown) then
 		if(data.duration > 0) then
-			button.cd:SetCooldown(data.expirationTime - data.duration, data.duration, data.timeMod)
-			button.cd:Show()
+			button.Cooldown:SetCooldown(data.expirationTime - data.duration, data.duration, data.timeMod)
+			button.Cooldown:Show()
 		else
-			button.cd:Hide()
+			button.Cooldown:Hide()
 		end
 	end
 
-	if(button.overlay) then
+	if(button.Overlay) then
 		if((data.isHarmful and element.showDebuffType) or (not data.isHarmful and element.showBuffType) or element.showType) then
 			local color = element.__owner.colors.debuff[data.dispelName] or element.__owner.colors.debuff.none
 
-			button.overlay:SetVertexColor(color[1], color[2], color[3])
-			button.overlay:Show()
+			button.Overlay:SetVertexColor(color[1], color[2], color[3])
+			button.Overlay:Show()
 		else
-			button.overlay:Hide()
+			button.Overlay:Hide()
 		end
 	end
 
-	if(button.stealable) then
+	if(button.Stealable) then
 		if(not data.isHarmful and data.isStealable and element.showStealableBuffs and not UnitIsUnit('player', unit)) then
-			button.stealable:Show()
+			button.Stealable:Show()
 		else
-			button.stealable:Hide()
+			button.Stealable:Hide()
 		end
 	end
 
-	if(button.icon) then button.icon:SetTexture(data.icon) end
-	if(button.count) then button.count:SetText(data.applications > 1 and data.applications or '') end
+	if(button.Icon) then button.Icon:SetTexture(data.icon) end
+	if(button.Count) then button.Count:SetText(data.applications > 1 and data.applications or '') end
 
 	local width = element.width or element.size or 16
 	local height = element.height or element.size or 16
 	button:SetSize(width, height)
-
 	button:EnableMouse(not element.disableMouse)
 	button:Show()
 
@@ -438,11 +437,11 @@ local function UpdateAuras(self, event, unit, updateInfo)
 				end
 
 				-- prevent the button from displaying anything
-				if(button.cd) then button.cd:Hide() end
-				if(button.icon) then button.icon:SetTexture() end
-				if(button.overlay) then button.overlay:Hide() end
-				if(button.stealable) then button.stealable:Hide() end
-				if(button.count) then button.count:SetText() end
+				if(button.Cooldown) then button.Cooldown:Hide() end
+				if(button.Icon) then button.Icon:SetTexture() end
+				if(button.Overlay) then button.Overlay:Hide() end
+				if(button.Stealable) then button.Stealable:Hide() end
+				if(button.Count) then button.Count:SetText() end
 
 				button:EnableMouse(false)
 				button:Show()
