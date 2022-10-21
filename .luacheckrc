@@ -71,6 +71,7 @@ read_globals = {
 	'GetUnitPowerBarInfo',
 	'GetUnitPowerBarInfoByID',
 	'GetUnitPowerBarStringsByID',
+	'HasLFGRestrictions',
 	'InCombatLockdown',
 	'IsLoggedIn',
 	'IsPlayerSpell',
