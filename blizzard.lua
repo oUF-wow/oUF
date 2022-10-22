@@ -1,7 +1,7 @@
 local _, ns = ...
 local oUF = ns.oUF
 
--- sourced from Blizzard_ArenaUI/Blizzard_ArenaUI.lua
+-- sourced from FrameXML\ArenaUI.lua
 local MAX_ARENA_ENEMIES = _G.MAX_ARENA_ENEMIES or 5
 
 -- sourced from FrameXML/TargetFrame.lua
@@ -108,16 +108,15 @@ function oUF:DisableBlizzard(unit)
 	elseif(unit:match('arena%d?$')) then
 		local id = unit:match('arena(%d)')
 		if(id) then
-			handleFrame('ArenaEnemyFrame' .. id)
+			handleFrame('ArenaEnemyMatchFrame' .. id)
 		else
 			for i = 1, MAX_ARENA_ENEMIES do
-				handleFrame(string.format('ArenaEnemyFrame%d', i))
+				handleFrame(string.format('ArenaEnemyMatchFrame%d', i))
 			end
 		end
 
-		-- Blizzard_ArenaUI should not be loaded
-		_G.Arena_LoadUI = function() end
-		SetCVar('showArenaEnemyFrames', '0', 'SHOW_ARENA_ENEMY_FRAMES_TEXT')
+		-- this disables ArenaEnemyFramesContainer
+		SetCVar('showArenaEnemyFrames', '0')
 	elseif(unit:match('nameplate%d+$')) then
 		local frame = C_NamePlate.GetNamePlateForUnit(unit)
 		if(frame and frame.UnitFrame) then
