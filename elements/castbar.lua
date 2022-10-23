@@ -109,7 +109,6 @@ local function resetAttributes(self)
 end
 
 local function CreatePip(element)
-	-- TODO
 	return CreateFrame('Frame', nil, element, 'CastingBarFrameStagePipTemplate')
 end
 
@@ -135,8 +134,14 @@ local function UpdatePips(element, numStages)
 
 			local pip = element.Pips[stage]
 			if(not pip) then
-				--[[ Override: Castbar:CreatePip(index)
-				TODO
+				--[[ Override: Castbar:CreatePip(stage)
+				Creates a "pip" for the given stage, used for empowered casts.
+
+				* self - the Castbar widget
+
+				## Returns
+
+				* pip - a frame used to depict an empowered stage boundary, typically with a line texture (frame)
 				--]]
 				pip = (element.CreatePip or CreatePip) (element, stage)
 				element.Pips[stage] = pip
@@ -248,7 +253,10 @@ local function CastStart(self, event, unit)
 
 	if(element.empowering) then
 		--[[ Override: Castbar:UpdatePips(numStages)
-		TODO
+		Handles updates for stage separators (pips) in an empowered cast.
+
+		* self      - the Castbar widget
+		* numStages - the number of stages in the current cast (number)
 		--]]
 		(element.UpdatePips or UpdatePips) (element, numStages)
 	end
