@@ -17,6 +17,8 @@ local colorMixin = {
 		self.b = b
 		self[3] = b
 		self.a = a
+
+		-- pre-generate the hex color, there's no point to this being generated on the fly
 		self.hex = string.format('ff%02x%02x%02x', self:GetRGBAsBytes())
 	end,
 	SetAtlas = function(self, atlas)
@@ -30,6 +32,22 @@ local colorMixin = {
 	end,
 }
 
+--[[ Colors: oUF:CreateColor(r, g, b[, a])
+Wrapper for [SharedXML\Color.lua's ColorMixin](https://wowpedia.fandom.com/wiki/ColorMixin), extended to support indexed colors used in oUF, as
+well as extra methods for dealing with atlases.
+
+The rgb values can be either normalized (0-1) or bytes (0-255).
+
+* self - the global oUF object
+* r    - value used as represent the red color (number)
+* g    - value used to represent the green color (number)
+* b    - value used to represent the blue color (number)
+* a    - value used to represent the opacity (number, optional)
+
+## Returns
+
+* color - the ColorMixin-based object
+--]]
 function oUF:CreateColor(r, g, b, a)
 	local color = Mixin({}, ColorMixin, colorMixin)
 	color:SetRGBA(r, g, b, a)
