@@ -254,7 +254,6 @@ local function SortAuras(a, b)
 	local aFromPlayer = a.sourceUnit and UnitIsUnit('player', a.sourceUnit)
 	local bFromPlayer = b.sourceUnit and UnitIsUnit('player', b.sourceUnit)
 	if(aFromPlayer ~= bFromPlayer) then
-
 		return aFromPlayer
 	end
 
