@@ -25,6 +25,9 @@ local colorMixin = {
 	GetAtlas = function(self)
 		return self.atlas
 	end,
+	GenerateHexColor = function(self)
+		return self.hex
+	end,
 }
 
 function oUF:CreateColor(r, g, b, a)
