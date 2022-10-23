@@ -40,6 +40,8 @@ read_globals = {
 	'UIParent',
 	'GameTooltip',
 	'GameTooltip_SetDefaultAnchor',
+	'Mixin',
+	'ColorMixin',
 
 	-- namespaces
 	'C_IncomingSummon',
