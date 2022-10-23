@@ -17,7 +17,7 @@ local colorMixin = {
 		self.b = b
 		self[3] = b
 		self.a = a
-		self.hex = string.format('ff%02x%02x%02x', r * 255, g * 255, b * 255)
+		self.hex = string.format('ff%02x%02x%02x', self:GetRGBAsBytes())
 	end,
 	SetAtlas = function(self, atlas)
 		self.atlas = atlas
