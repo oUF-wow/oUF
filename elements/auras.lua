@@ -53,10 +53,10 @@ At least one of the above widgets must be present for the element to work.
 
 ## Attributes
 
-button.caster   - the unit who cast the aura (string)
-button.filter   - the filter list used to determine the visibility of the aura (string)
-button.isDebuff - indicates if the button holds a debuff (boolean)
-button.isPlayer - indicates if the aura caster is the player or their vehicle (boolean)
+button.caster         - the unit who cast the aura (string)
+button.filter         - the filter list used to determine the visibility of the aura (string)
+button.isHarmful      - indicates if the button holds a debuff (boolean)
+button.auraInstanceID - unique ID for the current aura being tracked by the button (number)
 
 ## Examples
 
@@ -229,13 +229,13 @@ local function updateAura(element, unit, data, position)
 	button:EnableMouse(not element.disableMouse)
 	button:Show()
 
-	--[[ Callback: Auras:PostUpdateButton(unit, button, index, position)
+	--[[ Callback: Auras:PostUpdateButton(unit, button, data, position)
 	Called after the aura button has been updated.
 
 	* self     - the widget holding the aura buttons
 	* button   - the updated aura button (Button)
 	* unit     - the unit on which the aura is cast (string)
-	* data     - the aura data (table)
+	* data     - the [UnitAuraInfo](https://wowpedia.fandom.com/wiki/Struct_UnitAuraInfo) object (table)
 	* position - the actual position of the aura button (number)
 	--]]
 	if(element.PostUpdateButton) then
@@ -314,6 +314,18 @@ local function UpdateAuras(self, event, unit, updateInfo)
 				for i = 2, #slots do
 					if count <= numBuffs then
 						local data = processData(C_UnitAuras.GetAuraDataBySlot(unit, slots[i]))
+
+						--[[ Override: Auras:FilterAura(unit, data)
+						Defines a custom filter that controls if the aura button should be shown.
+
+						* self - the widget holding the aura buttons
+						* unit - the unit on which the aura is cast (string)
+						* data - [UnitAuraInfo](https://wowpedia.fandom.com/wiki/Struct_UnitAuraInfo) object (table)
+
+						## Returns
+
+						* show - indicates whether the aura button should be shown (boolean)
+						--]]
 						if((auras.FilterAura or FilterAura) (auras, unit, data)) then
 							auras.activeBuffs[data.auraInstanceID] = data
 
@@ -416,6 +428,16 @@ local function UpdateAuras(self, event, unit, updateInfo)
 					table.insert(auras.sortedBuffs, data)
 				end
 
+				--[[ Override: Auras:SortBuffs(a, b)
+				Defines a custom sorting alorithm for ordering the auras.  
+				Defaults to [AuraUtil.DefaultAuraCompare](https://github.com/Gethe/wow-ui-source/search?q=DefaultAuraCompare).
+				--]]
+				--[[ Override: Auras:SortAuras(a, b)
+				Defines a custom sorting alorithm for ordering the auras.  
+				Defaults to [AuraUtil.DefaultAuraCompare](https://github.com/Gethe/wow-ui-source/search?q=DefaultAuraCompare).
+
+				Overridden by the more specific SortBuffs and/or SortDebuffs overrides if they are defined.
+				--]]
 				table.sort(auras.sortedBuffs, auras.SortBuffs or auras.SortAuras or SortAuras)
 
 				for i = 1, #auras.sortedBuffs do
@@ -465,6 +487,10 @@ local function UpdateAuras(self, event, unit, updateInfo)
 					table.insert(auras.sortedDebuffs, data)
 				end
 
+				--[[ Override: Auras:SortDebuffs(a, b)
+				Defines a custom sorting alorithm for ordering the auras.  
+				Defaults to [AuraUtil.DefaultAuraCompare](https://github.com/Gethe/wow-ui-source/search?q=DefaultAuraCompare).
+				--]]
 				table.sort(auras.sortedDebuffs, auras.SortDebuffs or auras.SortAuras or SortAuras)
 			end
 
