@@ -244,17 +244,15 @@ local function updateAura(element, unit, data, position)
 end
 
 local function FilterAura(element, unit, data)
-	if((element.onlyShowPlayer and data.isFromPlayerOrPlayerPet) or (not element.onlyShowPlayer and data.name)) then
+	if((element.onlyShowPlayer and data.isPlayerAura) or (not element.onlyShowPlayer and data.name)) then
 		return true
 	end
 end
 
 -- see AuraUtil.DefaultAuraCompare
 local function SortAuras(a, b)
-	local aFromPlayer = a.sourceUnit and UnitIsUnit('player', a.sourceUnit)
-	local bFromPlayer = b.sourceUnit and UnitIsUnit('player', b.sourceUnit)
-	if(aFromPlayer ~= bFromPlayer) then
-		return aFromPlayer
+	if(a.isPlayerAura ~= b.isPlayerAura) then
+		return a.isPlayerAura
 	end
 
 	if(a.canApplyAura ~= b.canApplyAura) then
@@ -267,7 +265,7 @@ end
 local function processData(data)
 	if(not data) then return end
 
-	data.isFromPlayerOrPlayerPet = data.isFromPlayerOrPlayerPet or data.sourceUnit == 'vehicle'
+	data.isPlayerAura = data.sourceUnit and (UnitIsUnit('player', data.sourceUnit) or UnitIsOwnerOrControllerOfUnit('player', data.sourceUnit))
 
 	return data
 end
