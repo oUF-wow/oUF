@@ -7,8 +7,7 @@ local MAX_ARENA_ENEMIES = _G.MAX_ARENA_ENEMIES or 5
 -- sourced from FrameXML/TargetFrame.lua
 local MAX_BOSS_FRAMES = _G.MAX_BOSS_FRAMES or 5
 
--- sourced from FrameXML/PartyMemberFrame.lua
-local MAX_PARTY_MEMBERS = _G.MAX_PARTY_MEMBERS or 4
+local isPartyHooked = false
 
 local hiddenParent = CreateFrame('Frame', nil, UIParent)
 hiddenParent:SetAllPoints()
@@ -34,12 +33,12 @@ local function handleFrame(baseName, doNotReparent)
 			frame:SetParent(hiddenParent)
 		end
 
-		local health = frame.healthBar or frame.healthbar
+		local health = frame.healthBar or frame.healthbar or frame.HealthBar
 		if(health) then
 			health:UnregisterAllEvents()
 		end
 
-		local power = frame.manabar
+		local power = frame.manabar or frame.ManaBar
 		if(power) then
 			power:UnregisterAllEvents()
 		end
@@ -49,7 +48,7 @@ local function handleFrame(baseName, doNotReparent)
 			spell:UnregisterAllEvents()
 		end
 
-		local altpowerbar = frame.powerBarAlt
+		local altpowerbar = frame.powerBarAlt or frame.PowerBarAlt
 		if(altpowerbar) then
 			altpowerbar:UnregisterAllEvents()
 		end
@@ -57,6 +56,11 @@ local function handleFrame(baseName, doNotReparent)
 		local buffFrame = frame.BuffFrame
 		if(buffFrame) then
 			buffFrame:UnregisterAllEvents()
+		end
+
+		local petFrame = frame.PetFrame
+		if(petFrame) then
+			petFrame:UnregisterAllEvents()
 		end
 	end
 end
@@ -97,12 +101,13 @@ function oUF:DisableBlizzard(unit)
 			end
 		end
 	elseif(unit:match('party%d?$')) then
-		local id = unit:match('party(%d)')
-		if(id) then
-			handleFrame('PartyMemberFrame' .. id)
-		else
-			for i = 1, MAX_PARTY_MEMBERS do
-				handleFrame(string.format('PartyMemberFrame%d', i))
+		if(not isPartyHooked) then
+			isPartyHooked = true
+
+			PartyFrame:UnregisterAllEvents()
+
+			for frame in PartyFrame.PartyMemberFramePool:EnumerateActive() do
+				handleFrame(frame)
 			end
 		end
 	elseif(unit:match('arena%d?$')) then
