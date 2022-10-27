@@ -90,7 +90,6 @@ function oUF:DisableBlizzard(unit)
 		handleFrame(PetFrame)
 	elseif(unit == 'target') then
 		handleFrame(TargetFrame)
-		handleFrame(ComboFrame)
 	elseif(unit == 'focus') then
 		handleFrame(FocusFrame)
 	elseif(unit:match('boss%d?$')) then
