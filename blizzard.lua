@@ -62,6 +62,11 @@ local function handleFrame(baseName, doNotReparent)
 		if(petFrame) then
 			petFrame:UnregisterAllEvents()
 		end
+
+		local totFrame = frame.totFrame
+		if(totFrame) then
+			totFrame:UnregisterAllEvents()
+		end
 	end
 end
 
@@ -88,9 +93,6 @@ function oUF:DisableBlizzard(unit)
 		handleFrame(ComboFrame)
 	elseif(unit == 'focus') then
 		handleFrame(FocusFrame)
-		handleFrame(TargetofFocusFrame)
-	elseif(unit == 'targettarget') then
-		handleFrame(TargetFrameToT)
 	elseif(unit:match('boss%d?$')) then
 		local id = unit:match('boss(%d)')
 		if(id) then
