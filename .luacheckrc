@@ -31,6 +31,7 @@ read_globals = {
 	'Mixin',
 	'MonkStaggerBar',
 	'NamePlateDriverFrame',
+	'PartyFrame',
 	'PetCastingBarFrame',
 	'PetCastingBarFrame_OnLoad',
 	'PetFrame',
