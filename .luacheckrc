@@ -33,7 +33,6 @@ read_globals = {
 	'NamePlateDriverFrame',
 	'PartyFrame',
 	'PetCastingBarFrame',
-	'PetCastingBarFrame_OnLoad',
 	'PetFrame',
 	'PlayerCastingBarFrame',
 	'PlayerFrame',
