@@ -418,6 +418,14 @@ local function UpdateAuras(self, event, unit, updateInfo)
 		end
 
 		if(buffsChanged or debuffsChanged) then
+			--[[ Callback: Auras:PreSort(unit)
+			Called before ordering the auras.
+
+			* self - the widget holding the aura buttons
+			* unit - the unit for which the update has been triggered (string)
+			--]]
+			if(auras.PreSort) then auras:PreSort(unit) end
+
 			if(buffsChanged) then
 				-- instead of removing auras one by one, just wipe the tables entirely
 				-- and repopulate them, multiple table.remove calls are insanely slow
@@ -604,6 +612,8 @@ local function UpdateAuras(self, event, unit, updateInfo)
 		if(buffsChanged) then
 			buffs.sorted = table.wipe(buffs.sorted or {})
 
+			if(buffs.PreSort) then buffs:PreSort(unit) end
+
 			for _, data in next, buffs.active do
 				table.insert(buffs.sorted, data)
 			end
@@ -701,6 +711,8 @@ local function UpdateAuras(self, event, unit, updateInfo)
 
 		if(debuffsChanged) then
 			debuffs.sorted = table.wipe(debuffs.sorted or {})
+
+			if(debuffs.PreSort) then debuffs:PreSort(unit) end
 
 			for _, data in next, debuffs.active do
 				table.insert(debuffs.sorted, data)
