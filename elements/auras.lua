@@ -275,13 +275,14 @@ local function UpdateAuras(self, event, unit, updateInfo)
 
 	local auras = self.Auras
 	if(auras) then
-		--[[ Callback: Auras:PreUpdate(unit)
+		--[[ Callback: Auras:PreUpdate(unit, updateInfo)
 		Called before the element has been updated.
 
-		* self - the widget holding the aura buttons
-		* unit - the unit for which the update has been triggered (string)
+		* self       - the widget holding the aura buttons
+		* unit       - the unit for which the update has been triggered (string)
+		* updateInfo - [UnitAuraUpdateInfo](https://wowpedia.fandom.com/wiki/UNIT_AURA) object (table)
 		--]]
-		if(auras.PreUpdate) then auras:PreUpdate(unit) end
+		if(auras.PreUpdate) then auras:PreUpdate(unit, updateInfo) end
 
 		local buffsChanged = false
 		local numBuffs = auras.numBuffs or 32
@@ -530,7 +531,7 @@ local function UpdateAuras(self, event, unit, updateInfo)
 
 	local buffs = self.Buffs
 	if(buffs) then
-		if(buffs.PreUpdate) then buffs:PreUpdate(unit) end
+		if(buffs.PreUpdate) then buffs:PreUpdate(unit, updateInfo) end
 
 		local buffsChanged = false
 		local numBuffs = buffs.num or 32
@@ -628,7 +629,7 @@ local function UpdateAuras(self, event, unit, updateInfo)
 
 	local debuffs = self.Debuffs
 	if(debuffs) then
-		if(debuffs.PreUpdate) then debuffs:PreUpdate(unit) end
+		if(debuffs.PreUpdate) then debuffs:PreUpdate(unit, updateInfo) end
 
 		local debuffsChanged = false
 		local numDebuffs = debuffs.num or 40
