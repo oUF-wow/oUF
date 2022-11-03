@@ -508,7 +508,7 @@ local function UpdateAuras(self, event, unit, updateInfo)
 			if(auras.createdButtons > auras.anchoredButtons) then
 				--[[ Override: Auras:SetPosition(from, to)
 				Used to (re-)anchor the aura buttons.
-				Called when new aura buttons have been created or if :PreSetPosition is defined.
+				Called when new aura buttons have been created.
 
 				* self - the widget that holds the aura buttons
 				* from - the offset of the first aura button to be (re-)anchored (number)
