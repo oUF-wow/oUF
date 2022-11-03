@@ -99,7 +99,7 @@ function oUF:DisableBlizzard(unit)
 			handleFrame('Boss' .. id .. 'TargetFrame')
 		else
 			for i = 1, MAX_BOSS_FRAMES do
-				handleFrame(string.format('Boss%dTargetFrame', i))
+				handleFrame('Boss' .. i .. 'TargetFrame')
 			end
 		end
 	elseif(unit:match('party%d?$')) then
