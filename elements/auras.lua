@@ -381,6 +381,16 @@ local function UpdateAuras(self, event, unit, updateInfo)
 			end
 		end
 
+		--[[ Callback: Auras:PostUpdateInfo(unit, changed, updateInfo)
+		Called after updating the info for the active auras.
+
+		* self       - the widget holding the aura buttons
+		* unit       - the unit for which the update has been triggered (string)
+		* changed    - the hint on whether information was changed (boolean)
+		* updateInfo - [UnitAuraUpdateInfo](https://wowpedia.fandom.com/wiki/UNIT_AURA) object (table)
+		--]]
+		if(auras.PostUpdateInfo) then auras:PostUpdateInfo(unit, buffsChanged or debuffsChanged, updateInfo) end
+
 		if(buffsChanged or debuffsChanged) then
 
 			local numDebuffs = auras.numDebuffs or 40
@@ -557,6 +567,8 @@ local function UpdateAuras(self, event, unit, updateInfo)
 			end
 		end
 
+		if(buffs.PostUpdateInfo) then buffs:PostUpdateInfo(unit, buffsChanged, updateInfo) end
+
 		if(buffsChanged) then
 			local numBuffs = buffs.num or 32
 			buffs.sorted = table.wipe(buffs.sorted or {})
@@ -639,6 +651,8 @@ local function UpdateAuras(self, event, unit, updateInfo)
 				end
 			end
 		end
+
+		if(debuffs.PostUpdateInfo) then debuffs:PostUpdateInfo(unit, debuffsChanged, updateInfo) end
 
 		if(debuffsChanged) then
 			local numDebuffs = debuffs.num or 40
