@@ -17,6 +17,7 @@ ignore = {
 read_globals = {
 	'debugstack',
 	'geterrorhandler',
+	'hooksecurefunc',
 	string = {fields = {'join', 'split', 'trim'}},
 	table = {fields = {'removemulti', 'wipe'}},
 
@@ -24,6 +25,7 @@ read_globals = {
 	'ArenaEnemyFramesContainer',
 	'ArenaEnemyMatchFramesContainer',
 	'ArenaEnemyPrepFramesContainer',
+	'BossTargetFrameContainer',
 	'ColorMixin',
 	'ComboFrame',
 	'CreateColor',
