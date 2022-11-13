@@ -10,6 +10,7 @@ local MAX_BOSS_FRAMES = _G.MAX_BOSS_FRAMES or 5
 -- sourced from FrameXML/RaidFrame.lua
 local MEMBERS_PER_RAID_GROUP = _G.MEMBERS_PER_RAID_GROUP or 5
 
+local hookedFrames = {}
 local isArenaHooked = false
 local isBossHooked = false
 local isPartyHooked = false
@@ -42,7 +43,12 @@ local function handleFrame(baseName, doNotReparent)
 
 		if(not doNotReparent) then
 			frame:SetParent(hiddenParent)
-			hooksecurefunc(frame, 'SetParent', resetParent)
+
+			if(not hookedFrames[frame]) then
+				hooksecurefunc(frame, 'SetParent', resetParent)
+
+				hookedFrames[frame] = true
+			end
 		end
 
 		local health = frame.healthBar or frame.healthbar or frame.HealthBar
