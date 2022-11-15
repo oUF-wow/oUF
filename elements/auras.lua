@@ -541,7 +541,7 @@ local function UpdateAuras(self, event, unit, updateInfo)
 				updateAura(auras, unit, auras.sortedDebuffs[i], i + offset)
 			end
 
-			local numVisible = offset + #auras.sortedDebuffs + 1
+			local numVisible = offset + #auras.sortedDebuffs
 			local visibleChanged = false
 
 			if(numVisible ~= auras.visibleButtons) then
@@ -549,7 +549,7 @@ local function UpdateAuras(self, event, unit, updateInfo)
 				visibleChanged = auras.redrawIfVisibleChanged -- more convenient than auras.redrawIfVisibleChanged and visibleChanged
 			end
 
-			for i = numVisible, #auras do
+			for i = numVisible + 1, #auras do
 				auras[i]:Hide()
 			end
 
@@ -681,7 +681,7 @@ local function UpdateAuras(self, event, unit, updateInfo)
 				updateAura(buffs, unit, buffs.sorted[i], i)
 			end
 
-			local numVisible = #buffs.sorted + 1
+			local numVisible = #buffs.sorted
 			local visibleChanged = false
 
 			if(numVisible ~= buffs.visibleButtons) then
@@ -689,7 +689,7 @@ local function UpdateAuras(self, event, unit, updateInfo)
 				visibleChanged = buffs.redrawIfVisibleChanged
 			end
 
-			for i = numVisible, #buffs do
+			for i = numVisible + 1, #buffs do
 				buffs[i]:Hide()
 			end
 
@@ -805,7 +805,7 @@ local function UpdateAuras(self, event, unit, updateInfo)
 				updateAura(debuffs, unit, debuffs.sorted[i], i)
 			end
 
-			local numVisible = #debuffs.sorted + 1
+			local numVisible = #debuffs.sorted
 			local visibleChanged = false
 
 			if(numVisible ~= debuffs.visibleButtons) then
@@ -813,7 +813,7 @@ local function UpdateAuras(self, event, unit, updateInfo)
 				visibleChanged = debuffs.redrawIfVisibleChanged
 			end
 
-			for i = numVisible, #debuffs do
+			for i = numVisible + 1, #debuffs do
 				debuffs[i]:Hide()
 			end
 
