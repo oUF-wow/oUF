@@ -15,24 +15,24 @@ At least one of the above widgets must be present for the element to work.
 
 ## Options
 
-.disableMouse           - Disables mouse events (boolean)
-.disableCooldown        - Disables the cooldown spiral (boolean)
-.size                   - Aura button size. Defaults to 16 (number)
-.width                  - Aura button width. Takes priority over `size` (number)
-.height                 - Aura button height. Takes priority over `size` (number)
-.onlyShowPlayer         - Shows only auras created by player/vehicle (boolean)
-.showStealableBuffs     - Displays the stealable texture on buffs that can be stolen (boolean)
-.spacing                - Spacing between each button. Defaults to 0 (number)
-.['spacing-x']          - Horizontal spacing between each button. Takes priority over `spacing` (number)
-.['spacing-y']          - Vertical spacing between each button. Takes priority over `spacing` (number)
-.['growth-x']           - Horizontal growth direction. Defaults to 'RIGHT' (string)
-.['growth-y']           - Vertical growth direction. Defaults to 'UP' (string)
-.initialAnchor          - Anchor point for the aura buttons. Defaults to 'BOTTOMLEFT' (string)
-.filter                 - Custom filter list for auras to display. Defaults to 'HELPFUL' for buffs and 'HARMFUL' for
-                          debuffs (string)
-.tooltipAnchor          - Anchor point for the tooltip. Defaults to 'ANCHOR_BOTTOMRIGHT', however, if a frame has
-                          anchoring restrictions it will be set to 'ANCHOR_CURSOR' (string)
-.redrawIfVisibleChanged - Redraws aura buttons when the number of visible auras has changed (boolean)
+.disableMouse             - Disables mouse events (boolean)
+.disableCooldown          - Disables the cooldown spiral (boolean)
+.size                     - Aura button size. Defaults to 16 (number)
+.width                    - Aura button width. Takes priority over `size` (number)
+.height                   - Aura button height. Takes priority over `size` (number)
+.onlyShowPlayer           - Shows only auras created by player/vehicle (boolean)
+.showStealableBuffs       - Displays the stealable texture on buffs that can be stolen (boolean)
+.spacing                  - Spacing between each button. Defaults to 0 (number)
+.['spacing-x']            - Horizontal spacing between each button. Takes priority over `spacing` (number)
+.['spacing-y']            - Vertical spacing between each button. Takes priority over `spacing` (number)
+.['growth-x']             - Horizontal growth direction. Defaults to 'RIGHT' (string)
+.['growth-y']             - Vertical growth direction. Defaults to 'UP' (string)
+.initialAnchor            - Anchor point for the aura buttons. Defaults to 'BOTTOMLEFT' (string)
+.filter                   - Custom filter list for auras to display. Defaults to 'HELPFUL' for buffs and 'HARMFUL' for
+                            debuffs (string)
+.tooltipAnchor            - Anchor point for the tooltip. Defaults to 'ANCHOR_BOTTOMRIGHT', however, if a frame has
+                            anchoring restrictions it will be set to 'ANCHOR_CURSOR' (string)
+.reanchorIfVisibleChanged - Reanchors aura buttons when the number of visible auras has changed (boolean)
 
 ## Options Auras
 
@@ -546,7 +546,7 @@ local function UpdateAuras(self, event, unit, updateInfo)
 
 			if(numVisible ~= auras.visibleButtons) then
 				auras.visibleButtons = numVisible
-				visibleChanged = auras.redrawIfVisibleChanged -- more convenient than auras.redrawIfVisibleChanged and visibleChanged
+				visibleChanged = auras.reanchorIfVisibleChanged -- more convenient than auras.reanchorIfVisibleChanged and visibleChanged
 			end
 
 			for i = numVisible + 1, #auras do
@@ -557,7 +557,7 @@ local function UpdateAuras(self, event, unit, updateInfo)
 				--[[ Override: Auras:SetPosition(from, to)
 				Used to (re-)anchor the aura buttons.
 				Called when new aura buttons have been created or the number of visible buttons has changed if the
-				`.redrawIfVisibleChanged` option is enabled.
+				`.reanchorIfVisibleChanged` option is enabled.
 
 				* self - the widget that holds the aura buttons
 				* from - the offset of the first aura button to be (re-)anchored (number)
@@ -686,7 +686,7 @@ local function UpdateAuras(self, event, unit, updateInfo)
 
 			if(numVisible ~= buffs.visibleButtons) then
 				buffs.visibleButtons = numVisible
-				visibleChanged = buffs.redrawIfVisibleChanged
+				visibleChanged = buffs.reanchorIfVisibleChanged
 			end
 
 			for i = numVisible + 1, #buffs do
@@ -810,7 +810,7 @@ local function UpdateAuras(self, event, unit, updateInfo)
 
 			if(numVisible ~= debuffs.visibleButtons) then
 				debuffs.visibleButtons = numVisible
-				visibleChanged = debuffs.redrawIfVisibleChanged
+				visibleChanged = debuffs.reanchorIfVisibleChanged
 			end
 
 			for i = numVisible + 1, #debuffs do
