@@ -300,6 +300,7 @@ local function UpdateAuras(self, event, unit, updateInfo)
 		local numTotal = auras.numTotal or numBuffs + numDebuffs
 
 		if(not updateInfo or updateInfo.isFullUpdate) then
+			auras.allBuffs = table.wipe(auras.allBuffs or {})
 			auras.activeBuffs = table.wipe(auras.activeBuffs or {})
 			auras.sortedBuffs = table.wipe(auras.sortedBuffs or {})
 			numBuffs = math.min(numBuffs, numTotal)
@@ -307,65 +308,79 @@ local function UpdateAuras(self, event, unit, updateInfo)
 
 			local slots = {UnitAuraSlots(unit, buffFilter)}
 			if(slots[2]) then -- #1 return is continuationToken, we don't care about it
-				local count = 1
+				local buffCount = 0
 
 				for i = 2, #slots do
-					if count <= numBuffs then
-						local data = processData(C_UnitAuras.GetAuraDataBySlot(unit, slots[i]))
+					if(buffCount == numBuffs) then break end
 
-						--[[ Override: Auras:FilterAura(unit, data)
-						Defines a custom filter that controls if the aura button should be shown.
+					local data = processData(C_UnitAuras.GetAuraDataBySlot(unit, slots[i]))
 
-						* self - the widget holding the aura buttons
-						* unit - the unit on which the aura is cast (string)
-						* data - [UnitAuraInfo](https://wowpedia.fandom.com/wiki/Struct_UnitAuraInfo) object (table)
+					-- we want to save these because during further partial updates these will
+					-- be needed to fill in the blanks
+					auras.allBuffs[data.auraInstanceID] = data
 
-						## Returns
+					--[[ Override: Auras:FilterAura(unit, data)
+					Defines a custom filter that controls if the aura button should be shown.
 
-						* show - indicates whether the aura button should be shown (boolean)
-						--]]
-						if((auras.FilterAura or FilterAura) (auras, unit, data)) then
-							auras.activeBuffs[data.auraInstanceID] = data
+					* self - the widget holding the aura buttons
+					* unit - the unit on which the aura is cast (string)
+					* data - [UnitAuraInfo](https://wowpedia.fandom.com/wiki/Struct_UnitAuraInfo) object (table)
 
-							table.insert(auras.sortedBuffs, data)
+					## Returns
 
-							count = count + 1
-						end
+					* show - indicates whether the aura button should be shown (boolean)
+					--]]
+					if((auras.FilterAura or FilterAura) (auras, unit, data)) then
+						auras.activeBuffs[data.auraInstanceID] = true
+						buffCount = buffCount + 1
+
+						table.insert(auras.sortedBuffs, data)
 					end
 				end
 			end
 
+			auras.allDebuffs = table.wipe(auras.allDebuffs or {})
 			auras.activeDebuffs = table.wipe(auras.activeDebuffs or {})
 			auras.sortedDebuffs = table.wipe(auras.sortedDebuffs or {})
 			numDebuffs = math.min(numDebuffs, numTotal - #auras.sortedBuffs)
 			debuffsChanged = true
 
 			slots = {UnitAuraSlots(unit, debuffFilter)}
-			if(slots[2]) then -- #1 return is continuationToken, we don't care about it
-				local count = 1
+			if(slots[2]) then
+				local debuffCount = 0
 
 				for i = 2, #slots do
-					if(count <= numDebuffs) then
-						local data = processData(C_UnitAuras.GetAuraDataBySlot(unit, slots[i]))
-						if((auras.FilterAura or FilterAura) (auras, unit, data)) then
-							auras.activeDebuffs[data.auraInstanceID] = data
+					if(debuffCount == numDebuffs) then break end
 
-							table.insert(auras.sortedDebuffs, data)
+					local data = processData(C_UnitAuras.GetAuraDataBySlot(unit, slots[i]))
+					auras.allDebuffs[data.auraInstanceID] = data
 
-							count = count + 1
-						end
+					if((auras.FilterAura or FilterAura) (auras, unit, data)) then
+						auras.activeDebuffs[data.auraInstanceID] = true
+						debuffCount = debuffCount + 1
+
+						table.insert(auras.sortedDebuffs, data)
 					end
 				end
 			end
 		else
 			if(updateInfo.updatedAuraInstanceIDs) then
 				for _, auraInstanceID in next, updateInfo.updatedAuraInstanceIDs do
-					if(auras.activeBuffs[auraInstanceID]) then
-						auras.activeBuffs[auraInstanceID] = processData(C_UnitAuras.GetAuraDataByAuraInstanceID(unit, auraInstanceID))
-						buffsChanged = true
-					elseif(auras.activeDebuffs[auraInstanceID]) then
-						auras.activeDebuffs[auraInstanceID] = processData(C_UnitAuras.GetAuraDataByAuraInstanceID(unit, auraInstanceID))
-						debuffsChanged = true
+					if(auras.allBuffs[auraInstanceID]) then
+						auras.allBuffs[auraInstanceID] = processData(C_UnitAuras.GetAuraDataByAuraInstanceID(unit, auraInstanceID))
+
+						-- only update if it's actually active
+						if(auras.activeBuffs[auraInstanceID]) then
+							auras.activeBuffs[auraInstanceID] = true
+							buffsChanged = true
+						end
+					elseif(auras.allDebuffs[auraInstanceID]) then
+						auras.allDebuffs[auraInstanceID] = processData(C_UnitAuras.GetAuraDataByAuraInstanceID(unit, auraInstanceID))
+
+						if(auras.activeDebuffs[auraInstanceID]) then
+							auras.activeDebuffs[auraInstanceID] = true
+							debuffsChanged = true
+						end
 					end
 				end
 			end
@@ -375,42 +390,60 @@ local function UpdateAuras(self, event, unit, updateInfo)
 
 			if(updateInfo.removedAuraInstanceIDs) then
 				for _, auraInstanceID in next, updateInfo.removedAuraInstanceIDs do
-					if(auras.activeBuffs[auraInstanceID]) then
-						auras.activeBuffs[auraInstanceID] = nil
-						buffCount = buffCount - 1
-						buffsChanged = true
-					elseif(auras.activeDebuffs[auraInstanceID]) then
-						auras.activeDebuffs[auraInstanceID] = nil
-						debuffCount = debuffCount - 1
-						debuffsChanged = true
+					if(auras.allBuffs[auraInstanceID]) then
+						auras.allBuffs[auraInstanceID] = nil
+
+						if(auras.activeBuffs[auraInstanceID]) then
+							auras.activeBuffs[auraInstanceID] = nil
+							buffCount = buffCount - 1
+							buffsChanged = true
+						end
+					elseif(auras.allDebuffs[auraInstanceID]) then
+						auras.allDebuffs[auraInstanceID] = nil
+
+						if(auras.activeDebuffs[auraInstanceID]) then
+							auras.activeDebuffs[auraInstanceID] = nil
+							debuffCount = debuffCount - 1
+							debuffsChanged = true
+						end
+					end
+				end
+			end
+
+			if(updateInfo.addedAuras) then
+				for _, data in next, updateInfo.addedAuras do
+					if(data.isHelpful and not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, buffFilter)) then
+						auras.allBuffs[data.auraInstanceID] = processData(data)
+					elseif(data.isHarmful and not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, debuffFilter)) then
+						auras.allDebuffs[data.auraInstanceID] = processData(data)
 					end
 				end
 			end
 
 			numBuffs = math.min(numBuffs, numTotal)
 
-			if(updateInfo.addedAuras) then
-				for _, data in next, updateInfo.addedAuras do
-					if(data.isHelpful and not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, buffFilter)) then
-						-- only try to add new auras if we have enough room for them
-						if(buffCount <= numBuffs) then
-							data = processData(data)
-							if((auras.FilterAura or FilterAura) (auras, unit, data)) then
-								auras.activeBuffs[data.auraInstanceID] = data
-								buffCount = buffCount + 1
-								buffsChanged = true
-							end
-						end
-					elseif(data.isHarmful and not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, debuffFilter)) then
-						-- only try to add new auras if we have enough room for them
-						if(debuffCount <= math.min(numDebuffs, numTotal - buffCount)) then
-							data = processData(data)
-							if((auras.FilterAura or FilterAura) (auras, unit, data)) then
-								auras.activeDebuffs[data.auraInstanceID] = data
-								debuffCount = debuffCount + 1
-								debuffsChanged = true
-							end
-						end
+			-- rescan all auras to fill in the blanks because .addedAuras, if it's even
+			-- present in the first place, has only new auras
+			for auraInstanceID, data in next, auras.allBuffs do
+				if(buffCount == numBuffs) then break end
+
+				if(not auras.activeBuffs[auraInstanceID]) then
+					if((auras.FilterAura or FilterAura) (auras, unit, data)) then
+						auras.activeBuffs[data.auraInstanceID] = true
+						buffCount = buffCount + 1
+						buffsChanged = true
+					end
+				end
+			end
+
+			for auraInstanceID, data in next, auras.allDebuffs do
+				if(debuffCount == math.min(numDebuffs, numTotal - buffCount)) then break end
+
+				if(not auras.activeDebuffs[auraInstanceID]) then
+					if((auras.FilterAura or FilterAura) (auras, unit, data)) then
+						auras.activeDebuffs[data.auraInstanceID] = true
+						debuffCount = debuffCount + 1
+						debuffsChanged = true
 					end
 				end
 			end
@@ -422,8 +455,8 @@ local function UpdateAuras(self, event, unit, updateInfo)
 				-- and repopulate them, multiple table.remove calls are insanely slow
 				auras.sortedBuffs = table.wipe(auras.sortedBuffs or {})
 
-				for _, data in next, auras.activeBuffs do
-					table.insert(auras.sortedBuffs, data)
+				for auraInstanceID in next, auras.activeBuffs do
+					table.insert(auras.sortedBuffs, auras.allBuffs[auraInstanceID])
 				end
 
 				--[[ Override: Auras:SortBuffs(a, b)
@@ -483,8 +516,8 @@ local function UpdateAuras(self, event, unit, updateInfo)
 			if(debuffsChanged) then
 				auras.sortedDebuffs = table.wipe(auras.sortedDebuffs or {})
 
-				for _, data in next, auras.activeDebuffs do
-					table.insert(auras.sortedDebuffs, data)
+				for auraInstanceID in next, auras.activeDebuffs do
+					table.insert(auras.sortedDebuffs, auras.allDebuffs[auraInstanceID])
 				end
 
 				--[[ Override: Auras:SortDebuffs(a, b)
@@ -540,33 +573,40 @@ local function UpdateAuras(self, event, unit, updateInfo)
 		end
 
 		if(not updateInfo or updateInfo.isFullUpdate) then
+			buffs.all = table.wipe(buffs.all or {})
 			buffs.active = table.wipe(buffs.active or {})
 			buffs.sorted = table.wipe(buffs.sorted or {})
 			buffsChanged = true
 
 			local slots = {UnitAuraSlots(unit, buffFilter)}
-			if(slots[2]) then -- #1 return is continuationToken, we don't care about it
-				local count = 1
+			if(slots[2]) then
+				local buffCount = 0
 
 				for i = 2, #slots do
-					if count <= numBuffs then
-						local data = processData(C_UnitAuras.GetAuraDataBySlot(unit, slots[i]))
-						if((buffs.FilterAura or FilterAura) (buffs, unit, data)) then
-							buffs.active[data.auraInstanceID] = data
+					if(buffCount == numBuffs) then break end
 
-							table.insert(buffs.sorted, data)
+					local data = processData(C_UnitAuras.GetAuraDataBySlot(unit, slots[i]))
+					buffs.all[data.auraInstanceID] = data
 
-							count = count + 1
-						end
+					if((buffs.FilterAura or FilterAura) (buffs, unit, data)) then
+						buffs.active[data.auraInstanceID] = true
+						buffCount = buffCount + 1
+
+						table.insert(buffs.sorted, data)
+
 					end
 				end
 			end
 		else
 			if(updateInfo.updatedAuraInstanceIDs) then
 				for _, auraInstanceID in next, updateInfo.updatedAuraInstanceIDs do
-					if(buffs.active[auraInstanceID]) then
-						buffs.active[auraInstanceID] = processData(C_UnitAuras.GetAuraDataByAuraInstanceID(unit, auraInstanceID))
-						buffsChanged = true
+					if(buffs.all[auraInstanceID]) then
+						buffs.all[auraInstanceID] = processData(C_UnitAuras.GetAuraDataByAuraInstanceID(unit, auraInstanceID))
+
+						if(buffs.active[auraInstanceID]) then
+							buffs.active[auraInstanceID] = true
+							buffsChanged = true
+						end
 					end
 				end
 			end
@@ -575,10 +615,14 @@ local function UpdateAuras(self, event, unit, updateInfo)
 
 			if(updateInfo.removedAuraInstanceIDs) then
 				for _, auraInstanceID in next, updateInfo.removedAuraInstanceIDs do
-					if(buffs.active[auraInstanceID]) then
-						buffs.active[auraInstanceID] = nil
-						buffCount = buffCount - 1
-						buffsChanged = true
+					if(buffs.all[auraInstanceID]) then
+						buffs.all[auraInstanceID] = nil
+
+						if(buffs.active[auraInstanceID]) then
+							buffs.active[auraInstanceID] = nil
+							buffCount = buffCount - 1
+							buffsChanged = true
+						end
 					end
 				end
 			end
@@ -586,15 +630,19 @@ local function UpdateAuras(self, event, unit, updateInfo)
 			if(updateInfo.addedAuras) then
 				for _, data in next, updateInfo.addedAuras do
 					if(data.isHelpful and not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, buffFilter)) then
-						-- only try to add new buffs if we have enough room for them
-						if(buffCount <= numBuffs) then
-							data = processData(data)
-							if((buffs.FilterAura or FilterAura) (buffs, unit, data)) then
-								buffs.active[data.auraInstanceID] = data
-								buffCount = buffCount + 1
-								buffsChanged = true
-							end
-						end
+						buffs.all[data.auraInstanceID] = processData(data)
+					end
+				end
+			end
+
+			for auraInstanceID, data in next, buffs.all do
+				if(buffCount == numBuffs) then break end
+
+				if(not buffs.active[auraInstanceID]) then
+					if((buffs.FilterAura or FilterAura) (buffs, unit, data)) then
+						buffs.active[data.auraInstanceID] = true
+						buffCount = buffCount + 1
+						buffsChanged = true
 					end
 				end
 			end
@@ -603,8 +651,8 @@ local function UpdateAuras(self, event, unit, updateInfo)
 		if(buffsChanged) then
 			buffs.sorted = table.wipe(buffs.sorted or {})
 
-			for _, data in next, buffs.active do
-				table.insert(buffs.sorted, data)
+			for auraInstanceID in next, buffs.active do
+				table.insert(buffs.sorted, buffs.all[auraInstanceID])
 			end
 
 			table.sort(buffs.sorted, buffs.SortBuffs or buffs.SortAuras or SortAuras)
@@ -638,33 +686,39 @@ local function UpdateAuras(self, event, unit, updateInfo)
 		end
 
 		if(not updateInfo or updateInfo.isFullUpdate) then
+			debuffs.all = table.wipe(debuffs.all or {})
 			debuffs.active = table.wipe(debuffs.active or {})
 			debuffs.sorted = table.wipe(debuffs.sorted or {})
 			debuffsChanged = true
 
 			local slots = {UnitAuraSlots(unit, debuffFilter)}
-			if(slots[2]) then -- #1 return is continuationToken, we don't care about it
-				local count = 1
+			if(slots[2]) then
+				local debuffCount = 0
 
 				for i = 2, #slots do
-					if count <= numDebuffs then
-						local data = processData(C_UnitAuras.GetAuraDataBySlot(unit, slots[i]))
-						if((debuffs.FilterAura or FilterAura) (debuffs, unit, data)) then
-							debuffs.active[data.auraInstanceID] = data
+					if(debuffCount == numDebuffs) then break end
 
-							table.insert(debuffs.sorted, data)
+					local data = processData(C_UnitAuras.GetAuraDataBySlot(unit, slots[i]))
+					debuffs.all[data.auraInstanceID] = data
 
-							count = count + 1
-						end
+					if((debuffs.FilterAura or FilterAura) (debuffs, unit, data)) then
+						debuffs.active[data.auraInstanceID] = true
+						debuffCount = debuffCount + 1
+
+						table.insert(debuffs.sorted, data)
 					end
 				end
 			end
 		else
 			if(updateInfo.updatedAuraInstanceIDs) then
 				for _, auraInstanceID in next, updateInfo.updatedAuraInstanceIDs do
-					if(debuffs.active[auraInstanceID]) then
-						debuffs.active[auraInstanceID] = processData(C_UnitAuras.GetAuraDataByAuraInstanceID(unit, auraInstanceID))
-						debuffsChanged = true
+					if(debuffs.all[auraInstanceID]) then
+						debuffs.all[auraInstanceID] = processData(C_UnitAuras.GetAuraDataByAuraInstanceID(unit, auraInstanceID))
+
+						if(debuffs.active[auraInstanceID]) then
+							debuffs.active[auraInstanceID] = true
+							debuffsChanged = true
+						end
 					end
 				end
 			end
@@ -673,10 +727,14 @@ local function UpdateAuras(self, event, unit, updateInfo)
 
 			if(updateInfo.removedAuraInstanceIDs) then
 				for _, auraInstanceID in next, updateInfo.removedAuraInstanceIDs do
-					if(debuffs.active[auraInstanceID]) then
-						debuffs.active[auraInstanceID] = nil
-						debuffCount = debuffCount - 1
-						debuffsChanged = true
+					if(debuffs.all[auraInstanceID]) then
+						debuffs.all[auraInstanceID] = nil
+
+						if(debuffs.active[auraInstanceID]) then
+							debuffs.active[auraInstanceID] = nil
+							debuffCount = debuffCount - 1
+							debuffsChanged = true
+						end
 					end
 				end
 			end
@@ -684,15 +742,19 @@ local function UpdateAuras(self, event, unit, updateInfo)
 			if(updateInfo.addedAuras) then
 				for _, data in next, updateInfo.addedAuras do
 					if(data.isHarmful and not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, debuffFilter)) then
-						-- only try to add new debuffs if we have enough room for them
-						if(debuffCount <= numDebuffs) then
-							data = processData(data)
-							if((debuffs.FilterAura or FilterAura) (debuffs, unit, data)) then
-								debuffs.active[data.auraInstanceID] = data
-								debuffCount = debuffCount + 1
-								debuffsChanged = true
-							end
-						end
+						debuffs.all[data.auraInstanceID] = processData(data)
+					end
+				end
+			end
+
+			for auraInstanceID, data in next, debuffs.all do
+				if(debuffCount <= numDebuffs) then break end
+
+				if(not debuffs.active[auraInstanceID]) then
+					if((debuffs.FilterAura or FilterAura) (debuffs, unit, data)) then
+						debuffs.active[data.auraInstanceID] = true
+						debuffCount = debuffCount + 1
+						debuffsChanged = true
 					end
 				end
 			end
@@ -701,8 +763,8 @@ local function UpdateAuras(self, event, unit, updateInfo)
 		if(debuffsChanged) then
 			debuffs.sorted = table.wipe(debuffs.sorted or {})
 
-			for _, data in next, debuffs.active do
-				table.insert(debuffs.sorted, data)
+			for auraInstanceID in next, debuffs.active do
+				table.insert(debuffs.sorted, debuffs.all[auraInstanceID])
 			end
 
 			table.sort(debuffs.sorted, debuffs.SortDebuffs or debuffs.SortAuras or SortAuras)
