@@ -480,7 +480,7 @@ local function UpdateAuras(self, event, unit, updateInfo)
 
 			local offset = #auras.sortedBuffs
 
-			if(auras.gap and #auras.sortedDebuffs > 0) then
+			if(auras.gap and offset > 0 and #auras.sortedDebuffs > 0) then
 				offset = offset + 1
 
 				local button = auras[offset]
