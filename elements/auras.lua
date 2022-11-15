@@ -316,8 +316,8 @@ local function UpdateAuras(self, event, unit, updateInfo)
 
 					local data = processData(C_UnitAuras.GetAuraDataBySlot(unit, slots[i]))
 
-					-- we want to save these because during further partial updates these will
-					-- be needed to fill in the blanks
+					-- we want to save all auras because during further partial updates they'll be
+					-- needed to fill in the blanks
 					auras.allBuffs[data.auraInstanceID] = data
 
 					--[[ Override: Auras:FilterAura(unit, data)
@@ -451,8 +451,7 @@ local function UpdateAuras(self, event, unit, updateInfo)
 		end
 
 		--[[ Callback: Auras:PostUpdateInfo(unit, buffsChanged, debuffsChanged)
-		Called after the aura update info has been processed.
-		Please note that `.sorted*` tables are outdated during this call, rely only on `.all*` and `.active*` tables.
+		Called after the aura update info has been processed, but before sorting.
 
 		* self           - the widget holding the aura buttons
 		* unit           - the unit for which the update has been triggered (string)
@@ -474,12 +473,12 @@ local function UpdateAuras(self, event, unit, updateInfo)
 				end
 
 				--[[ Override: Auras:SortBuffs(a, b)
-				Defines a custom sorting alorithm for ordering the auras.
+				Defines a custom sorting algorithm for ordering the auras.
 
 				Defaults to [AuraUtil.DefaultAuraCompare](https://github.com/Gethe/wow-ui-source/search?q=DefaultAuraCompare).
 				--]]
 				--[[ Override: Auras:SortAuras(a, b)
-				Defines a custom sorting alorithm for ordering the auras.
+				Defines a custom sorting algorithm for ordering the auras.
 
 				Defaults to [AuraUtil.DefaultAuraCompare](https://github.com/Gethe/wow-ui-source/search?q=DefaultAuraCompare).
 
@@ -535,7 +534,7 @@ local function UpdateAuras(self, event, unit, updateInfo)
 				end
 
 				--[[ Override: Auras:SortDebuffs(a, b)
-				Defines a custom sorting alorithm for ordering the auras.
+				Defines a custom sorting algorithm for ordering the auras.
 
 				Defaults to [AuraUtil.DefaultAuraCompare](https://github.com/Gethe/wow-ui-source/search?q=DefaultAuraCompare).
 				--]]
@@ -676,8 +675,8 @@ local function UpdateAuras(self, event, unit, updateInfo)
 			end
 		end
 
-		if(auras.PostUpdateInfo) then
-			auras:PostUpdateInfo(unit, buffsChanged)
+		if(buffs.PostUpdateInfo) then
+			buffs:PostUpdateInfo(unit, buffsChanged)
 		end
 
 		if(buffsChanged) then
@@ -804,8 +803,8 @@ local function UpdateAuras(self, event, unit, updateInfo)
 			end
 		end
 
-		if(auras.PostUpdateInfo) then
-			auras:PostUpdateInfo(unit, debuffsChanged)
+		if(debuffs.PostUpdateInfo) then
+			debuffs:PostUpdateInfo(unit, debuffsChanged)
 		end
 
 		if(debuffsChanged) then
@@ -889,6 +888,7 @@ local function Enable(self)
 
 			auras.createdButtons = auras.createdButtons or 0
 			auras.anchoredButtons = 0
+			auras.visibleButtons = 0
 			auras.tooltipAnchor = auras.tooltipAnchor or 'ANCHOR_BOTTOMRIGHT'
 
 			auras:Show()
@@ -903,6 +903,7 @@ local function Enable(self)
 
 			buffs.createdButtons = buffs.createdButtons or 0
 			buffs.anchoredButtons = 0
+			buffs.visibleButtons = 0
 			buffs.tooltipAnchor = buffs.tooltipAnchor or 'ANCHOR_BOTTOMRIGHT'
 
 			buffs:Show()
@@ -917,6 +918,7 @@ local function Enable(self)
 
 			debuffs.createdButtons = debuffs.createdButtons or 0
 			debuffs.anchoredButtons = 0
+			debuffs.visibleButtons = 0
 			debuffs.tooltipAnchor = debuffs.tooltipAnchor or 'ANCHOR_BOTTOMRIGHT'
 
 			debuffs:Show()
