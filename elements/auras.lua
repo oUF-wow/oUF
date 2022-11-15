@@ -15,23 +15,24 @@ At least one of the above widgets must be present for the element to work.
 
 ## Options
 
-.disableMouse       - Disables mouse events (boolean)
-.disableCooldown    - Disables the cooldown spiral (boolean)
-.size               - Aura button size. Defaults to 16 (number)
-.width              - Aura button width. Takes priority over `size` (number)
-.height             - Aura button height. Takes priority over `size` (number)
-.onlyShowPlayer     - Shows only auras created by player/vehicle (boolean)
-.showStealableBuffs - Displays the stealable texture on buffs that can be stolen (boolean)
-.spacing            - Spacing between each button. Defaults to 0 (number)
-.['spacing-x']      - Horizontal spacing between each button. Takes priority over `spacing` (number)
-.['spacing-y']      - Vertical spacing between each button. Takes priority over `spacing` (number)
-.['growth-x']       - Horizontal growth direction. Defaults to 'RIGHT' (string)
-.['growth-y']       - Vertical growth direction. Defaults to 'UP' (string)
-.initialAnchor      - Anchor point for the aura buttons. Defaults to 'BOTTOMLEFT' (string)
-.filter             - Custom filter list for auras to display. Defaults to 'HELPFUL' for buffs and 'HARMFUL' for
-                      debuffs (string)
-.tooltipAnchor      - Anchor point for the tooltip. Defaults to 'ANCHOR_BOTTOMRIGHT', however, if a frame has anchoring
-                      restrictions it will be set to 'ANCHOR_CURSOR' (string)
+.disableMouse           - Disables mouse events (boolean)
+.disableCooldown        - Disables the cooldown spiral (boolean)
+.size                   - Aura button size. Defaults to 16 (number)
+.width                  - Aura button width. Takes priority over `size` (number)
+.height                 - Aura button height. Takes priority over `size` (number)
+.onlyShowPlayer         - Shows only auras created by player/vehicle (boolean)
+.showStealableBuffs     - Displays the stealable texture on buffs that can be stolen (boolean)
+.spacing                - Spacing between each button. Defaults to 0 (number)
+.['spacing-x']          - Horizontal spacing between each button. Takes priority over `spacing` (number)
+.['spacing-y']          - Vertical spacing between each button. Takes priority over `spacing` (number)
+.['growth-x']           - Horizontal growth direction. Defaults to 'RIGHT' (string)
+.['growth-y']           - Vertical growth direction. Defaults to 'UP' (string)
+.initialAnchor          - Anchor point for the aura buttons. Defaults to 'BOTTOMLEFT' (string)
+.filter                 - Custom filter list for auras to display. Defaults to 'HELPFUL' for buffs and 'HARMFUL' for
+                          debuffs (string)
+.tooltipAnchor          - Anchor point for the tooltip. Defaults to 'ANCHOR_BOTTOMRIGHT', however, if a frame has
+                          anchoring restrictions it will be set to 'ANCHOR_CURSOR' (string)
+.redrawIfVisibleChanged - Redraws aura buttons when the number of visible auras has changed (boolean)
 
 ## Options Auras
 
@@ -534,21 +535,35 @@ local function UpdateAuras(self, event, unit, updateInfo)
 				updateAura(auras, unit, auras.sortedDebuffs[i], i + offset)
 			end
 
-			for i = offset + #auras.sortedDebuffs + 1, #auras do
+			local numVisible = offset + #auras.sortedDebuffs + 1
+			local visibleChanged = false
+
+			if(numVisible ~= auras.visibleButtons) then
+				auras.visibleButtons = numVisible
+				visibleChanged = auras.redrawIfVisibleChanged -- more convenient than auras.redrawIfVisibleChanged and visibleChanged
+			end
+
+			for i = numVisible, #auras do
 				auras[i]:Hide()
 			end
 
-			if(auras.createdButtons > auras.anchoredButtons) then
+			if(visibleChanged or auras.createdButtons > auras.anchoredButtons) then
 				--[[ Override: Auras:SetPosition(from, to)
 				Used to (re-)anchor the aura buttons.
-				Called when new aura buttons have been created or if :PreSetPosition is defined.
+				Called when new aura buttons have been created or the number of visible buttons has changed if the
+				`.redrawIfVisibleChanged` option is enabled.
 
 				* self - the widget that holds the aura buttons
 				* from - the offset of the first aura button to be (re-)anchored (number)
 				* to   - the offset of the last aura button to be (re-)anchored (number)
 				--]]
-				(auras.SetPosition or SetPosition) (auras, auras.anchoredButtons + 1, auras.createdButtons)
-				auras.anchoredButtons = auras.createdButtons
+				if(visibleChanged) then
+					-- this is useful for when people might want centred auras, like nameplates
+					(auras.SetPosition or SetPosition) (auras, 1, numVisible)
+				else
+					(auras.SetPosition or SetPosition) (auras, auras.anchoredButtons + 1, auras.createdButtons)
+					auras.anchoredButtons = auras.createdButtons
+				end
 			end
 
 			--[[ Callback: Auras:PostUpdate(unit)
@@ -661,13 +676,25 @@ local function UpdateAuras(self, event, unit, updateInfo)
 				updateAura(buffs, unit, buffs.sorted[i], i)
 			end
 
-			for i = #buffs.sorted + 1, #buffs do
+			local numVisible = #buffs.sorted + 1
+			local visibleChanged = false
+
+			if(numVisible ~= buffs.visibleButtons) then
+				buffs.visibleButtons = numVisible
+				visibleChanged = buffs.redrawIfVisibleChanged
+			end
+
+			for i = numVisible, #buffs do
 				buffs[i]:Hide()
 			end
 
-			if(buffs.createdButtons > buffs.anchoredButtons) then
-				(buffs.SetPosition or SetPosition) (buffs, buffs.anchoredButtons + 1, buffs.createdButtons)
-				buffs.anchoredButtons = buffs.createdButtons
+			if(visibleChanged or buffs.createdButtons > buffs.anchoredButtons) then
+				if(visibleChanged) then
+					(buffs.SetPosition or SetPosition) (buffs, 1, numVisible)
+				else
+					(buffs.SetPosition or SetPosition) (buffs, buffs.anchoredButtons + 1, buffs.createdButtons)
+					buffs.anchoredButtons = buffs.createdButtons
+				end
 			end
 
 			if(buffs.PostUpdate) then buffs:PostUpdate(unit) end
@@ -773,13 +800,25 @@ local function UpdateAuras(self, event, unit, updateInfo)
 				updateAura(debuffs, unit, debuffs.sorted[i], i)
 			end
 
-			for i = #debuffs.sorted + 1, #debuffs do
+			local numVisible = #debuffs.sorted + 1
+			local visibleChanged = false
+
+			if(numVisible ~= debuffs.visibleButtons) then
+				debuffs.visibleButtons = numVisible
+				visibleChanged = debuffs.redrawIfVisibleChanged
+			end
+
+			for i = numVisible, #debuffs do
 				debuffs[i]:Hide()
 			end
 
-			if(debuffs.createdButtons > debuffs.anchoredButtons) then
-				(debuffs.SetPosition or SetPosition) (debuffs, debuffs.anchoredButtons + 1, debuffs.createdButtons)
-				debuffs.anchoredButtons = debuffs.createdButtons
+			if(visibleChanged or debuffs.createdButtons > debuffs.anchoredButtons) then
+				if(visibleChanged) then
+					(debuffs.SetPosition or SetPosition) (debuffs, 1, numVisible)
+				else
+					(debuffs.SetPosition or SetPosition) (debuffs, debuffs.anchoredButtons + 1, debuffs.createdButtons)
+					debuffs.anchoredButtons = debuffs.createdButtons
+				end
 			end
 
 			if(debuffs.PostUpdate) then debuffs:PostUpdate(unit) end
