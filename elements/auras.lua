@@ -450,6 +450,19 @@ local function UpdateAuras(self, event, unit, updateInfo)
 			end
 		end
 
+		--[[ Callback: Auras:PostUpdateInfo(unit, buffsChanged, debuffsChanged)
+		Called after the aura update info has been processed.
+		Please note that `.sorted*` tables are outdated during this call, rely only on `.all*` and `.active*` tables.
+
+		* self           - the widget holding the aura buttons
+		* unit           - the unit for which the update has been triggered (string)
+		* buffsChanged   - indicates whether the buff info has changed (boolean)
+		* debuffsChanged - indicates whether the debuff info has changed (boolean)
+		--]]
+		if(auras.PostUpdateInfo) then
+			auras:PostUpdateInfo(unit, buffsChanged, debuffsChanged)
+		end
+
 		if(buffsChanged or debuffsChanged) then
 			if(buffsChanged) then
 				-- instead of removing auras one by one, just wipe the tables entirely
@@ -663,6 +676,10 @@ local function UpdateAuras(self, event, unit, updateInfo)
 			end
 		end
 
+		if(auras.PostUpdateInfo) then
+			auras:PostUpdateInfo(unit, buffsChanged)
+		end
+
 		if(buffsChanged) then
 			buffs.sorted = table.wipe(buffs.sorted or {})
 
@@ -785,6 +802,10 @@ local function UpdateAuras(self, event, unit, updateInfo)
 					end
 				end
 			end
+		end
+
+		if(auras.PostUpdateInfo) then
+			auras:PostUpdateInfo(unit, debuffsChanged)
 		end
 
 		if(debuffsChanged) then
