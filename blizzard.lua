@@ -68,6 +68,11 @@ local function handleFrame(baseName, doNotReparent)
 		if(totFrame) then
 			totFrame:UnregisterAllEvents()
 		end
+
+		local classPowerBar = frame.classPowerBar
+		if(classPowerBar) then
+			classPowerBar:UnregisterAllEvents()
+		end
 	end
 end
 
