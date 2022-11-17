@@ -274,15 +274,18 @@ end
 local function UpdateAuras(self, event, unit, updateInfo)
 	if(self.unit ~= unit) then return end
 
+	local isFullUpdate = not updateInfo or updateInfo.isFullUpdate
+
 	local auras = self.Auras
 	if(auras) then
 		--[[ Callback: Auras:PreUpdate(unit)
 		Called before the element has been updated.
 
-		* self - the widget holding the aura buttons
-		* unit - the unit for which the update has been triggered (string)
+		* self         - the widget holding the aura buttons
+		* unit         - the unit for which the update has been triggered (string)
+		* isFullUpdate - indicates whether the element is performing a full update (boolean)
 		--]]
-		if(auras.PreUpdate) then auras:PreUpdate(unit) end
+		if(auras.PreUpdate) then auras:PreUpdate(unit, isFullUpdate) end
 
 		local buffsChanged = false
 		local numBuffs = auras.numBuffs or 32
@@ -300,7 +303,7 @@ local function UpdateAuras(self, event, unit, updateInfo)
 
 		local numTotal = auras.numTotal or numBuffs + numDebuffs
 
-		if(not updateInfo or updateInfo.isFullUpdate) then
+		if(isFullUpdate) then
 			auras.allBuffs = table.wipe(auras.allBuffs or {})
 			auras.activeBuffs = table.wipe(auras.activeBuffs or {})
 			auras.sortedBuffs = table.wipe(auras.sortedBuffs or {})
@@ -553,7 +556,7 @@ local function UpdateAuras(self, event, unit, updateInfo)
 
 	local buffs = self.Buffs
 	if(buffs) then
-		if(buffs.PreUpdate) then buffs:PreUpdate(unit) end
+		if(buffs.PreUpdate) then buffs:PreUpdate(unit, isFullUpdate) end
 
 		local buffsChanged = false
 		local numBuffs = buffs.num or 32
@@ -562,7 +565,7 @@ local function UpdateAuras(self, event, unit, updateInfo)
 			buffFilter = buffFilter(buffs, unit)
 		end
 
-		if(not updateInfo or updateInfo.isFullUpdate) then
+		if(isFullUpdate) then
 			buffs.all = table.wipe(buffs.all or {})
 			buffs.active = table.wipe(buffs.active or {})
 			buffs.sorted = table.wipe(buffs.sorted or {})
@@ -663,7 +666,7 @@ local function UpdateAuras(self, event, unit, updateInfo)
 
 	local debuffs = self.Debuffs
 	if(debuffs) then
-		if(debuffs.PreUpdate) then debuffs:PreUpdate(unit) end
+		if(debuffs.PreUpdate) then debuffs:PreUpdate(unit, isFullUpdate) end
 
 		local debuffsChanged = false
 		local numDebuffs = debuffs.num or 40
@@ -672,7 +675,7 @@ local function UpdateAuras(self, event, unit, updateInfo)
 			debuffFilter = debuffFilter(debuffs, unit)
 		end
 
-		if(not updateInfo or updateInfo.isFullUpdate) then
+		if(isFullUpdate) then
 			debuffs.all = table.wipe(debuffs.all or {})
 			debuffs.active = table.wipe(debuffs.active or {})
 			debuffs.sorted = table.wipe(debuffs.sorted or {})
