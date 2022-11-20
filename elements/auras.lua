@@ -278,7 +278,7 @@ local function UpdateAuras(self, event, unit, updateInfo)
 
 	local auras = self.Auras
 	if(auras) then
-		--[[ Callback: Auras:PreUpdate(unit)
+		--[[ Callback: Auras:PreUpdate(unit, isFullUpdate)
 		Called before the element has been updated.
 
 		* self         - the widget holding the aura buttons
