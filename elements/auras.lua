@@ -235,7 +235,7 @@ local function updateAura(element, unit, data, position)
 
 	* self     - the widget holding the aura buttons
 	* button   - the updated aura button (Button)
-	* unit     - the unit on which the aura is cast (string)
+	* unit     - the unit for which the update has been triggered (string)
 	* data     - the [UnitAuraInfo](https://wowpedia.fandom.com/wiki/Struct_UnitAuraInfo) object (table)
 	* position - the actual position of the aura button (number)
 	--]]
@@ -424,7 +424,7 @@ local function UpdateAuras(self, event, unit, updateInfo)
 		end
 
 		--[[ Callback: Auras:PostUpdateInfo(unit, buffsChanged, debuffsChanged)
-		Called after the aura update info has been processed, but before sorting.
+		Called after the aura update info has been updated and filtered, but before sorting.
 
 		* self           - the widget holding the aura buttons
 		* unit           - the unit for which the update has been triggered (string)
