@@ -306,7 +306,6 @@ local function UpdateAuras(self, event, unit, updateInfo)
 		if(isFullUpdate) then
 			auras.allBuffs = table.wipe(auras.allBuffs or {})
 			auras.activeBuffs = table.wipe(auras.activeBuffs or {})
-			auras.sortedBuffs = table.wipe(auras.sortedBuffs or {})
 			buffsChanged = true
 
 			local slots = {UnitAuraSlots(unit, buffFilter)}
@@ -332,7 +331,6 @@ local function UpdateAuras(self, event, unit, updateInfo)
 
 			auras.allDebuffs = table.wipe(auras.allDebuffs or {})
 			auras.activeDebuffs = table.wipe(auras.activeDebuffs or {})
-			auras.sortedDebuffs = table.wipe(auras.sortedDebuffs or {})
 			debuffsChanged = true
 
 			slots = {UnitAuraSlots(unit, debuffFilter)}
@@ -568,7 +566,6 @@ local function UpdateAuras(self, event, unit, updateInfo)
 		if(isFullUpdate) then
 			buffs.all = table.wipe(buffs.all or {})
 			buffs.active = table.wipe(buffs.active or {})
-			buffs.sorted = table.wipe(buffs.sorted or {})
 			buffsChanged = true
 
 			local slots = {UnitAuraSlots(unit, buffFilter)}
@@ -678,7 +675,6 @@ local function UpdateAuras(self, event, unit, updateInfo)
 		if(isFullUpdate) then
 			debuffs.all = table.wipe(debuffs.all or {})
 			debuffs.active = table.wipe(debuffs.active or {})
-			debuffs.sorted = table.wipe(debuffs.sorted or {})
 			debuffsChanged = true
 
 			local slots = {UnitAuraSlots(unit, debuffFilter)}
