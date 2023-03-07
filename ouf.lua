@@ -764,10 +764,8 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 	-- and because forbidden nameplates exist, we have to allow default nameplate
 	-- driver to create, update, and remove Blizz nameplates.
 	-- Disable only not forbidden nameplates.
-	NamePlateDriverFrame:HookScript('OnEvent', function(_, event, unit)
-		if(event == 'NAME_PLATE_UNIT_ADDED' and unit) then
-			self:DisableBlizzard(unit)
-		end
+	hooksecurefunc(NamePlateDriverFrame, 'AcquireUnitFrame', function(...)
+		self:DisableNamePlate(...)
 	end)
 
 	local eventHandler = CreateFrame('Frame', 'oUF_NamePlateDriver')
