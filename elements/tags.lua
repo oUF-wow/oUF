@@ -769,9 +769,9 @@ local function getTagFunc(tagstr)
 					tagFunc = function()
 						return '|cffffffff' .. bracket .. '|r'
 					end
-				end
 
-				invalidBrackets[bracket] = tagFunc
+					invalidBrackets[bracket] = tagFunc
+				end
 			end
 
 			table.insert(funcs, tagFunc)
