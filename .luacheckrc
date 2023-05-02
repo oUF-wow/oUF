@@ -49,6 +49,7 @@ read_globals = {
 	'UIParent',
 
 	-- namespaces
+	'C_AddOns',
 	'C_IncomingSummon',
 	'C_NamePlate',
 	'C_PvP',
@@ -57,7 +58,6 @@ read_globals = {
 	-- API
 	'CopyTable',
 	'CreateFrame',
-	'GetAddOnMetadata',
 	'GetArenaOpponentSpec',
 	'GetNetStats',
 	'GetNumArenaOpponentSpecs',
