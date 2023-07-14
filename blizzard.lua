@@ -1,9 +1,6 @@
 local _, ns = ...
 local oUF = ns.oUF
 
--- sourced from FrameXML\ArenaUI.lua
-local MAX_ARENA_ENEMIES = _G.MAX_ARENA_ENEMIES or 5
-
 -- sourced from FrameXML/TargetFrame.lua
 local MAX_BOSS_FRAMES = _G.MAX_BOSS_FRAMES or 5
 
@@ -142,19 +139,7 @@ function oUF:DisableBlizzard(unit)
 		if(not isArenaHooked) then
 			isArenaHooked = true
 
-			-- this disables ArenaEnemyFramesContainer
-			SetCVar('showArenaEnemyFrames', '0')
-			SetCVar('showArenaEnemyPets', '0')
-
-			-- but still UAE and hide all containers
-			handleFrame(ArenaEnemyFramesContainer)
-			handleFrame(ArenaEnemyPrepFramesContainer)
-			handleFrame(ArenaEnemyMatchFramesContainer)
-
-			for i = 1, MAX_ARENA_ENEMIES do
-				handleFrame('ArenaEnemyMatchFrame' .. i, true)
-				handleFrame('ArenaEnemyPrepFrame' .. i, true)
-			end
+			handleFrame(CompactArenaFrame)
 		end
 	end
 end
