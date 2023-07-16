@@ -59,7 +59,7 @@ local function handleFrame(baseName, doNotReparent)
 			power:UnregisterAllEvents()
 		end
 
-		local spell = frame.castBar or frame.spellbar
+		local spell = frame.castBar or frame.spellbar or frame.CastingBarFrame
 		if(spell) then
 			spell:UnregisterAllEvents()
 		end
@@ -87,6 +87,16 @@ local function handleFrame(baseName, doNotReparent)
 		local classPowerBar = frame.classPowerBar
 		if(classPowerBar) then
 			classPowerBar:UnregisterAllEvents()
+		end
+
+		local ccRemoverFrame = frame.CcRemoverFrame
+		if(ccRemoverFrame) then
+			ccRemoverFrame:UnregisterAllEvents()
+		end
+
+		local debuffFrame = frame.DebuffFrame
+		if(debuffFrame) then
+			debuffFrame:UnregisterAllEvents()
 		end
 	end
 end
@@ -140,6 +150,10 @@ function oUF:DisableBlizzard(unit)
 			isArenaHooked = true
 
 			handleFrame(CompactArenaFrame)
+
+			for _, frame in next, CompactArenaFrame.memberUnitFrames do
+				handleFrame(frame, true)
+			end
 		end
 	end
 end
