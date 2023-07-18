@@ -102,6 +102,10 @@ local function resetAttributes(self)
 	self.empowering = nil
 	self.notInterruptible = nil
 	self.spellID = nil
+	self.numStages = nil
+	self.curStage = nil
+
+	table.wipe(self.stagePoints)
 
 	for _, pip in next, self.Pips do
 		pip:Hide()
@@ -117,6 +121,8 @@ local function UpdatePips(element, numStages)
 	local stageMaxValue = element.max * 1000
 	local isHoriz = element:GetOrientation() == 'HORIZONTAL'
 	local elementSize = isHoriz and element:GetWidth() or element:GetHeight()
+	element.numStages = numStages
+	element.curStage = 0 -- NOTE: Updates only if the PostUpdateStage callback is present
 
 	for stage = 1, numStages do
 		local duration
@@ -128,6 +134,7 @@ local function UpdatePips(element, numStages)
 
 		if(duration > CASTBAR_STAGE_DURATION_INVALID) then
 			stageTotalDuration = stageTotalDuration + duration
+			element.stagePoints[stage] = stageTotalDuration / 1000
 
 			local portion = stageTotalDuration / stageMaxValue
 			local offset = elementSize * portion
@@ -464,6 +471,29 @@ local function onUpdate(self, elapsed)
 			end
 		end
 
+		--[[ Callback: Castbar:PostUpdateStage(stage)
+		Called after the current stage changes.
+
+		* self - the Castbar widget
+		* stage - the stage of the empowered cast (number)
+		--]]
+		if(self.empowering and self.PostUpdateStage) then
+			local old = self.curStage
+			for i = old + 1, self.numStages do
+				if(self.stagePoints[i]) then
+					if(self.duration > self.stagePoints[i]) then
+						self.curStage = i
+
+						if(self.curStage ~= old) then
+							self:PostUpdateStage(i)
+						end
+					else
+						break
+					end
+				end
+			end
+		end
+
 		self:SetValue(self.duration)
 	elseif(self.holdTime > 0) then
 		self.holdTime = self.holdTime - elapsed
@@ -502,6 +532,7 @@ local function Enable(self, unit)
 		self:RegisterEvent('UNIT_SPELLCAST_NOT_INTERRUPTIBLE', CastInterruptible)
 
 		element.holdTime = 0
+		element.stagePoints = {}
 		element.Pips = element.Pips or {}
 
 		element:SetScript('OnUpdate', element.OnUpdate or onUpdate)
