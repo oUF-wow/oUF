@@ -173,6 +173,16 @@ local function UpdatePips(element, numStages)
 			end
 		end
 	end
+
+	--[[ Callback: Castbar:PostUpdatePips(unit)
+	Called after the element has updated stage separators (pips) in an empowered cast.
+
+	* self - the Castbar widget
+	* numStages - the number of stages in the current cast (number)
+	--]]
+	if(element.PostUpdatePips) then
+		element:PostUpdatePips(numStages)
+	end
 end
 
 local function CastStart(self, event, unit)
