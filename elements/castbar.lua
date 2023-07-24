@@ -37,7 +37,7 @@ A default texture will be applied to the StatusBar and Texture widgets if they d
 .numStages        - The number of empowerment stages of the current spell (number?)
 .curStage         - The current empowerment stage of the spell. It updates only if the PostUpdateStage callback is
                     defined (number?)
-.stagePoints      - The timestamps (in seconds) for each empowerment stage (table?)
+.stagePoints      - The timestamps (in seconds) for each empowerment stage (table)
 
 ## Examples
 
@@ -185,7 +185,7 @@ local function UpdatePips(element, numStages)
 		end
 	end
 
-	--[[ Callback: Castbar:PostUpdatePips(unit)
+	--[[ Callback: Castbar:PostUpdatePips(numStages)
 	Called after the element has updated stage separators (pips) in an empowered cast.
 
 	* self - the Castbar widget
