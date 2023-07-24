@@ -34,6 +34,10 @@ A default texture will be applied to the StatusBar and Texture widgets if they d
 .empowering       - Indicates whether the current spell is an empowering cast (boolean)
 .notInterruptible - Indicates whether the current spell is interruptible (boolean)
 .spellID          - The spell identifier of the currently cast/channeled/empowering spell (number)
+.numStages        - The number of empowerment stages of the current spell (number?)
+.curStage         - The current empowerment stage of the spell. It updates only if the PostUpdateStage callback is
+                    defined (number?)
+.stagePoints      - The timestamps (in seconds) for each empowerment stage (table?)
 
 ## Examples
 
