@@ -37,6 +37,7 @@ read_globals = {
 	'PartyFrame',
 	'PetCastingBarFrame',
 	'PetFrame',
+	'PingableType_UnitFrameMixin',
 	'PlayerCastingBarFrame',
 	'PlayerFrame',
 	'PlayerPowerBarAlt',
