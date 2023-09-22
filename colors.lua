@@ -136,13 +136,23 @@ for eclass, color in next, _G.FACTION_BAR_COLORS do
 	colors.reaction[eclass] = oUF:CreateColor(color.r, color.g, color.b)
 end
 
+local staggerIndices = {
+	green = 1,
+	yellow = 2,
+	red = 3,
+}
+
 for power, color in next, PowerBarColor do
 	if (type(power) == 'string') then
 		if(type(select(2, next(color))) == 'table') then
+			-- special handling for stagger
 			colors.power[power] = {}
 
-			for index, color_ in next, color do
-				colors.power[power][index] = oUF:CreateColor(color_.r, color_.g, color_.b)
+			for name, color_ in next, color do
+				local index = staggerIndices[name]
+				if(index) then
+					colors.power[power][index] = oUF:CreateColor(color_.r, color_.g, color_.b)
+				end
 			end
 		else
 			colors.power[power] = oUF:CreateColor(color.r, color.g, color.b)
