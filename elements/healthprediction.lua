@@ -138,25 +138,29 @@ local function Update(self, event, unit)
 	end
 
 	if(element.myBar) then
-		element.myBar:SetMinMaxValues(0, maxHealth)
+		-- BUG: As of 10.2, when the current value matches the min value the status bar texture
+		-- despite not being visible is actually set to the max which is the opposite of what we
+		-- want, and it breaks all the anchors on top of that. Setting the min value slightly below
+		-- 0 allows us to imitate the original pre-10.2 behaviour.
+		element.myBar:SetMinMaxValues(-0.001, maxHealth)
 		element.myBar:SetValue(myIncomingHeal)
 		element.myBar:Show()
 	end
 
 	if(element.otherBar) then
-		element.otherBar:SetMinMaxValues(0, maxHealth)
+		element.otherBar:SetMinMaxValues(-0.001, maxHealth)
 		element.otherBar:SetValue(otherIncomingHeal)
 		element.otherBar:Show()
 	end
 
 	if(element.absorbBar) then
-		element.absorbBar:SetMinMaxValues(0, maxHealth)
+		element.absorbBar:SetMinMaxValues(-0.001, maxHealth)
 		element.absorbBar:SetValue(absorb)
 		element.absorbBar:Show()
 	end
 
 	if(element.healAbsorbBar) then
-		element.healAbsorbBar:SetMinMaxValues(0, maxHealth)
+		element.healAbsorbBar:SetMinMaxValues(-0.001, maxHealth)
 		element.healAbsorbBar:SetValue(healAbsorb)
 		element.healAbsorbBar:Show()
 	end
