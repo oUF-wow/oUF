@@ -11,6 +11,7 @@ ignore = {
 	'312/event', -- unused value of argument event
 	'312/unit', -- unused value of argument unit
 	'431', -- shadowing an upvalue
+	'614', -- trailing whitespace in comment (which is valid markdown for our docs)
 	'631', -- line is too long
 }
 
