@@ -317,7 +317,6 @@ local function CastUpdate(self, event, unit, castID, spellID)
 		return
 	end
 
-	local element = self.Castbar
 	if(not element:IsShown() or element.castID ~= castID or element.spellID ~= spellID) then
 		return
 	end
@@ -377,7 +376,6 @@ local function CastStop(self, event, unit, castID, spellID)
 		return
 	end
 
-	local element = self.Castbar
 	if(not element:IsShown() or element.castID ~= castID or element.spellID ~= spellID) then
 		return
 	end
@@ -402,7 +400,6 @@ local function CastFail(self, event, unit, castID, spellID)
 		return
 	end
 
-	local element = self.Castbar
 	if(not element:IsShown() or element.castID ~= castID or element.spellID ~= spellID) then
 		return
 	end
@@ -436,7 +433,6 @@ local function CastInterruptible(self, event, unit)
 		return
 	end
 
-	local element = self.Castbar
 	if(not element:IsShown()) then return end
 
 	element.notInterruptible = event == 'UNIT_SPELLCAST_NOT_INTERRUPTIBLE'
