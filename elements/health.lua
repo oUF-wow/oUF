@@ -173,16 +173,24 @@ local function Update(self, event, unit)
 	element.cur = cur
 	element.max = max
 
-	--[[ Callback: Health:PostUpdate(unit, cur, max)
+	local lossPerc = 0
+	if(element.TempLoss) then
+		lossPerc = Clamp(GetUnitTotalModifiedMaxHealthPercent(unit), 0, 1)
+
+		element.TempLoss:SetValue(lossPerc)
+	end
+
+	--[[ Callback: Health:PostUpdate(unit, cur, max, lossPerc)
 	Called after the element has been updated.
 
-	* self - the Health element
-	* unit - the unit for which the update has been triggered (string)
-	* cur  - the unit's current health value (number)
-	* max  - the unit's maximum possible health value (number)
+	* self     - the Health element
+	* unit     - the unit for which the update has been triggered (string)
+	* cur      - the unit's current health value (number)
+	* max      - the unit's maximum possible health value (number)
+	* lossPerc - the percent by which the unit's max health has been temporarily reduced (number)
 	--]]
 	if(element.PostUpdate) then
-		element:PostUpdate(unit, cur, max)
+		element:PostUpdate(unit, cur, max, lossPerc)
 	end
 end
 
@@ -310,6 +318,21 @@ local function Enable(self)
 
 		element:Show()
 
+		if(element.TempLoss) then
+			self:RegisterEvent('UNIT_MAX_HEALTH_MODIFIERS_CHANGED', Path)
+
+			if(element.TempLoss:IsObjectType('StatusBar')) then
+				element.TempLoss:SetMinMaxValues(0, 1)
+				element.TempLoss:SetValue(0)
+
+				if(not element.TempLoss:GetStatusBarTexture()) then
+					element.TempLoss:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+				end
+			end
+
+			element.TempLoss:Show()
+		end
+
 		return true
 	end
 end
@@ -325,6 +348,11 @@ local function Disable(self)
 		self:UnregisterEvent('UNIT_FACTION', ColorPath)
 		self:UnregisterEvent('UNIT_FLAGS', ColorPath)
 		self:UnregisterEvent('UNIT_THREAT_LIST_UPDATE', ColorPath)
+		self:UnregisterEvent('UNIT_MAX_HEALTH_MODIFIERS_CHANGED', Path)
+
+		if(element.TempLoss) then
+			element.TempLoss:Hide()
+		end
 	end
 end
 
