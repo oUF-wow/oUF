@@ -24,6 +24,7 @@ read_globals = {
 
 	-- FrameXML
 	'BossTargetFrameContainer',
+	'Clamp',
 	'ColorMixin',
 	'ComboFrame',
 	'CompactArenaFrame',
@@ -78,6 +79,7 @@ read_globals = {
 	'GetUnitPowerBarInfo',
 	'GetUnitPowerBarInfoByID',
 	'GetUnitPowerBarStringsByID',
+	'GetUnitTotalModifiedMaxHealthPercent',
 	'HasLFGRestrictions',
 	'InCombatLockdown',
 	'IsLoggedIn',
