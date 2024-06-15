@@ -54,6 +54,7 @@ read_globals = {
 	'C_IncomingSummon',
 	'C_NamePlate',
 	'C_PvP',
+	'C_Spell',
 	'C_UnitAuras',
 
 	-- API
