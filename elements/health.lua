@@ -311,6 +311,7 @@ local function Enable(self)
 
 		self:RegisterEvent('UNIT_HEALTH', Path)
 		self:RegisterEvent('UNIT_MAXHEALTH', Path)
+		self:RegisterEvent('UNIT_MAX_HEALTH_MODIFIERS_CHANGED', Path)
 
 		if(element:IsObjectType('StatusBar') and not element:GetStatusBarTexture()) then
 			element:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
@@ -319,8 +320,6 @@ local function Enable(self)
 		element:Show()
 
 		if(element.TempLoss) then
-			self:RegisterEvent('UNIT_MAX_HEALTH_MODIFIERS_CHANGED', Path)
-
 			if(element.TempLoss:IsObjectType('StatusBar')) then
 				element.TempLoss:SetMinMaxValues(0, 1)
 				element.TempLoss:SetValue(0)
