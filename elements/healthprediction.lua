@@ -81,30 +81,6 @@ A default texture will be applied to the Texture widgets if they don't have a te
 local _, ns = ...
 local oUF = ns.oUF
 
-local function UpdateSize(self, event, unit)
-	if(not self.Health or self.unit ~= unit) then return end
-
-	local element = self.HealthPrediction
-	local isHoriz = self.Health:GetOrientation() == 'HORIZONTAL'
-	local newSize = self.Health[isHoriz and 'GetWidth' or 'GetHeight'](self.Health)
-
-	if(element.myBar) then
-		element.myBar[isHoriz and 'SetWidth' or 'SetHeight'](element.myBar, newSize)
-	end
-
-	if(element.otherBar) then
-		element.otherBar[isHoriz and 'SetWidth' or 'SetHeight'](element.otherBar, newSize)
-	end
-
-	if(element.absorbBar) then
-		element.absorbBar[isHoriz and 'SetWidth' or 'SetHeight'](element.absorbBar, newSize)
-	end
-
-	if(element.healAbsorbBar) then
-		element.healAbsorbBar[isHoriz and 'SetWidth' or 'SetHeight'](element.healAbsorbBar, newSize)
-	end
-end
-
 local function Update(self, event, unit)
 	if(self.unit ~= unit) then return end
 
@@ -218,11 +194,7 @@ local function Update(self, event, unit)
 	end
 end
 
-local function Path(self, event, ...)
-	if(event == 'OnShow' or event == 'RefreshUnit' or event == 'UNIT_MAX_HEALTH_MODIFIERS_CHANGED') then
-		(self.HealthPrediction.UpdateSize or UpdateSize) (self, event, ...)
-	end
-
+local function Path(self, ...)
 	--[[ Override: HealthPrediction.Override(self, event, unit)
 	Used to completely override the internal update function.
 
@@ -230,7 +202,7 @@ local function Path(self, event, ...)
 	* event - the event triggering the update (string)
 	* unit  - the unit accompanying the event
 	--]]
-	return (self.HealthPrediction.Override or Update) (self, event, ...)
+	return (self.HealthPrediction.Override or Update) (self, ...)
 end
 
 local function ForceUpdate(element)
@@ -248,7 +220,6 @@ local function Enable(self)
 		self:RegisterEvent('UNIT_HEAL_PREDICTION', Path)
 		self:RegisterEvent('UNIT_ABSORB_AMOUNT_CHANGED', Path)
 		self:RegisterEvent('UNIT_HEAL_ABSORB_AMOUNT_CHANGED', Path)
-		self:RegisterEvent('UNIT_MAX_HEALTH_MODIFIERS_CHANGED', Path)
 
 		if(not element.maxOverflow) then
 			element.maxOverflow = 1.05
@@ -328,7 +299,6 @@ local function Disable(self)
 		self:UnregisterEvent('UNIT_HEAL_PREDICTION', Path)
 		self:UnregisterEvent('UNIT_ABSORB_AMOUNT_CHANGED', Path)
 		self:UnregisterEvent('UNIT_HEAL_ABSORB_AMOUNT_CHANGED', Path)
-		self:UnregisterEvent('UNIT_MAX_HEALTH_MODIFIERS_CHANGED', Path)
 	end
 end
 
