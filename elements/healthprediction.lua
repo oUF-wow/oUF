@@ -219,7 +219,7 @@ local function Update(self, event, unit)
 end
 
 local function Path(self, event, ...)
-	if(event == 'UpdateAllElements' or event == 'UNIT_MAX_HEALTH_MODIFIERS_CHANGED') then
+	if(event == 'OnShow' or event == 'RefreshUnit' or event == 'UNIT_MAX_HEALTH_MODIFIERS_CHANGED') then
 		(self.HealthPrediction.UpdateSize or UpdateSize) (self, event, ...)
 	end
 
