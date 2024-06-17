@@ -24,6 +24,7 @@ read_globals = {
 
 	-- FrameXML
 	'BossTargetFrameContainer',
+	'Clamp',
 	'ColorMixin',
 	'ComboFrame',
 	'CompactArenaFrame',
@@ -53,6 +54,7 @@ read_globals = {
 	'C_IncomingSummon',
 	'C_NamePlate',
 	'C_PvP',
+	'C_Spell',
 	'C_UnitAuras',
 
 	-- API
@@ -78,6 +80,7 @@ read_globals = {
 	'GetUnitPowerBarInfo',
 	'GetUnitPowerBarInfoByID',
 	'GetUnitPowerBarStringsByID',
+	'GetUnitTotalModifiedMaxHealthPercent',
 	'HasLFGRestrictions',
 	'InCombatLockdown',
 	'IsLoggedIn',

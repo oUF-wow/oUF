@@ -71,7 +71,9 @@ local function Update(self, event, unit)
 	local mainCost, altCost = 0, 0
 
 	if(event == 'UNIT_SPELLCAST_START' and startTime ~= endTime) then
-		local costTable = GetSpellPowerCost(spellID)
+		local costTable = C_Spell.GetSpellPowerCost(spellID)
+		if(not costTable) then return end
+
 		-- hasRequiredAura is always false if there's only 1 subtable
 		local checkRequiredAura = #costTable > 1
 
