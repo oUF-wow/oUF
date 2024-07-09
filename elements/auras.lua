@@ -236,7 +236,7 @@ local function updateAura(element, unit, data, position)
 	* self     - the widget holding the aura buttons
 	* button   - the updated aura button (Button)
 	* unit     - the unit for which the update has been triggered (string)
-	* data     - the [UnitAuraInfo](https://wowpedia.fandom.com/wiki/Struct_UnitAuraInfo) object (table)
+	* data     - the [AuraData](https://warcraft.wiki.gg/wiki/Struct_AuraData) object (table)
 	* position - the actual position of the aura button (number)
 	--]]
 	if(element.PostUpdateButton) then
@@ -273,7 +273,7 @@ local function processData(element, unit, data)
 
 	* self - the widget holding the aura buttons
 	* unit - the unit for which the update has been triggered (string)
-	* data - [UnitAuraInfo](https://wowpedia.fandom.com/wiki/Struct_UnitAuraInfo) object (table)
+	* data - [AuraData](https://warcraft.wiki.gg/wiki/Struct_AuraData) object (table)
 
 	## Returns
 
@@ -333,7 +333,7 @@ local function UpdateAuras(self, event, unit, updateInfo)
 
 				* self - the widget holding the aura buttons
 				* unit - the unit for which the update has been triggered (string)
-				* data - [UnitAuraInfo](https://wowpedia.fandom.com/wiki/Struct_UnitAuraInfo) object (table)
+				* data - [AuraData](https://warcraft.wiki.gg/wiki/Struct_AuraData) object (table)
 
 				## Returns
 

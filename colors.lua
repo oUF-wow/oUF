@@ -33,7 +33,7 @@ local colorMixin = {
 }
 
 --[[ Colors: oUF:CreateColor(r, g, b[, a])
-Wrapper for [SharedXML\Color.lua's ColorMixin](https://wowpedia.fandom.com/wiki/ColorMixin), extended to support indexed colors used in oUF, as
+Wrapper for [SharedXML\Color.lua's ColorMixin](https://warcraft.wiki.gg/wiki/ColorMixin), extended to support indexed colors used in oUF, as
 well as extra methods for dealing with atlases.
 
 The rgb values can be either normalized (0-1) or bytes (0-255).
@@ -211,7 +211,7 @@ local function colorsAndPercent(a, b, ...)
 	return relperc, select((segment * 3) + 1, ...)
 end
 
--- http://www.wowwiki.com/ColorGradient
+-- https://warcraft.wiki.gg/wiki/ColorGradient
 --[[ Colors: oUF:RGBColorGradient(a, b, ...)
 Used to convert a percent value (the quotient of `a` and `b`) into a gradient from 2 or more RGB colors. If more than 2
 colors are passed, the gradient will be between the two colors which perc lies in an evenly divided range. A RGB color
