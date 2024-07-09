@@ -168,32 +168,32 @@ for power, color in next, PowerBarColor do
 	end
 end
 
--- sourced from FrameXML/Constants.lua
-colors.power[0] = colors.power.MANA
-colors.power[1] = colors.power.RAGE
-colors.power[2] = colors.power.FOCUS
-colors.power[3] = colors.power.ENERGY
-colors.power[4] = colors.power.COMBO_POINTS
-colors.power[5] = colors.power.RUNES
-colors.power[6] = colors.power.RUNIC_POWER
-colors.power[7] = colors.power.SOUL_SHARDS
-colors.power[8] = colors.power.LUNAR_POWER
-colors.power[9] = colors.power.HOLY_POWER
-colors.power[11] = colors.power.MAELSTROM
-colors.power[12] = colors.power.CHI
-colors.power[13] = colors.power.INSANITY
-colors.power[16] = colors.power.ARCANE_CHARGES
-colors.power[17] = colors.power.FURY
-colors.power[18] = colors.power.PAIN
+-- fallback integer index to named index
+colors.power[Enum.PowerType.Mana] = colors.power.MANA
+colors.power[Enum.PowerType.Rage] = colors.power.RAGE
+colors.power[Enum.PowerType.Focus] = colors.power.FOCUS
+colors.power[Enum.PowerType.Energy] = colors.power.ENERGY
+colors.power[Enum.PowerType.ComboPoints] = colors.power.COMBO_POINTS
+colors.power[Enum.PowerType.Runes] = colors.power.RUNES
+colors.power[Enum.PowerType.RunicPower] = colors.power.RUNIC_POWER
+colors.power[Enum.PowerType.SoulShards] = colors.power.SOUL_SHARDS
+colors.power[Enum.PowerType.LunarPower] = colors.power.LUNAR_POWER
+colors.power[Enum.PowerType.HolyPower] = colors.power.HOLY_POWER
+colors.power[Enum.PowerType.Maelstrom] = colors.power.MAELSTROM
+colors.power[Enum.PowerType.Chi] = colors.power.CHI
+colors.power[Enum.PowerType.Insanity] = colors.power.INSANITY
+colors.power[Enum.PowerType.ArcaneCharges] = colors.power.ARCANE_CHARGES
+colors.power[Enum.PowerType.Fury] = colors.power.FURY
+colors.power[Enum.PowerType.Pain] = colors.power.PAIN
 
 -- there's no official colour for evoker's essence
 -- use the average colour of the essence texture instead
 colors.power.ESSENCE = oUF:CreateColor(100, 173, 206)
-colors.power[19] = colors.power.ESSENCE
+colors.power[Enum.PowerType.Essence] = colors.power.ESSENCE
 
--- alternate power, sourced from FrameXML/CompactUnitFrame.lua
+-- alternate power, originally sourced from CompactUnitFrame.lua
 colors.power.ALTERNATE = oUF:CreateColor(0.7, 0.7, 0.6)
-colors.power[10] = colors.power.ALTERNATE
+colors.power[Enum.PowerType.Alternate] = colors.power.ALTERNATE
 
 for i = 0, 3 do
 	colors.threat[i] = oUF:CreateColor(GetThreatStatusColor(i))
