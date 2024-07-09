@@ -169,6 +169,7 @@ for power, color in next, PowerBarColor do
 end
 
 -- fallback integer index to named index
+-- sourced from PowerBarColor - Blizzard_UnitFrame/Mainline/PowerBarColorUtil.lua
 colors.power[Enum.PowerType.Mana] = colors.power.MANA
 colors.power[Enum.PowerType.Rage] = colors.power.RAGE
 colors.power[Enum.PowerType.Focus] = colors.power.FOCUS
@@ -180,18 +181,20 @@ colors.power[Enum.PowerType.SoulShards] = colors.power.SOUL_SHARDS
 colors.power[Enum.PowerType.LunarPower] = colors.power.LUNAR_POWER
 colors.power[Enum.PowerType.HolyPower] = colors.power.HOLY_POWER
 colors.power[Enum.PowerType.Maelstrom] = colors.power.MAELSTROM
-colors.power[Enum.PowerType.Chi] = colors.power.CHI
 colors.power[Enum.PowerType.Insanity] = colors.power.INSANITY
-colors.power[Enum.PowerType.ArcaneCharges] = colors.power.ARCANE_CHARGES
 colors.power[Enum.PowerType.Fury] = colors.power.FURY
 colors.power[Enum.PowerType.Pain] = colors.power.PAIN
+
+-- these two don't have fallback values in PowerBarColor, but we want them
+colors.power[Enum.PowerType.Chi] = colors.power.CHI
+colors.power[Enum.PowerType.ArcaneCharges] = colors.power.ARCANE_CHARGES
 
 -- there's no official colour for evoker's essence
 -- use the average colour of the essence texture instead
 colors.power.ESSENCE = oUF:CreateColor(100, 173, 206)
 colors.power[Enum.PowerType.Essence] = colors.power.ESSENCE
 
--- alternate power, originally sourced from CompactUnitFrame.lua
+-- alternate power, sourced from Blizzard_UnitFrame/Mainline/CompactUnitFrame.lua
 colors.power.ALTERNATE = oUF:CreateColor(0.7, 0.7, 0.6)
 colors.power[Enum.PowerType.Alternate] = colors.power.ALTERNATE
 

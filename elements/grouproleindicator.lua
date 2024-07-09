@@ -25,7 +25,7 @@ A default texture will be applied if the widget is a Texture and doesn't have a 
 local _, ns = ...
 local oUF = ns.oUF
 
--- sourced from Interface\AddOns\Blizzard_Deprecated\Deprecated_10_1_5.lua
+-- originally sourced from Blizzard_Deprecated/Deprecated_10_1_5.lua
 local function GetTexCoordsForRoleSmallCircle(role)
 	if(role == 'TANK') then
 		return 0, 19 / 64, 22 / 64, 41 / 64
