@@ -449,12 +449,12 @@ local function UpdateAuras(self, event, unit, updateInfo)
 				--[[ Override: Auras:SortBuffs(a, b)
 				Defines a custom sorting algorithm for ordering the auras.
 
-				Defaults to [AuraUtil.DefaultAuraCompare](https://github.com/Gethe/wow-ui-source/search?q=DefaultAuraCompare).
+				Defaults to [AuraUtil.DefaultAuraCompare](https://github.com/Gethe/wow-ui-source/search?q=symbol:DefaultAuraCompare).
 				--]]
 				--[[ Override: Auras:SortAuras(a, b)
 				Defines a custom sorting algorithm for ordering the auras.
 
-				Defaults to [AuraUtil.DefaultAuraCompare](https://github.com/Gethe/wow-ui-source/search?q=DefaultAuraCompare).
+				Defaults to [AuraUtil.DefaultAuraCompare](https://github.com/Gethe/wow-ui-source/search?q=symbol:DefaultAuraCompare).
 
 				Overridden by the more specific SortBuffs and/or SortDebuffs overrides if they are defined.
 				--]]
@@ -480,7 +480,7 @@ local function UpdateAuras(self, event, unit, updateInfo)
 				--[[ Override: Auras:SortDebuffs(a, b)
 				Defines a custom sorting algorithm for ordering the auras.
 
-				Defaults to [AuraUtil.DefaultAuraCompare](https://github.com/Gethe/wow-ui-source/search?q=DefaultAuraCompare).
+				Defaults to [AuraUtil.DefaultAuraCompare](https://github.com/Gethe/wow-ui-source/search?q=symbol:DefaultAuraCompare).
 				--]]
 				table.sort(auras.sortedDebuffs, auras.SortDebuffs or auras.SortAuras or SortAuras)
 			end
