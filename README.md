@@ -15,7 +15,7 @@ By itself oUF doesn't do much, a layout is required.
 ## Documentation
 
 All the documentation can be found in the source code (until we publish it online).  
-If you're upgrading to version 10.0, see our [upgrade guide](https://www.wowinterface.com/forums/showthread.php?t=58257).
+
 
 ## Embedding
 
@@ -23,7 +23,8 @@ If you intend to embed oUF into your project, please refer to our [embedding wik
 
 ## Feedback
 
-If you have an issue, please use the [issue tracker](https://github.com/oUF-wow/oUF/issues). Alternatively you can start a topic on our [official forums](https://www.wowinterface.com/forums/forumdisplay.php?f=87).
+If you have an issue, please use the [issue tracker](https://github.com/oUF-wow/oUF/issues).  
+For all other communication, please use the [Discussions](https://github.com/oUF-wow/oUF/discussions) here on GitHub.
 
-Please search first to make sure your issue has not been reported/solved already.  
-Generally, bugs should be reported through the author of the layout you're using.
+Please search first to make sure your issue/question has not been reported/solved already.  
+Generally, bugs should be reported through the author of the layout you're using, not directly to oUF.
