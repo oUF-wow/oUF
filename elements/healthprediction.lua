@@ -228,6 +228,14 @@ local function shouldUpdateSize(self)
 end
 
 local function Path(self, ...)
+	--[[ Override: HealthPrediction.UpdateSize(self, event, unit, ...)
+	Used to completely override the internal function for updating the widgets' size.
+
+	* self  - the parent object
+	* event - the event triggering the update (string)
+	* unit  - the unit accompanying the event (string)
+	* ...   - the arguments accompanying the event
+	--]]
 	if(shouldUpdateSize(self)) then
 		(self.HealthPrediction.UpdateSize or UpdateSize) (self, ...)
 	end
