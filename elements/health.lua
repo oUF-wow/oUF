@@ -9,7 +9,8 @@ Health - A `StatusBar` used to represent the unit's health.
 
 ## Sub-Widgets
 
-.bg - A `Texture` used as a background. It will inherit the color of the main StatusBar.
+.TempLoss - A `StatusBar` used to represent temporary max health reduction.
+.bg       - A `Texture` used as a background. It will inherit the color of the main StatusBar.
 
 ## Notes
 
@@ -58,7 +59,7 @@ The following options are listed by priority. The first check that returns true 
 
     -- Add a background
     local Background = Health:CreateTexture(nil, 'BACKGROUND')
-    Background:SetAllPoints(Health)
+    Background:SetAllPoints()
     Background:SetTexture(1, 1, 1, .5)
 
     -- Options
@@ -72,6 +73,39 @@ The following options are listed by priority. The first check that returns true 
     Background.multiplier = .5
 
     -- Register it with oUF
+    Health.bg = Background
+    self.Health = Health
+
+    -- Alternatively, if .TempLoss is being used
+    local TempLoss = CreateFrame('StatusBar', nil, self)
+    TempLoss:SetReverseFill(true)
+    TempLoss:SetHeight(20)
+    TempLoss:SetPoint('TOP')
+    TempLoss:SetPoint('LEFT')
+    TempLoss:SetPoint('RIGHT')
+
+    local Health = CreateFrame('StatusBar', nil, self)
+    Health:SetPoint('LEFT')
+    Health:SetPoint('TOPRIGHT', TempLoss:GetStatusBarTexture(), 'TOPLEFT')
+    Health:SetPoint('BOTTOMRIGHT', TempLoss:GetStatusBarTexture(), 'BOTTOMLEFT')
+
+    -- Add a background
+    local Background = TempLoss:CreateTexture(nil, 'BACKGROUND')
+    Background:SetAllPoints()
+    Background:SetTexture(1, 1, 1, .5)
+
+    -- Options
+    Health.colorTapping = true
+    Health.colorDisconnected = true
+    Health.colorClass = true
+    Health.colorReaction = true
+    Health.colorHealth = true
+
+    -- Make the background darker.
+    Background.multiplier = .5
+
+    -- Register it with oUF
+    Health.TempLoss = TempLoss
     Health.bg = Background
     self.Health = Health
 --]]
