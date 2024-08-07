@@ -119,6 +119,7 @@ read_globals = {
 	'UnitHealthMax',
 	'UnitHonorLevel',
 	'UnitInParty',
+	'UnitInPartyIsAI',
 	'UnitInRaid',
 	'UnitInRange',
 	'UnitIsConnected',
