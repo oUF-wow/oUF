@@ -22,6 +22,7 @@ A default texture will be applied if the widget is a StatusBar and doesn't have 
 .displayAltPower                  - Use this to let the widget display alternative power, if the unit has one.
                                     By default, it does so only for raid and party units. If none, the display will fall
                                     back to the primary power (boolean)
+.useAtlas                         - Use the atlas associated with the power color for the texture if available (boolean)
 .smoothGradient                   - 9 color values to be used with the .colorSmooth option (table)
 .considerSelectionInCombatHostile - Indicates whether selection should be considered hostile while the unit is in
                                     combat with the player (boolean)
@@ -120,7 +121,7 @@ local function UpdateColor(self, event, unit)
 
 	local pType, pToken, altR, altG, altB = UnitPowerType(unit)
 
-	local r, g, b, color
+	local r, g, b, color, atlas
 	if(element.colorDisconnected and not UnitIsConnected(unit)) then
 		color = self.colors.disconnected
 	elseif(element.colorTapping and not UnitPlayerControlled(unit) and UnitIsTapDenied(unit)) then
@@ -146,6 +147,10 @@ local function UpdateColor(self, event, unit)
 		else
 			color = self.colors.power[ALTERNATE_POWER_INDEX]
 		end
+
+		if(element.useAtlas and color and color.atlas) then
+			atlas = color.atlas
+		end
 	elseif(element.colorClass and (UnitIsPlayer(unit) or UnitInPartyIsAI(unit)))
 		or (element.colorClassNPC and not (UnitIsPlayer(unit) or UnitInPartyIsAI(unit)))
 		or (element.colorClassPet and UnitPlayerControlled(unit) and not UnitIsPlayer(unit)) then
@@ -160,31 +165,37 @@ local function UpdateColor(self, event, unit)
 		r, g, b = self:ColorGradient((element.cur or 1) + adjust, (element.max or 1) + adjust, unpack(element.smoothGradient or self.colors.smooth))
 	end
 
-	if(color) then
-		r, g, b = color[1], color[2], color[3]
-	end
+	if(atlas) then
+		element:SetStatusBarTexture(atlas)
+		element:SetStatusBarColor(1, 1, 1)
+	else
+		if(color) then
+			r, g, b = color[1], color[2], color[3]
+		end
 
-	if(b) then
-		element:SetStatusBarColor(r, g, b)
+		if(b) then
+			element:SetStatusBarColor(r, g, b)
 
-		local bg = element.bg
-		if(bg) then
-			local mu = bg.multiplier or 1
-			bg:SetVertexColor(r * mu, g * mu, b * mu)
+			local bg = element.bg
+			if(bg) then
+				local mu = bg.multiplier or 1
+				bg:SetVertexColor(r * mu, g * mu, b * mu)
+			end
 		end
 	end
 
 	--[[ Callback: Power:PostUpdateColor(unit, r, g, b)
 	Called after the element color has been updated.
 
-	* self - the Power element
-	* unit - the unit for which the update has been triggered (string)
-	* r    - the red component of the used color (number)[0-1]
-	* g    - the green component of the used color (number)[0-1]
-	* b    - the blue component of the used color (number)[0-1]
+	* self  - the Power element
+	* unit  - the unit for which the update has been triggered (string)
+	* r     - the red component of the used color (number?)[0-1]
+	* g     - the green component of the used color (number?)[0-1]
+	* b     - the blue component of the used color (number?)[0-1]
+	* atlas - the atlas used instead of color (string)
 	--]]
 	if(element.PostUpdateColor) then
-		element:PostUpdateColor(unit, r, g, b)
+		element:PostUpdateColor(unit, r, g, b, atlas)
 	end
 end
 
