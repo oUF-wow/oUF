@@ -69,13 +69,15 @@ local function updateTooltip(self)
 end
 
 local function onEnter(self)
-	if(not self:IsVisible()) then return end
+	if(GameTooltip:IsForbidden() or not self:IsVisible()) then return end
 
 	GameTooltip_SetDefaultAnchor(GameTooltip, self)
 	self:UpdateTooltip()
 end
 
 local function onLeave()
+	if(GameTooltip:IsForbidden()) then return end
+
 	GameTooltip:Hide()
 end
 
