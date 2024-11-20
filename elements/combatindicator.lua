@@ -98,7 +98,7 @@ local function Disable(self)
 	if(element) then
 		element:Hide()
 
-		if(unit == 'player') then
+		if(self.unit == 'player') then
 			self:UnregisterEvent('PLAYER_REGEN_DISABLED', Path, true)
 			self:UnregisterEvent('PLAYER_REGEN_ENABLED', Path, true)
 		else
