@@ -142,6 +142,7 @@ local function Update(self, event)
 		hasSortOrder = false
 	end
 
+	local currentTime = GetTime()
 	local rune, start, duration, runeReady
 	for index, runeID in next, runemap do
 		rune = element[index]
@@ -156,7 +157,7 @@ local function Update(self, event)
 				rune:SetValue(1)
 				rune:SetScript('OnUpdate', nil)
 			elseif(start) then
-				rune.duration = GetTime() - start
+				rune.duration = currentTime - start
 				rune:SetMinMaxValues(0, duration)
 				rune:SetValue(0)
 				rune:SetScript('OnUpdate', onUpdate)
