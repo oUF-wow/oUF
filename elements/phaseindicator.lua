@@ -50,7 +50,7 @@ local function UpdateTooltip(element)
 end
 
 local function onEnter(element)
-	if(not element:IsVisible()) then return end
+	if(GameTooltip:IsForbidden() or not element:IsVisible()) then return end
 
 	if(element.reason) then
 		GameTooltip:SetOwner(element, 'ANCHOR_BOTTOMRIGHT')
@@ -59,6 +59,8 @@ local function onEnter(element)
 end
 
 local function onLeave()
+	if(GameTooltip:IsForbidden()) then return end
+
 	GameTooltip:Hide()
 end
 
