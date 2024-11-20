@@ -71,7 +71,13 @@ local function Update(self, event, unit)
 				element:SetUnit(unit)
 			end
 		else
-			local class = element.showClass and UnitClassBase(unit)
+			local class, _
+			if(element.showClass) then
+				-- BUG: UnitClassBase can't be trusted
+				--      https://github.com/Stanzilla/WoWUIBugs/issues/621
+				_, class = UnitClass(unit)
+			end
+
 			if(class) then
 				element:SetAtlas('classicon-' .. class)
 			else
