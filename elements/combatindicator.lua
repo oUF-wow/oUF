@@ -1,7 +1,7 @@
 --[[
 # Element: Combat Indicator
 
-Toggles the visibility of an indicator based on the player's combat status.
+Toggles the visibility of an indicator based on the unit's combat status.
 
 ## Widget
 
@@ -49,7 +49,7 @@ local function Update(self, event, unit)
 	Called after the element has been updated.
 
 	* self     - the CombatIndicator element
-	* inCombat - indicates if the player is affecting combat (boolean)
+	* inCombat - indicates if the unit is affecting combat (boolean)
 	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(inCombat)
@@ -76,13 +76,7 @@ local function Enable(self, unit)
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
 
-		if(unit == 'player') then
-			self:RegisterEvent('PLAYER_REGEN_DISABLED', Path, true)
-			self:RegisterEvent('PLAYER_REGEN_ENABLED', Path, true)
-		else
-			self:RegisterEvent('UNIT_COMBAT', Path)
-			self:RegisterEvent('UNIT_FLAGS', Path)
-		end
+		self:RegisterEvent('UNIT_FLAGS', Path)
 
 		if(element:IsObjectType('Texture') and not element:GetTexture()) then
 			element:SetTexture([[Interface\CharacterFrame\UI-StateIcon]])
@@ -98,13 +92,7 @@ local function Disable(self)
 	if(element) then
 		element:Hide()
 
-		if(self.unit == 'player') then
-			self:UnregisterEvent('PLAYER_REGEN_DISABLED', Path, true)
-			self:UnregisterEvent('PLAYER_REGEN_ENABLED', Path, true)
-		else
-			self:UnregisterEvent('UNIT_COMBAT', Path)
-			self:UnregisterEvent('UNIT_FLAGS', Path)
-		end
+		self:UnregisterEvent('UNIT_FLAGS', Path)
 	end
 end
 
