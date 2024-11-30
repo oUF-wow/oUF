@@ -22,7 +22,6 @@ A default texture will be applied if the widget is a StatusBar and doesn't have 
 .displayAltPower                  - Use this to let the widget display alternative power, if the unit has one.
                                     By default, it does so only for raid and party units. If none, the display will fall
                                     back to the primary power (boolean)
-.useAtlas                         - Use the atlas associated with the power color for the texture if available (boolean)
 .smoothGradient                   - 9 color values to be used with the .colorSmooth option (table)
 .considerSelectionInCombatHostile - Indicates whether selection should be considered hostile while the unit is in
                                     combat with the player (boolean)
@@ -33,6 +32,9 @@ The following options are listed by priority. The first check that returns true 
 .colorTapping      - Use `self.colors.tapping` to color the bar if the unit isn't tapped by the player (boolean)
 .colorThreat       - Use `self.colors.threat[threat]` to color the bar based on the unit's threat status. `threat` is
                      defined by the first return of [UnitThreatSituation](https://warcraft.wiki.gg/wiki/API_UnitThreatSituation) (boolean)
+.colorPowerAtlas   - Use `self.colors.power[token].atlas` to replace the texture whenever it's available. The previously
+                     defined texture (if any) will be restored if the color changes to one that doesn't have an atlas
+                     (boolean)
 .colorPower        - Use `self.colors.power[token]` to color the bar based on the unit's power type. This method will
                      fall-back to `:GetAlternativeColor()` if it can't find a color matching the token. If this function
                      isn't defined, then it will attempt to color based upon the alternative power colors returned by
@@ -148,7 +150,7 @@ local function UpdateColor(self, event, unit)
 			color = self.colors.power[ALTERNATE_POWER_INDEX]
 		end
 
-		if(element.useAtlas and color and color.atlas) then
+		if(element.colorPowerAtlas and color and color.atlas) then
 			atlas = color.atlas
 		end
 	elseif(element.colorClass and (UnitIsPlayer(unit) or UnitInPartyIsAI(unit)))
@@ -413,7 +415,7 @@ local function Enable(self)
 			element:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 		end
 
-		if(element.useAtlas) then
+		if(element.colorPowerAtlas) then
 			element.__texture = element:GetStatusBarTexture():GetTexture()
 		end
 
