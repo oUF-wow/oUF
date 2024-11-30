@@ -219,10 +219,7 @@ local function Update(self, event, unit)
 	end
 
 	local cur, max = UnitPower(unit, displayType), UnitPowerMax(unit, displayType)
-	if not min then
-		min = 0
-	end
-
+	min = min or 0 -- ensure we always have a minimum value to avoid errors
 	element:SetMinMaxValues(min, max)
 
 	if(UnitIsConnected(unit)) then
