@@ -23,7 +23,7 @@ OnEnter and OnLeave script handlers will be set to display a Tooltip if the `Tot
 ## Examples
 
     local Totems = {}
-    for index = 1, 5 do
+    for index = 1, 4 do
         -- Position and size of the totem indicator
         local Totem = CreateFrame('Button', nil, self)
         Totem:SetSize(40, 40)
