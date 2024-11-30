@@ -177,6 +177,7 @@ local function UpdateColor(self, event, unit)
 			if(element.__texture) then
 				element:SetStatusBarTexture(element.__texture)
 			end
+
 			element:SetStatusBarColor(r, g, b)
 
 			local bg = element.bg
