@@ -174,6 +174,9 @@ local function UpdateColor(self, event, unit)
 		end
 
 		if(b) then
+			if(element.__texture) then
+				element:SetStatusBarTexture(element.__texture)
+			end
 			element:SetStatusBarColor(r, g, b)
 
 			local bg = element.bg
@@ -407,6 +410,10 @@ local function Enable(self)
 
 		if(element:IsObjectType('StatusBar') and not element:GetStatusBarTexture()) then
 			element:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+		end
+
+		if(element.useAtlas) then
+			element.__texture = element:GetStatusBarTexture():GetTexture()
 		end
 
 		if(not element.GetDisplayPower) then
