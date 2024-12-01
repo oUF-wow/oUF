@@ -150,7 +150,7 @@ local function UpdateColor(self, event, unit)
 			color = self.colors.power[ALTERNATE_POWER_INDEX]
 		end
 
-		if(element.colorPowerAtlas and color and color.atlas) then
+		if(element.colorPowerAtlas and color) then
 			atlas = color.atlas
 		end
 	elseif(element.colorClass and (UnitIsPlayer(unit) or UnitInPartyIsAI(unit)))
@@ -198,7 +198,7 @@ local function UpdateColor(self, event, unit)
 	* r     - the red component of the used color (number?)[0-1]
 	* g     - the green component of the used color (number?)[0-1]
 	* b     - the blue component of the used color (number?)[0-1]
-	* atlas - the atlas used instead of color (string)
+	* atlas - the atlas used instead of color (string?)
 	--]]
 	if(element.PostUpdateColor) then
 		element:PostUpdateColor(unit, r, g, b, atlas)
@@ -416,7 +416,7 @@ local function Enable(self)
 		end
 
 		if(element.colorPowerAtlas) then
-			element.__texture = element:GetStatusBarTexture():GetTexture()
+			element.__texture = element.__texture or element:GetStatusBarTexture():GetTexture()
 		end
 
 		if(not element.GetDisplayPower) then
