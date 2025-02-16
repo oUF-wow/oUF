@@ -133,8 +133,9 @@ local function Enable(self, unit)
 		--
 		-- DISABLE isn't used as it fires when we most likely don't have the
 		-- information we want.
-		if(unit == 'party') then
+		if(unit == 'party') or (unit == 'target') then
 			self:RegisterEvent('PARTY_MEMBER_ENABLE', Path)
+			self:RegisterEvent('PARTY_MEMBER_DISABLE', Path)
 		end
 
 		element:Show()
@@ -152,6 +153,7 @@ local function Disable(self)
 		self:UnregisterEvent('UNIT_PORTRAIT_UPDATE', Path)
 		self:UnregisterEvent('PORTRAITS_UPDATED', Path)
 		self:UnregisterEvent('PARTY_MEMBER_ENABLE', Path)
+		self:UnregisterEvent('PARTY_MEMBER_DISABLE', Path)
 		self:UnregisterEvent('UNIT_CONNECTION', Path)
 	end
 end
