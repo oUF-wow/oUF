@@ -54,7 +54,9 @@ read_globals = {
 	'C_IncomingSummon',
 	'C_NamePlate',
 	'C_PvP',
+	'C_SpecializationInfo',
 	'C_Spell',
+	'C_SpellBook',
 	'C_UnitAuras',
 
 	-- API
@@ -67,7 +69,6 @@ read_globals = {
 	'GetRaidTargetIndex',
 	'GetReadyCheckStatus',
 	'GetRuneCooldown',
-	'GetSpecialization',
 	'GetSpecializationInfoByID',
 	'GetSpellPowerCost',
 	'GetTexCoordsForRoleSmallCircle',
@@ -85,7 +86,6 @@ read_globals = {
 	'InCombatLockdown',
 	'IsInInstance',
 	'IsLoggedIn',
-	'IsPlayerSpell',
 	'IsResting',
 	'PartyUtil',
 	'PlayerVehicleHasComboPoints',
