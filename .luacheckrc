@@ -99,7 +99,6 @@ read_globals = {
 	'SetCVar',
 	'SetPortraitTexture',
 	'SetRaidTargetIconTexture',
-	'ShowBossFrameWhenUninteractable',
 	'UnitAffectingCombat',
 	'UnitAuraSlots',
 	'UnitCastingInfo',
