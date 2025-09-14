@@ -226,8 +226,11 @@ local function CastStart(self, event, unit)
 	end
 
 	if(not name or (isTradeSkill and element.hideTradeSkills)) then
-		resetAttributes(element)
-		element:Hide()
+		-- don't cancel hold time when we swap targets
+		if not (element.holdTime and element.holdTime > 0) then
+			resetAttributes(element)
+			element:Hide()
+		end
 
 		return
 	end
@@ -536,6 +539,7 @@ local function Update(...)
 end
 
 local function ForceUpdate(element)
+	print('forceupdate', element.__owner.unit)
 	return Update(element.__owner, 'ForceUpdate', element.__owner.unit)
 end
 
