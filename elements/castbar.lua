@@ -227,7 +227,7 @@ local function CastStart(self, event, unit)
 
 	if(not name or (isTradeSkill and element.hideTradeSkills)) then
 		-- don't cancel hold time when we swap targets
-		if not (element.holdTime and element.holdTime > 0) then
+		if not (event == 'PLAYER_TARGET_CHANGED' and element.holdTime and element.holdTime > 0) then
 			resetAttributes(element)
 			element:Hide()
 		end
