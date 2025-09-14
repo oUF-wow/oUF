@@ -539,7 +539,6 @@ local function Update(...)
 end
 
 local function ForceUpdate(element)
-	print('forceupdate', element.__owner.unit)
 	return Update(element.__owner, 'ForceUpdate', element.__owner.unit)
 end
 
