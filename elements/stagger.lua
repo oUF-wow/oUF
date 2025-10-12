@@ -148,15 +148,30 @@ local function Path(self, ...)
 end
 
 local function Visibility(self, event, unit)
+	local element = self.Stagger
 	if(SPEC_MONK_BREWMASTER ~= C_SpecializationInfo.GetSpecialization() or UnitHasVehiclePlayerFrameUI('player')) then
-		if(self.Stagger:IsShown()) then
-			self.Stagger:Hide()
+		if(element:IsShown()) then
+			element:Hide()
 			self:UnregisterEvent('UNIT_AURA', Path)
+
+			--[[ Callback: Stagger:PostVisibility(isVisible)
+			Called after the element's visibility has been changed.
+
+			* self      - the Stagger element
+			* isVisible - the current visibility state of the element (boolean)
+			--]]
+			if(element.PostVisibility) then
+				element:PostVisibility(false)
+			end
 		end
 	else
-		if(not self.Stagger:IsShown()) then
-			self.Stagger:Show()
+		if(not element:IsShown()) then
+			element:Show()
 			self:RegisterEvent('UNIT_AURA', Path)
+
+			if(element.PostVisibility) then
+				element:PostVisibility(true)
+			end
 		end
 
 		Path(self, event, unit)
