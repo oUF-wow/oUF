@@ -54,9 +54,6 @@ At least one of the above widgets must be present for the element to work.
 
 ## Attributes
 
-button.caster         - the unit who cast the aura (string)
-button.filter         - the filter list used to determine the visibility of the aura (string)
-button.isHarmful      - indicates if the button holds a debuff (boolean)
 button.auraInstanceID - unique ID for the current aura being tracked by the button (number)
 
 ## Examples
@@ -187,7 +184,6 @@ local function updateAura(element, unit, data, position)
 
 	-- for tooltips
 	button.auraInstanceID = data.auraInstanceID
-	button.isHarmful = data.isHarmful
 
 	if(button.Cooldown and not element.disableCooldown) then
 		if(data.duration > 0) then
@@ -250,10 +246,6 @@ end
 local function SortAuras(a, b)
 	if(a.isPlayerAura ~= b.isPlayerAura) then
 		return a.isPlayerAura
-	end
-
-	if(a.canApplyAura ~= b.canApplyAura) then
-		return a.canApplyAura
 	end
 
 	return a.auraInstanceID < b.auraInstanceID
