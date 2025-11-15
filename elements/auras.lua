@@ -239,7 +239,7 @@ local function updateAura(element, unit, data, position)
 	end
 end
 
-local function FilterAura(element, unit, data, filter)
+local function FilterAura(element, unit, data)
 	if((element.onlyShowPlayer and data.isPlayerAura) or not element.onlyShowPlayer) then
 		return true
 	end
