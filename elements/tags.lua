@@ -736,7 +736,7 @@ local function getTagFunc(tagstr)
 								str = tag(unit, realUnit)
 							end
 
-							if(str and str ~= '') then
+							if(str and (issecretvalue(str) or str ~= '')) then
 								return prefix .. str .. suffix
 							end
 						end
@@ -749,7 +749,7 @@ local function getTagFunc(tagstr)
 								str = tag(unit, realUnit)
 							end
 
-							if(str and str ~= '') then
+							if(str and (issecretvalue(str) or str ~= '')) then
 								return str
 							end
 						end
