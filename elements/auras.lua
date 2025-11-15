@@ -186,35 +186,38 @@ local function updateAura(element, unit, data, position)
 	button.auraInstanceID = data.auraInstanceID
 
 	if(button.Cooldown and not element.disableCooldown) then
-		if(data.duration > 0) then
-			button.Cooldown:SetCooldown(data.expirationTime - data.duration, data.duration, data.timeMod)
-			button.Cooldown:Show()
-		else
-			button.Cooldown:Hide()
-		end
+		-- if(data.duration > 0) then
+		-- 	button.Cooldown:SetCooldown(data.expirationTime - data.duration, data.duration, data.timeMod)
+		-- 	button.Cooldown:Show()
+		-- else
+		-- 	button.Cooldown:Hide()
+		-- end
 	end
 
 	if(button.Overlay) then
-		if((data.isHarmful and element.showDebuffType) or (not data.isHarmful and element.showBuffType) or element.showType) then
-			local color = element.__owner.colors.debuff[data.dispelName] or element.__owner.colors.debuff.none
+		-- if((data.isHarmful and element.showDebuffType) or (not data.isHarmful and element.showBuffType) or element.showType) then
+		-- 	local color = element.__owner.colors.debuff[data.dispelName] or element.__owner.colors.debuff.none
 
-			button.Overlay:SetVertexColor(color[1], color[2], color[3])
-			button.Overlay:Show()
-		else
-			button.Overlay:Hide()
-		end
+		-- 	button.Overlay:SetVertexColor(color[1], color[2], color[3])
+		-- 	button.Overlay:Show()
+		-- else
+		-- 	button.Overlay:Hide()
+		-- end
 	end
 
 	if(button.Stealable) then
-		if(not data.isHarmful and data.isStealable and element.showStealableBuffs and not UnitIsUnit('player', unit)) then
-			button.Stealable:Show()
-		else
-			button.Stealable:Hide()
-		end
+		-- if(not data.isHarmful and data.isStealable and element.showStealableBuffs and not UnitIsUnit('player', unit)) then
+		-- 	button.Stealable:Show()
+		-- else
+		-- 	button.Stealable:Hide()
+		-- end
 	end
 
 	if(button.Icon) then button.Icon:SetTexture(data.icon) end
-	if(button.Count) then button.Count:SetText(data.applications > 1 and data.applications or '') end
+	if(button.Count) then
+		-- button.Count:SetText(data.applications > 1 and data.applications or '')
+		button.Count:SetText(data.applications) -- BUG: will show "0" on <2 applications
+	end
 
 	local width = element.width or element.size or 16
 	local height = element.height or element.size or 16
@@ -236,7 +239,7 @@ local function updateAura(element, unit, data, position)
 	end
 end
 
-local function FilterAura(element, unit, data, filter)
+local function FilterAura(element, unit, data)
 	if((element.onlyShowPlayer and data.isPlayerAura) or not element.onlyShowPlayer) then
 		return true
 	end
