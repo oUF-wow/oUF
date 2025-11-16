@@ -162,7 +162,7 @@ local function SetPosition(element, from, to)
 end
 
 local function updateAura(element, unit, data, position)
-	if(not data.name) then return end
+	if(not data) then return end
 
 	local button = element[position]
 	if(not button) then
