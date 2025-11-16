@@ -186,12 +186,7 @@ local function updateAura(element, unit, data, position)
 	button.auraInstanceID = data.auraInstanceID
 
 	if(button.Cooldown and not element.disableCooldown) then
-		-- if(data.duration > 0) then
-		-- 	button.Cooldown:SetCooldown(data.expirationTime - data.duration, data.duration, data.timeMod)
-		-- 	button.Cooldown:Show()
-		-- else
-		-- 	button.Cooldown:Hide()
-		-- end
+		button.Cooldown:SetCooldownDuration(data.duration, data.timeMod)
 	end
 
 	if(button.Overlay) then
