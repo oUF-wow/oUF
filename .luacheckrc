@@ -16,9 +16,6 @@ ignore = {
 }
 
 read_globals = {
-	'debugstack',
-	'geterrorhandler',
-	'hooksecurefunc',
 	string = {fields = {'join', 'split', 'trim'}},
 	table = {fields = {'removemulti', 'wipe'}},
 
@@ -33,7 +30,6 @@ read_globals = {
 	'FocusFrame',
 	'GameTooltip',
 	'GameTooltip_SetDefaultAnchor',
-	'Mixin',
 	'MonkStaggerBar',
 	'NamePlateDriverFrame',
 	'PartyFrame',
@@ -87,6 +83,7 @@ read_globals = {
 	'IsInInstance',
 	'IsLoggedIn',
 	'IsResting',
+	'Mixin',
 	'PartyUtil',
 	'PlayerVehicleHasComboPoints',
 	'PowerBarColor',
@@ -150,4 +147,8 @@ read_globals = {
 	'UnitThreatSituation',
 	'UnitWatchRegistered',
 	'UnregisterUnitWatch',
+	'issecretvalue',
+	'debugstack',
+	'geterrorhandler',
+	'hooksecurefunc',
 }
