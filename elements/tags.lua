@@ -206,15 +206,6 @@ local tagStrings = {
 		end
 	end]],
 
-	['deficit:name'] = [[function(u)
-		local missinghp = _TAGS['missinghp'](u)
-		if(missinghp) then
-			return '-' .. missinghp
-		else
-			return _TAGS['name'](u)
-		end
-	end]],
-
 	['difficulty'] = [[function(u)
 		if UnitCanAttack('player', u) then
 			local l = UnitEffectiveLevel(u)
@@ -528,7 +519,6 @@ local tagEvents = {
 	['curmana']             = 'UNIT_POWER_UPDATE UNIT_MAXPOWER',
 	['curpp']               = 'UNIT_POWER_UPDATE UNIT_MAXPOWER',
 	['dead']                = 'UNIT_HEALTH',
-	['deficit:name']        = 'UNIT_HEALTH UNIT_MAXHEALTH UNIT_NAME_UPDATE',
 	['difficulty']          = 'UNIT_FACTION',
 	['faction']             = 'NEUTRAL_FACTION_SELECT_RESULT',
 	['group']               = 'GROUP_ROSTER_UPDATE',
