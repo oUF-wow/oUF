@@ -190,6 +190,7 @@ local function updateAura(element, unit, data, position)
 	end
 
 	if(button.Overlay) then
+		button.Overlay:Hide()
 		-- if((data.isHarmful and element.showDebuffType) or (not data.isHarmful and element.showBuffType) or element.showType) then
 		-- 	local color = element.__owner.colors.debuff[data.dispelName] or element.__owner.colors.debuff.none
 
@@ -201,6 +202,7 @@ local function updateAura(element, unit, data, position)
 	end
 
 	if(button.Stealable) then
+		button.Stealable:Hide()
 		-- if(not data.isHarmful and data.isStealable and element.showStealableBuffs and not UnitIsUnit('player', unit)) then
 		-- 	button.Stealable:Show()
 		-- else
