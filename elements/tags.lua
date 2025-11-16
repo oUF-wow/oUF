@@ -275,17 +275,11 @@ local tagStrings = {
 	end]],
 
 	['missinghp'] = [[function(u)
-		local current = UnitHealthMax(u) - UnitHealth(u)
-		if(current > 0) then
-			return current
-		end
+		return UnitHealthMissing(u) -- ISSUE: can't check if it's actually missing first
 	end]],
 
 	['missingpp'] = [[function(u)
-		local current = UnitPowerMax(u) - UnitPower(u)
-		if(current > 0) then
-			return current
-		end
+		return UnitPowerMissing(u) -- ISSUE: can't check if it's actually missing first
 	end]],
 
 	['name'] = [[function(u, r)
@@ -299,21 +293,11 @@ local tagStrings = {
 	end]],
 
 	['perhp'] = [[function(u)
-		local m = UnitHealthMax(u)
-		if(m == 0) then
-			return 0
-		else
-			return math.floor(UnitHealth(u) / m * 100 + .5)
-		end
+		return string.format('%d', UnitHealthPercent(u, true, true))
 	end]],
 
 	['perpp'] = [[function(u)
-		local m = UnitPowerMax(u)
-		if(m == 0) then
-			return 0
-		else
-			return math.floor(UnitPower(u) / m * 100 + .5)
-		end
+		return string.format('%d', UnitPowerPercent(u, true, true))
 	end]],
 
 	['plus'] = [[function(u)
