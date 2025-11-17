@@ -209,8 +209,7 @@ local function Update(self, event, unit)
 
 	local lossPerc = 0
 	if(element.TempLoss) then
-		lossPerc = Clamp(GetUnitTotalModifiedMaxHealthPercent(unit), 0, 1)
-
+		lossPerc = GetUnitTotalModifiedMaxHealthPercent(unit)
 		element.TempLoss:SetValue(lossPerc)
 	end
 
