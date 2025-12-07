@@ -43,6 +43,7 @@ The following options are listed by priority. The first check that returns true 
                      based on the player's current health percentage (boolean)
 .colorHealth       - Use `self.colors.health` to color the bar. This flag is used to reset the bar color back to default
                      if none of the above conditions are met (boolean)
+.smoothing         - Which smoothing method to use, defaults to Enum.StatusBarInterpolation.Immediate (number)
 
 ## Sub-Widgets Options
 
@@ -199,9 +200,9 @@ local function Update(self, event, unit)
 	element:SetMinMaxValues(0, max)
 
 	if(UnitIsConnected(unit)) then
-		element:SetValue(cur)
+		element:SetValue(cur, element.smoothing)
 	else
-		element:SetValue(max)
+		element:SetValue(max, element.smoothing)
 	end
 
 	element.cur = cur
@@ -210,7 +211,7 @@ local function Update(self, event, unit)
 	local lossPerc = 0
 	if(element.TempLoss) then
 		lossPerc = GetUnitTotalModifiedMaxHealthPercent(unit)
-		element.TempLoss:SetValue(lossPerc)
+		element.TempLoss:SetValue(lossPerc, element.smoothing)
 	end
 
 	--[[ Callback: Health:PostUpdate(unit, cur, max, lossPerc)
@@ -326,6 +327,10 @@ local function Enable(self)
 		element.SetColorTapping = SetColorTapping
 		element.SetColorThreat = SetColorThreat
 
+		if(not element.smoothing) then
+			element.smoothing = Enum.StatusBarInterpolation.Immediate
+		end
+
 		if(element.colorDisconnected) then
 			self:RegisterEvent('UNIT_CONNECTION', ColorPath)
 		end
@@ -355,7 +360,7 @@ local function Enable(self)
 		if(element.TempLoss) then
 			if(element.TempLoss:IsObjectType('StatusBar')) then
 				element.TempLoss:SetMinMaxValues(0, 1)
-				element.TempLoss:SetValue(0)
+				element.TempLoss:SetValue(0, element.smoothing)
 
 				if(not element.TempLoss:GetStatusBarTexture()) then
 					element.TempLoss:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
