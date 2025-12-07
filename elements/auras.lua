@@ -202,12 +202,11 @@ local function updateAura(element, unit, data, position)
 	end
 
 	if(button.Stealable) then
-		button.Stealable:Hide()
-		-- if(not data.isHarmful and data.isStealable and element.showStealableBuffs and not UnitIsUnit('player', unit)) then
-		-- 	button.Stealable:Show()
-		-- else
-		-- 	button.Stealable:Hide()
-		-- end
+		if element.showStealableBuffs and not UnitCanCooperate('player', unit) then
+			button.Stealable:SetAlphaFromBoolean(data.isStealable, 1, 0)
+		else
+			button.Stealable:SetAlpha(0)
+		end
 	end
 
 	if(button.Icon) then button.Icon:SetTexture(data.icon) end
