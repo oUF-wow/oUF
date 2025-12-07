@@ -53,6 +53,7 @@ read_globals = {
 	'C_SpecializationInfo',
 	'C_Spell',
 	'C_SpellBook',
+	'C_StringUtil',
 	'C_UnitAuras',
 
 	-- API
@@ -98,6 +99,7 @@ read_globals = {
 	'SetRaidTargetIconTexture',
 	'UnitAffectingCombat',
 	'UnitAuraSlots',
+	'UnitCanCooperate',
 	'UnitCastingInfo',
 	'UnitChannelInfo',
 	'UnitClass',

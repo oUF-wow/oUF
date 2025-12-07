@@ -15,6 +15,10 @@ Stagger - A `StatusBar` used to represent the current stagger level.
 
 A default texture will be applied if the widget is a StatusBar and doesn't have a texture set.
 
+## Options
+
+.smoothing - Which smoothing method to use, defaults to Enum.StatusBarInterpolation.Immediate (number)
+
 ## Sub-Widgets Options
 
 .multiplier - Used to tint the background based on the main widgets R, G and B values. Defaults to 1 (number)[0-1]
@@ -110,7 +114,7 @@ local function Update(self, event, unit)
 	local max = UnitHealthMax('player')
 
 	element:SetMinMaxValues(0, max)
-	element:SetValue(cur)
+	element:SetValue(cur, element.smoothing)
 
 	element.cur = cur
 	element.max = max
@@ -198,6 +202,10 @@ local function Enable(self, unit)
 	if(element and UnitIsUnit(unit, 'player')) then
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
+
+		if(not element.smoothing) then
+			element.smoothing = Enum.StatusBarInterpolation.Immediate
+		end
 
 		self:RegisterEvent('UNIT_DISPLAYPOWER', VisibilityPath)
 		self:RegisterEvent('PLAYER_TALENT_UPDATE', VisibilityPath, true)
