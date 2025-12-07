@@ -45,11 +45,7 @@ local function Update(self, event)
 	local connected = UnitIsConnected(unit)
 	if(connected) then
 		inRange, checkedRange = UnitInRange(unit)
-		if(checkedRange and not inRange) then
-			self:SetAlpha(element.outsideAlpha)
-		else
-			self:SetAlpha(element.insideAlpha)
-		end
+		self:SetAlphaFromBoolean(inRange, element.insideAlpha, element.outsideAlpha)
 	else
 		self:SetAlpha(element.insideAlpha)
 	end
