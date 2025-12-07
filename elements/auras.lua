@@ -211,8 +211,7 @@ local function updateAura(element, unit, data, position)
 
 	if(button.Icon) then button.Icon:SetTexture(data.icon) end
 	if(button.Count) then
-		-- button.Count:SetText(data.applications > 1 and data.applications or '')
-		button.Count:SetText(data.applications) -- BUG: will show "0" on <2 applications
+		button.Count:SetText(C_StringUtil.TruncateWhenZero(data.applications)) -- ISSUE: will show "1" on <2 applications
 	end
 
 	local width = element.width or element.size or 16
