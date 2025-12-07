@@ -266,11 +266,11 @@ local tagStrings = {
 	end]],
 
 	['missinghp'] = [[function(u)
-		return UnitHealthMissing(u) -- ISSUE: can't check if it's actually missing first
+		return C_StringUtil.TruncateWhenZero(UnitHealthMissing(u))
 	end]],
 
 	['missingpp'] = [[function(u)
-		return UnitPowerMissing(u) -- ISSUE: can't check if it's actually missing first
+		return C_StringUtil.TruncateWhenZero(UnitPowerMissing(u))
 	end]],
 
 	['name'] = [[function(u, r)
@@ -711,7 +711,7 @@ local function getTagFunc(tagstr)
 							end
 
 							if(str and (issecretvalue(str) or str ~= '')) then
-								return prefix .. str .. suffix
+								return C_StringUtil.WrapString(str, prefix, suffix)
 							end
 						end
 					else
