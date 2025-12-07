@@ -18,6 +18,7 @@ A default texture will be applied if the widget is a StatusBar and doesn't have 
 .smoothGradient                   - 9 color values to be used with the .colorSmooth option (table)
 .considerSelectionInCombatHostile - Indicates whether selection should be considered hostile while the unit is in
                                     combat with the player (boolean)
+.smoothing                        - Which smoothing method to use, defaults to Enum.StatusBarInterpolation.Immediate (number)
 
 The following options are listed by priority. The first check that returns true decides the color of the bar.
 
@@ -151,7 +152,7 @@ local function Update(self, event, unit, powerType)
 		max = UnitPowerMax(unit, ALTERNATE_POWER_INDEX)
 		min = barInfo.minPower
 		element:SetMinMaxValues(min, max)
-		element:SetValue(cur)
+		element:SetValue(cur, element.smoothing)
 	end
 
 	element.cur = cur
@@ -240,6 +241,10 @@ local function Enable(self, unit)
 	if(element) then
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
+
+		if(not element.smoothing) then
+			element.smoothing = Enum.StatusBarInterpolation.Immediate
+		end
 
 		self:RegisterEvent('UNIT_POWER_BAR_SHOW', VisibilityPath)
 		self:RegisterEvent('UNIT_POWER_BAR_HIDE', VisibilityPath)
