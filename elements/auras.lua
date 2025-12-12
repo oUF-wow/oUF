@@ -57,6 +57,7 @@ At least one of the above widgets must be present for the element to work.
 ## Attributes
 
 button.auraInstanceID - unique ID for the current aura being tracked by the button (number)
+button.isHarmfulAura  - indicates if the button holds a debuff (boolean)
 
 ## Examples
 
@@ -261,6 +262,7 @@ local function processData(element, unit, data, filter)
 	if(not data) then return end
 
 	data.isPlayerAura = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, filter .. '|PLAYER')
+	data.isHarmfulAura = filter == 'HARMFUL' -- "isHarmful" is a secret, use a different name
 
 	--[[ Callback: Auras:PostProcessAuraData(unit, data, filter)
 	Called after the aura data has been processed.
