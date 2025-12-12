@@ -33,6 +33,9 @@ At least one of the above widgets must be present for the element to work.
 .tooltipAnchor            - Anchor point for the tooltip. Defaults to 'ANCHOR_BOTTOMRIGHT', however, if a frame has
                             anchoring restrictions it will be set to 'ANCHOR_CURSOR' (string)
 .reanchorIfVisibleChanged - Reanchors aura buttons when the number of visible auras has changed (boolean)
+.showType                 - Show Overlay texture colored by oUF.colors.debuff (boolean)
+.showDebuffType           - Show Overlay texture colored by oUF.colors.debuff when it's a debuff. Exclusive with .showType (boolean)
+.showBuffType             - Show Overlay texture colored by oUF.colors.debuff when it's a buff. Exclusive with .showType (boolean)
 .minCount                 - Minimum number of aura applications for the Count text to be visible. Defaults to 2 (number)
 .maxCount                 - Maximum number of aura applications for the Count text, anything above renders "*". Defaults to 999 (number)
 
