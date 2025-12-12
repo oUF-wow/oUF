@@ -129,9 +129,13 @@ if(not customClassColors()) then
 	end)
 end
 
-for debuffType, color in next, _G.DebuffTypeColor do
-	colors.debuff[debuffType] = oUF:CreateColor(color.r, color.g, color.b)
-end
+-- copy of DEBUFF_DISPLAY_INFO from AuraUtil
+colors.debuff[oUF.Enum.DebuffType.None] = _G.DEBUFF_TYPE_NONE_COLOR
+colors.debuff[oUF.Enum.DebuffType.Magic] = _G.DEBUFF_TYPE_MAGIC_COLOR
+colors.debuff[oUF.Enum.DebuffType.Curse] = _G.DEBUFF_TYPE_CURSE_COLOR
+colors.debuff[oUF.Enum.DebuffType.Disease] = _G.DEBUFF_TYPE_DISEASE_COLOR
+colors.debuff[oUF.Enum.DebuffType.Poison] = _G.DEBUFF_TYPE_POISON_COLOR
+colors.debuff[oUF.Enum.DebuffType.Bleed] = _G.DEBUFF_TYPE_BLEED_COLOR
 
 for eclass, color in next, _G.FACTION_BAR_COLORS do
 	colors.reaction[eclass] = oUF:CreateColor(color.r, color.g, color.b)
