@@ -33,6 +33,8 @@ At least one of the above widgets must be present for the element to work.
 .tooltipAnchor            - Anchor point for the tooltip. Defaults to 'ANCHOR_BOTTOMRIGHT', however, if a frame has
                             anchoring restrictions it will be set to 'ANCHOR_CURSOR' (string)
 .reanchorIfVisibleChanged - Reanchors aura buttons when the number of visible auras has changed (boolean)
+.minCount                 - Minimum number of aura applications for the Count text to be visible. Defaults to 2 (number)
+.maxCount                 - Maximum number of aura applications for the Count text, anything above renders "*". Defaults to 999 (number)
 
 ## Options Auras
 
@@ -211,7 +213,7 @@ local function updateAura(element, unit, data, position)
 
 	if(button.Icon) then button.Icon:SetTexture(data.icon) end
 	if(button.Count) then
-		button.Count:SetText(C_StringUtil.TruncateWhenZero(data.applications)) -- ISSUE: will show "1" on <2 applications
+		button.Count:SetText(C_UnitAuras.GetAuraApplicationDisplayCount(unit, data.auraInstanceID, element.minCount or 2, element.maxCount or 999))
 	end
 
 	local width = element.width or element.size or 16
