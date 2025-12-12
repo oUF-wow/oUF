@@ -6,6 +6,7 @@
 	<Script file="factory.lua"/>
 	<Script file="blizzard.lua"/>
 	<Script file="units.lua"/>
+	<Script file="enums.lua"/>
 	<Script file="colors.lua"/>
 
 	<Script file="elements\additionalpower.lua"/>
