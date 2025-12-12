@@ -136,6 +136,7 @@ colors.debuff[oUF.Enum.DebuffType.Curse] = _G.DEBUFF_TYPE_CURSE_COLOR
 colors.debuff[oUF.Enum.DebuffType.Disease] = _G.DEBUFF_TYPE_DISEASE_COLOR
 colors.debuff[oUF.Enum.DebuffType.Poison] = _G.DEBUFF_TYPE_POISON_COLOR
 colors.debuff[oUF.Enum.DebuffType.Bleed] = _G.DEBUFF_TYPE_BLEED_COLOR
+colors.debuff[oUF.Enum.DebuffType.Enrage] = CreateColor(243/255, 95/255, 245/255) -- TODO: make something up
 
 for eclass, color in next, _G.FACTION_BAR_COLORS do
 	colors.reaction[eclass] = oUF:CreateColor(color.r, color.g, color.b)
