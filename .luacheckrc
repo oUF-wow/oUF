@@ -47,6 +47,7 @@ read_globals = {
 
 	-- namespaces
 	'C_AddOns',
+	'C_CurveUtil',
 	'C_IncomingSummon',
 	'C_NamePlate',
 	'C_PvP',
