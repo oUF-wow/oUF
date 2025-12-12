@@ -33,6 +33,9 @@ At least one of the above widgets must be present for the element to work.
 .tooltipAnchor            - Anchor point for the tooltip. Defaults to 'ANCHOR_BOTTOMRIGHT', however, if a frame has
                             anchoring restrictions it will be set to 'ANCHOR_CURSOR' (string)
 .reanchorIfVisibleChanged - Reanchors aura buttons when the number of visible auras has changed (boolean)
+.showType                 - Show Overlay texture colored by oUF.colors.debuff (boolean)
+.showDebuffType           - Show Overlay texture colored by oUF.colors.debuff when it's a debuff. Exclusive with .showType (boolean)
+.showBuffType             - Show Overlay texture colored by oUF.colors.debuff when it's a buff. Exclusive with .showType (boolean)
 .minCount                 - Minimum number of aura applications for the Count text to be visible. Defaults to 2 (number)
 .maxCount                 - Maximum number of aura applications for the Count text, anything above renders "*". Defaults to 999 (number)
 
@@ -843,7 +846,7 @@ local function Enable(self)
 
 			auras.debuffCurve = C_CurveUtil.CreateColorCurve()
 			auras.debuffCurve:SetType(Enum.LuaCurveType.Step)
-			for dispelType, dispelIndex in next, oUF.Enum.DebuffType do
+			for _, dispelIndex in next, oUF.Enum.DebuffType do
 				if self.colors.debuff[dispelIndex] then
 					auras.debuffCurve:AddPoint(dispelIndex, self.colors.debuff[dispelIndex])
 				end
@@ -866,7 +869,7 @@ local function Enable(self)
 
 			buffs.debuffCurve = C_CurveUtil.CreateColorCurve()
 			buffs.debuffCurve:SetType(Enum.LuaCurveType.Step)
-			for dispelType, dispelIndex in next, oUF.Enum.DebuffType do
+			for _, dispelIndex in next, oUF.Enum.DebuffType do
 				if self.colors.debuff[dispelIndex] then
 					buffs.debuffCurve:AddPoint(dispelIndex, self.colors.debuff[dispelIndex])
 				end
@@ -889,7 +892,7 @@ local function Enable(self)
 
 			debuffs.debuffCurve = C_CurveUtil.CreateColorCurve()
 			debuffs.debuffCurve:SetType(Enum.LuaCurveType.Step)
-			for dispelType, dispelIndex in next, oUF.Enum.DebuffType do
+			for _, dispelIndex in next, oUF.Enum.DebuffType do
 				if self.colors.debuff[dispelIndex] then
 					debuffs.debuffCurve:AddPoint(dispelIndex, self.colors.debuff[dispelIndex])
 				end
