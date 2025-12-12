@@ -56,6 +56,10 @@ At least one of the above widgets must be present for the element to work.
 
 ## Attributes
 
+.debuffCurve - Curve object with points defined for each index in oUF.colors.debuff
+
+## Button Attributes
+
 button.auraInstanceID - unique ID for the current aura being tracked by the button (number)
 button.isHarmfulAura  - indicates if the button holds a debuff (boolean)
 
@@ -199,15 +203,17 @@ local function updateAura(element, unit, data, position)
 	end
 
 	if(button.Overlay) then
-		button.Overlay:Hide()
-		-- if((data.isHarmful and element.showDebuffType) or (not data.isHarmful and element.showBuffType) or element.showType) then
-		-- 	local color = element.__owner.colors.debuff[data.dispelName] or element.__owner.colors.debuff.none
-
-		-- 	button.Overlay:SetVertexColor(color[1], color[2], color[3])
-		-- 	button.Overlay:Show()
-		-- else
-		-- 	button.Overlay:Hide()
-		-- end
+		if(element.showType or (data.isHarmfulAura and element.showDebuffType) or (not data.isHarmfulAura and element.showBuffType)) then
+			local color = C_UnitAuras.GetAuraDispelTypeColor(unit, data.auraInstanceID, element.debuffCurve)
+			if color then
+				button.Overlay:SetVertexColor(color:GetRGB())
+				button.Overlay:Show()
+			else
+				button.Overlay:Hide()
+			end
+		else
+			button.Overlay:Hide()
+		end
 	end
 
 	if(button.Stealable) then
@@ -835,6 +841,14 @@ local function Enable(self)
 			auras.visibleButtons = 0
 			auras.tooltipAnchor = auras.tooltipAnchor or 'ANCHOR_BOTTOMRIGHT'
 
+			auras.debuffCurve = C_CurveUtil.CreateColorCurve()
+			auras.debuffCurve:SetType(Enum.LuaCurveType.Step)
+			for dispelType, dispelIndex in next, oUF.Enum.DebuffType do
+				if self.colors.debuff[dispelIndex] then
+					auras.debuffCurve:AddPoint(dispelIndex, self.colors.debuff[dispelIndex])
+				end
+			end
+
 			auras:Show()
 		end
 
@@ -850,6 +864,14 @@ local function Enable(self)
 			buffs.visibleButtons = 0
 			buffs.tooltipAnchor = buffs.tooltipAnchor or 'ANCHOR_BOTTOMRIGHT'
 
+			buffs.debuffCurve = C_CurveUtil.CreateColorCurve()
+			buffs.debuffCurve:SetType(Enum.LuaCurveType.Step)
+			for dispelType, dispelIndex in next, oUF.Enum.DebuffType do
+				if self.colors.debuff[dispelIndex] then
+					buffs.debuffCurve:AddPoint(dispelIndex, self.colors.debuff[dispelIndex])
+				end
+			end
+
 			buffs:Show()
 		end
 
@@ -864,6 +886,14 @@ local function Enable(self)
 			debuffs.anchoredButtons = 0
 			debuffs.visibleButtons = 0
 			debuffs.tooltipAnchor = debuffs.tooltipAnchor or 'ANCHOR_BOTTOMRIGHT'
+
+			debuffs.debuffCurve = C_CurveUtil.CreateColorCurve()
+			debuffs.debuffCurve:SetType(Enum.LuaCurveType.Step)
+			for dispelType, dispelIndex in next, oUF.Enum.DebuffType do
+				if self.colors.debuff[dispelIndex] then
+					debuffs.debuffCurve:AddPoint(dispelIndex, self.colors.debuff[dispelIndex])
+				end
+			end
 
 			debuffs:Show()
 		end
