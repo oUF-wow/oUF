@@ -264,7 +264,7 @@ local function CastStart(self, event, unit)
 	element:SetValue(element.duration)
 
 	if(element.Icon) then element.Icon:SetTexture(texture or FALLBACK_ICON) end
-	if(element.Shield) then element.Shield:SetShown(notInterruptible) end
+	if(element.Shield) then element.Shield:SetAlphaFromBoolean(notInterruptible, 1, 0) end
 	if(element.Spark) then element.Spark:Show() end
 	if(element.Text) then element.Text:SetText(text) end
 	if(element.Time) then element.Time:SetText() end
@@ -440,7 +440,7 @@ local function CastInterruptible(self, event, unit)
 
 	element.notInterruptible = event == 'UNIT_SPELLCAST_NOT_INTERRUPTIBLE'
 
-	if(element.Shield) then element.Shield:SetShown(element.notInterruptible) end
+	if(element.Shield) then element.Shield:SetAlphaFromBoolean(element.notInterruptible, 1, 0) end
 
 	--[[ Callback: Castbar:PostCastInterruptible(unit)
 	Called after the element has been updated when a spell cast has become interruptible or uninterruptible.
