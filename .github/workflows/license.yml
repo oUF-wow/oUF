@@ -17,7 +17,7 @@ jobs:
           files: LICENSE.txt
 
       - name: Create pull request
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           title: Update license
           commit-message: Update license

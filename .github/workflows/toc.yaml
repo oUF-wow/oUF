@@ -19,7 +19,7 @@ jobs:
           ptr: true
 
       - name: Create pull request
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           title: Update Interface version
           body:
