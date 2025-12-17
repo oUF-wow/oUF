@@ -86,7 +86,7 @@ local colors = {
 		[13] = oUF:CreateColor(0, 153, 0), -- BATTLEGROUND_FRIENDLY_PVP
 	},
 	class = {},
-	debuff = {},
+	dispel = {},
 	reaction = {},
 	power = {},
 	threat = {},
@@ -130,13 +130,13 @@ if(not customClassColors()) then
 end
 
 -- copy of DEBUFF_DISPLAY_INFO from AuraUtil
-colors.debuff[oUF.Enum.DebuffType.None] = _G.DEBUFF_TYPE_NONE_COLOR
-colors.debuff[oUF.Enum.DebuffType.Magic] = _G.DEBUFF_TYPE_MAGIC_COLOR
-colors.debuff[oUF.Enum.DebuffType.Curse] = _G.DEBUFF_TYPE_CURSE_COLOR
-colors.debuff[oUF.Enum.DebuffType.Disease] = _G.DEBUFF_TYPE_DISEASE_COLOR
-colors.debuff[oUF.Enum.DebuffType.Poison] = _G.DEBUFF_TYPE_POISON_COLOR
-colors.debuff[oUF.Enum.DebuffType.Bleed] = _G.DEBUFF_TYPE_BLEED_COLOR
-colors.debuff[oUF.Enum.DebuffType.Enrage] = CreateColor(243/255, 95/255, 245/255) -- TODO: make something up
+colors.dispel[oUF.Enum.DispelType.None] = _G.DEBUFF_TYPE_NONE_COLOR
+colors.dispel[oUF.Enum.DispelType.Magic] = _G.DEBUFF_TYPE_MAGIC_COLOR
+colors.dispel[oUF.Enum.DispelType.Curse] = _G.DEBUFF_TYPE_CURSE_COLOR
+colors.dispel[oUF.Enum.DispelType.Disease] = _G.DEBUFF_TYPE_DISEASE_COLOR
+colors.dispel[oUF.Enum.DispelType.Poison] = _G.DEBUFF_TYPE_POISON_COLOR
+colors.dispel[oUF.Enum.DispelType.Bleed] = _G.DEBUFF_TYPE_BLEED_COLOR
+colors.dispel[oUF.Enum.DispelType.Enrage] = CreateColor(243/255, 95/255, 245/255) -- TODO: make something up
 
 for eclass, color in next, _G.FACTION_BAR_COLORS do
 	colors.reaction[eclass] = oUF:CreateColor(color.r, color.g, color.b)
