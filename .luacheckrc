@@ -50,6 +50,7 @@ read_globals = {
 	'C_CurveUtil',
 	'C_IncomingSummon',
 	'C_NamePlate',
+	'C_NamePlateManager',
 	'C_PvP',
 	'C_SpecializationInfo',
 	'C_Spell',
