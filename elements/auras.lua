@@ -842,7 +842,7 @@ local function Enable(self)
 
 			auras.dispelColorCurve = C_CurveUtil.CreateColorCurve()
 			auras.dispelColorCurve:SetType(Enum.LuaCurveType.Step)
-			for _, dispelIndex in next, oUF.Enum.DebuffType do
+			for _, dispelIndex in next, oUF.Enum.DispelType do
 				if self.colors.dispel[dispelIndex] then
 					auras.dispelColorCurve:AddPoint(dispelIndex, self.colors.dispel[dispelIndex])
 				end
@@ -865,7 +865,7 @@ local function Enable(self)
 
 			buffs.dispelColorCurve = C_CurveUtil.CreateColorCurve()
 			buffs.dispelColorCurve:SetType(Enum.LuaCurveType.Step)
-			for _, dispelIndex in next, oUF.Enum.DebuffType do
+			for _, dispelIndex in next, oUF.Enum.DispelType do
 				if self.colors.dispel[dispelIndex] then
 					buffs.dispelColorCurve:AddPoint(dispelIndex, self.colors.dispel[dispelIndex])
 				end
@@ -888,7 +888,7 @@ local function Enable(self)
 
 			debuffs.dispelColorCurve = C_CurveUtil.CreateColorCurve()
 			debuffs.dispelColorCurve:SetType(Enum.LuaCurveType.Step)
-			for _, dispelIndex in next, oUF.Enum.DebuffType do
+			for _, dispelIndex in next, oUF.Enum.DispelType do
 				if self.colors.dispel[dispelIndex] then
 					debuffs.dispelColorCurve:AddPoint(dispelIndex, self.colors.dispel[dispelIndex])
 				end
