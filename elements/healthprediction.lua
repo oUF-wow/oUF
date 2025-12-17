@@ -172,7 +172,7 @@ local function Update(self, event, unit)
 	* unit - the unit for which the update has been triggered (string)
 	--]]
 	if(element.PostUpdate) then
-		return element:PostUpdate(unit, myIncomingHeal, otherIncomingHeal, absorb, healAbsorb, hasOverAbsorb, hasOverHealAbsorb)
+		return element:PostUpdate(unit)
 	end
 end
 
