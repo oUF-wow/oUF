@@ -66,7 +66,7 @@ This example does not contain all widgets or options, just a selection.
     overDamageAbsorbIndicator:SetPoint('LEFT', self.Health, 'RIGHT')
     overDamageAbsorbIndicator:SetWidth(10)
 
-	local overHealAbsorbIndicator = self.Health:CreateTexture(nil, "OVERLAY")
+    local overHealAbsorbIndicator = self.Health:CreateTexture(nil, "OVERLAY")
     overHealAbsorbIndicator:SetPoint('TOP')
     overHealAbsorbIndicator:SetPoint('BOTTOM')
     overHealAbsorbIndicator:SetPoint('RIGHT', self.Health, 'LEFT')
