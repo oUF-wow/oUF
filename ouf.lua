@@ -758,6 +758,8 @@ Used to create nameplates and apply the currently active style to them.
 
 * self      - the global oUF object
 * prefix    - prefix for the global name of the nameplate. Defaults to an auto-generated prefix (string?)
+* width     - width of the nameplate
+* height    - height of the nameplate
 * callback  - function to be called after a nameplate unit or the player's target has changed. The arguments passed to
               the callback are the updated nameplate, if any, the event that triggered the update, and the new unit
               (function?)
@@ -765,9 +767,11 @@ Used to create nameplates and apply the currently active style to them.
 
 PingableUnitFrameTemplate is inherited for Ping support.
 --]]
-function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
-	argcheck(nameplateCallback, 3, 'function', 'nil')
-	argcheck(nameplateCVars, 4, 'table', 'nil')
+function oUF:SpawnNamePlates(namePrefix, width, height, nameplateCallback, nameplateCVars)
+	argcheck(width, 3, 'number', 'nil')
+	argcheck(height, 4, 'number', 'nil')
+	argcheck(nameplateCallback, 5, 'function', 'nil')
+	argcheck(nameplateCVars, 6, 'table', 'nil')
 	if(not style) then return error('Unable to create frame. No styles have been registered.') end
 	if(_G.oUF_NamePlateDriver) then return error('oUF nameplate driver has already been initialized.') end
 
@@ -780,6 +784,13 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 	eventHandler:RegisterEvent('PLAYER_TARGET_CHANGED')
 
 	if(IsLoggedIn()) then
+		-- set size
+		C_NamePlate.SetNamePlateSize(width or 200, height or 30)
+
+		-- force hit insets so nameplates are clickable within the whole nameplate size
+		C_NamePlateManager.SetNamePlateHitTestInsets(Enum.NamePlateType.Enemy, -10000, -10000, -10000, -10000)
+		C_NamePlateManager.SetNamePlateHitTestInsets(Enum.NamePlateType.Friendly, 10000, 10000, 10000, 10000)
+
 		if(nameplateCVars) then
 			for cvar, value in next, nameplateCVars do
 				SetCVar(cvar, value)
@@ -791,6 +802,13 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 
 	eventHandler:SetScript('OnEvent', function(_, event, unit)
 		if(event == 'PLAYER_LOGIN') then
+			-- set size
+			C_NamePlate.SetNamePlateSize(width or 200, height or 30)
+
+			-- force hit insets so nameplates are clickable within the whole nameplate size
+			C_NamePlateManager.SetNamePlateHitTestInsets(Enum.NamePlateType.Enemy, -10000, -10000, -10000, -10000)
+			C_NamePlateManager.SetNamePlateHitTestInsets(Enum.NamePlateType.Friendly, 10000, 10000, 10000, 10000)
+
 			if(nameplateCVars) then
 				for cvar, value in next, nameplateCVars do
 					SetCVar(cvar, value)
