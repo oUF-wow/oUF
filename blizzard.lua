@@ -65,7 +65,7 @@ local function handleFrame(baseName, doNotReparent)
 			end
 		end
 
-		local health = frame.healthBar or frame.healthbar or frame.HealthBar
+		local health = frame.healthBar or frame.healthbar or frame.HealthBar or (frame.HealthBarsContainer and frame.HealthBarsContainer.healthBar)
 		if(health) then
 			health:UnregisterAllEvents()
 		end
@@ -75,9 +75,9 @@ local function handleFrame(baseName, doNotReparent)
 			power:UnregisterAllEvents()
 		end
 
-		local spell = frame.castBar or frame.spellbar or frame.CastingBarFrame
-		if(spell) then
-			spell:UnregisterAllEvents()
+		local castbar = frame.castBar or frame.spellbar or frame.CastingBarFrame
+		if(castbar) then
+			castbar:UnregisterAllEvents()
 		end
 
 		local altpowerbar = frame.powerBarAlt or frame.PowerBarAlt
@@ -85,7 +85,7 @@ local function handleFrame(baseName, doNotReparent)
 			altpowerbar:UnregisterAllEvents()
 		end
 
-		local buffFrame = frame.BuffFrame
+		local buffFrame = frame.BuffFrame or frame.AurasFrame
 		if(buffFrame) then
 			buffFrame:UnregisterAllEvents()
 		end
@@ -174,15 +174,15 @@ function oUF:DisableBlizzard(unit)
 	end
 end
 
-function oUF:DisableNamePlate(frame)
+function oUF:DisableBlizzardNamePlate(frame)
 	if(not(frame and frame.UnitFrame)) then return end
 	if(frame.UnitFrame:IsForbidden()) then return end
 
-	if(not hookedNameplates[frame]) then
-		frame.UnitFrame:HookScript('OnShow', insecureHide)
-
-		hookedNameplates[frame] = true
-	end
+	-- TODO: this doesn't seem like it's needed any more?
+	-- if(not hookedNameplates[frame]) then
+	-- 	frame.UnitFrame:HookScript('OnShow', insecureHide)
+	-- 	hookedNameplates[frame] = true
+	-- end
 
 	handleFrame(frame.UnitFrame, true)
 end
