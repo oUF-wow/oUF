@@ -33,9 +33,9 @@ At least one of the above widgets must be present for the element to work.
 .tooltipAnchor            - Anchor point for the tooltip. Defaults to 'ANCHOR_BOTTOMRIGHT', however, if a frame has
                             anchoring restrictions it will be set to 'ANCHOR_CURSOR' (string)
 .reanchorIfVisibleChanged - Reanchors aura buttons when the number of visible auras has changed (boolean)
-.showType                 - Show Overlay texture colored by oUF.colors.debuff (boolean)
-.showDebuffType           - Show Overlay texture colored by oUF.colors.debuff when it's a debuff. Exclusive with .showType (boolean)
-.showBuffType             - Show Overlay texture colored by oUF.colors.debuff when it's a buff. Exclusive with .showType (boolean)
+.showType                 - Show Overlay texture colored by oUF.colors.dispel (boolean)
+.showDebuffType           - Show Overlay texture colored by oUF.colors.dispel when it's a debuff. Exclusive with .showType (boolean)
+.showBuffType             - Show Overlay texture colored by oUF.colors.dispel when it's a buff. Exclusive with .showType (boolean)
 .minCount                 - Minimum number of aura applications for the Count text to be visible. Defaults to 2 (number)
 .maxCount                 - Maximum number of aura applications for the Count text, anything above renders "*". Defaults to 999 (number)
 
@@ -59,7 +59,7 @@ At least one of the above widgets must be present for the element to work.
 
 ## Attributes
 
-.debuffCurve - Curve object with points defined for each index in oUF.colors.debuff
+.dispelColorCurve - Curve object with points defined for each index in oUF.colors.dispel
 
 ## Button Attributes
 
@@ -207,7 +207,7 @@ local function updateAura(element, unit, data, position)
 
 	if(button.Overlay) then
 		if(element.showType or (data.isHarmfulAura and element.showDebuffType) or (not data.isHarmfulAura and element.showBuffType)) then
-			local color = C_UnitAuras.GetAuraDispelTypeColor(unit, data.auraInstanceID, element.debuffCurve)
+			local color = C_UnitAuras.GetAuraDispelTypeColor(unit, data.auraInstanceID, element.dispelColorCurve)
 			button.Overlay:SetVertexColor(color:GetRGBA())
 			button.Overlay:Show()
 		else
@@ -840,11 +840,11 @@ local function Enable(self)
 			auras.visibleButtons = 0
 			auras.tooltipAnchor = auras.tooltipAnchor or 'ANCHOR_BOTTOMRIGHT'
 
-			auras.debuffCurve = C_CurveUtil.CreateColorCurve()
-			auras.debuffCurve:SetType(Enum.LuaCurveType.Step)
+			auras.dispelColorCurve = C_CurveUtil.CreateColorCurve()
+			auras.dispelColorCurve:SetType(Enum.LuaCurveType.Step)
 			for _, dispelIndex in next, oUF.Enum.DebuffType do
-				if self.colors.debuff[dispelIndex] then
-					auras.debuffCurve:AddPoint(dispelIndex, self.colors.debuff[dispelIndex])
+				if self.colors.dispel[dispelIndex] then
+					auras.dispelColorCurve:AddPoint(dispelIndex, self.colors.dispel[dispelIndex])
 				end
 			end
 
@@ -863,11 +863,11 @@ local function Enable(self)
 			buffs.visibleButtons = 0
 			buffs.tooltipAnchor = buffs.tooltipAnchor or 'ANCHOR_BOTTOMRIGHT'
 
-			buffs.debuffCurve = C_CurveUtil.CreateColorCurve()
-			buffs.debuffCurve:SetType(Enum.LuaCurveType.Step)
+			buffs.dispelColorCurve = C_CurveUtil.CreateColorCurve()
+			buffs.dispelColorCurve:SetType(Enum.LuaCurveType.Step)
 			for _, dispelIndex in next, oUF.Enum.DebuffType do
-				if self.colors.debuff[dispelIndex] then
-					buffs.debuffCurve:AddPoint(dispelIndex, self.colors.debuff[dispelIndex])
+				if self.colors.dispel[dispelIndex] then
+					buffs.dispelColorCurve:AddPoint(dispelIndex, self.colors.dispel[dispelIndex])
 				end
 			end
 
@@ -886,11 +886,11 @@ local function Enable(self)
 			debuffs.visibleButtons = 0
 			debuffs.tooltipAnchor = debuffs.tooltipAnchor or 'ANCHOR_BOTTOMRIGHT'
 
-			debuffs.debuffCurve = C_CurveUtil.CreateColorCurve()
-			debuffs.debuffCurve:SetType(Enum.LuaCurveType.Step)
+			debuffs.dispelColorCurve = C_CurveUtil.CreateColorCurve()
+			debuffs.dispelColorCurve:SetType(Enum.LuaCurveType.Step)
 			for _, dispelIndex in next, oUF.Enum.DebuffType do
-				if self.colors.debuff[dispelIndex] then
-					debuffs.debuffCurve:AddPoint(dispelIndex, self.colors.debuff[dispelIndex])
+				if self.colors.dispel[dispelIndex] then
+					debuffs.dispelColorCurve:AddPoint(dispelIndex, self.colors.dispel[dispelIndex])
 				end
 			end
 
