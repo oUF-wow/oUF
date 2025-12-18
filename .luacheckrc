@@ -48,6 +48,7 @@ read_globals = {
 	-- namespaces
 	'C_AddOns',
 	'C_CurveUtil',
+	'C_CVar',
 	'C_IncomingSummon',
 	'C_NamePlate',
 	'C_NamePlateManager',

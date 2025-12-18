@@ -757,7 +757,7 @@ do
 	local hitInset = 10000 -- some large number that will ensure we have full coverage
 	local function updateDriver(driver)
 		if(IsLoggedIn()) then
-			C_NamePlate.SetNamePlateSize(self.plateWidth or 200, self.plateHeight or 30)
+			C_NamePlate.SetNamePlateSize(driver.plateWidth or 200, driver.plateHeight or 30)
 
 			local enemyInset = driver.friendlyNonInteractible and hitInset or -hitInset
 			C_NamePlateManager.SetNamePlateHitTestInsets(Enum.NamePlateType.Enemy, enemyInset, enemyInset, enemyInset, enemyInset)
@@ -890,7 +890,7 @@ do
 				self.removedCallback(nameplate.unitFrame, event, unit)
 			end
 		end
-	end)
+	end
 
 	--[[ oUF:SpawnNamePlates(prefix, callback, variables)
 	Used to create nameplates and apply the currently active style to them.
