@@ -774,19 +774,36 @@ do
 	end
 
 	local nameplateDriverMixin = {}
+	--[[ nameplates:SetTargetCallback(callback)
+	Sets a callback function to be triggered whenever a nameplate has been targeted.  
+	The payload for the callback is `(nameplate, event, unit)`.
+	--]]
 	function nameplateDriverMixin:SetTargetCallback(callback)
 		argcheck(callback, 2, 'function', 'nil')
 		self.targetCallback = callback
 	end
+	--[[ nameplates:SetAddedCallback(callback)
+	Sets a callback function to be triggered whenever a nameplate has been added.  
+	The payload for the callback is `(nameplate, event, unit)`.
+	--]]
 	function nameplateDriverMixin:SetAddedCallback(callback)
 		argcheck(callback, 2, 'function', 'nil')
 		self.addedCallback = callback
 	end
+	--[[ nameplates:SetRemovedCallback(callback)
+	Sets a callback function to be triggered whenever a nameplate has been removed.  
+	The payload for the callback is `(nameplate, event, unit)`.
+	--]]
 	function nameplateDriverMixin:SetRemovedCallback(callback)
 		argcheck(callback, 2, 'function', 'nil')
 		self.removedCallback = callback
 	end
 
+	--[[ nameplates:SetSize(width[, height])
+	Sets the width and size for all nameplates.  
+	If only width is provided it will also be used for the height.  
+	The default width is `200`, and the default height is `30`.
+	--]]
 	function nameplateDriverMixin:SetSize(width, height)
 		argcheck(width, 2, 'number')
 		argcheck(height, 3, 'number', 'nil')
@@ -797,18 +814,32 @@ do
 		updateDriver(self)
 	end
 
+	--[[ nameplates:SetEnemyInteractible(state)
+	Sets the interactible state for enemy nameplates.  
+	They are interactible by default.
+	--]]
 	function nameplateDriverMixin:SetEnemyInteractible(state)
 		self.enemyNonInteractible = not state
 
 		updateDriver(self)
 	end
 
+	--[[ nameplates:SetFriendlyInteractible(state)
+	Sets the interactible state for friendly nameplates.  
+	They are interactible by default.
+	--]]
 	function nameplateDriverMixin:SetFriendlyInteractible(state)
 		self.friendlyNonInteractible = not state
 
 		updateDriver(self)
 	end
 
+	--[[ nameplates:SetCVars(variables)
+	Sets console variables from key/value table.
+	--]]
+	--[[ nameplates:SetCVars(name, value[, ...])
+	Sets console variables from key/value parameters.
+	--]]
 	function nameplateDriverMixin:SetCVars(...)
 		if(type(...) == 'table') then
 			self.cvars = ...
@@ -897,12 +928,6 @@ do
 
 	* self      - the global oUF object
 	* prefix    - prefix for the global name of the nameplate. Defaults to an auto-generated prefix (string?)
-	* width     - width of the nameplate
-	* height    - height of the nameplate
-	* callback  - function to be called after a nameplate unit or the player's target has changed. The arguments passed to
-	              the callback are the updated nameplate, if any, the event that triggered the update, and the new unit
-	              (function?)
-	* variables - list of console variable-value pairs to be set when the player logs in (table?)
 
 	PingableUnitFrameTemplate is inherited for Ping support.
 	--]]
