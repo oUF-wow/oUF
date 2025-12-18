@@ -753,88 +753,101 @@ function oUF:Spawn(unit, overrideName)
 	return object
 end
 
---[[ oUF:SpawnNamePlates(prefix, callback, variables)
-Used to create nameplates and apply the currently active style to them.
+do
+	local hitInset = 10000 -- some large number that will ensure we have full coverage
+	local function updateDriver(driver)
+		if(IsLoggedIn()) then
+			C_NamePlate.SetNamePlateSize(self.plateWidth or 200, self.plateHeight or 30)
 
-* self      - the global oUF object
-* prefix    - prefix for the global name of the nameplate. Defaults to an auto-generated prefix (string?)
-* width     - width of the nameplate
-* height    - height of the nameplate
-* callback  - function to be called after a nameplate unit or the player's target has changed. The arguments passed to
-              the callback are the updated nameplate, if any, the event that triggered the update, and the new unit
-              (function?)
-* variables - list of console variable-value pairs to be set when the player logs in (table?)
+			local enemyInset = driver.friendlyNonInteractible and hitInset or -hitInset
+			C_NamePlateManager.SetNamePlateHitTestInsets(Enum.NamePlateType.Enemy, enemyInset, enemyInset, enemyInset, enemyInset)
 
-PingableUnitFrameTemplate is inherited for Ping support.
---]]
-function oUF:SpawnNamePlates(namePrefix, width, height, nameplateCallback, nameplateCVars)
-	argcheck(width, 3, 'number', 'nil')
-	argcheck(height, 4, 'number', 'nil')
-	argcheck(nameplateCallback, 5, 'function', 'nil')
-	argcheck(nameplateCVars, 6, 'table', 'nil')
-	if(not style) then return error('Unable to create frame. No styles have been registered.') end
-	if(_G.oUF_NamePlateDriver) then return error('oUF nameplate driver has already been initialized.') end
+			local friendlyInset = driver.friendlyNonInteractible and hitInset or -hitInset
+			C_NamePlateManager.SetNamePlateHitTestInsets(Enum.NamePlateType.Friendly, friendlyInset, friendlyInset, friendlyInset, friendlyInset)
 
-	local style = style
-	local prefix = namePrefix or generateName()
-
-	local eventHandler = CreateFrame('Frame', 'oUF_NamePlateDriver')
-	eventHandler:RegisterEvent('NAME_PLATE_UNIT_ADDED')
-	eventHandler:RegisterEvent('NAME_PLATE_UNIT_REMOVED')
-	eventHandler:RegisterEvent('PLAYER_TARGET_CHANGED')
-
-	if(IsLoggedIn()) then
-		-- set size
-		C_NamePlate.SetNamePlateSize(width or 200, height or 30)
-
-		-- force hit insets so nameplates are clickable within the whole nameplate size
-		C_NamePlateManager.SetNamePlateHitTestInsets(Enum.NamePlateType.Enemy, -10000, -10000, -10000, -10000)
-		C_NamePlateManager.SetNamePlateHitTestInsets(Enum.NamePlateType.Friendly, 10000, 10000, 10000, 10000)
-
-		if(nameplateCVars) then
-			for cvar, value in next, nameplateCVars do
-				SetCVar(cvar, value)
-			end
-		end
-	else
-		eventHandler:RegisterEvent('PLAYER_LOGIN')
-	end
-
-	eventHandler:SetScript('OnEvent', function(_, event, unit)
-		if(event == 'PLAYER_LOGIN') then
-			-- set size
-			C_NamePlate.SetNamePlateSize(width or 200, height or 30)
-
-			-- force hit insets so nameplates are clickable within the whole nameplate size
-			C_NamePlateManager.SetNamePlateHitTestInsets(Enum.NamePlateType.Enemy, -10000, -10000, -10000, -10000)
-			C_NamePlateManager.SetNamePlateHitTestInsets(Enum.NamePlateType.Friendly, 10000, 10000, 10000, 10000)
-
-			if(nameplateCVars) then
-				for cvar, value in next, nameplateCVars do
-					SetCVar(cvar, value)
+			if(driver.cvars) then
+				for name, value in next, driver.cvars do
+					C_CVar.SetCVar(name, value)
 				end
 			end
+		end
+	end
+
+	local nameplateDriverMixin = {}
+	function nameplateDriverMixin:SetTargetCallback(callback)
+		argcheck(callback, 2, 'function', 'nil')
+		self.targetCallback = callback
+	end
+	function nameplateDriverMixin:SetAddedCallback(callback)
+		argcheck(callback, 2, 'function', 'nil')
+		self.addedCallback = callback
+	end
+	function nameplateDriverMixin:SetRemovedCallback(callback)
+		argcheck(callback, 2, 'function', 'nil')
+		self.removedCallback = callback
+	end
+
+	function nameplateDriverMixin:SetSize(width, height)
+		argcheck(width, 2, 'number')
+		argcheck(height, 3, 'number', 'nil')
+
+		self.plateWidth = width
+		self.plateHeight = height or width
+
+		updateDriver(self)
+	end
+
+	function nameplateDriverMixin:SetEnemyInteractible(state)
+		self.enemyNonInteractible = not state
+
+		updateDriver(self)
+	end
+
+	function nameplateDriverMixin:SetFriendlyInteractible(state)
+		self.friendlyNonInteractible = not state
+
+		updateDriver(self)
+	end
+
+	function nameplateDriverMixin:SetCVars(...)
+		if(type(...) == 'table') then
+			self.cvars = ...
+		else
+			self.cvars = {}
+			for index = 1, select('#', ...), 2 do
+				local name, value = select(index, ...)
+				if(not name) then break end
+				self.cvars[name] = value
+			end
+		end
+
+		updateDriver(self)
+	end
+
+	local function driverEventHandler(self, event, unit)
+		if(event == 'PLAYER_LOGIN') then
+			updateDriver(self)
 		elseif(event == 'PLAYER_TARGET_CHANGED') then
 			local nameplate = C_NamePlate.GetNamePlateForUnit('target')
-			if(nameplateCallback) then
-				nameplateCallback(nameplate and nameplate.unitFrame, event, 'target')
+			if(not nameplate or not nameplate.unitFrame) then return end
+
+			if(self.targetCallback) then
+				self.targetCallback(nameplate.unitFrame, event, 'target')
 			end
 
 			-- UAE is called after the callback to reduce the number of
-			-- ForceUpdate calls layout devs have to do themselves
-			if(nameplate) then
-				nameplate.unitFrame:UpdateAllElements(event)
-			end
-		elseif(event == 'NAME_PLATE_UNIT_ADDED' and unit) then
+			-- ForceUpdate calls layouts have to do after changing things
+			nameplate.unitFrame:UpdateAllElements(event)
+		elseif(event == 'NAME_PLATE_UNIT_ADDED') then
 			local nameplate = C_NamePlate.GetNamePlateForUnit(unit)
 			if(not nameplate) then return end
 
 			self:DisableBlizzardNamePlate(nameplate)
 
 			if(not nameplate.unitFrame) then
-				nameplate.style = style
+				nameplate.style = self.style
 
-				nameplate.unitFrame = CreateFrame('Button', prefix..nameplate:GetName(), nameplate, 'PingableUnitFrameTemplate')
+				nameplate.unitFrame = CreateFrame('Button', self.namePrefix .. nameplate:GetName(), nameplate, 'PingableUnitFrameTemplate')
 				nameplate.unitFrame:EnableMouse(false)
 				nameplate.unitFrame.isNamePlate = true
 
@@ -853,7 +866,6 @@ function oUF:SpawnNamePlates(namePrefix, width, height, nameplateCallback, namep
 					nameplate.UnitFrame.WidgetContainer:SetIgnoreParentAlpha(true)
 					nameplate.unitFrame.WidgetContainer = nameplate.UnitFrame.WidgetContainer
 				end
-
 				if(nameplate.UnitFrame.SoftTargetFrame) then
 					nameplate.UnitFrame.SoftTargetFrame:SetParent(nameplate.unitFrame)
 					nameplate.UnitFrame.SoftTargetFrame:SetIgnoreParentAlpha(true)
@@ -861,24 +873,61 @@ function oUF:SpawnNamePlates(namePrefix, width, height, nameplateCallback, namep
 				end
 			end
 
-			if(nameplateCallback) then
-				nameplateCallback(nameplate.unitFrame, event, unit)
+			if(self.addedCallback) then
+				self.addedCallback(nameplate.unitFrame, event, unit)
 			end
 
 			-- UAE is called after the callback to reduce the number of
-			-- ForceUpdate calls layout devs have to do themselves
+			-- ForceUpdate calls layouts have to do after changing things
 			nameplate.unitFrame:UpdateAllElements(event)
-		elseif(event == 'NAME_PLATE_UNIT_REMOVED' and unit) then
+		elseif(event == 'NAME_PLATE_UNIT_REMOVED') then
 			local nameplate = C_NamePlate.GetNamePlateForUnit(unit)
-			if(not nameplate) then return end
+			if(not nameplate or not nameplate.unitFrame) then return end
 
 			nameplate.unitFrame:SetAttribute('unit', nil)
 
-			if(nameplateCallback) then
-				nameplateCallback(nameplate.unitFrame, event, unit)
+			if(self.removedCallback) then
+				self.removedCallback(nameplate.unitFrame, event, unit)
 			end
 		end
 	end)
+
+	--[[ oUF:SpawnNamePlates(prefix, callback, variables)
+	Used to create nameplates and apply the currently active style to them.
+
+	* self      - the global oUF object
+	* prefix    - prefix for the global name of the nameplate. Defaults to an auto-generated prefix (string?)
+	* width     - width of the nameplate
+	* height    - height of the nameplate
+	* callback  - function to be called after a nameplate unit or the player's target has changed. The arguments passed to
+	              the callback are the updated nameplate, if any, the event that triggered the update, and the new unit
+	              (function?)
+	* variables - list of console variable-value pairs to be set when the player logs in (table?)
+
+	PingableUnitFrameTemplate is inherited for Ping support.
+	--]]
+	function oUF:SpawnNamePlates(namePrefix)
+		if(not style) then return error('Unable to create frame. No styles have been registered.') end
+
+		local driverName = (global or parent) .. '_NamePlateDriver'
+		if(_G[driverName]) then return error('oUF nameplate driver has already been initialized.') end
+
+		local nameplateDriver = Mixin(CreateFrame('Frame', driverName), nameplateDriverMixin)
+		nameplateDriver:SetScript('OnEvent', driverEventHandler)
+
+		nameplateDriver.style = style
+		nameplateDriver.prefix = namePrefix or generateName()
+
+		nameplateDriver:RegisterEvent('NAME_PLATE_UNIT_ADDED')
+		nameplateDriver:RegisterEvent('NAME_PLATE_UNIT_REMOVED')
+		nameplateDriver:RegisterEvent('PLAYER_TARGET_CHANGED')
+
+		if(IsLoggedIn()) then
+			updateDriver(nameplateDriver)
+		else
+			nameplateDriver:RegisterEvent('PLAYER_LOGIN')
+		end
+	end
 end
 
 --[[ oUF:AddElement(name, update, enable, disable)
