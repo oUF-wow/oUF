@@ -613,6 +613,24 @@ do
 		end
 	]]
 
+	local headerMixin = {}
+	--[[ header:SetVisibility(visibility)
+	Sets the macro conditional(s) controlling when to display the header (string).
+	--]]
+	function headerMixin:SetVisibility(visibility)
+		argcheck(visibility, 2, 'string', 'nil')
+
+		local type, list = string.split(' ', visibility, 2)
+		if(list and type == 'custom') then
+			RegisterAttributeDriver(self, 'state-visibility', list)
+			self.visibility = list
+		else
+			local condition = getCondition(string.split(',', visibility))
+			RegisterAttributeDriver(self, 'state-visibility', condition)
+			self.visibility = condition
+		end
+	end
+
 	--[[ oUF:SpawnHeader(overrideName, template, visibility, ...)
 	Used to create a group header and apply the currently active style to it.
 
@@ -621,7 +639,6 @@ do
 	                 of the active style and other arguments passed to `:SpawnHeader` (string?)
 	* template     - name of a template to be used for creating the header. Defaults to `'SecureGroupHeaderTemplate'`
 	                 (string?)
-	* visibility   - macro conditional(s) which define when to display the header (string).
 	* ...          - further argument pairs. Consult [Group Headers](https://warcraft.wiki.gg/wiki/SecureGroupHeaderTemplate)
 	                 for possible values. If preferred, the attributes can be an associative table.
 
@@ -632,14 +649,14 @@ do
 	                              configuration (string?)
 	* oUF-onlyProcessChildren   - can be used to force headers to only process children (boolean?)
 	--]]
-	function oUF:SpawnHeader(overrideName, template, visibility, ...)
+	function oUF:SpawnHeader(overrideName, template, ...)
 		if(not style) then return error('Unable to create frame. No styles have been registered.') end
 
 		template = (template or 'SecureGroupHeaderTemplate')
 
 		local isPetHeader = template:match('PetHeader')
 		local name = overrideName or generateName(nil, ...)
-		local header = CreateFrame('Frame', name, PetBattleFrameHider, template)
+		local header = Mixin(CreateFrame('Frame', name, PetBattleFrameHider, template), headerMixin)
 
 		header:SetAttribute('template', 'SecureUnitButtonTemplate, SecureHandlerStateTemplate, SecureHandlerEnterLeaveTemplate, PingableUnitFrameTemplate')
 
@@ -659,7 +676,6 @@ do
 
 		header.style = style
 		header.styleFunction = styleProxy
-		header.visibility = visibility
 
 		-- Expose the header through oUF.headers.
 		table.insert(headers, header)
@@ -703,18 +719,6 @@ do
 
 		if(header:GetAttribute('showParty')) then
 			self:DisableBlizzard('party')
-		end
-
-		if(visibility) then
-			local type, list = string.split(' ', visibility, 2)
-			if(list and type == 'custom') then
-				RegisterAttributeDriver(header, 'state-visibility', list)
-				header.visibility = list
-			else
-				local condition = getCondition(string.split(',', visibility))
-				RegisterAttributeDriver(header, 'state-visibility', condition)
-				header.visibility = condition
-			end
 		end
 
 		return header
