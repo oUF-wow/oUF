@@ -276,7 +276,7 @@ local function CastStart(self, event, unit)
 	if(element.Time) then element.Time:SetText() end
 
 	local safeZone = element.SafeZone
-	if(safeZone) then
+	if(safeZone and unit == 'player') then
 		local isHoriz = element:GetOrientation() == 'HORIZONTAL'
 
 		safeZone:ClearAllPoints()
