@@ -507,29 +507,28 @@ local function onUpdate(self, elapsed)
 			end
 		end
 
-		--[[ Callback: Castbar:PostUpdateStage(stage)
-		Called after the current stage changes.
+		-- --[[ Callback: Castbar:PostUpdateStage(stage)
+		-- Called after the current stage changes.
 
-		* self - the Castbar widget
-		* stage - the stage of the empowered cast (number)
-		--]]
-		if(self.empowering and self.PostUpdateStage) then
-			local old = self.curStage
-			for i = old + 1, self.numStages do
-				if(self.stagePoints[i]) then
-					if(self.duration > self.stagePoints[i]) then
-						self.curStage = i
+		-- * self - the Castbar widget
+		-- * stage - the stage of the empowered cast (number)
+		-- --]]
+		-- if(self.empowering and self.PostUpdateStage) then
+		-- 	local old = self.curStage
+		-- 	for i = old + 1, self.numStages do
+		-- 		if(self.stagePoints[i]) then
+		-- 			if(self.duration > self.stagePoints[i]) then
+		-- 				self.curStage = i
 
-						if(self.curStage ~= old) then
-							self:PostUpdateStage(i)
-						end
-					else
-						break
-					end
-				end
-			end
-		end
-
+		-- 				if(self.curStage ~= old) then
+		-- 					self:PostUpdateStage(i)
+		-- 				end
+		-- 			else
+		-- 				break
+		-- 			end
+		-- 		end
+		-- 	end
+		-- end
 	elseif(self.holdTime > 0) then
 		self.holdTime = self.holdTime - elapsed
 	else
