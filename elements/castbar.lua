@@ -34,10 +34,6 @@ A default texture will be applied to the StatusBar and Texture widgets if they d
 .empowering       - Indicates whether the current spell is an empowering cast (boolean)
 .notInterruptible - Indicates whether the current spell is interruptible (boolean)
 .spellID          - The spell identifier of the currently cast/channeled/empowering spell (number)
-.numStages        - The number of empowerment stages of the current spell (number?)
-.curStage         - The current empowerment stage of the spell. It updates only if the PostUpdateStage callback is
-                    defined (number?)
-.stagePoints      - The timestamps (in seconds) for each empowerment stage (table)
 
 ## Examples
 
@@ -97,7 +93,6 @@ local oUF = ns.oUF
 local FALLBACK_ICON = 136243 -- Interface\ICONS\Trade_Engineering
 local FAILED = _G.FAILED or 'Failed'
 local INTERRUPTED = _G.INTERRUPTED or 'Interrupted'
-local CASTBAR_STAGE_DURATION_INVALID = -1 -- defined in FrameXML/CastingBarFrame.lua
 
 local function resetAttributes(self)
 	self.castID = nil
@@ -106,10 +101,6 @@ local function resetAttributes(self)
 	self.empowering = nil
 	self.notInterruptible = nil
 	self.spellID = nil
-	self.numStages = nil
-	self.curStage = nil
-
-	table.wipe(self.stagePoints)
 
 	for _, pip in next, self.Pips do
 		pip:Hide()
@@ -120,83 +111,69 @@ local function CreatePip(element)
 	return CreateFrame('Frame', nil, element, 'CastingBarFrameStagePipTemplate')
 end
 
-local function UpdatePips(element, numStages)
-	local stageTotalDuration = 0
-	local stageMaxValue = element.max * 1000
+local function UpdatePips(element, stages)
 	local isHoriz = element:GetOrientation() == 'HORIZONTAL'
 	local elementSize = isHoriz and element:GetWidth() or element:GetHeight()
-	element.numStages = numStages
-	element.curStage = 0 -- NOTE: Updates only if the PostUpdateStage callback is present
 
-	for stage = 1, numStages do
-		local duration
-		if(stage > numStages) then
-			duration = GetUnitEmpowerHoldAtMaxTime(element.__owner.unit)
-		else
-			duration = GetUnitEmpowerStageDuration(element.__owner.unit, stage - 1)
+	local lastOffset = 0
+	for stage, stageSection in next, stages do
+		local offset = lastOffset + (elementSize * stageSection)
+		lastOffset = offset
+
+		local pip = element.Pips[stage]
+		if(not pip) then
+			--[[ Override: Castbar:CreatePip(stage)
+			Creates a "pip" for the given stage, used for empowered casts.
+
+			* self  - the Castbar widget
+			* stage - the empowered stage for which the pip should be created (number)
+
+			## Returns
+
+			* pip - a frame used to depict an empowered stage boundary, typically with a line texture (frame)
+			--]]
+			pip = (element.CreatePip or CreatePip) (element, stage)
+			element.Pips[stage] = pip
 		end
 
-		if(duration > CASTBAR_STAGE_DURATION_INVALID) then
-			stageTotalDuration = stageTotalDuration + duration
-			element.stagePoints[stage] = stageTotalDuration / 1000
+		pip:ClearAllPoints()
+		pip:Show()
 
-			local portion = stageTotalDuration / stageMaxValue
-			local offset = elementSize * portion
-
-			local pip = element.Pips[stage]
-			if(not pip) then
-				--[[ Override: Castbar:CreatePip(stage)
-				Creates a "pip" for the given stage, used for empowered casts.
-
-				* self - the Castbar widget
-
-				## Returns
-
-				* pip - a frame used to depict an empowered stage boundary, typically with a line texture (frame)
-				--]]
-				pip = (element.CreatePip or CreatePip) (element, stage)
-				element.Pips[stage] = pip
+		if(isHoriz) then
+			if(pip.RotateTextures) then
+				pip:RotateTextures(0)
 			end
 
-			pip:ClearAllPoints()
-			pip:Show()
-
-			if(isHoriz) then
-				if(pip.RotateTextures) then
-					pip:RotateTextures(0)
-				end
-
-				if(element:GetReverseFill()) then
-					pip:SetPoint('TOP', element, 'TOPRIGHT', -offset, 0)
-					pip:SetPoint('BOTTOM', element, 'BOTTOMRIGHT', -offset, 0)
-				else
-					pip:SetPoint('TOP', element, 'TOPLEFT', offset, 0)
-					pip:SetPoint('BOTTOM', element, 'BOTTOMLEFT', offset, 0)
-				end
+			if(element:GetReverseFill()) then
+				pip:SetPoint('TOP', element, 'TOPRIGHT', -offset, 0)
+				pip:SetPoint('BOTTOM', element, 'BOTTOMRIGHT', -offset, 0)
 			else
-				if(pip.RotateTextures) then
-					pip:RotateTextures(1.5708)
-				end
+				pip:SetPoint('TOP', element, 'TOPLEFT', offset, 0)
+				pip:SetPoint('BOTTOM', element, 'BOTTOMLEFT', offset, 0)
+			end
+		else
+			if(pip.RotateTextures) then
+				pip:RotateTextures(1.5708)
+			end
 
-				if(element:GetReverseFill()) then
-					pip:SetPoint('LEFT', element, 'TOPLEFT', 0, -offset)
-					pip:SetPoint('RIGHT', element, 'TOPRIGHT', 0, -offset)
-				else
-					pip:SetPoint('LEFT', element, 'BOTTOMLEFT', 0, offset)
-					pip:SetPoint('RIGHT', element, 'BOTTOMRIGHT', 0, offset)
-				end
+			if(element:GetReverseFill()) then
+				pip:SetPoint('LEFT', element, 'TOPLEFT', 0, -offset)
+				pip:SetPoint('RIGHT', element, 'TOPRIGHT', 0, -offset)
+			else
+				pip:SetPoint('LEFT', element, 'BOTTOMLEFT', 0, offset)
+				pip:SetPoint('RIGHT', element, 'BOTTOMRIGHT', 0, offset)
 			end
 		end
 	end
 
-	--[[ Callback: Castbar:PostUpdatePips(numStages)
+	--[[ Callback: Castbar:PostUpdatePips(stages)
 	Called after the element has updated stage separators (pips) in an empowered cast.
 
-	* self - the Castbar widget
-	* numStages - the number of stages in the current cast (number)
+	* self   - the Castbar widget
+	* stages - stages with percentage of each stage (table)
 	--]]
 	if(element.PostUpdatePips) then
-		element:PostUpdatePips(numStages)
+		element:PostUpdatePips(stages)
 	end
 end
 
@@ -217,7 +194,6 @@ local function CastStart(self, event, unit)
 		return
 	end
 
-	local numStages, _
 	local direction, duration = Enum.StatusBarTimerDirection.ElapsedTime
 	local name, text, texture, startTime, endTime, isTradeSkill, _, notInterruptible, spellID, castID = UnitCastingInfo(unit)
 	if(name) then
@@ -225,7 +201,7 @@ local function CastStart(self, event, unit)
 		duration = UnitCastingDuration(unit)
 	else
 		local isEmpowered
-		name, text, texture, startTime, endTime, isTradeSkill, notInterruptible, spellID, isEmpowered, numStages, castID = UnitChannelInfo(unit)
+		name, text, texture, startTime, endTime, isTradeSkill, notInterruptible, spellID, isEmpowered, _, castID = UnitChannelInfo(unit)
 		if(isEmpowered) then
 			element.empowering = true
 			duration = UnitEmpoweredChannelDuration(unit)
@@ -298,13 +274,13 @@ local function CastStart(self, event, unit)
 	end
 
 	if(element.empowering) then
-		--[[ Override: Castbar:UpdatePips(numStages)
+		--[[ Override: Castbar:UpdatePips(stages)
 		Handles updates for stage separators (pips) in an empowered cast.
 
-		* self      - the Castbar widget
-		* numStages - the number of stages in the current cast (number)
+		* self   - the Castbar widget
+		* stages - stages with percentage of each stage (table)
 		--]]
-		(element.UpdatePips or UpdatePips) (element, numStages)
+		(element.UpdatePips or UpdatePips) (element, UnitEmpoweredStagePercentages(unit))
 	end
 
 	--[[ Callback: Castbar:PostCastStart(unit)
@@ -595,7 +571,6 @@ local function Enable(self, unit)
 		self:RegisterEvent('UNIT_SPELLCAST_NOT_INTERRUPTIBLE', CastInterruptible)
 
 		element.holdTime = 0
-		element.stagePoints = {}
 		element.Pips = element.Pips or {}
 
 		element:SetScript('OnUpdate', element.OnUpdate or onUpdate)
