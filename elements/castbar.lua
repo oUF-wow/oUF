@@ -222,25 +222,20 @@ local function CastStart(self, event, unit)
 		return
 	end
 
-	if(element.empowering) then
-		endTime = endTime + GetUnitEmpowerHoldAtMaxTime(unit)
-	end
-
-	endTime = endTime / 1000
-	startTime = startTime / 1000
-
-	element.max = endTime - startTime
-	element.startTime = startTime
 	element.delay = 0
 	element.notInterruptible = notInterruptible
 	element.holdTime = 0
 	element.castID = castID
 	element.spellID = spellID
 
-	if(element.channeling) then
-		element.duration = endTime - GetTime()
-	else
-		element.duration = GetTime() - startTime
+	if(unit == 'player') then
+		-- we can only read these variables for players
+		element.startTime = startTime / 1000
+		if(self.empowering) then
+			element.endTime = (endTime + GetUnitEmpowerHoldAtMaxTime(unit)) / 1000
+		else
+			element.endTime = endTime / 1000
+		end
 	end
 
 	element:SetTimerDuration(duration, element.smoothing, direction)
@@ -265,7 +260,11 @@ local function CastStart(self, event, unit)
 			safeZone:SetPoint(element:GetReverseFill() and (isHoriz and 'LEFT' or 'BOTTOM') or (isHoriz and 'RIGHT' or 'TOP'))
 		end
 
-		local ratio = (select(4, GetNetStats()) / 1000) / element.max
+		if(element.empowering) then
+			endTime = endTime + GetUnitEmpowerHoldAtMaxTime(unit)
+		end
+
+		local ratio = (select(4, GetNetStats())) / (endTime - startTime)
 		if(ratio > 1) then
 			ratio = 1
 		end
@@ -308,10 +307,10 @@ local function CastUpdate(self, event, unit, _, _, castID)
 
 	local direction, duration, name, startTime, _ = Enum.StatusBarTimerDirection.ElapsedTime
 	if(event == 'UNIT_SPELLCAST_DELAYED') then
-		name, _, _, startTime, endTime = UnitCastingInfo(unit)
+		name, _, _, startTime = UnitCastingInfo(unit)
 		duration = UnitEmpoweredChannelDuration(unit)
 	else
-		name, _, _, startTime, endTime = UnitChannelInfo(unit)
+		name, _, _, startTime = UnitChannelInfo(unit)
 		if(event == 'UNIT_SPELLCAST_EMPOWER_UPDATE') then
 			duration = UnitEmpoweredChannelDuration(unit)
 		else
@@ -322,32 +321,25 @@ local function CastUpdate(self, event, unit, _, _, castID)
 
 	if(not name) then return end
 
-	if(element.empowering) then
-		endTime = endTime + GetUnitEmpowerHoldAtMaxTime(unit)
+	if(unit == 'player') then
+		-- we can only calculate delay for players
+		startTime = startTime / 1000
+
+		local delta
+		if(element.channeling) then
+			delta = element.startTime - startTime
+		else
+			delta = startTime - element.startTime
+		end
+
+		if(delta < 0) then
+			delta = 0
+		end
+
+		element.delay = element.delay + delta
 	end
 
-	endTime = endTime / 1000
-	startTime = startTime / 1000
-
-	local delta
-	if(element.channeling) then
-		delta = element.startTime - startTime
-
-		element.duration = endTime - GetTime()
-	else
-		delta = startTime - element.startTime
-
-		element.duration = GetTime() - startTime
-	end
-
-	if(delta < 0) then
-		delta = 0
-	end
-
-	element.max = endTime - startTime
 	element:SetTimerDuration(duration, element.smoothing, direction)
-	element.startTime = startTime
-	element.delay = element.delay + delta
 
 	--[[ Callback: Castbar:PostCastUpdate(unit)
 	Called after the element has been updated when a spell cast or channel has been updated.
@@ -419,7 +411,6 @@ local function CastFail(self, event, unit, _, _, ...)
 	element.holdTime = element.timeToHold or 0
 
 	resetAttributes(element)
-	element:SetValue(element.max)
 
 	--[[ Callback: Castbar:PostCastFail(unit, spellID)
 	Called after the element has been updated upon a failed or interrupted spell cast.
@@ -458,37 +449,6 @@ end
 
 local function onUpdate(self, elapsed)
 	if(self.casting or self.channeling or self.empowering) then
-		local isCasting = self.casting or self.empowering
-		if(isCasting) then
-			self.duration = self.duration + elapsed
-			if(self.duration >= self.max) then
-				local spellID = self.spellID
-
-				resetAttributes(self)
-				self:Hide()
-
-				if(self.PostCastStop) then
-					self:PostCastStop(self.__owner.unit, spellID)
-				end
-
-				return
-			end
-		else
-			self.duration = self.duration - elapsed
-			if(self.duration <= 0) then
-				local spellID = self.spellID
-
-				resetAttributes(self)
-				self:Hide()
-
-				if(self.PostCastStop) then
-					self:PostCastStop(self.__owner.unit, spellID)
-				end
-
-				return
-			end
-		end
-
 		if(self.Time) then
 			local duration = self:GetTimerDuration():GetRemainingDuration()
 			if(self.delay ~= 0) then
