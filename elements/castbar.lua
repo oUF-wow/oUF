@@ -465,6 +465,7 @@ local function CastInterruptible(self, event, unit)
 	end
 
 	if(not element:IsShown()) then return end
+	-- ISSUE: we can't verify if this is for an active cast/channel/empower without castID
 
 	element.notInterruptible = event == 'UNIT_SPELLCAST_NOT_INTERRUPTIBLE'
 
