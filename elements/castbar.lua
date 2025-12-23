@@ -371,17 +371,42 @@ local function CastStop(self, event, unit, _, _, ...)
 		return
 	end
 
+	if(element.Spark) then element.Spark:Hide() end
+
+	if(interruptedBy) then
+		if(element.Text) then element.Text:SetText(INTERRUPTED) end
+
+		element.holdTime = element.timeToHold or 0
+
+		-- force filled castbar
+		element:SetMinMaxValues(0, 1)
+		element:SetValue(1)
+	end
+
 	resetAttributes(element)
 
-	--[[ Callback: Castbar:PostCastStop(unit, spellID)
-	Called after the element has been updated when a spell cast or channel has stopped.
+	if(interruptedBy) then
+		--[[ Callback: Castbar:PostCastInterrupted(unit, interruptedBy)
+		Called after the element has been updated when a spell cast or channel has stopped.
 
-	* self    - the Castbar widget
-	* unit    - the unit for which the update has been triggered (string)
-	* spellID - the ID of the spell (number)
-	--]]
-	if(element.PostCastStop) then
-		return element:PostCastStop(unit, spellID)
+		* self          - the Castbar widget
+		* unit          - the unit for which the update has been triggered (string)
+		* interruptedBy - GUID of whomever interrupted the cast (string)
+		--]]
+		if(element.PostCastInterrupted) then
+			return element:PostCastInterrupted(unit, interruptedBy)
+		end
+	else
+		--[[ Callback: Castbar:PostCastStop(unit[, empowerComplete])
+		Called after the element has been updated when a spell cast or channel has stopped.
+
+		* self            - the Castbar widget
+		* unit            - the unit for which the update has been triggered (string)
+		* empowerComplete - if the empowered cast was complete (boolean?)
+		--]]
+		if(element.PostCastStop) then
+			return element:PostCastStop(unit, empowerComplete)
+		end
 	end
 end
 
@@ -412,15 +437,24 @@ local function CastFail(self, event, unit, _, _, ...)
 
 	resetAttributes(element)
 
-	--[[ Callback: Castbar:PostCastFail(unit, spellID)
-	Called after the element has been updated upon a failed or interrupted spell cast.
+	-- force filled castbar
+	element:SetMinMaxValues(0, 1)
+	element:SetValue(1)
 
-	* self    - the Castbar widget
-	* unit    - the unit for which the update has been triggered (string)
-	* spellID - the ID of the spell (number)
-	--]]
-	if(element.PostCastFail) then
-		return element:PostCastFail(unit, spellID)
+	if(interruptedBy) then
+		if(element.PostCastInterrupted) then
+			return element:PostCastInterrupted(unit, interruptedBy)
+		end
+	else
+		--[[ Callback: Castbar:PostCastFail(unit)
+		Called after the element has been updated upon a failed or interrupted spell cast.
+
+		* self - the Castbar widget
+		* unit - the unit for which the update has been triggered (string)
+		--]]
+		if(element.PostCastFail) then
+			return element:PostCastFail(unit)
+		end
 	end
 end
 
