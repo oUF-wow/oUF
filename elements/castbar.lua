@@ -218,16 +218,21 @@ local function CastStart(self, event, unit)
 	end
 
 	local numStages, _
+	local direction, duration = Enum.StatusBarTimerDirection.ElapsedTime
 	local name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible, spellID = UnitCastingInfo(unit)
 	if(name) then
 		element.casting = true
+		duration = UnitCastingDuration(unit)
 	else
 		local isEmpowered
 		name, text, texture, startTime, endTime, isTradeSkill, notInterruptible, spellID, isEmpowered, numStages = UnitChannelInfo(unit)
 		if(isEmpowered) then
 			element.empowering = true
+			duration = UnitEmpoweredChannelDuration(unit)
 		else
 			element.channeling = true
+			duration = UnitChannelDuration(unit)
+			direction = Enum.StatusBarTimerDirection.RemainingTime
 		end
 	end
 
@@ -262,8 +267,7 @@ local function CastStart(self, event, unit)
 		element.duration = GetTime() - startTime
 	end
 
-	element:SetMinMaxValues(0, element.max)
-	element:SetValue(element.duration)
+	element:SetTimerDuration(duration, element.smoothing, direction)
 
 	if(element.Icon) then element.Icon:SetTexture(texture or FALLBACK_ICON) end
 	if(element.Shield) then element.Shield:SetAlphaFromBoolean(notInterruptible, 1, 0) end
@@ -326,11 +330,18 @@ local function CastUpdate(self, event, unit, castID, spellID)
 		return
 	end
 
-	local name, startTime, endTime, _
+	local direction, duration, name, startTime, _ = Enum.StatusBarTimerDirection.ElapsedTime
 	if(event == 'UNIT_SPELLCAST_DELAYED') then
 		name, _, _, startTime, endTime = UnitCastingInfo(unit)
+		duration = UnitEmpoweredChannelDuration(unit)
 	else
 		name, _, _, startTime, endTime = UnitChannelInfo(unit)
+		if(event == 'UNIT_SPELLCAST_EMPOWER_UPDATE') then
+			duration = UnitEmpoweredChannelDuration(unit)
+		else
+			duration = UnitChannelDuration(unit)
+			direction = Enum.StatusBarTimerDirection.RemainingTime
+		end
 	end
 
 	if(not name) then return end
@@ -358,11 +369,9 @@ local function CastUpdate(self, event, unit, castID, spellID)
 	end
 
 	element.max = endTime - startTime
+	element:SetTimerDuration(duration, element.smoothing, direction)
 	element.startTime = startTime
 	element.delay = element.delay + delta
-
-	element:SetMinMaxValues(0, element.max)
-	element:SetValue(element.duration)
 
 	--[[ Callback: Castbar:PostCastUpdate(unit)
 	Called after the element has been updated when a spell cast or channel has been updated.
@@ -489,17 +498,19 @@ local function onUpdate(self, elapsed)
 		end
 
 		if(self.Time) then
+			local duration = self:GetTimerDuration():GetRemainingDuration()
 			if(self.delay ~= 0) then
+				local isCasting = self.casting or self.empowering
 				if(self.CustomDelayText) then
-					self:CustomDelayText(self.duration)
+					self:CustomDelayText(duration)
 				else
-					self.Time:SetFormattedText('%.1f|cffff0000%s%.2f|r', self.duration, isCasting and '+' or '-', self.delay)
+					self.Time:SetFormattedText('%.1f|cffff0000%s%.2f|r', duration, isCasting and '+' or '-', self.delay)
 				end
 			else
 				if(self.CustomTimeText) then
-					self:CustomTimeText(self.duration)
+					self:CustomTimeText(duration)
 				else
-					self.Time:SetFormattedText('%.1f', self.duration)
+					self.Time:SetFormattedText('%.1f', duration)
 				end
 			end
 		end
@@ -527,7 +538,6 @@ local function onUpdate(self, elapsed)
 			end
 		end
 
-		self:SetValue(self.duration)
 	elseif(self.holdTime > 0) then
 		self.holdTime = self.holdTime - elapsed
 	else
@@ -549,6 +559,10 @@ local function Enable(self, unit)
 	if(element and unit and not unit:match('%wtarget$')) then
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
+
+		if(not element.smoothing) then
+			element.smoothing = Enum.StatusBarInterpolation.Immediate
+		end
 
 		self:RegisterEvent('UNIT_SPELLCAST_START', CastStart)
 		self:RegisterEvent('UNIT_SPELLCAST_CHANNEL_START', CastStart)
