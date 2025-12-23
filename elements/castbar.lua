@@ -28,7 +28,7 @@ A default texture will be applied to the StatusBar and Texture widgets if they d
 
 ## Attributes
 
-.castID           - A globally unique identifier of the currently cast spell (string?)
+.castID           - A unique identifier of the currently cast spell (number?)
 .casting          - Indicates whether the current spell is an ordinary cast (boolean)
 .channeling       - Indicates whether the current spell is a channeled cast (boolean)
 .empowering       - Indicates whether the current spell is an empowering cast (boolean)
