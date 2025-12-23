@@ -956,6 +956,8 @@ do
 		else
 			nameplateDriver:RegisterEvent('PLAYER_LOGIN')
 		end
+
+		return nameplateDriver
 	end
 end
 
