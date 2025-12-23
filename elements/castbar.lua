@@ -219,13 +219,13 @@ local function CastStart(self, event, unit)
 
 	local numStages, _
 	local direction, duration = Enum.StatusBarTimerDirection.ElapsedTime
-	local name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible, spellID = UnitCastingInfo(unit)
+	local name, text, texture, startTime, endTime, isTradeSkill, _, notInterruptible, spellID, castID = UnitCastingInfo(unit)
 	if(name) then
 		element.casting = true
 		duration = UnitCastingDuration(unit)
 	else
 		local isEmpowered
-		name, text, texture, startTime, endTime, isTradeSkill, notInterruptible, spellID, isEmpowered, numStages = UnitChannelInfo(unit)
+		name, text, texture, startTime, endTime, isTradeSkill, notInterruptible, spellID, isEmpowered, numStages, castID = UnitChannelInfo(unit)
 		if(isEmpowered) then
 			element.empowering = true
 			duration = UnitEmpoweredChannelDuration(unit)
@@ -320,13 +320,13 @@ local function CastStart(self, event, unit)
 	element:Show()
 end
 
-local function CastUpdate(self, event, unit, castID, spellID)
+local function CastUpdate(self, event, unit, _, _, castID)
 	local element = self.Castbar
 	if(not (element.ShouldShow or ShouldShow) (element, unit)) then
 		return
 	end
 
-	if(not element:IsShown() or element.castID ~= castID or element.spellID ~= spellID) then
+	if(not element:IsShown() or element.castID ~= castID) then
 		return
 	end
 
@@ -384,13 +384,22 @@ local function CastUpdate(self, event, unit, castID, spellID)
 	end
 end
 
-local function CastStop(self, event, unit, castID, spellID)
+local function CastStop(self, event, unit, _, _, ...)
 	local element = self.Castbar
 	if(not (element.ShouldShow or ShouldShow) (element, unit)) then
 		return
 	end
 
-	if(not element:IsShown() or element.castID ~= castID or element.spellID ~= spellID) then
+	local castID, interruptedBy, empowerComplete
+	if(event == 'UNIT_SPELLCAST_STOP') then
+		castID = ...
+	elseif(event == 'UNIT_SPELLCAST_EMPOWER_STOP') then
+		empowerComplete, interruptedBy, castID = ...
+	elseif(event == 'UNIT_SPELLCAST_CHANNEL_STOP') then
+		interruptedBy, castID = ...
+	end
+
+	if(not element:IsShown() or element.castID ~= castID) then
 		return
 	end
 
@@ -408,13 +417,20 @@ local function CastStop(self, event, unit, castID, spellID)
 	end
 end
 
-local function CastFail(self, event, unit, castID, spellID)
+local function CastFail(self, event, unit, _, _, ...)
 	local element = self.Castbar
 	if(not (element.ShouldShow or ShouldShow) (element, unit)) then
 		return
 	end
 
-	if(not element:IsShown() or element.castID ~= castID or element.spellID ~= spellID) then
+	local castID, interruptedBy
+	if(event == 'UNIT_SPELLCAST_INTERRUPTED') then
+		interruptedBy, castID = ...
+	elseif(event == 'UNIT_SPELLCAST_FAILED') then
+		castID = ...
+	end
+
+	if(not element:IsShown() or element.castID ~= castID) then
 		return
 	end
 
