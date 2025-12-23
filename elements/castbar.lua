@@ -219,25 +219,27 @@ local function CastStart(self, event, unit)
 
 	local numStages, _
 	local name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible, spellID = UnitCastingInfo(unit)
-	event = 'UNIT_SPELLCAST_START'
-	if(not name) then
-		name, text, texture, startTime, endTime, isTradeSkill, notInterruptible, spellID, _, numStages = UnitChannelInfo(unit)
-		event = (numStages and numStages > 0) and 'UNIT_SPELLCAST_EMPOWER_START' or 'UNIT_SPELLCAST_CHANNEL_START'
+	if(name) then
+		element.casting = true
+	else
+		local isEmpowered
+		name, text, texture, startTime, endTime, isTradeSkill, notInterruptible, spellID, isEmpowered, numStages = UnitChannelInfo(unit)
+		if(isEmpowered) then
+			element.empowering = true
+		else
+			element.channeling = true
+		end
 	end
 
 	if(not name or (isTradeSkill and element.hideTradeSkills)) then
 		-- don't cancel hold time when we swap targets
-		if not (event == 'PLAYER_TARGET_CHANGED' and element.holdTime and element.holdTime > 0) then
+		if(not (event == 'PLAYER_TARGET_CHANGED' and element.holdTime and element.holdTime > 0)) then
 			resetAttributes(element)
 			element:Hide()
 		end
 
 		return
 	end
-
-	element.casting = event == 'UNIT_SPELLCAST_START'
-	element.channeling = event == 'UNIT_SPELLCAST_CHANNEL_START'
-	element.empowering = event == 'UNIT_SPELLCAST_EMPOWER_START'
 
 	if(element.empowering) then
 		endTime = endTime + GetUnitEmpowerHoldAtMaxTime(unit)
