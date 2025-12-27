@@ -105,7 +105,7 @@ local function UpdateColor(self, event, unit, powerType)
 	end
 
 	if(color) then
-		r, g, b = color.r, color.g, color.b
+		r, g, b = color:GetRGB()
 	end
 
 	if(b) then
