@@ -97,11 +97,11 @@ local function UpdateColor(self, event)
 	for index = 1, #element do
 		element[index]:SetStatusBarColor(r, g, b)
 
-		local bg = element[index].bg
-		if(bg) then
-			local mu = bg.multiplier or 1
-			bg:SetVertexColor(r * mu, g * mu, b * mu)
-		end
+		-- local bg = element[index].bg
+		-- if(bg) then
+		-- 	local mu = bg.multiplier or 1
+		-- 	bg:SetVertexColor(r * mu, g * mu, b * mu)
+		-- end
 	end
 
 	--[[ Callback: Runes:PostUpdateColor(r, g, b)
