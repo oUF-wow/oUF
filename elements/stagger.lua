@@ -70,7 +70,7 @@ local function UpdateColor(self, event, unit)
 
 	local r, g, b
 	if(color) then
-		r, g, b = color[1], color[2], color[3]
+		r, g, b = color.r, color.g, color.b
 		if(b) then
 			element:SetStatusBarColor(r, g, b)
 
