@@ -95,7 +95,7 @@ local function UpdateColor(self, event)
 	local r, g, b = color.r, color.g, color.b
 
 	for index = 1, #element do
-		element[index]:SetStatusBarColor(r, g, b)
+		element[index]:GetStatusBarTexture():SetVertexColor(r, g, b)
 
 		-- local bg = element[index].bg
 		-- if(bg) then
