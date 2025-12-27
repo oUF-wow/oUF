@@ -61,7 +61,7 @@ local function updateArenaPreparationElements(self, event, elementName, specID)
 			end
 
 			if(color) then
-				r, g, b = color.r, color.g, color.b
+				r, g, b = color:GetRGB()
 			end
 
 			if(r or g or b) then

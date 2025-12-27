@@ -92,7 +92,7 @@ local function UpdateColor(self, event)
 		color = self.colors.power.RUNES
 	end
 
-	local r, g, b = color.r, color.g, color.b
+	local r, g, b = color:GetRGB()
 
 	for index = 1, #element do
 		element[index]:GetStatusBarTexture():SetVertexColor(r, g, b)

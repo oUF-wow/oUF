@@ -70,7 +70,7 @@ local RequireSpec, RequirePower, RequireSpell
 
 local function UpdateColor(element, powerType)
 	local color = element.__owner.colors.power[powerType]
-	local r, g, b = color.r, color.g, color.b
+	local r, g, b = color:GetRGB()
 	for i = 1, #element do
 		local bar = element[i]
 		bar:GetStatusBarTexture():SetVertexColor(r, g, b)
