@@ -75,11 +75,11 @@ local function UpdateColor(element, powerType)
 		local bar = element[i]
 		bar:SetStatusBarColor(r, g, b)
 
-		local bg = bar.bg
-		if(bg) then
-			local mu = bg.multiplier or 1
-			bg:SetVertexColor(r * mu, g * mu, b * mu)
-		end
+		-- local bg = bar.bg
+		-- if(bg) then
+		-- 	local mu = bg.multiplier or 1
+		-- 	bg:SetVertexColor(r * mu, g * mu, b * mu)
+		-- end
 	end
 
 	--[[ Callback: ClassPower:PostUpdateColor(r, g, b)
