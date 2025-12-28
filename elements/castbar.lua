@@ -383,8 +383,6 @@ local function CastStop(self, event, unit, _, _, ...)
 		element:SetValue(1)
 	end
 
-	resetAttributes(element)
-
 	if(interruptedBy) then
 		--[[ Callback: Castbar:PostCastInterrupted(unit, interruptedBy)
 		Called after the element has been updated when a spell cast or channel has stopped.
@@ -394,7 +392,7 @@ local function CastStop(self, event, unit, _, _, ...)
 		* interruptedBy - GUID of whomever interrupted the cast (string)
 		--]]
 		if(element.PostCastInterrupted) then
-			return element:PostCastInterrupted(unit, interruptedBy)
+			element:PostCastInterrupted(unit, interruptedBy)
 		end
 	else
 		--[[ Callback: Castbar:PostCastStop(unit[, empowerComplete])
@@ -405,9 +403,11 @@ local function CastStop(self, event, unit, _, _, ...)
 		* empowerComplete - if the empowered cast was complete (boolean?)
 		--]]
 		if(element.PostCastStop) then
-			return element:PostCastStop(unit, empowerComplete)
+			element:PostCastStop(unit, empowerComplete)
 		end
 	end
+
+	resetAttributes(element)
 end
 
 local function CastFail(self, event, unit, _, _, ...)
@@ -435,15 +435,13 @@ local function CastFail(self, event, unit, _, _, ...)
 
 	element.holdTime = element.timeToHold or 0
 
-	resetAttributes(element)
-
 	-- force filled castbar
 	element:SetMinMaxValues(0, 1)
 	element:SetValue(1)
 
 	if(interruptedBy) then
 		if(element.PostCastInterrupted) then
-			return element:PostCastInterrupted(unit, interruptedBy)
+			element:PostCastInterrupted(unit, interruptedBy)
 		end
 	else
 		--[[ Callback: Castbar:PostCastFail(unit)
@@ -453,9 +451,11 @@ local function CastFail(self, event, unit, _, _, ...)
 		* unit - the unit for which the update has been triggered (string)
 		--]]
 		if(element.PostCastFail) then
-			return element:PostCastFail(unit)
+			element:PostCastFail(unit)
 		end
 	end
+
+	resetAttributes(element)
 end
 
 local function CastInterruptible(self, event, unit)
