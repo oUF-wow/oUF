@@ -308,7 +308,7 @@ local function CastUpdate(self, event, unit, _, _, castID)
 	local direction, duration, name, startTime, _ = Enum.StatusBarTimerDirection.ElapsedTime
 	if(event == 'UNIT_SPELLCAST_DELAYED') then
 		name, _, _, startTime = UnitCastingInfo(unit)
-		duration = UnitEmpoweredChannelDuration(unit)
+		duration = UnitCastingDuration(unit)
 	else
 		name, _, _, startTime = UnitChannelInfo(unit)
 		if(event == 'UNIT_SPELLCAST_EMPOWER_UPDATE') then
