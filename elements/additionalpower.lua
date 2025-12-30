@@ -20,7 +20,6 @@ A default texture will be applied if the widget is a StatusBar and doesn't have 
 
 .frequentUpdates - Indicates whether to use UNIT_POWER_FREQUENT instead UNIT_POWER_UPDATE to update the bar (boolean)
 .displayPairs    - Use to override display pairs. (table)
-.smoothGradient  - 9 color values to be used with the .colorSmooth option (table)
 .smoothing       - Which status bar smoothing method to use, defaults to `Enum.StatusBarInterpolation.Immediate` (number)
 
 The following options are listed by priority. The first check that returns true decides the color of the bar.
@@ -29,8 +28,6 @@ The following options are listed by priority. The first check that returns true 
                (boolean)
 .colorClass  - Use `self.colors.class[class]` to color the bar based on unit class. `class` is defined by the
                second return of [UnitClass](https://warcraft.wiki.gg/wiki/API_UnitClass) (boolean)
-.colorSmooth - Use `self.colors.smooth` to color the bar with a smooth gradient based on the player's current
-               additional power percentage (boolean)
 
 ## Sub-Widget Options
 
@@ -75,8 +72,6 @@ local function UpdateColor(self, event, unit, powerType)
 		color = self.colors.power[ADDITIONAL_POWER_BAR_INDEX]
 	elseif(element.colorClass) then
 		color = self.colors.class[playerClass]
-	elseif(element.colorSmooth) then
-		r, g, b = self:ColorGradient(element.cur or 1, element.max or 1, unpack(element.smoothGradient or self.colors.smooth))
 	end
 
 	if(color) then
