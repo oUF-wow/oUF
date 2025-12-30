@@ -53,10 +53,10 @@ local function Update(self, event)
 	--[[ Callback: Range:PostUpdate(object, inRange, isEligible)
 	Called after the element has been updated.
 
-	* self         - the Range element
-	* object       - the parent object
-	* inRange      - indicates if the unit is within 40 yards of the player (boolean)
-	* isEligible   - indicates if the unit is eligible for the range check (boolean)
+	* self       - the Range element
+	* object     - the parent object
+	* inRange    - indicates if the unit is within 40 yards of the player (boolean)
+	* isEligible - indicates if the unit is eligible for the range check (boolean)
 	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(self, inRange, isEligible)
