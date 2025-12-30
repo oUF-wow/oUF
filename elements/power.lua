@@ -22,7 +22,6 @@ A default texture will be applied if the widget is a StatusBar and doesn't have 
 .displayAltPower                  - Use this to let the widget display alternative power, if the unit has one.
                                     By default, it does so only for raid and party units. If none, the display will fall
                                     back to the primary power (boolean)
-.smoothGradient                   - 9 color values to be used with the .colorSmooth option (table)
 .considerSelectionInCombatHostile - Indicates whether selection should be considered hostile while the unit is in
                                     combat with the player (boolean)
 .smoothing                        - Which status bar smoothing method to use, defaults to `Enum.StatusBarInterpolation.Immediate` (number)
@@ -53,8 +52,6 @@ The following options are listed by priority. The first check that returns true 
 .colorReaction     - Use `self.colors.reaction[reaction]` to color the bar based on the player's reaction towards the
                      unit. `reaction` is defined by the return value of
                      [UnitReaction](https://warcraft.wiki.gg/wiki/API_UnitReaction) (boolean)
-.colorSmooth       - Use `smoothGradient` if present or `self.colors.smooth` to color the bar with a smooth gradient
-                     based on the player's current power percentage (boolean)
 
 ## Sub-Widget Options
 
@@ -163,9 +160,6 @@ local function UpdateColor(self, event, unit)
 		color = self.colors.selection[unitSelectionType(unit, element.considerSelectionInCombatHostile)]
 	elseif(element.colorReaction and UnitReaction(unit, 'player')) then
 		color = self.colors.reaction[UnitReaction(unit, 'player')]
-	elseif(element.colorSmooth) then
-		local adjust = 0 - (element.min or 0)
-		r, g, b = self:ColorGradient((element.cur or 1) + adjust, (element.max or 1) + adjust, unpack(element.smoothGradient or self.colors.smooth))
 	end
 
 	if(atlas) then
