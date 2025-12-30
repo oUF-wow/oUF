@@ -54,8 +54,8 @@ local function updateArenaPreparationElements(self, event, elementName, specID)
 				color = self.colors.class[class]
 			elseif(element.colorReaction) then
 				color = self.colors.reaction[2]
-			elseif(element.colorSmooth) then
-				_, _, _, _, _, _, r, g, b = unpack(element.smoothGradient or self.colors.smooth)
+			elseif(element.colorSmooth and self.colors.health.curve) then
+				-- TODO: get the last curve point value
 			elseif(element.colorHealth and elementName == 'Health') then
 				color = self.colors.health
 			end
