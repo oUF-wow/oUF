@@ -122,6 +122,7 @@ read_globals = {
 	'UnitHasVehicleUI',
 	'UnitHealth',
 	'UnitHealthMax',
+	'UnitHealthPercent',
 	'UnitHonorLevel',
 	'UnitInParty',
 	'UnitInPartyIsAI',
