@@ -66,11 +66,6 @@ function oUF:CreateColor(r, g, b, a)
 end
 
 local colors = {
-	smooth = {
-		1, 0, 0,
-		1, 1, 0,
-		0, 1, 0
-	},
 	health = oUF:CreateColor(49, 207, 37),
 	disconnected = oUF:CreateColor(0.6, 0.6, 0.6),
 	tapped = oUF:CreateColor(0.6, 0.6, 0.6),
@@ -101,6 +96,13 @@ local colors = {
 	power = {},
 	threat = {},
 }
+
+-- provide a default curve for smooth health colors
+colors.health:SetCurve({
+	[0], oUF:CreateColor(1, 0, 0),
+	[1/3], oUF:CreateColor(1, 1, 0),
+	[2/3], oUF:CreateColor(0, 1, 0)
+})
 
 -- We do this because people edit the vars directly, and changing the default
 -- globals makes SPICE FLOW!
