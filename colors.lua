@@ -12,11 +12,35 @@ local colorMixin = {
 	GetAtlas = function(self)
 		return self.atlas
 	end,
+	SetCurve = function(self, ...)
+		if(...) then
+			if(self.curve) then
+				self.curve:ClearPoints()
+			else
+				self.curve = C_CurveUtil.CreateColorCurve()
+			end
+
+			if(type(...) == 'table') then
+				for x, y in next, (...) do
+					self.curve:AddPoint(x, y)
+				end
+			else
+				for i = 1, select('#', ...), 2 do
+					self.curve:AddPoint(select(i, ...), select(i+1, ...))
+				end
+			end
+		else
+			self.curve = nil
+		end
+	end,
+	GetCurve = function(self)
+		return self.curve
+	end,
 }
 
 --[[ Colors: oUF:CreateColor(r, g, b[, a])
 Wrapper for [Blizzard_SharedXMLBase/Color.lua's ColorMixin](https://warcraft.wiki.gg/wiki/ColorMixin), extended to support indexed colors used in oUF, as
-well as extra methods for dealing with atlases.
+well as extra methods for dealing with atlases and curves.
 
 The rgb values can be either normalized (0-1) or bytes (0-255).
 
