@@ -18,7 +18,6 @@ A default texture will be applied if the widget is a StatusBar and doesn't have 
 
 ## Options
 
-.smoothGradient                   - 9 color values to be used with the .colorSmooth option (table)
 .considerSelectionInCombatHostile - Indicates whether selection should be considered hostile while the unit is in
                                     combat with the player (boolean)
 .smoothing                        - Which status bar smoothing method to use, defaults to
@@ -41,8 +40,8 @@ The following options are listed by priority. The first check that returns true 
 .colorReaction     - Use `self.colors.reaction[reaction]` to color the bar based on the player's reaction towards the
                      unit. `reaction` is defined by the return value of
                      [UnitReaction](https://warcraft.wiki.gg/wiki/API_UnitReaction) (boolean)
-.colorSmooth       - Use `smoothGradient` if present or `self.colors.smooth` to color the bar with a smooth gradient
-                     based on the player's current health percentage (boolean)
+.colorSmooth       - Use color curve from `self.colors.health` to color the bar with a smooth gradient based on the
+                     player's current health percentage (boolean)
 .colorHealth       - Use `self.colors.health` to color the bar. This flag is used to reset the bar color back to default
                      if none of the above conditions are met (boolean)
 
@@ -138,8 +137,8 @@ local function UpdateColor(self, event, unit)
 		color = self.colors.selection[unitSelectionType(unit, element.considerSelectionInCombatHostile)]
 	elseif(element.colorReaction and UnitReaction(unit, 'player')) then
 		color = self.colors.reaction[UnitReaction(unit, 'player')]
-	elseif(element.colorSmooth) then
-		r, g, b = self:ColorGradient(element.cur or 1, element.max or 1, unpack(element.smoothGradient or self.colors.smooth))
+	elseif(element.colorSmooth and self.colors.health:GetCurve()) then
+		color = UnitHealthPercent(unit, true, self.colors.health:GetCurve())
 	elseif(element.colorHealth) then
 		color = self.colors.health
 	end
