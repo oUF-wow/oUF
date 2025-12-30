@@ -21,7 +21,7 @@ A default texture will be applied if the widget is a StatusBar and doesn't have 
 .frequentUpdates - Indicates whether to use UNIT_POWER_FREQUENT instead UNIT_POWER_UPDATE to update the bar (boolean)
 .displayPairs    - Use to override display pairs. (table)
 .smoothGradient  - 9 color values to be used with the .colorSmooth option (table)
-.smoothing       - Which smoothing method to use, defaults to Enum.StatusBarInterpolation.Immediate (number)
+.smoothing       - Which status bar smoothing method to use, defaults to `Enum.StatusBarInterpolation.Immediate` (number)
 
 The following options are listed by priority. The first check that returns true decides the color of the bar.
 

@@ -21,6 +21,8 @@ A default texture will be applied if the widget is a StatusBar and doesn't have 
 .smoothGradient                   - 9 color values to be used with the .colorSmooth option (table)
 .considerSelectionInCombatHostile - Indicates whether selection should be considered hostile while the unit is in
                                     combat with the player (boolean)
+.smoothing                        - Which status bar smoothing method to use, defaults to
+                                    `Enum.StatusBarInterpolation.Immediate` (number)
 
 The following options are listed by priority. The first check that returns true decides the color of the bar.
 
@@ -43,7 +45,6 @@ The following options are listed by priority. The first check that returns true 
                      based on the player's current health percentage (boolean)
 .colorHealth       - Use `self.colors.health` to color the bar. This flag is used to reset the bar color back to default
                      if none of the above conditions are met (boolean)
-.smoothing         - Which smoothing method to use, defaults to Enum.StatusBarInterpolation.Immediate (number)
 
 ## Sub-Widgets Options
 
