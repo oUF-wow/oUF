@@ -284,11 +284,11 @@ local tagStrings = {
 	end]],
 
 	['perhp'] = [[function(u)
-		return string.format('%d', UnitHealthPercent(u, true, true))
+		return string.format('%d', UnitHealthPercent(u, true, CurveConstants.ScaleTo100))
 	end]],
 
 	['perpp'] = [[function(u)
-		return string.format('%d', UnitPowerPercent(u, true, true))
+		return string.format('%d', UnitPowerPercent(u, true, CurveConstants.ScaleTo100))
 	end]],
 
 	['plus'] = [[function(u)
