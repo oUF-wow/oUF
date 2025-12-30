@@ -124,9 +124,6 @@ local _ENV = {
 		return string.format('|cff%02x%02x%02x', r * 255, g * 255, b * 255)
 	end,
 }
-_ENV.ColorGradient = function(...)
-	return _ENV._FRAME:ColorGradient(...)
-end
 
 local _PROXY = setmetatable(_ENV, {__index = _G})
 
