@@ -147,7 +147,7 @@ local function UpdateColor(self, event, unit)
 		r, g, b = color:GetRGB()
 	end
 
-	if(b) then
+	if(r or g or b) then
 		element:GetStatusBarTexture():SetVertexColor(r, g, b)
 
 		-- local bg = element.bg
