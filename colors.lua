@@ -220,18 +220,6 @@ for i = 0, 3 do
 	colors.threat[i] = oUF:CreateColor(GetThreatStatusColor(i))
 end
 
-local function colorsAndPercent(a, b, ...)
-	if(a <= 0 or b == 0) then
-		return nil, ...
-	elseif(a >= b) then
-		return nil, select(-3, ...)
-	end
-
-	local num = select('#', ...) / 3
-	local segment, relperc = math.modf((a / b) * (num - 1))
-	return relperc, select((segment * 3) + 1, ...)
-end
-
 oUF.colors = colors
 
 frame_metatable.__index.colors = colors
