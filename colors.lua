@@ -100,8 +100,8 @@ local colors = {
 -- provide a default curve for smooth health colors
 colors.health:SetCurve({
 	[0] = oUF:CreateColor(1, 0, 0),
-	[1/3] = oUF:CreateColor(1, 1, 0),
-	[2/3] = oUF:CreateColor(0, 1, 0),
+	[0.5] = oUF:CreateColor(1, 1, 0),
+	[1] = oUF:CreateColor(0, 1, 0),
 })
 
 -- We do this because people edit the vars directly, and changing the default
