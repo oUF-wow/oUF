@@ -68,6 +68,13 @@ function oUF:CreateColor(r, g, b, a)
 	local color = Mixin({}, ColorMixin, colorMixin)
 	color:SetRGBA(r, g, b, a)
 
+	-- provide a default curve for smooth colors
+	color:SetCurve({
+		[  0] = CreateColor(1, 0, 0),
+		[0.5] = CreateColor(1, 1, 0),
+		[  1] = CreateColor(0, 1, 0),
+	})
+
 	return color
 end
 
@@ -102,13 +109,6 @@ local colors = {
 	power = {},
 	threat = {},
 }
-
--- provide a default curve for smooth health colors
-colors.health:SetCurve({
-	[0] = oUF:CreateColor(1, 0, 0),
-	[0.5] = oUF:CreateColor(1, 1, 0),
-	[1] = oUF:CreateColor(0, 1, 0),
-})
 
 -- We do this because people edit the vars directly, and changing the default
 -- globals makes SPICE FLOW!
