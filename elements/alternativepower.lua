@@ -21,19 +21,21 @@ A default texture will be applied if the widget is a StatusBar and doesn't have 
 
 The following options are listed by priority. The first check that returns true decides the color of the bar.
 
-.colorThreat       - Use `self.colors.threat[threat]` to color the bar based on the unit's threat status. `threat` is
-                     defined by the first return of [UnitThreatSituation](https://warcraft.wiki.gg/wiki/API_UnitThreatSituation) (boolean)
-.colorPower        - Use `self.colors.power[token]` to color the bar based on the unit's alternative power type
-                     (boolean)
-.colorClass        - Use `self.colors.class[class]` to color the bar based on unit class. `class` is defined by the
-                     second return of [UnitClass](https://warcraft.wiki.gg/wiki/API_UnitClass) (boolean)
-.colorClassNPC     - Use `self.colors.class[class]` to color the bar if the unit is a NPC (boolean)
-.colorSelection    - Use `self.colors.selection[selection]` to color the bar based on the unit's selection color.
-                     `selection` is defined by the return value of Private.unitSelectionType, a wrapper function
-                     for [UnitSelectionType](https://warcraft.wiki.gg/wiki/API_UnitSelectionType) (boolean)
-.colorReaction     - Use `self.colors.reaction[reaction]` to color the bar based on the player's reaction towards the
-                     unit. `reaction` is defined by the return value of
-                     [UnitReaction](https://warcraft.wiki.gg/wiki/API_UnitReaction) (boolean)
+.colorThreat      - Use `self.colors.threat[threat]` to color the bar based on the unit's threat status. `threat` is
+                  defined by the first return of [UnitThreatSituation](https://warcraft.wiki.gg/wiki/API_UnitThreatSituation) (boolean)
+.colorPower       - Use `self.colors.power[token]` to color the bar based on the unit's alternative power type
+                  (boolean)
+.colorPowerSmooth - Use `self.colors.power[token].curve` to color the bar with a smooth gradient based on the unit's
+                  current power percentage (boolean)
+.colorClass       - Use `self.colors.class[class]` to color the bar based on unit class. `class` is defined by the
+                  second return of [UnitClass](https://warcraft.wiki.gg/wiki/API_UnitClass) (boolean)
+.colorClassNPC    - Use `self.colors.class[class]` to color the bar if the unit is a NPC (boolean)
+.colorSelection   - Use `self.colors.selection[selection]` to color the bar based on the unit's selection color.
+                  `selection` is defined by the return value of Private.unitSelectionType, a wrapper function
+                  for [UnitSelectionType](https://warcraft.wiki.gg/wiki/API_UnitSelectionType) (boolean)
+.colorReaction    - Use `self.colors.reaction[reaction]` to color the bar based on the player's reaction towards the
+                  unit. `reaction` is defined by the return value of
+                  [UnitReaction](https://warcraft.wiki.gg/wiki/API_UnitReaction) (boolean)
 
 ## Examples
 
@@ -88,6 +90,10 @@ local function UpdateColor(self, event, unit, powerType)
 		color =  self.colors.threat[UnitThreatSituation('player', unit)]
 	elseif(element.colorPower) then
 		color = self.colors.power[ALTERNATE_POWER_INDEX]
+
+		if(element.colorPowerSmooth and color) then
+			color = UnitPowerPercent(unit, true, color:GetCurve())
+		end
 	elseif(element.colorClass and (UnitIsPlayer(unit) or UnitInPartyIsAI(unit)))
 		or (element.colorClassNPC and not (UnitIsPlayer(unit) or UnitInPartyIsAI(unit))) then
 		local _, class = UnitClass(unit)
