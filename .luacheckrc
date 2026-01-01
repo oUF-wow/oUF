@@ -147,6 +147,7 @@ read_globals = {
 	'UnitPowerBarID',
 	'UnitPowerDisplayMod',
 	'UnitPowerMax',
+	'UnitPowerPercent',
 	'UnitPowerType',
 	'UnitPvpClassification',
 	'UnitRace',

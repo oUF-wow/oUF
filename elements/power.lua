@@ -32,15 +32,17 @@ The following options are listed by priority. The first check that returns true 
 .colorTapping      - Use `self.colors.tapping` to color the bar if the unit isn't tapped by the player (boolean)
 .colorThreat       - Use `self.colors.threat[threat]` to color the bar based on the unit's threat status. `threat` is
                      defined by the first return of [UnitThreatSituation](https://warcraft.wiki.gg/wiki/API_UnitThreatSituation) (boolean)
-.colorPowerAtlas   - Use `self.colors.power[token].atlas` to replace the texture whenever it's available. The previously
-                     defined texture (if any) will be restored if the color changes to one that doesn't have an atlas
-                     (boolean)
 .colorPower        - Use `self.colors.power[token]` to color the bar based on the unit's power type. This method will
                      fall-back to `:GetAlternativeColor()` if it can't find a color matching the token. If this function
                      isn't defined, then it will attempt to color based upon the alternative power colors returned by
                      [UnitPowerType](https://warcraft.wiki.gg/wiki/API_UnitPowerType). If these aren't
                      defined, then it will attempt to color the bar based upon `self.colors.power[type]`. In case of
                      failure it'll default to `self.colors.power.MANA` (boolean)
+.colorPowerAtlas   - Use `self.colors.power[token].atlas` to replace the texture whenever it's available. The previously
+                     defined texture (if any) will be restored if the color changes to one that doesn't have an atlas
+                     (boolean)
+.colorPowerSmooth  - Use `self.colors.power[token].curve` to color the bar with a smooth gradient based on the unit's
+                     current power percentage (boolean)
 .colorClass        - Use `self.colors.class[class]` to color the bar based on unit class. `class` is defined by the
                      second return of [UnitClass](https://warcraft.wiki.gg/wiki/API_UnitClass) (boolean)
 .colorClassNPC     - Use `self.colors.class[class]` to color the bar if the unit is a NPC (boolean)
@@ -150,6 +152,10 @@ local function UpdateColor(self, event, unit)
 
 		if(element.colorPowerAtlas and color) then
 			atlas = color.atlas
+		end
+
+		if(element.colorPowerSmooth and color) then
+			color = UnitPowerPercent(unit, true, color:GetCurve())
 		end
 	elseif(element.colorClass and (UnitIsPlayer(unit) or UnitInPartyIsAI(unit)))
 		or (element.colorClassNPC and not (UnitIsPlayer(unit) or UnitInPartyIsAI(unit)))
