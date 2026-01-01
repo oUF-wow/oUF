@@ -24,10 +24,12 @@ A default texture will be applied if the widget is a StatusBar and doesn't have 
 
 The following options are listed by priority. The first check that returns true decides the color of the bar.
 
-.colorPower  - Use `self.colors.power[token]` to color the bar based on the player's additional power type
-               (boolean)
-.colorClass  - Use `self.colors.class[class]` to color the bar based on unit class. `class` is defined by the
-               second return of [UnitClass](https://warcraft.wiki.gg/wiki/API_UnitClass) (boolean)
+.colorPower       - Use `self.colors.power[token]` to color the bar based on the player's additional power type
+                    (boolean)
+.colorPowerSmooth - Use `self.colors.power[token].curve` to color the bar with a smooth gradient based on the player's
+                    current power percentage (boolean)
+.colorClass       - Use `self.colors.class[class]` to color the bar based on unit class. `class` is defined by the
+                    second return of [UnitClass](https://warcraft.wiki.gg/wiki/API_UnitClass) (boolean)
 
 ## Sub-Widget Options
 
@@ -70,6 +72,10 @@ local function UpdateColor(self, event, unit, powerType)
 	local r, g, b, color
 	if(element.colorPower) then
 		color = self.colors.power[ADDITIONAL_POWER_BAR_INDEX]
+
+		if(element.colorPowerSmooth and color) then
+			color = UnitPowerPercent(unit, true, color:GetCurve())
+		end
 	elseif(element.colorClass) then
 		color = self.colors.class[playerClass]
 	end
