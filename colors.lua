@@ -10,7 +10,7 @@ local colorMixin = {
 	SetAtlas = function(self, atlas)
 		local info = C_Texture.GetAtlasInfo(atlas)
 		if(not info) then
-			return warn('[%s] is an invalid atlas.', atlas)
+			return warn('"%s" is an invalid atlas.', atlas)
 		end
 
 		self.atlas = atlas
