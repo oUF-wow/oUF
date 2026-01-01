@@ -3,10 +3,16 @@ local oUF = ns.oUF
 local Private = oUF.Private
 
 local frame_metatable = Private.frame_metatable
+local error = Private.error
 
 -- overriding SetRGBA makes colors incompatible with ColorCurve objects
 local colorMixin = {
 	SetAtlas = function(self, atlas)
+		local info = C_Texture.GetAtlasInfo(atlas)
+		if(not info) then
+			return error('[%s] is an invalid atlas.', atlas)
+		end
+
 		self.atlas = atlas
 	end,
 	GetAtlas = function(self)
@@ -167,6 +173,10 @@ for power, color in next, PowerBarColor do
 
 			if(color.atlas) then
 				colors.power[power]:SetAtlas(color.atlas)
+			end
+
+			if(color.atlasElementName) then
+				colors.power[power]:SetAtlas("UI-HUD-UnitFrame-Player-PortraitOn-Bar-" .. color.atlasElementName)
 			end
 		else
 			-- special handling for stagger
