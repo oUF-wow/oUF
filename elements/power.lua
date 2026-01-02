@@ -154,7 +154,7 @@ local function UpdateColor(self, event, unit)
 			atlas = color.atlas
 		end
 
-		if(element.colorPowerSmooth and color) then
+		if(element.colorPowerSmooth and color and color:GetCurve()) then
 			color = UnitPowerPercent(unit, true, color:GetCurve())
 		end
 	elseif(element.colorClass and (UnitIsPlayer(unit) or UnitInPartyIsAI(unit)))
