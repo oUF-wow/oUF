@@ -73,7 +73,7 @@ local function UpdateColor(self, event, unit, powerType)
 	if(element.colorPower) then
 		color = self.colors.power[ADDITIONAL_POWER_BAR_INDEX]
 
-		if(element.colorPowerSmooth and color) then
+		if(element.colorPowerSmooth and color and color:GetCurve()) then
 			color = UnitPowerPercent(unit, true, color:GetCurve())
 		end
 	elseif(element.colorClass) then
