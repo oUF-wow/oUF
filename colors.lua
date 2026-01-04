@@ -87,9 +87,11 @@ local colors = {
 		oUF:CreateColor(148, 203, 247), -- frost
 		oUF:CreateColor(173, 235, 66), -- unholy
 	},
+	-- sourced from https://wago.tools/db2/HighlightColor?filter%5BFlags%5D=exact%3A0
+	-- colour values are EndColor, and for indices just count them from 0, ignore ID and Type
 	selection = {
 		[ 0] = oUF:CreateColor(255, 0, 0), -- HOSTILE
-		[ 1] = oUF:CreateColor(255, 129, 0), -- UNFRIENDLY
+		[ 1] = oUF:CreateColor(255, 128, 0), -- UNFRIENDLY
 		[ 2] = oUF:CreateColor(255, 255, 0), -- NEUTRAL
 		[ 3] = oUF:CreateColor(0, 255, 0), -- FRIENDLY
 		[ 4] = oUF:CreateColor(0, 0, 255), -- PLAYER_SIMPLE
@@ -98,8 +100,8 @@ local colors = {
 		[ 7] = oUF:CreateColor(170, 255, 170), -- PARTY_PVP
 		[ 8] = oUF:CreateColor(83, 201, 255), -- FRIEND
 		[ 9] = oUF:CreateColor(128, 128, 128), -- DEAD
-		-- [10] = {}, -- COMMENTATOR_TEAM_1, unavailable to players
-		-- [11] = {}, -- COMMENTATOR_TEAM_2, unavailable to players
+		[10] = oUF:CreateColor(100, 179, 255), -- COMMENTATOR_TEAM_1, unavailable to players
+		[11] = oUF:CreateColor(255, 0, 0), -- COMMENTATOR_TEAM_2, unavailable to players
 		[12] = oUF:CreateColor(255, 255, 139), -- SELF, buggy
 		[13] = oUF:CreateColor(0, 153, 0), -- BATTLEGROUND_FRIENDLY_PVP
 	},
