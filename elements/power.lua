@@ -151,7 +151,7 @@ local function UpdateColor(self, event, unit)
 		end
 
 		if(element.colorPowerAtlas and color) then
-			atlas = color.atlas
+			atlas = color:GetAtlas()
 		end
 
 		if(element.colorPowerSmooth and color and color:GetCurve()) then
