@@ -3,14 +3,14 @@ local oUF = ns.oUF
 local Private = oUF.Private
 
 local frame_metatable = Private.frame_metatable
-local warn = Private.warn
+local nierror = Private.nierror
 
 -- overriding SetRGBA makes colors incompatible with ColorCurve objects
 local colorMixin = {
 	SetAtlas = function(self, atlas)
 		local info = C_Texture.GetAtlasInfo(atlas)
 		if(not info) then
-			return warn('"%s" is an invalid atlas.', atlas)
+			return nierror(string.format('"%s" is an invalid atlas.', atlas))
 		end
 
 		self.atlas = atlas

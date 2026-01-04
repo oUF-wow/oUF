@@ -11,7 +11,7 @@ local Private = oUF.Private
 local argcheck = Private.argcheck
 local print = Private.print --luacheck: no unused
 local unitExists = Private.unitExists
-local warn = Private.warn
+local nierror = Private.nierror
 
 local styles, style = {}
 local callback, objects, headers = {}, {}, {}
@@ -412,7 +412,7 @@ function oUF:RegisterStyle(name, func)
 	argcheck(name, 2, 'string')
 	argcheck(func, 3, 'function', 'table')
 
-	if(styles[name]) then return warn('Style [%s] already registered.', name) end
+	if(styles[name]) then return nierror(string.format('Style [%s] already registered.', name)) end
 	if(not style) then style = name end
 
 	styles[name] = func
@@ -426,7 +426,7 @@ Used to set the active style.
 --]]
 function oUF:SetActiveStyle(name)
 	argcheck(name, 2, 'string')
-	if(not styles[name]) then return warn('Style [%s] does not exist.', name) end
+	if(not styles[name]) then return nierror(string.format('Style [%s] does not exist.', name)) end
 
 	style = name
 end
@@ -650,7 +650,7 @@ do
 	* oUF-onlyProcessChildren   - can be used to force headers to only process children (boolean?)
 	--]]
 	function oUF:SpawnHeader(overrideName, template, ...)
-		if(not style) then return warn('Unable to create frame. No styles have been registered.') end
+		if(not style) then return nierror('Unable to create frame. No styles have been registered.') end
 
 		template = (template or 'SecureGroupHeaderTemplate')
 
@@ -740,7 +740,7 @@ PingableUnitFrameTemplate is inherited for Ping support.
 --]]
 function oUF:Spawn(unit, overrideName)
 	argcheck(unit, 2, 'string')
-	if(not style) then return warn('Unable to create frame. No styles have been registered.') end
+	if(not style) then return nierror('Unable to create frame. No styles have been registered.') end
 
 	unit = unit:lower()
 
@@ -936,10 +936,10 @@ do
 	PingableUnitFrameTemplate is inherited for Ping support.
 	--]]
 	function oUF:SpawnNamePlates(namePrefix)
-		if(not style) then return warn('Unable to create frame. No styles have been registered.') end
+		if(not style) then return nierror('Unable to create frame. No styles have been registered.') end
 
 		local driverName = (global or parent) .. '_NamePlateDriver'
-		if(_G[driverName]) then return warn('oUF nameplate driver has already been initialized.') end
+		if(_G[driverName]) then return nierror('oUF nameplate driver has already been initialized.') end
 
 		local nameplateDriver = Mixin(CreateFrame('Frame', driverName), nameplateDriverMixin)
 		nameplateDriver:SetScript('OnEvent', driverEventHandler)
@@ -976,7 +976,7 @@ function oUF:AddElement(name, update, enable, disable)
 	argcheck(enable, 4, 'function')
 	argcheck(disable, 5, 'function')
 
-	if(elements[name]) then return warn('Element [%s] is already registered.', name) end
+	if(elements[name]) then return nierror(string.format('Element [%s] is already registered.', name)) end
 	elements[name] = {
 		update = update;
 		enable = enable;
@@ -996,9 +996,9 @@ oUF.headers = headers
 
 if(global) then
 	if(parent ~= 'oUF' and global == 'oUF') then
-		warn('%s is doing it wrong and setting its global to "oUF".', parent)
+		nierror(string.format('%s is doing it wrong and setting its global to "oUF".', parent))
 	elseif(_G[global]) then
-		warn('%s is setting its global to an existing name "%s".', parent, global)
+		nierror(string.format('%s is setting its global to an existing name "%s".', parent, global))
 	else
 		_G[global] = oUF
 	end

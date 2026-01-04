@@ -17,10 +17,6 @@ function Private.print(...)
 	print('|cff33ff99oUF:|r', ...)
 end
 
-function Private.warn(...)
-	Private.print('|cffffd200Warning:|r ' .. string.format(...))
-end
-
 function Private.nierror(...)
 	return geterrorhandler()(...)
 end
