@@ -38,18 +38,18 @@ The following options are listed by priority. The first check that returns true 
                      [UnitPowerType](https://warcraft.wiki.gg/wiki/API_UnitPowerType). If these aren't
                      defined, then it will attempt to color the bar based upon `self.colors.power[type]`. In case of
                      failure it'll default to `self.colors.power.MANA` (boolean)
-.colorPowerAtlas   - Use `self.colors.power[token].atlas` to replace the texture whenever it's available. The previously
-                     defined texture (if any) will be restored if the color changes to one that doesn't have an atlas
-                     (boolean)
-.colorPowerSmooth  - Use `self.colors.power[token].curve` to color the bar with a smooth gradient based on the unit's
-                     current power percentage (boolean)
+.colorPowerAtlas   - Use atlas from `self.colors.power[token]` to replace the texture whenever it's available. The previously
+                     defined texture (if any) will be restored if the color changes to one that doesn't have an atlas.
+					 Requires `.colorPower` to be enabled (boolean)
+.colorPowerSmooth  - Use color curve from `self.colors.power[token]` to color the bar with a smooth gradient based on the unit's
+                     current power percentage. Requires `.colorPower` to be enabled (boolean)
 .colorClass        - Use `self.colors.class[class]` to color the bar based on unit class. `class` is defined by the
                      second return of [UnitClass](https://warcraft.wiki.gg/wiki/API_UnitClass) (boolean)
 .colorClassNPC     - Use `self.colors.class[class]` to color the bar if the unit is a NPC (boolean)
 .colorClassPet     - Use `self.colors.class[class]` to color the bar if the unit is player controlled, but not a player
                      (boolean)
-.colorSelection    - Use `self.colors.selection[selection]` to color the bar based on the unit's selection color.
-                     `selection` is defined by the return value of Private.unitSelectionType, a wrapper function
+.colorSelection    - Use `self.colors.selection[selection]` to color the bar based on the unit's outline/highlight
+                     color. `selection` is defined by the return value of Private.unitSelectionType, a wrapper function
                      for [UnitSelectionType](https://warcraft.wiki.gg/wiki/API_UnitSelectionType) (boolean)
 .colorReaction     - Use `self.colors.reaction[reaction]` to color the bar based on the player's reaction towards the
                      unit. `reaction` is defined by the return value of
