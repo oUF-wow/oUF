@@ -26,8 +26,8 @@ The following options are listed by priority. The first check that returns true 
 
 .colorPower       - Use `self.colors.power[token]` to color the bar based on the player's additional power type
                     (boolean)
-.colorPowerSmooth - Use `self.colors.power[token].curve` to color the bar with a smooth gradient based on the player's
-                    current power percentage (boolean)
+.colorPowerSmooth - Use color curve from `self.colors.power[token]` to color the bar with a smooth gradient based on the
+                    player's current power percentage. Requires `.colorPower` to be enabled (boolean)
 .colorClass       - Use `self.colors.class[class]` to color the bar based on unit class. `class` is defined by the
                     second return of [UnitClass](https://warcraft.wiki.gg/wiki/API_UnitClass) (boolean)
 
