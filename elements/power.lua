@@ -40,7 +40,7 @@ The following options are listed by priority. The first check that returns true 
                      failure it'll default to `self.colors.power.MANA` (boolean)
 .colorPowerAtlas   - Use atlas from `self.colors.power[token]` to replace the texture whenever it's available. The previously
                      defined texture (if any) will be restored if the color changes to one that doesn't have an atlas.
-					 Requires `.colorPower` to be enabled (boolean)
+                     Requires `.colorPower` to be enabled (boolean)
 .colorPowerSmooth  - Use color curve from `self.colors.power[token]` to color the bar with a smooth gradient based on the unit's
                      current power percentage. Requires `.colorPower` to be enabled (boolean)
 .colorClass        - Use `self.colors.class[class]` to color the bar based on unit class. `class` is defined by the
