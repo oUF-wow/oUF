@@ -21,6 +21,10 @@ function Private.nierror(...)
 	return geterrorhandler()(...)
 end
 
+function Private.xpcall(func, ...)
+	return xpcall(func, Private.nierror, ...)
+end
+
 function Private.unitExists(unit)
 	return unit and (UnitExists(unit) or UnitIsVisible(unit))
 end
@@ -35,23 +39,6 @@ function Private.validateUnit(unit)
 
 		return not not unit
 	end
-end
-
-local validSelectionTypes = {}
-for _, selectionType in next, oUF.Enum.SelectionType do
-	validSelectionTypes[selectionType] = selectionType
-end
-
-function Private.unitSelectionType(unit, considerHostile)
-	if(considerHostile and UnitThreatSituation('player', unit)) then
-		return 0
-	else
-		return validSelectionTypes[UnitSelectionType(unit, true)]
-	end
-end
-
-function Private.xpcall(func, ...)
-	return xpcall(func, Private.nierror, ...)
 end
 
 function Private.validateEvent(event)
@@ -70,4 +57,17 @@ function Private.isUnitEvent(event, unit)
 	end
 
 	return isOK
+end
+
+local validSelectionTypes = {}
+for _, selectionType in next, oUF.Enum.SelectionType do
+	validSelectionTypes[selectionType] = selectionType
+end
+
+function Private.unitSelectionType(unit, considerHostile)
+	if(considerHostile and UnitThreatSituation('player', unit)) then
+		return 0
+	else
+		return validSelectionTypes[UnitSelectionType(unit, true)]
+	end
 end
