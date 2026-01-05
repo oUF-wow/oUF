@@ -5,7 +5,6 @@ local Private = oUF.Private
 local frame_metatable = Private.frame_metatable
 local nierror = Private.nierror
 
--- overriding SetRGBA makes colors incompatible with ColorCurve objects
 local colorMixin = {
 	SetAtlas = function(self, atlas)
 		local info = C_Texture.GetAtlasInfo(atlas)
@@ -45,8 +44,8 @@ local colorMixin = {
 }
 
 --[[ Colors: oUF:CreateColor(r, g, b[, a])
-Wrapper for [Blizzard_SharedXMLBase/Color.lua's ColorMixin](https://warcraft.wiki.gg/wiki/ColorMixin), extended to support indexed colors used in oUF, as
-well as extra methods for dealing with atlases and curves.
+Wrapper for [Blizzard_SharedXMLBase/Color.lua's ColorMixin](https://warcraft.wiki.gg/wiki/ColorMixin), extended with extra methods for dealing with
+atlases and curves.
 
 The rgb values can be either normalized (0-1) or bytes (0-255).
 
