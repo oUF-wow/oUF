@@ -927,7 +927,7 @@ do
 		end
 	end
 
-	--[[ oUF:SpawnNamePlates(prefix, callback, variables)
+	--[[ oUF:SpawnNamePlates(prefix)
 	Used to create nameplates and apply the currently active style to them.
 
 	* self      - the global oUF object
