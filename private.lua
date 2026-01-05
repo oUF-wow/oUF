@@ -1,5 +1,6 @@
 local _, ns = ...
-local Private = ns.oUF.Private
+local oUF = ns.oUF
+local Private = oUF.Private
 
 function Private.argcheck(value, num, ...)
 	assert(type(num) == 'number', "Bad argument #2 to 'argcheck' (number expected, got " .. type(num) .. ')')

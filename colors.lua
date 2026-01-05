@@ -100,7 +100,7 @@ local colors = {
 		[oUF.Enum.SelectionType.Dead] = oUF:CreateColor(128, 128, 128),
 		[oUF.Enum.SelectionType.PartyPvPInBattleground] = oUF:CreateColor(0, 153, 0),
 		[oUF.Enum.SelectionType.RecentAlly] = oUF:CreateColor(83, 201, 255),
-	}
+	},
 	class = {},
 	dispel = {},
 	reaction = {},
