@@ -87,24 +87,21 @@ local colors = {
 		oUF:CreateColor(148, 203, 247), -- frost
 		oUF:CreateColor(173, 235, 66), -- unholy
 	},
-	-- sourced from https://wago.tools/db2/HighlightColor?filter%5BFlags%5D=exact%3A0
-	-- colour values are EndColor, and for indices just count them from 0, ignore ID and Type
 	selection = {
-		[ 0] = oUF:CreateColor(255, 0, 0), -- HOSTILE
-		[ 1] = oUF:CreateColor(255, 128, 0), -- UNFRIENDLY
-		[ 2] = oUF:CreateColor(255, 255, 0), -- NEUTRAL
-		[ 3] = oUF:CreateColor(0, 255, 0), -- FRIENDLY
-		[ 4] = oUF:CreateColor(0, 0, 255), -- PLAYER_SIMPLE
-		[ 5] = oUF:CreateColor(96, 96, 255), -- PLAYER_EXTENDED
-		[ 6] = oUF:CreateColor(170, 170, 255), -- PARTY
-		[ 7] = oUF:CreateColor(170, 255, 170), -- PARTY_PVP
-		[ 8] = oUF:CreateColor(83, 201, 255), -- FRIEND
-		[ 9] = oUF:CreateColor(128, 128, 128), -- DEAD
-		[10] = oUF:CreateColor(100, 179, 255), -- COMMENTATOR_TEAM_1, unavailable to players
-		[11] = oUF:CreateColor(255, 0, 0), -- COMMENTATOR_TEAM_2, unavailable to players
-		[12] = oUF:CreateColor(255, 255, 139), -- SELF, buggy
-		[13] = oUF:CreateColor(0, 153, 0), -- BATTLEGROUND_FRIENDLY_PVP
-	},
+		-- https://warcraft.wiki.gg/wiki/API_UnitSelectionColor
+		[oUF.Enum.SelectionType.Hostile] = oUF:CreateColor(255, 0, 0),
+		[oUF.Enum.SelectionType.Unfriendly] = oUF:CreateColor(255, 128, 0),
+		[oUF.Enum.SelectionType.Neutral] = oUF:CreateColor(255, 255, 0),
+		[oUF.Enum.SelectionType.Friendly] = oUF:CreateColor(0, 255, 0),
+		[oUF.Enum.SelectionType.PlayerSimple] = oUF:CreateColor(0, 0, 255),
+		[oUF.Enum.SelectionType.PlayerExtended] = oUF:CreateColor(96, 96, 255),
+		[oUF.Enum.SelectionType.Party] = oUF:CreateColor(170, 170, 255),
+		[oUF.Enum.SelectionType.PartyPvP] = oUF:CreateColor(170, 255, 170),
+		[oUF.Enum.SelectionType.Friend] = oUF:CreateColor(83, 201, 255),
+		[oUF.Enum.SelectionType.Dead] = oUF:CreateColor(128, 128, 128),
+		[oUF.Enum.SelectionType.PartyPvPInBattleground] = oUF:CreateColor(0, 153, 0),
+		[oUF.Enum.SelectionType.RecentAlly] = oUF:CreateColor(83, 201, 255),
+	}
 	class = {},
 	dispel = {},
 	reaction = {},
