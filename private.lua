@@ -37,28 +37,16 @@ function Private.validateUnit(unit)
 	end
 end
 
-local selectionTypes = {
-	[ 0] = 0,
-	[ 1] = 1,
-	[ 2] = 2,
-	[ 3] = 3,
-	[ 4] = 4,
-	[ 5] = 5,
-	[ 6] = 6,
-	[ 7] = 7,
-	[ 8] = 8,
-	[ 9] = 9,
-	-- [10] = 10, -- unavailable to players
-	-- [11] = 11, -- unavailable to players
-	-- [12] = 12, -- inconsistent due to bugs and its reliance on cvars
-	[13] = 13,
-}
+local validSelectionTypes = {}
+for _, selectionType in next, oUF.Enum.SelectionType do
+	validSelectionTypes[selectionType] = selectionType
+end
 
 function Private.unitSelectionType(unit, considerHostile)
 	if(considerHostile and UnitThreatSituation('player', unit)) then
 		return 0
 	else
-		return selectionTypes[UnitSelectionType(unit, true)]
+		return validSelectionTypes[UnitSelectionType(unit, true)]
 	end
 end
 
