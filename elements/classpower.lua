@@ -7,14 +7,6 @@ Handles the visibility and updating of the player's class resources (like Chi Or
 
 ClassPower - An `table` consisting of as many StatusBars as the theoretical maximum return of [UnitPowerMax](https://warcraft.wiki.gg/wiki/API_UnitPowerMax).
 
-## Sub-Widgets
-
-.bg - A `Texture` used as a background. It will inherit the color of the main StatusBar.
-
-## Sub-Widget Options
-
-.multiplier - Used to tint the background based on the widget's R, G and B values. Defaults to 1 (number)[0-1]
-
 ## Notes
 
 A default texture will be applied if the sub-widgets are StatusBars and don't have a texture set.
@@ -74,12 +66,6 @@ local function UpdateColor(element, powerType)
 	for i = 1, #element do
 		local bar = element[i]
 		bar:GetStatusBarTexture():SetVertexColor(r, g, b)
-
-		-- local bg = bar.bg
-		-- if(bg) then
-		-- 	local mu = bg.multiplier or 1
-		-- 	bg:SetVertexColor(r * mu, g * mu, b * mu)
-		-- end
 	end
 
 	--[[ Callback: ClassPower:PostUpdateColor(r, g, b)

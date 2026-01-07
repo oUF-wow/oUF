@@ -44,11 +44,6 @@ A default texture will be applied to the StatusBar and Texture widgets if they d
     Castbar:SetPoint('LEFT')
     Castbar:SetPoint('RIGHT')
 
-    -- Add a background
-    local Background = Castbar:CreateTexture(nil, 'BACKGROUND')
-    Background:SetAllPoints(Castbar)
-    Background:SetColorTexture(1, 1, 1, .5)
-
     -- Add a spark
     local Spark = Castbar:CreateTexture(nil, 'OVERLAY')
     Spark:SetSize(20, 20)
@@ -77,7 +72,6 @@ A default texture will be applied to the StatusBar and Texture widgets if they d
     local SafeZone = Castbar:CreateTexture(nil, 'OVERLAY')
 
     -- Register it with oUF
-    Castbar.bg = Background
     Castbar.Spark = Spark
     Castbar.Time = Time
     Castbar.Text = Text

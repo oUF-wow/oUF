@@ -7,10 +7,6 @@ Handles the visibility and updating of the Monk's stagger bar.
 
 Stagger - A `StatusBar` used to represent the current stagger level.
 
-## Sub-Widgets
-
-.bg - A `Texture` used as a background. It will inherit the color of the main StatusBar.
-
 ## Notes
 
 A default texture will be applied if the widget is a StatusBar and doesn't have a texture set.
@@ -18,10 +14,6 @@ A default texture will be applied if the widget is a StatusBar and doesn't have 
 ## Options
 
 .smoothing - Which smoothing method to use, defaults to Enum.StatusBarInterpolation.Immediate (number)
-
-## Sub-Widgets Options
-
-.multiplier - Used to tint the background based on the main widgets R, G and B values. Defaults to 1 (number)[0-1]
 
 ## Examples
 
@@ -73,12 +65,6 @@ local function UpdateColor(self, event, unit)
 		r, g, b = color:GetRGB()
 		if(b) then
 			element:GetStatusBarTexture():SetVertexColor(r, g, b)
-
-			-- local bg = element.bg
-			-- if(bg and b) then
-			-- 	local mu = bg.multiplier or 1
-			-- 	bg:SetVertexColor(r * mu, g * mu, b * mu)
-			-- end
 		end
 	end
 

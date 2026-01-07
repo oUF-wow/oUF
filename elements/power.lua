@@ -7,10 +7,6 @@ Handles the updating of a status bar that displays the unit's power.
 
 Power - A `StatusBar` used to represent the unit's power.
 
-## Sub-Widgets
-
-.bg - A `Texture` used as a background. It will inherit the color of the main StatusBar.
-
 ## Notes
 
 A default texture will be applied if the widget is a StatusBar and doesn't have a texture or a color set.
@@ -55,11 +51,6 @@ The following options are listed by priority. The first check that returns true 
                      unit. `reaction` is defined by the return value of
                      [UnitReaction](https://warcraft.wiki.gg/wiki/API_UnitReaction) (boolean)
 
-## Sub-Widget Options
-
-.multiplier - A multiplier used to tint the background based on the main widgets R, G and B values. Defaults to 1
-              (number)[0-1]
-
 ## Examples
 
     -- Position and size
@@ -69,11 +60,6 @@ The following options are listed by priority. The first check that returns true 
     Power:SetPoint('LEFT')
     Power:SetPoint('RIGHT')
 
-    -- Add a background
-    local Background = Power:CreateTexture(nil, 'BACKGROUND')
-    Background:SetAllPoints(Power)
-    Background:SetTexture(1, 1, 1, .5)
-
     -- Options
     Power.frequentUpdates = true
     Power.colorTapping = true
@@ -82,11 +68,7 @@ The following options are listed by priority. The first check that returns true 
     Power.colorClass = true
     Power.colorReaction = true
 
-    -- Make the background darker.
-    Background.multiplier = .5
-
     -- Register it with oUF
-    Power.bg = Background
     self.Power = Power
 --]]
 
@@ -182,12 +164,6 @@ local function UpdateColor(self, event, unit)
 			end
 
 			element:GetStatusBarTexture():SetVertexColor(r, g, b)
-
-			-- local bg = element.bg
-			-- if(bg) then
-			-- 	local mu = bg.multiplier or 1
-			-- 	bg:SetVertexColor(r * mu, g * mu, b * mu)
-			-- end
 		end
 	end
 

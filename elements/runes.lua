@@ -7,10 +7,6 @@ Handles the visibility and updating of Death Knight's runes.
 
 Runes - An `table` holding `StatusBar`s.
 
-## Sub-Widgets
-
-.bg - A `Texture` used as a background. It will inherit the color of the main StatusBar.
-
 ## Notes
 
 A default texture will be applied if the sub-widgets are StatusBars and don't have a texture set.
@@ -21,10 +17,6 @@ A default texture will be applied if the sub-widgets are StatusBars and don't ha
              value of [C_SpecializationInfo.GetSpecialization](https://warcraft.wiki.gg/wiki/API_C_SpecializationInfo.GetSpecialization) (boolean)
 .sortOrder - Sorting order. Sorts by the remaining cooldown time, 'asc' - from the least cooldown time remaining (fully
              charged) to the most (fully depleted), 'desc' - the opposite (string?)['asc', 'desc']
-
-## Sub-Widgets Options
-
-.multiplier - Used to tint the background based on the main widgets R, G and B values. Defaults to 1 (number)[0-1]
 
 ## Examples
 
@@ -96,12 +88,6 @@ local function UpdateColor(self, event)
 
 	for index = 1, #element do
 		element[index]:GetStatusBarTexture():SetVertexColor(r, g, b)
-
-		-- local bg = element[index].bg
-		-- if(bg) then
-		-- 	local mu = bg.multiplier or 1
-		-- 	bg:SetVertexColor(r * mu, g * mu, b * mu)
-		-- end
 	end
 
 	--[[ Callback: Runes:PostUpdateColor(r, g, b)
