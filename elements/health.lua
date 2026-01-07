@@ -10,7 +10,6 @@ Health - A `StatusBar` used to represent the unit's health.
 ## Sub-Widgets
 
 .TempLoss - A `StatusBar` used to represent temporary max health reduction.
-.bg       - A `Texture` used as a background. It will inherit the color of the main StatusBar.
 
 ## Notes
 
@@ -45,10 +44,6 @@ The following options are listed by priority. The first check that returns true 
 .colorHealth       - Use `self.colors.health` to color the bar. This flag is used to reset the bar color back to default
                      if none of the above conditions are met (boolean)
 
-## Sub-Widgets Options
-
-.multiplier - Used to tint the background based on the main widgets R, G and B values. Defaults to 1 (number)[0-1]
-
 ## Examples
 
     -- Position and size
@@ -58,11 +53,6 @@ The following options are listed by priority. The first check that returns true 
     Health:SetPoint('LEFT')
     Health:SetPoint('RIGHT')
 
-    -- Add a background
-    local Background = Health:CreateTexture(nil, 'BACKGROUND')
-    Background:SetAllPoints()
-    Background:SetTexture(1, 1, 1, .5)
-
     -- Options
     Health.colorTapping = true
     Health.colorDisconnected = true
@@ -70,11 +60,7 @@ The following options are listed by priority. The first check that returns true 
     Health.colorReaction = true
     Health.colorHealth = true
 
-    -- Make the background darker.
-    Background.multiplier = .5
-
     -- Register it with oUF
-    Health.bg = Background
     self.Health = Health
 
     -- Alternatively, if .TempLoss is being used
@@ -90,11 +76,6 @@ The following options are listed by priority. The first check that returns true 
     Health:SetPoint('TOPRIGHT', TempLoss:GetStatusBarTexture(), 'TOPLEFT')
     Health:SetPoint('BOTTOMRIGHT', TempLoss:GetStatusBarTexture(), 'BOTTOMLEFT')
 
-    -- Add a background
-    local Background = TempLoss:CreateTexture(nil, 'BACKGROUND')
-    Background:SetAllPoints()
-    Background:SetTexture(1, 1, 1, .5)
-
     -- Options
     Health.colorTapping = true
     Health.colorDisconnected = true
@@ -102,12 +83,8 @@ The following options are listed by priority. The first check that returns true 
     Health.colorReaction = true
     Health.colorHealth = true
 
-    -- Make the background darker.
-    Background.multiplier = .5
-
     -- Register it with oUF
     Health.TempLoss = TempLoss
-    Health.bg = Background
     self.Health = Health
 --]]
 
@@ -149,12 +126,6 @@ local function UpdateColor(self, event, unit)
 
 	if(r or g or b) then
 		element:GetStatusBarTexture():SetVertexColor(r, g, b)
-
-		-- local bg = element.bg
-		-- if(bg) then
-		-- 	local mu = bg.multiplier or 1
-		-- 	bg:SetVertexColor(r * mu, g * mu, b * mu)
-		-- end
 	end
 
 	--[[ Callback: Health:PostUpdateColor(unit, r, g, b)

@@ -110,12 +110,6 @@ local function UpdateColor(self, event, unit, powerType)
 
 	if(b) then
 		element:GetStatusBarTexture():SetVertexColor(r, g, b)
-
-		-- local bg = element.bg
-		-- if(bg) then
-		-- 	local mu = bg.multiplier or 1
-		-- 	bg:SetVertexColor(r * mu, g * mu, b * mu)
-		-- end
 	end
 
 	--[[ Callback: AlternativePower:PostUpdateColor(unit, r, g, b)

@@ -8,10 +8,6 @@ Balance druids.
 
 AdditionalPower - A `StatusBar` that is used to display the player's additional power.
 
-## Sub-Widgets
-
-.bg - A `Texture` used as a background. Inherits the widget's color.
-
 ## Notes
 
 A default texture will be applied if the widget is a StatusBar and doesn't have a texture set.
@@ -31,10 +27,6 @@ The following options are listed by priority. The first check that returns true 
 .colorClass       - Use `self.colors.class[class]` to color the bar based on unit class. `class` is defined by the
                     second return of [UnitClass](https://warcraft.wiki.gg/wiki/API_UnitClass) (boolean)
 
-## Sub-Widget Options
-
-.multiplier - Used to tint the background based on the widget's R, G and B values. Defaults to 1 (number)[0-1]
-
 ## Examples
 
     -- Position and size
@@ -44,13 +36,7 @@ The following options are listed by priority. The first check that returns true 
     AdditionalPower:SetPoint('LEFT')
     AdditionalPower:SetPoint('RIGHT')
 
-    -- Add a background
-    local Background = AdditionalPower:CreateTexture(nil, 'BACKGROUND')
-    Background:SetAllPoints(AdditionalPower)
-    Background:SetTexture(1, 1, 1, .5)
-
     -- Register it with oUF
-    AdditionalPower.bg = Background
     self.AdditionalPower = AdditionalPower
 --]]
 
@@ -86,12 +72,6 @@ local function UpdateColor(self, event, unit, powerType)
 
 	if(b) then
 		element:GetStatusBarTexture():SetVertexColor(r, g, b)
-
-		-- local bg = element.bg
-		-- if(bg) then
-		-- 	local mu = bg.multiplier or 1
-		-- 	bg:SetVertexColor(r * mu, g * mu, b * mu)
-		-- end
 	end
 
 	--[[ Callback: AdditionalPower:PostUpdateColor(r, g, b)
