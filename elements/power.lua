@@ -150,31 +150,30 @@ local function UpdateColor(self, event, unit)
 		element:SetStatusBarTexture(atlas)
 		element:GetStatusBarTexture():SetVertexColor(1, 1, 1)
 	else
-		if(color) then
-			r, g, b = color:GetRGB()
+		if(element.__texture) then
+			element:SetStatusBarTexture(element.__texture)
 		end
 
+		-- it's done this way so that only non-standard powers have r, g, b values
 		if(b) then
-			if(element.__texture) then
-				element:SetStatusBarTexture(element.__texture)
-			end
-
 			element:GetStatusBarTexture():SetVertexColor(r, g, b)
+		elseif(color) then
+			element:GetStatusBarTexture():SetVertexColor(color:GetRGB())
 		end
 	end
 
-	--[[ Callback: Power:PostUpdateColor(unit, r, g, b)
+	--[[ Callback: Power:PostUpdateColor(unit, color, altR, altG, altB)
 	Called after the element color has been updated.
 
 	* self  - the Power element
 	* unit  - the unit for which the update has been triggered (string)
-	* r     - the red component of the used color (number?)[0-1]
-	* g     - the green component of the used color (number?)[0-1]
-	* b     - the blue component of the used color (number?)[0-1]
-	* atlas - the atlas used instead of color (string?)
+	* color - the used ColorMixin-based object (table?)
+	* altR  - the red component of the used alternative color (number?)[0-1]
+	* altG  - the green component of the used alternative color (number?)[0-1]
+	* altB  - the blue component of the used alternative color (number?)[0-1]
 	--]]
 	if(element.PostUpdateColor) then
-		element:PostUpdateColor(unit, r, g, b, atlas)
+		element:PostUpdateColor(unit, color, r, g, b)
 	end
 end
 
