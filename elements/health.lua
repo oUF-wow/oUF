@@ -98,7 +98,7 @@ local function UpdateColor(self, event, unit)
 	if(not unit or self.unit ~= unit) then return end
 	local element = self.Health
 
-	local r, g, b, color
+	local color
 	if(element.colorDisconnected and not UnitIsConnected(unit)) then
 		color = self.colors.disconnected
 	elseif(element.colorTapping and not UnitPlayerControlled(unit) and UnitIsTapDenied(unit)) then
@@ -121,24 +121,18 @@ local function UpdateColor(self, event, unit)
 	end
 
 	if(color) then
-		r, g, b = color:GetRGB()
+		element:GetStatusBarTexture():SetVertexColor(color:GetRGB())
 	end
 
-	if(r or g or b) then
-		element:GetStatusBarTexture():SetVertexColor(r, g, b)
-	end
-
-	--[[ Callback: Health:PostUpdateColor(unit, r, g, b)
+	--[[ Callback: Health:PostUpdateColor(unit, color)
 	Called after the element color has been updated.
 
-	* self - the Health element
-	* unit - the unit for which the update has been triggered (string)
-	* r    - the red component of the used color (number)[0-1]
-	* g    - the green component of the used color (number)[0-1]
-	* b    - the blue component of the used color (number)[0-1]
+	* self  - the Health element
+	* unit  - the unit for which the update has been triggered (string)
+	* color - the used ColorMixin-based object (table?)
 	--]]
 	if(element.PostUpdateColor) then
-		element:PostUpdateColor(unit, r, g, b)
+		element:PostUpdateColor(unit, color)
 	end
 end
 
