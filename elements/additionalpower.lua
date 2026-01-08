@@ -55,7 +55,7 @@ local function UpdateColor(self, event, unit, powerType)
 	if(not (unit and UnitIsUnit(unit, 'player') and powerType == ADDITIONAL_POWER_BAR_NAME)) then return end
 	local element = self.AdditionalPower
 
-	local r, g, b, color
+	local color
 	if(element.colorPower) then
 		color = self.colors.power[ADDITIONAL_POWER_BAR_INDEX]
 
@@ -67,23 +67,17 @@ local function UpdateColor(self, event, unit, powerType)
 	end
 
 	if(color) then
-		r, g, b = color:GetRGB()
+		element:GetStatusBarTexture():SetVertexColor(color:GetRGB())
 	end
 
-	if(b) then
-		element:GetStatusBarTexture():SetVertexColor(r, g, b)
-	end
-
-	--[[ Callback: AdditionalPower:PostUpdateColor(r, g, b)
+	--[[ Callback: AdditionalPower:PostUpdateColor(color)
 	Called after the element color has been updated.
 
-	* self - the AdditionalPower element
-	* r    - the red component of the used color (number)[0-1]
-	* g    - the green component of the used color (number)[0-1]
-	* b    - the blue component of the used color (number)[0-1]
+	* self  - the AdditionalPower element
+	* color - the used ColorMixin-based object (table?)
 	--]]
 	if(element.PostUpdateColor) then
-		element:PostUpdateColor(r, g, b)
+		element:PostUpdateColor(color)
 	end
 end
 
