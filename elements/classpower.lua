@@ -62,22 +62,21 @@ local RequireSpec, RequirePower, RequireSpell
 
 local function UpdateColor(element, powerType)
 	local color = element.__owner.colors.power[powerType]
-	local r, g, b = color:GetRGB()
-	for i = 1, #element do
-		local bar = element[i]
-		bar:GetStatusBarTexture():SetVertexColor(r, g, b)
+	if(color) then
+		for i = 1, #element do
+			local bar = element[i]
+			bar:GetStatusBarTexture():SetVertexColor(color:GetRGB())
+		end
 	end
 
-	--[[ Callback: ClassPower:PostUpdateColor(r, g, b)
+	--[[ Callback: ClassPower:PostUpdateColor(color)
 	Called after the element color has been updated.
 
-	* self - the ClassPower element
-	* r    - the red component of the used color (number)[0-1]
-	* g    - the green component of the used color (number)[0-1]
-	* b    - the blue component of the used color (number)[0-1]
+	* self  - the ClassPower element
+	* color - the used ColorMixin-based object (table?)
 	--]]
 	if(element.PostUpdateColor) then
-		element:PostUpdateColor(r, g, b)
+		element:PostUpdateColor(color)
 	end
 end
 
