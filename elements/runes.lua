@@ -84,22 +84,20 @@ local function UpdateColor(self, event)
 		color = self.colors.power.RUNES
 	end
 
-	local r, g, b = color:GetRGB()
-
-	for index = 1, #element do
-		element[index]:GetStatusBarTexture():SetVertexColor(r, g, b)
+	if(color) then
+		for index = 1, #element do
+			element[index]:GetStatusBarTexture():SetVertexColor(color:GetRGB())
+		end
 	end
 
-	--[[ Callback: Runes:PostUpdateColor(r, g, b)
+	--[[ Callback: Runes:PostUpdateColor(color)
 	Called after the element color has been updated.
 
 	* self - the Runes element
-	* r    - the red component of the used color (number)[0-1]
-	* g    - the green component of the used color (number)[0-1]
-	* b    - the blue component of the used color (number)[0-1]
+	* color - the used ColorMixin-based object (table?)
 	--]]
 	if(element.PostUpdateColor) then
-		element:PostUpdateColor(r, g, b)
+		element:PostUpdateColor(color)
 	end
 end
 
