@@ -216,7 +216,7 @@ local function updateAura(element, unit, data, position)
 	end
 
 	if(button.Stealable) then
-		if element.showStealableBuffs and not UnitCanCooperate('player', unit) then
+		if(element.showStealableBuffs and not UnitCanCooperate('player', unit)) then
 			button.Stealable:SetAlphaFromBoolean(data.isStealable, 1, 0)
 		else
 			button.Stealable:SetAlpha(0)
@@ -843,7 +843,7 @@ local function Enable(self)
 			auras.dispelColorCurve = auras.dispelColorCurve or C_CurveUtil.CreateColorCurve()
 			auras.dispelColorCurve:SetType(Enum.LuaCurveType.Step)
 			for _, dispelIndex in next, oUF.Enum.DispelType do
-				if self.colors.dispel[dispelIndex] then
+				if(self.colors.dispel[dispelIndex]) then
 					auras.dispelColorCurve:AddPoint(dispelIndex, self.colors.dispel[dispelIndex])
 				end
 			end
@@ -866,7 +866,7 @@ local function Enable(self)
 			buffs.dispelColorCurve = buffs.dispelColorCurve or C_CurveUtil.CreateColorCurve()
 			buffs.dispelColorCurve:SetType(Enum.LuaCurveType.Step)
 			for _, dispelIndex in next, oUF.Enum.DispelType do
-				if self.colors.dispel[dispelIndex] then
+				if(self.colors.dispel[dispelIndex]) then
 					buffs.dispelColorCurve:AddPoint(dispelIndex, self.colors.dispel[dispelIndex])
 				end
 			end
@@ -889,7 +889,7 @@ local function Enable(self)
 			debuffs.dispelColorCurve = debuffs.dispelColorCurve or C_CurveUtil.CreateColorCurve()
 			debuffs.dispelColorCurve:SetType(Enum.LuaCurveType.Step)
 			for _, dispelIndex in next, oUF.Enum.DispelType do
-				if self.colors.dispel[dispelIndex] then
+				if(self.colors.dispel[dispelIndex]) then
 					debuffs.dispelColorCurve:AddPoint(dispelIndex, self.colors.dispel[dispelIndex])
 				end
 			end
