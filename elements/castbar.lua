@@ -497,6 +497,7 @@ local function onUpdate(self, elapsed)
 			end
 		end
 
+		-- ISSUE: we have no way to get this information any more, Blizzard is aware
 		-- --[[ Callback: Castbar:PostUpdateStage(stage)
 		-- Called after the current stage changes.
 
