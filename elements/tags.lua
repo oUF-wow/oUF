@@ -114,10 +114,15 @@ local _PATTERN = '%[..-%]+'
 
 local _ENV = {
 	Hex = function(r, g, b)
+		if(not r or (issecretvalue(r) or (r.r and issecretvalue(r.r)))) then
+			return '|cffffffff'
+		end
+
 		if(type(r) == 'table') then
 			r, g, b = r.r, r.g, r.b
 		end
-		return string.format('|cff%02x%02x%02x', r * 255, g * 255, b * 255)
+
+		return '|c' .. C_ColorUtil.GenerateTextColorCode({r = r, g = g, b = b})
 	end,
 }
 
