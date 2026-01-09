@@ -285,7 +285,7 @@ local tagStrings = {
 	end]],
 
 	['perpp'] = [[function(u)
-		return string.format('%d', UnitPowerPercent(u, true, CurveConstants.ScaleTo100))
+		return string.format('%d', UnitPowerPercent(u, nil, true, CurveConstants.ScaleTo100))
 	end]],
 
 	['plus'] = [[function(u)
