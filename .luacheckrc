@@ -47,6 +47,7 @@ read_globals = {
 
 	-- namespaces
 	'C_AddOns',
+	'C_ColorUtil',
 	'C_CurveUtil',
 	'C_CVar',
 	'C_IncomingSummon',
