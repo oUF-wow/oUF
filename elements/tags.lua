@@ -116,12 +116,9 @@ local _ENV = {
 	Hex = function(r, g, b)
 		if(not r or (issecretvalue(r) or (r.r and issecretvalue(r.r)))) then
 			return '|cffffffff'
+		elseif(type(r) == 'table') then
+			return '|c' .. C_ColorUtil.GenerateTextColorCode(r)
 		end
-
-		if(type(r) == 'table') then
-			r, g, b = r.r, r.g, r.b
-		end
-
 		return '|c' .. C_ColorUtil.GenerateTextColorCode({r = r, g = g, b = b})
 	end,
 }
