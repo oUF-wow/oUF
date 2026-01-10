@@ -328,7 +328,7 @@ local function Enable(self)
 				element.TempLoss:SetValue(0, element.smoothing)
 
 				if(not element.TempLoss:GetStatusBarTexture()) then
-					element.TempLoss:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+					element.TempLoss:SetStatusBarTexture('UI-HUD-UnitFrame-Target-PortraitOn-Bar-TempHPLoss')
 				end
 			end
 
