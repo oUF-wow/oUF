@@ -23,10 +23,10 @@ At least one of the above widgets must be present for the element to work.
 .onlyShowPlayer           - Shows only auras created by player/vehicle (boolean)
 .showStealableBuffs       - Displays the stealable texture on buffs that can be stolen (boolean)
 .spacing                  - Spacing between each button. Defaults to 0 (number)
-.['spacing-x']            - Horizontal spacing between each button. Takes priority over `spacing` (number)
-.['spacing-y']            - Vertical spacing between each button. Takes priority over `spacing` (number)
-.['growth-x']             - Horizontal growth direction. Defaults to 'RIGHT' (string)
-.['growth-y']             - Vertical growth direction. Defaults to 'UP' (string)
+.spacingX                 - Horizontal spacing between each button. Takes priority over `spacing` (number)
+.spacingY                 - Vertical spacing between each button. Takes priority over `spacing` (number)
+.growthX                  - Horizontal growth direction. Defaults to 'RIGHT' (string)
+.growthY                  - Vertical growth direction. Defaults to 'UP' (string)
 .initialAnchor            - Anchor point for the aura buttons. Defaults to 'BOTTOMLEFT' (string)
 .filter                   - Custom filter list for auras to display. Defaults to 'HELPFUL' for buffs and 'HARMFUL' for
                             debuffs (string)
@@ -152,12 +152,12 @@ end
 local function SetPosition(element, from, to)
 	local width = element.width or element.size or 16
 	local height = element.height or element.size or 16
-	local sizex = width + (element['spacing-x'] or element.spacing or 0)
-	local sizey = height + (element['spacing-y'] or element.spacing or 0)
+	local sizeX = width + (element.spacingX or element.spacing or 0)
+	local sizeY = height + (element.spacingY or element.spacing or 0)
 	local anchor = element.initialAnchor or 'BOTTOMLEFT'
-	local growthx = (element['growth-x'] == 'LEFT' and -1) or 1
-	local growthy = (element['growth-y'] == 'DOWN' and -1) or 1
-	local cols = math.floor(element:GetWidth() / sizex + 0.5)
+	local growthX = (element.growthX == 'LEFT' and -1) or 1
+	local growthY = (element.growthY == 'DOWN' and -1) or 1
+	local cols = math.floor(element:GetWidth() / sizeX + 0.5)
 
 	for i = from, to do
 		local button = element[i]
@@ -167,7 +167,7 @@ local function SetPosition(element, from, to)
 		local row = math.floor((i - 1) / cols)
 
 		button:ClearAllPoints()
-		button:SetPoint(anchor, element, anchor, col * sizex * growthx, row * sizey * growthy)
+		button:SetPoint(anchor, element, anchor, col * sizeX * growthX, row * sizeY * growthY)
 	end
 end
 
