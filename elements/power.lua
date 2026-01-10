@@ -79,7 +79,7 @@ local unitSelectionType = Private.unitSelectionType
 -- sourced from Blizzard_UnitFrame/UnitPowerBarAlt.lua
 local ALTERNATE_POWER_INDEX = Enum.PowerType.Alternate or 10
 
---[[ Override: Power:GetDisplayPower()
+--[[ Override: Power:GetDisplayPower(unit)
 Used to get info on the unit's alternative power, if any.
 Should return the power type index (see [Enum.PowerType.Alternate](https://warcraft.wiki.gg/wiki/Enum.PowerType))
 and the minimum value for the given power type (see [info.minPower](https://warcraft.wiki.gg/wiki/API_GetUnitPowerBarInfo))
@@ -88,9 +88,9 @@ displayed. In case of a nil return, the element defaults to the primary power
 type and zero for the minimum value.
 
 * self - the Power element
+* unit - the unit for which the update has been triggered (string)
 --]]
-local function GetDisplayPower(element)
-	local unit = element.__owner.unit
+local function GetDisplayPower(_, unit)
 	local barInfo = GetUnitPowerBarInfo(unit)
 	if(barInfo and barInfo.showOnRaid and (UnitInParty(unit) or UnitInRaid(unit))) then
 		return ALTERNATE_POWER_INDEX, barInfo.minPower
@@ -204,7 +204,7 @@ local function Update(self, event, unit)
 
 	local displayType, min
 	if(element.displayAltPower) then
-		displayType, min = element:GetDisplayPower()
+		displayType, min = element:GetDisplayPower(unit)
 	end
 
 	local cur, max = UnitPower(unit, displayType), UnitPowerMax(unit, displayType)
