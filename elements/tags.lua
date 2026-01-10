@@ -119,7 +119,7 @@ local _ENV = {
 		elseif(type(r) == 'table') then
 			return '|c' .. C_ColorUtil.GenerateTextColorCode(r)
 		end
-		return '|c' .. C_ColorUtil.GenerateTextColorCode({r = r, g = g, b = b})
+		return string.format('|cff%02x%02x%02x', r * 255, g * 255, b * 255)
 	end,
 }
 
