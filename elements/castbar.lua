@@ -484,11 +484,10 @@ local function onUpdate(self, elapsed)
 			if durationObject then
 				local duration = durationObject:GetRemainingDuration()
 				if(self.delay ~= 0) then
-					local isCasting = self.casting or self.empowering
 					if(self.CustomDelayText) then
 						self:CustomDelayText(duration)
 					else
-						self.Time:SetFormattedText('%.1f|cffff0000%s%.2f|r', duration, isCasting and '+' or '-', self.delay)
+						self.Time:SetFormattedText('%.1f|cffff0000%s%.2f|r', duration, self.channeling and '-' or '+', self.delay)
 					end
 				else
 					if(self.CustomTimeText) then
