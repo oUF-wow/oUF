@@ -258,7 +258,25 @@ local function SetColorTapping(element, state, isForced)
 		element.colorTapping = state
 		if(state) then
 			element.__owner:RegisterEvent('UNIT_FACTION', ColorPath)
-		else
+		elseif(not element.colorReaction) then
+			element.__owner:UnregisterEvent('UNIT_FACTION', ColorPath)
+		end
+	end
+end
+
+--[[ Health:SetColorReaction(state, isForced)
+Used to toggle coloring by the unit's reaction.
+
+* self     - the Health element
+* state    - the desired state (boolean)
+* isForced - forces the event update even if the state wasn't changed (boolean)
+--]]
+local function SetColorReaction(element, state, isForced)
+	if(element.colorReaction ~= state or isForced) then
+		element.colorReaction = state
+		if(state) then
+			element.__owner:RegisterEvent('UNIT_FACTION', ColorPath)
+		elseif(not element.colorTapping) then
 			element.__owner:UnregisterEvent('UNIT_FACTION', ColorPath)
 		end
 	end
@@ -290,6 +308,7 @@ local function Enable(self)
 		element.SetColorDisconnected = SetColorDisconnected
 		element.SetColorSelection = SetColorSelection
 		element.SetColorTapping = SetColorTapping
+		element.SetColorReaction = SetColorReaction
 		element.SetColorThreat = SetColorThreat
 
 		if(not element.smoothing) then
@@ -304,7 +323,7 @@ local function Enable(self)
 			self:RegisterEvent('UNIT_FLAGS', ColorPath)
 		end
 
-		if(element.colorTapping) then
+		if(element.colorTapping or element.colorReaction) then
 			self:RegisterEvent('UNIT_FACTION', ColorPath)
 		end
 
