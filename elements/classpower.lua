@@ -40,7 +40,7 @@ Supported class powers:
 local _, ns = ...
 local oUF = ns.oUF
 
-local PlayerClass = UnitClassBase('player')
+local playerClass = UnitClassBase('player')
 
 -- sourced from Blizzard_FrameXMLBase/Constants.lua
 local SPEC_MAGE_ARCANE = _G.SPEC_MAGE_ARCANE or 1
@@ -270,29 +270,29 @@ do
 		Path(self, 'ClassPowerDisable', 'player', ClassPowerType)
 	end
 
-	if(PlayerClass == 'MONK') then
+	if(playerClass == 'MONK') then
 		ClassPowerID = SPELL_POWER_CHI
 		ClassPowerType = 'CHI'
 		RequireSpec = SPEC_MONK_WINDWALKER
-	elseif(PlayerClass == 'PALADIN') then
+	elseif(playerClass == 'PALADIN') then
 		ClassPowerID = SPELL_POWER_HOLY_POWER
 		ClassPowerType = 'HOLY_POWER'
-	elseif(PlayerClass == 'WARLOCK') then
+	elseif(playerClass == 'WARLOCK') then
 		ClassPowerID = SPELL_POWER_SOUL_SHARDS
 		ClassPowerType = 'SOUL_SHARDS'
-	elseif(PlayerClass == 'ROGUE' or PlayerClass == 'DRUID') then
+	elseif(playerClass == 'ROGUE' or playerClass == 'DRUID') then
 		ClassPowerID = SPELL_POWER_COMBO_POINTS
 		ClassPowerType = 'COMBO_POINTS'
 
-		if(PlayerClass == 'DRUID') then
+		if(playerClass == 'DRUID') then
 			RequirePower = SPELL_POWER_ENERGY
 			RequireSpell = 5221 -- Shred
 		end
-	elseif(PlayerClass == 'MAGE') then
+	elseif(playerClass == 'MAGE') then
 		ClassPowerID = SPELL_POWER_ARCANE_CHARGES
 		ClassPowerType = 'ARCANE_CHARGES'
 		RequireSpec = SPEC_MAGE_ARCANE
-	elseif(PlayerClass == 'EVOKER') then
+	elseif(playerClass == 'EVOKER') then
 		ClassPowerID = SPELL_POWER_ESSENCE
 		ClassPowerType = 'ESSENCE'
 	end
