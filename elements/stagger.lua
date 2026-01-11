@@ -25,8 +25,6 @@ A default texture will be applied if the widget is a StatusBar and doesn't have 
     self.Stagger = Stagger
 --]]
 
-if(UnitClassBase('player') ~= 'MONK') then return end
-
 local _, ns = ...
 local oUF = ns.oUF
 
@@ -177,7 +175,30 @@ local function ForceUpdate(element)
 	VisibilityPath(element.__owner, 'ForceUpdate', element.__owner.unit)
 end
 
+local function Disable(self)
+	local element = self.Stagger
+	if(element) then
+		element:Hide()
+
+		self:UnregisterEvent('UNIT_AURA', Path)
+		self:UnregisterEvent('UNIT_DISPLAYPOWER', VisibilityPath)
+		self:UnregisterEvent('PLAYER_TALENT_UPDATE', VisibilityPath)
+
+		MonkStaggerBar:RegisterEvent('PLAYER_ENTERING_WORLD')
+		MonkStaggerBar:RegisterEvent('PLAYER_SPECIALIZATION_CHANGED')
+		MonkStaggerBar:RegisterEvent('UNIT_DISPLAYPOWER')
+		MonkStaggerBar:RegisterEvent('UNIT_EXITED_VEHICLE')
+		MonkStaggerBar:RegisterEvent('UPDATE_VEHICLE_ACTIONBAR')
+	end
+end
+
 local function Enable(self, unit)
+	if(UnitClassBase('player') ~= 'MONK') then
+		Disable(self)
+
+		return false
+	end
+
 	local element = self.Stagger
 	if(element and UnitIsUnit(unit, 'player')) then
 		element.__owner = self
@@ -204,23 +225,6 @@ local function Enable(self, unit)
 		element:Hide()
 
 		return true
-	end
-end
-
-local function Disable(self)
-	local element = self.Stagger
-	if(element) then
-		element:Hide()
-
-		self:UnregisterEvent('UNIT_AURA', Path)
-		self:UnregisterEvent('UNIT_DISPLAYPOWER', VisibilityPath)
-		self:UnregisterEvent('PLAYER_TALENT_UPDATE', VisibilityPath)
-
-		MonkStaggerBar:RegisterEvent('PLAYER_ENTERING_WORLD')
-		MonkStaggerBar:RegisterEvent('PLAYER_SPECIALIZATION_CHANGED')
-		MonkStaggerBar:RegisterEvent('UNIT_DISPLAYPOWER')
-		MonkStaggerBar:RegisterEvent('UNIT_EXITED_VEHICLE')
-		MonkStaggerBar:RegisterEvent('UPDATE_VEHICLE_ACTIONBAR')
 	end
 end
 
