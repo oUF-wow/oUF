@@ -57,7 +57,7 @@ local SPELL_POWER_ESSENCE = Enum.PowerType.Essence or 19
 
 local ClassPowerEnable, ClassPowerDisable
 
--- holds class-specific information for visibility toggles
+-- holds class-specific information for enablement toggles
 local classPowerID, classPowerType
 local requireSpec, requirePower, requireSpell
 
