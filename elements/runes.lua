@@ -34,8 +34,6 @@ A default texture will be applied if the sub-widgets are StatusBars and don't ha
     self.Runes = Runes
 --]]
 
-if(UnitClassBase('player') ~= 'DEATHKNIGHT') then return end
-
 local _, ns = ...
 local oUF = ns.oUF
 
@@ -183,7 +181,25 @@ local function ForceUpdate(element)
 	ColorPath(element.__owner, 'ForceUpdate')
 end
 
+local function Disable(self)
+	local element = self.Runes
+	if(element) then
+		for i = 1, #element do
+			element[i]:Hide()
+		end
+
+		self:UnregisterEvent('PLAYER_SPECIALIZATION_CHANGED', ColorPath)
+		self:UnregisterEvent('RUNE_POWER_UPDATE', Path)
+	end
+end
+
 local function Enable(self, unit)
+	if(UnitClassBase('player') ~= 'DEATHKNIGHT') then
+		Disable(self)
+
+		return false
+	end
+
 	local element = self.Runes
 	if(element and UnitIsUnit(unit, 'player')) then
 		element.__owner = self
@@ -200,18 +216,6 @@ local function Enable(self, unit)
 		self:RegisterEvent('RUNE_POWER_UPDATE', Path, true)
 
 		return true
-	end
-end
-
-local function Disable(self)
-	local element = self.Runes
-	if(element) then
-		for i = 1, #element do
-			element[i]:Hide()
-		end
-
-		self:UnregisterEvent('PLAYER_SPECIALIZATION_CHANGED', ColorPath)
-		self:UnregisterEvent('RUNE_POWER_UPDATE', Path)
 	end
 end
 
