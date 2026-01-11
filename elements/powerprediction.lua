@@ -48,7 +48,7 @@ local ALT_POWER_BAR_PAIR_DISPLAY_INFO = _G.ALT_POWER_BAR_PAIR_DISPLAY_INFO
 
 local ADDITIONAL_POWER_BAR_INDEX = 0
 
-local _, playerClass = UnitClass('player')
+local playerClass = UnitClassBase('player')
 
 local function UpdateSize(self, event, unit)
 	local element = self.PowerPrediction
