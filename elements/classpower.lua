@@ -55,10 +55,11 @@ local SPELL_POWER_CHI = Enum.PowerType.Chi or 12
 local SPELL_POWER_ARCANE_CHARGES = Enum.PowerType.ArcaneCharges or 16
 local SPELL_POWER_ESSENCE = Enum.PowerType.Essence or 19
 
--- Holds the class specific stuff.
-local ClassPowerID, ClassPowerType
 local ClassPowerEnable, ClassPowerDisable
-local RequireSpec, RequirePower, RequireSpell
+
+-- holds class-specific information for visibility toggles
+local classPowerID, classPowerType
+local requireSpec, requirePower, requireSpell
 
 local function UpdateColor(element, powerType)
 	local color = element.__owner.colors.power[powerType]
@@ -81,7 +82,7 @@ local function UpdateColor(element, powerType)
 end
 
 local function Update(self, event, unit, powerType)
-	if(not (unit and (UnitIsUnit(unit, 'player') and (not powerType or powerType == ClassPowerType)
+	if(not (unit and (UnitIsUnit(unit, 'player') and (not powerType or powerType == classPowerType)
 		or unit == 'vehicle' and powerType == 'COMBO_POINTS'))) then
 		return
 	end
@@ -99,20 +100,20 @@ local function Update(self, event, unit, powerType)
 
 	local cur, max, mod, oldMax, chargedPoints
 	if(event ~= 'ClassPowerDisable') then
-		local powerID = unit == 'vehicle' and SPELL_POWER_COMBO_POINTS or ClassPowerID
+		local powerID = unit == 'vehicle' and SPELL_POWER_COMBO_POINTS or classPowerID
 		cur = UnitPower(unit, powerID, true)
 		max = UnitPowerMax(unit, powerID)
 		mod = UnitPowerDisplayMod(powerID)
 		chargedPoints = GetUnitChargedPowerPoints(unit)
 
 		-- UNIT_POWER_POINT_CHARGE doesn't provide a power type
-		powerType = powerType or ClassPowerType
+		powerType = powerType or classPowerType
 
 		-- mod should never be 0, but according to Blizz code it can actually happen
 		cur = mod == 0 and 0 or cur / mod
 
 		-- BUG: Destruction is supposed to show partial soulshards, but Affliction and Demonology should only show full ones
-		if(ClassPowerType == 'SOUL_SHARDS' and C_SpecializationInfo.GetSpecialization() ~= SPEC_WARLOCK_DESTRUCTION) then
+		if(classPowerType == 'SOUL_SHARDS' and C_SpecializationInfo.GetSpecialization() ~= SPEC_WARLOCK_DESTRUCTION) then
 			cur = cur - cur % 1
 		end
 
@@ -173,11 +174,11 @@ local function Visibility(self, event, unit)
 	if(UnitHasVehicleUI('player')) then
 		shouldEnable = PlayerVehicleHasComboPoints()
 		unit = 'vehicle'
-	elseif(ClassPowerID) then
-		if(not RequireSpec or RequireSpec == C_SpecializationInfo.GetSpecialization()) then
+	elseif(classPowerID) then
+		if(not requireSpec or requireSpec == C_SpecializationInfo.GetSpecialization()) then
 			-- use 'player' instead of unit because 'SPELLS_CHANGED' is a unitless event
-			if(not RequirePower or RequirePower == UnitPowerType('player')) then
-				if(not RequireSpell or C_SpellBook.IsSpellKnown(RequireSpell)) then
+			if(not requirePower or requirePower == UnitPowerType('player')) then
+				if(not requireSpell or C_SpellBook.IsSpellKnown(requireSpell)) then
 					self:UnregisterEvent('SPELLS_CHANGED', Visibility)
 					shouldEnable = true
 					unit = 'player'
@@ -189,7 +190,7 @@ local function Visibility(self, event, unit)
 	end
 
 	local isEnabled = element.__isEnabled
-	local powerType = unit == 'vehicle' and 'COMBO_POINTS' or ClassPowerType
+	local powerType = unit == 'vehicle' and 'COMBO_POINTS' or classPowerType
 
 	if(shouldEnable) then
 		--[[ Override: ClassPower:UpdateColor(powerType)
@@ -252,7 +253,7 @@ do
 		if(UnitHasVehicleUI('player')) then
 			Path(self, 'ClassPowerEnable', 'vehicle', 'COMBO_POINTS')
 		else
-			Path(self, 'ClassPowerEnable', 'player', ClassPowerType)
+			Path(self, 'ClassPowerEnable', 'player', classPowerType)
 		end
 	end
 
@@ -267,34 +268,34 @@ do
 		end
 
 		element.__isEnabled = false
-		Path(self, 'ClassPowerDisable', 'player', ClassPowerType)
+		Path(self, 'ClassPowerDisable', 'player', classPowerType)
 	end
 
 	if(playerClass == 'MONK') then
-		ClassPowerID = SPELL_POWER_CHI
-		ClassPowerType = 'CHI'
-		RequireSpec = SPEC_MONK_WINDWALKER
+		classPowerID = SPELL_POWER_CHI
+		classPowerType = 'CHI'
+		requireSpec = SPEC_MONK_WINDWALKER
 	elseif(playerClass == 'PALADIN') then
-		ClassPowerID = SPELL_POWER_HOLY_POWER
-		ClassPowerType = 'HOLY_POWER'
+		classPowerID = SPELL_POWER_HOLY_POWER
+		classPowerType = 'HOLY_POWER'
 	elseif(playerClass == 'WARLOCK') then
-		ClassPowerID = SPELL_POWER_SOUL_SHARDS
-		ClassPowerType = 'SOUL_SHARDS'
+		classPowerID = SPELL_POWER_SOUL_SHARDS
+		classPowerType = 'SOUL_SHARDS'
 	elseif(playerClass == 'ROGUE' or playerClass == 'DRUID') then
-		ClassPowerID = SPELL_POWER_COMBO_POINTS
-		ClassPowerType = 'COMBO_POINTS'
+		classPowerID = SPELL_POWER_COMBO_POINTS
+		classPowerType = 'COMBO_POINTS'
 
 		if(playerClass == 'DRUID') then
-			RequirePower = SPELL_POWER_ENERGY
-			RequireSpell = 5221 -- Shred
+			requirePower = SPELL_POWER_ENERGY
+			requireSpell = 5221 -- Shred
 		end
 	elseif(playerClass == 'MAGE') then
-		ClassPowerID = SPELL_POWER_ARCANE_CHARGES
-		ClassPowerType = 'ARCANE_CHARGES'
-		RequireSpec = SPEC_MAGE_ARCANE
+		classPowerID = SPELL_POWER_ARCANE_CHARGES
+		classPowerType = 'ARCANE_CHARGES'
+		requireSpec = SPEC_MAGE_ARCANE
 	elseif(playerClass == 'EVOKER') then
-		ClassPowerID = SPELL_POWER_ESSENCE
-		ClassPowerType = 'ESSENCE'
+		classPowerID = SPELL_POWER_ESSENCE
+		classPowerType = 'ESSENCE'
 	end
 end
 
@@ -305,11 +306,11 @@ local function Enable(self, unit)
 		element.__max = #element
 		element.ForceUpdate = ForceUpdate
 
-		if(RequireSpec or RequireSpell) then
+		if(requireSpec or requireSpell) then
 			self:RegisterEvent('PLAYER_TALENT_UPDATE', VisibilityPath, true)
 		end
 
-		if(RequirePower) then
+		if(requirePower) then
 			self:RegisterEvent('UNIT_DISPLAYPOWER', VisibilityPath)
 		end
 
