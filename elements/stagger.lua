@@ -25,7 +25,7 @@ A default texture will be applied if the widget is a StatusBar and doesn't have 
     self.Stagger = Stagger
 --]]
 
-if(select(2, UnitClass('player')) ~= 'MONK') then return end
+if(UnitClassBase('player') ~= 'MONK') then return end
 
 local _, ns = ...
 local oUF = ns.oUF
