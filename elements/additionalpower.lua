@@ -41,7 +41,7 @@ The following options are listed by priority. The first check that returns true 
 local _, ns = ...
 local oUF = ns.oUF
 
-local _, playerClass = UnitClass('player')
+local playerClass = UnitClassBase('player')
 
 -- sourced from Blizzard_UnitFrame/AlternatePowerBar.lua
 local ALT_POWER_BAR_PAIR_DISPLAY_INFO = _G.ALT_POWER_BAR_PAIR_DISPLAY_INFO

@@ -40,7 +40,7 @@ Supported class powers:
 local _, ns = ...
 local oUF = ns.oUF
 
-local _, PlayerClass = UnitClass('player')
+local PlayerClass = UnitClassBase('player')
 
 -- sourced from Blizzard_FrameXMLBase/Constants.lua
 local SPEC_MAGE_ARCANE = _G.SPEC_MAGE_ARCANE or 1
