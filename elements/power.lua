@@ -101,8 +101,6 @@ local function UpdateColor(self, event, unit)
 	if(self.unit ~= unit) then return end
 	local element = self.Power
 
-	local pType, pToken, altR, altG, altB = UnitPowerType(unit)
-
 	local r, g, b, color, atlas
 	if(element.colorDisconnected and not UnitIsConnected(unit)) then
 		color = self.colors.disconnected
@@ -111,21 +109,23 @@ local function UpdateColor(self, event, unit)
 	elseif(element.colorThreat and not UnitPlayerControlled(unit) and UnitThreatSituation('player', unit)) then
 		color =  self.colors.threat[UnitThreatSituation('player', unit)]
 	elseif(element.colorPower) then
-		if(element.displayType ~= ALTERNATE_POWER_INDEX) then
+		if(element.displayType) then
+			color = self.colors.power[element.displayType]
+		end
+
+		if(not color) then
+			local pType, pToken, altR, altG, altB = UnitPowerType(unit)
 			color = self.colors.power[pToken]
-			if(not color) then
-				if(altR) then
-					r, g, b = altR, altG, altB
-					if(r > 1 or g > 1 or b > 1) then
-						-- BUG: As of 7.0.3, altR, altG, altB may be in 0-1 or 0-255 range.
-						r, g, b = r / 255, g / 255, b / 255
-					end
-				else
-					color = self.colors.power[pType] or self.colors.power.MANA
+
+			if(not color and altR) then
+				r, g, b = altR, altG, altB
+				if(r > 1 or g > 1 or b > 1) then
+					-- BUG: As of 7.0.3, altR, altG, altB may be in 0-1 or 0-255 range.
+					r, g, b = r / 255, g / 255, b / 255
 				end
+			else
+				color = self.colors.power[pType] or self.colors.power.MANA
 			end
-		else
-			color = self.colors.power[ALTERNATE_POWER_INDEX]
 		end
 
 		if(element.colorPowerAtlas and color) then
