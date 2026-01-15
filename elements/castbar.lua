@@ -296,7 +296,7 @@ local function CastUpdate(self, event, unit, _, _, castID)
 		return
 	end
 
-	if(not element:IsShown() or element.castID ~= castID) then
+	if(not element:IsShown() or not castID or element.castID ~= castID) then
 		return
 	end
 
@@ -362,7 +362,7 @@ local function CastStop(self, event, unit, _, _, ...)
 		interruptedBy, castID = ...
 	end
 
-	if(not element:IsShown() or element.castID ~= castID) then
+	if(not element:IsShown() or not castID or element.castID ~= castID) then
 		return
 	end
 
@@ -418,7 +418,7 @@ local function CastFail(self, event, unit, _, _, ...)
 		castID = ...
 	end
 
-	if(not element:IsShown() or element.castID ~= castID) then
+	if(not element:IsShown() or not castID or element.castID ~= castID) then
 		return
 	end
 
