@@ -119,6 +119,7 @@ local _ENV = {
 		end
 		return string.format('|cff%02x%02x%02x', r * 255, g * 255, b * 255)
 	end,
+	ColorMixin = ColorMixin, -- not available in restricted env for some reason
 }
 
 local _PROXY = setmetatable(_ENV, {__index = _G})
