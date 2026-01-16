@@ -35,6 +35,7 @@ A default texture will be applied to the StatusBar and Texture widgets if they d
 .empowering       - Indicates whether the current spell is an empowering cast (boolean)
 .notInterruptible - Indicates whether the current spell is interruptible (boolean)
 .spellID          - The spell identifier of the currently cast/channeled/empowering spell (number)
+.spellName        - The name of the spell currently being cast/channeled/empowered (string)
 
 ## Examples
 
@@ -96,6 +97,7 @@ local function resetAttributes(self)
 	self.empowering = nil
 	self.notInterruptible = nil
 	self.spellID = nil
+	self.spellName = nil
 
 	for _, pip in next, self.Pips do
 		pip:Hide()
@@ -222,6 +224,7 @@ local function CastStart(self, event, unit)
 	element.holdTime = 0
 	element.castID = castID
 	element.spellID = spellID
+	element.spellName = text
 
 	if(unit == 'player') then
 		-- we can only read these variables for players
