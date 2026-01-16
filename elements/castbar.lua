@@ -484,12 +484,24 @@ local function onUpdate(self, elapsed)
 			if durationObject then
 				local duration = durationObject:GetRemainingDuration()
 				if(self.delay ~= 0) then
+					--[[ Override: Castbar:CustomDelayText(duration)
+					Used to completely override the updating of the .Time sub-widget when there is a delay to adjust for.
+
+					* self     - the Castbar widget
+					* duration - a [Duration](https://warcraft.wiki.gg/wiki/ScriptObject_DurationObject) object for the Castbar
+					--]]
 					if(self.CustomDelayText) then
 						self:CustomDelayText(duration)
 					else
 						self.Time:SetFormattedText('%.1f|cffff0000%s%.2f|r', duration, self.channeling and '-' or '+', self.delay)
 					end
 				else
+					--[[ Override: Castbar:CustomTimeText(duration)
+					Used to completely override the updating of the .Time sub-widget.
+
+					* self     - the Castbar widget
+					* duration - a [Duration](https://warcraft.wiki.gg/wiki/ScriptObject_DurationObject) object for the Castbar
+					--]]
 					if(self.CustomTimeText) then
 						self:CustomTimeText(duration)
 					else
