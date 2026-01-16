@@ -482,7 +482,6 @@ local function onUpdate(self, elapsed)
 		if(self.Time) then
 			local durationObject = self:GetTimerDuration() -- can be nil
 			if durationObject then
-				local duration = durationObject:GetRemainingDuration()
 				if(self.delay ~= 0) then
 					--[[ Override: Castbar:CustomDelayText(duration)
 					Used to completely override the updating of the .Time sub-widget when there is a delay to adjust for.
@@ -493,6 +492,7 @@ local function onUpdate(self, elapsed)
 					if(self.CustomDelayText) then
 						self:CustomDelayText(durationObject)
 					else
+						local duration = durationObject:GetRemainingDuration()
 						self.Time:SetFormattedText('%.1f|cffff0000%s%.2f|r', duration, self.channeling and '-' or '+', self.delay)
 					end
 				else
@@ -505,7 +505,7 @@ local function onUpdate(self, elapsed)
 					if(self.CustomTimeText) then
 						self:CustomTimeText(durationObject)
 					else
-						self.Time:SetFormattedText('%.1f', duration)
+						self.Time:SetFormattedText('%.1f', durationObject:GetRemainingDuration())
 					end
 				end
 			end
