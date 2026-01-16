@@ -491,7 +491,7 @@ local function onUpdate(self, elapsed)
 					* duration - a [Duration](https://warcraft.wiki.gg/wiki/ScriptObject_DurationObject) object for the Castbar
 					--]]
 					if(self.CustomDelayText) then
-						self:CustomDelayText(duration)
+						self:CustomDelayText(durationObject)
 					else
 						self.Time:SetFormattedText('%.1f|cffff0000%s%.2f|r', duration, self.channeling and '-' or '+', self.delay)
 					end
@@ -503,7 +503,7 @@ local function onUpdate(self, elapsed)
 					* duration - a [Duration](https://warcraft.wiki.gg/wiki/ScriptObject_DurationObject) object for the Castbar
 					--]]
 					if(self.CustomTimeText) then
-						self:CustomTimeText(duration)
+						self:CustomTimeText(durationObject)
 					else
 						self.Time:SetFormattedText('%.1f', duration)
 					end
