@@ -185,6 +185,13 @@ local function ShouldShow(element, unit)
 	return element.__owner.unit == unit
 end
 
+local BROKEN_EMPOWER_SPELLS = {
+	[382614] = true, -- Dream Breath
+	[355936] = true, -- Dream Breath
+	[355941] = true, -- Dream Breath
+	[376788] = true, -- Dream Breath
+}
+
 local function CastStart(self, event, unit)
 	local element = self.Castbar
 	if(not (element.ShouldShow or ShouldShow) (element, unit)) then
@@ -200,7 +207,7 @@ local function CastStart(self, event, unit)
 		local isEmpowered
 		name, text, texture, startTime, endTime, isTradeSkill, notInterruptible, spellID, isEmpowered, _, castID = UnitChannelInfo(unit)
 
-		if(event == 'UNIT_SPELLCAST_EMPOWER_START' and castID == 382614) then
+		if(event == 'UNIT_SPELLCAST_EMPOWER_START' and BROKEN_EMPOWER_SPELLS[castID]) then
 			-- BUG: Dream Breath triggers this event twice with castID and spellID swapped
 			return
 		end
