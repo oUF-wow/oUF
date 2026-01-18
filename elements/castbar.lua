@@ -199,6 +199,12 @@ local function CastStart(self, event, unit)
 	else
 		local isEmpowered
 		name, text, texture, startTime, endTime, isTradeSkill, notInterruptible, spellID, isEmpowered, _, castID = UnitChannelInfo(unit)
+
+		if(event == 'UNIT_SPELLCAST_EMPOWER_START' and castID == 382614) then
+			-- BUG: Dream Breath triggers this event twice with castID and spellID swapped
+			return
+		end
+
 		if(isEmpowered) then
 			element.empowering = true
 			duration = UnitEmpoweredChannelDuration(unit)
