@@ -201,7 +201,9 @@ local function Path(self, ...)
 	* event - the event triggering the update (string)
 	* unit  - the unit accompanying the event (string)
 	--]]
-	(self.Health.Override or Update) (self, ...);
+	do
+		(self.Health.Override or Update) (self, ...)
+	end
 
 	ColorPath(self, ...)
 end
