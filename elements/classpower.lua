@@ -57,11 +57,26 @@ local SPELL_POWER_CHI = Enum.PowerType.Chi or 12
 local SPELL_POWER_ARCANE_CHARGES = Enum.PowerType.ArcaneCharges or 16
 local SPELL_POWER_ESSENCE = Enum.PowerType.Essence or 19
 
+local SPELL_DARK_HEART = Constants.UnitPowerSpellIDs.DARK_HEART_SPELL_ID or 1225789
+local SPELL_MAELSTROM_WEAPON = 344179
+local SPELL_MAELSTROM_WEAPON_TALENT = 187880
+local SPELL_SHRED = 5221
+local SPELL_SILENCE_THE_WHISPERS = Constants.UnitPowerSpellIDs.SILENCE_THE_WHISPERS_SPELL_ID or 1227702
+local SPELL_VOID_METAMORPHOSIS = Constants.UnitPowerSpellIDs.VOID_METAMORPHOSIS_SPELL_ID or 1217607
+
 local ClassPowerEnable, ClassPowerDisable, RefreshEvents, GetPowerUpdaters
 
 -- holds class-specific information for enablement toggles
 local classPowerID, classPowerType, classAuraID
 local requireSpec, requirePower, requireSpells
+
+local function GetGenericPower(unit)
+	return UnitPower(unit, classPowerID)
+end
+
+local function GetGenericPowerMax(unit)
+	return UnitPowerMax(unit, classPowerID)
+end
 
 local function GetComboPoints(unit)
 	return UnitPower(unit, SPELL_POWER_COMBO_POINTS), GetUnitChargedPowerPoints(unit)
@@ -85,19 +100,19 @@ local function GetMaelstromWeapon()
 end
 
 local function GetMaelstromWeaponMax()
-	return C_Spell.GetSpellMaxCumulativeAuraApplications(344179)
+	return C_Spell.GetSpellMaxCumulativeAuraApplications(SPELL_MAELSTROM_WEAPON)
 end
 
 local function GetSoulFragments()
-	if C_UnitAuras.GetPlayerAuraBySpellID(Constants.UnitPowerSpellIDs.VOID_METAMORPHOSIS_SPELL_ID) then
-		local aura = C_UnitAuras.GetPlayerAuraBySpellID(Constants.UnitPowerSpellIDs.SILENCE_THE_WHISPERS_SPELL_ID)
+	if C_UnitAuras.GetPlayerAuraBySpellID(SPELL_VOID_METAMORPHOSIS) then
+		local aura = C_UnitAuras.GetPlayerAuraBySpellID(SPELL_SILENCE_THE_WHISPERS)
 		if aura then
 			return aura.applications / GetCollapsingStarCost()
 		end
 	else
-		local aura = C_UnitAuras.GetPlayerAuraBySpellID(Constants.UnitPowerSpellIDs.DARK_HEART_SPELL_ID)
+		local aura = C_UnitAuras.GetPlayerAuraBySpellID(SPELL_DARK_HEART)
 		if aura then
-			return aura.applications / C_Spell.GetSpellMaxCumulativeAuraApplications(Constants.UnitPowerSpellIDs.DARK_HEART_SPELL_ID)
+			return aura.applications / C_Spell.GetSpellMaxCumulativeAuraApplications(SPELL_DARK_HEART)
 		end
 	end
 
@@ -107,15 +122,6 @@ end
 local function GetSoulFragmentsMax()
 	return 1
 end
-
-local function GetGenericPower(unit)
-	return UnitPower(unit, classPowerID)
-end
-
-local function GetGenericPowerMax(unit)
-	return UnitPowerMax(unit, classPowerID)
-end
-
 
 if(playerClass == 'MONK') then
 	classPowerID = SPELL_POWER_CHI
@@ -150,7 +156,7 @@ elseif(playerClass == 'ROGUE' or playerClass == 'DRUID') then
 
 	if(playerClass == 'DRUID') then
 		requirePower = SPELL_POWER_ENERGY
-		requireSpells = 5221 -- Shred
+		requireSpells = SPELL_SHRED
 	end
 
 	GetPowerUpdaters = function()
@@ -172,16 +178,16 @@ elseif(playerClass == 'EVOKER') then
 		return GetGenericPower, GetGenericPowerMax
 	end
 elseif(playerClass == 'SHAMAN') then
-	requireSpells = 187880 -- Maelstrom Weapon talent
+	requireSpells = SPELL_MAELSTROM_WEAPON_TALENT
+	classAuraID = SPELL_MAELSTROM_WEAPON
 	requireSpec = SPEC_SHAMAN_ENCHANCEMENT
-	classAuraID = 344179 -- Maelstrom Weapon buff
 
 	GetPowerUpdaters = function()
 		return GetMaelstromWeapon, GetMaelstromWeaponMax
 	end
 elseif(playerClass == 'DEMONHUNTER') then
 	requireSpec = SPEC_DEMONHUNTER_DEVOURER
-	classAuraID = Constants.UnitPowerSpellIDs.VOID_METAMORPHOSIS_SPELL_ID
+	classAuraID = SPELL_VOID_METAMORPHOSIS
 
 	GetPowerUpdaters = function()
 		return GetSoulFragments, GetSoulFragmentsMax
