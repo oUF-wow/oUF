@@ -228,11 +228,8 @@ colors.power[Enum.PowerType.Essence or 19] = colors.power.ESSENCE
 colors.power.ALTERNATE = oUF:CreateColor(0.7, 0.7, 0.6)
 colors.power[Enum.PowerType.Alternate or 10] = colors.power.ALTERNATE
 
--- maelstrom weapon, since soul fragments were hacked in by blizz, might as well do the same with MW
--- there's no official colour, use the average colour of the MW icon instead
--- colors.power.MAELSTROM_WEAPON = oUF:CreateColor(88, 79, 151)
--- there's no official colour, reuse maelstrom colour
-colors.power.MAELSTROM_WEAPON = oUF:CreateColor(0, 143, 255)
+-- there's no official colour, this colour is a mix of maelstrom colour and the MW icon
+colors.power.MAELSTROM_WEAPON = oUF:CreateColor(44, 111, 203)
 
 for i = 0, 3 do
 	colors.threat[i] = oUF:CreateColor(GetThreatStatusColor(i))
