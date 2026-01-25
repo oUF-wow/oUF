@@ -1,6 +1,9 @@
 name: Lint
 
-on: pull_request
+on:
+  pull_request:
+    paths:
+      - '**.lua'
 
 jobs:
   lint:
@@ -8,6 +11,7 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/Checkout@v6
+
     - name: Run luacheck
       uses: nebularg/actions-luacheck@v1
       with:
