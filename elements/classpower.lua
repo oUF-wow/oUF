@@ -64,6 +64,9 @@ local SPELL_SHRED = 5221
 local SPELL_SILENCE_THE_WHISPERS = Constants.UnitPowerSpellIDs.SILENCE_THE_WHISPERS_SPELL_ID or 1227702
 local SPELL_VOID_METAMORPHOSIS = Constants.UnitPowerSpellIDs.VOID_METAMORPHOSIS_SPELL_ID or 1217607
 
+local SOUL_FRAGMENTS_NO_META_INDEX = 1
+local SOUL_FRAGMENTS_META_INDEX = 2
+
 local ClassPowerEnable, ClassPowerDisable, RefreshEvents, GetPowerUpdaters
 
 -- holds class-specific information for enablement toggles
@@ -108,7 +111,7 @@ local function GetMaelstromWeaponMax()
 end
 
 local function GetSoulFragments()
-	if C_UnitAuras.GetPlayerAuraBySpellID(SPELL_VOID_METAMORPHOSIS) then
+	if(C_UnitAuras.GetPlayerAuraBySpellID(SPELL_VOID_METAMORPHOSIS)) then
 		local auraInfo = C_UnitAuras.GetPlayerAuraBySpellID(SPELL_SILENCE_THE_WHISPERS)
 		if(auraInfo) then
 			return auraInfo.applications / GetCollapsingStarCost()
@@ -130,7 +133,11 @@ end
 local function GetSoulFragmentsColor(element, powerType)
 	local color = element.__owner.colors.power[powerType]
 	if(color) then
-		return color[1]
+		if(C_UnitAuras.GetPlayerAuraBySpellID(SPELL_VOID_METAMORPHOSIS)) then
+			return color[SOUL_FRAGMENTS_META_INDEX]
+		else
+			return color[SOUL_FRAGMENTS_NO_META_INDEX]
+		end
 	end
 end
 
@@ -279,6 +286,16 @@ local function Update(self, event, unit, powerType)
 			end
 
 			element.__max = max
+
+			--[[ Override: ClassPower:UpdateColor(powerType)
+			Used to completely override the internal function for updating the widgets' colors.
+
+			* self      - the ClassPower element
+			* powerType - the active power type (string)
+			--]]
+			do
+				(element.UpdateColor or UpdateColor) (element, powerType)
+			end
 		end
 	end
 	--[[ Callback: ClassPower:PostUpdate(cur, max, hasMaxChanged, powerType)
