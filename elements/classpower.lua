@@ -105,14 +105,14 @@ end
 
 local function GetSoulFragments()
 	if C_UnitAuras.GetPlayerAuraBySpellID(SPELL_VOID_METAMORPHOSIS) then
-		local aura = C_UnitAuras.GetPlayerAuraBySpellID(SPELL_SILENCE_THE_WHISPERS)
-		if aura then
-			return aura.applications / GetCollapsingStarCost()
+		local auraInfo = C_UnitAuras.GetPlayerAuraBySpellID(SPELL_SILENCE_THE_WHISPERS)
+		if(auraInfo) then
+			return auraInfo.applications / GetCollapsingStarCost()
 		end
 	else
-		local aura = C_UnitAuras.GetPlayerAuraBySpellID(SPELL_DARK_HEART)
-		if aura then
-			return aura.applications / C_Spell.GetSpellMaxCumulativeAuraApplications(SPELL_DARK_HEART)
+		local auraInfo = C_UnitAuras.GetPlayerAuraBySpellID(SPELL_DARK_HEART)
+		if(auraInfo) then
+			return auraInfo.applications / C_Spell.GetSpellMaxCumulativeAuraApplications(SPELL_DARK_HEART)
 		end
 	end
 
