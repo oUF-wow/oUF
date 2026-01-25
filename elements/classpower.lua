@@ -78,6 +78,10 @@ local function GetGenericPowerMax(unit)
 	return UnitPowerMax(unit, classPowerID)
 end
 
+local function GetGenericPowerColor(element, powerType)
+	return element.__owner.colors.power[powerType]
+end
+
 local function GetComboPoints(unit)
 	return UnitPower(unit, SPELL_POWER_COMBO_POINTS), GetUnitChargedPowerPoints(unit)
 end
@@ -123,20 +127,27 @@ local function GetSoulFragmentsMax()
 	return 1
 end
 
+local function GetSoulFragmentsColor(element, powerType)
+	local color = element.__owner.colors.power[powerType]
+	if(color) then
+		return color[1]
+	end
+end
+
 if(playerClass == 'MONK') then
 	classPowerID = SPELL_POWER_CHI
 	classPowerType = 'CHI'
 	requireSpec = SPEC_MONK_WINDWALKER
 
 	GetPowerUpdaters = function()
-		return GetGenericPower, GetGenericPowerMax
+		return GetGenericPower, GetGenericPowerMax, GetGenericPowerColor
 	end
 elseif(playerClass == 'PALADIN') then
 	classPowerID = SPELL_POWER_HOLY_POWER
 	classPowerType = 'HOLY_POWER'
 
 	GetPowerUpdaters = function()
-		return GetGenericPower, GetGenericPowerMax
+		return GetGenericPower, GetGenericPowerMax, GetGenericPowerColor
 	end
 elseif(playerClass == 'WARLOCK') then
 	classPowerID = SPELL_POWER_SOUL_SHARDS
@@ -148,7 +159,7 @@ elseif(playerClass == 'WARLOCK') then
 			cur = GetSoulShardsDestro
 		end
 
-		return cur, GetGenericPowerMax
+		return cur, GetGenericPowerMax, GetGenericPowerColor
 	end
 elseif(playerClass == 'ROGUE' or playerClass == 'DRUID') then
 	classPowerID = SPELL_POWER_COMBO_POINTS
@@ -160,7 +171,7 @@ elseif(playerClass == 'ROGUE' or playerClass == 'DRUID') then
 	end
 
 	GetPowerUpdaters = function()
-		return GetComboPoints, GetComboPointsMax
+		return GetComboPoints, GetComboPointsMax, GetGenericPowerColor
 	end
 elseif(playerClass == 'MAGE') then
 	classPowerID = SPELL_POWER_ARCANE_CHARGES
@@ -168,37 +179,39 @@ elseif(playerClass == 'MAGE') then
 	requireSpec = SPEC_MAGE_ARCANE
 
 	GetPowerUpdaters = function()
-		return GetGenericPower, GetGenericPowerMax
+		return GetGenericPower, GetGenericPowerMax, GetGenericPowerColor
 	end
 elseif(playerClass == 'EVOKER') then
 	classPowerID = SPELL_POWER_ESSENCE
 	classPowerType = 'ESSENCE'
 
 	GetPowerUpdaters = function()
-		return GetGenericPower, GetGenericPowerMax
+		return GetGenericPower, GetGenericPowerMax, GetGenericPowerColor
 	end
 elseif(playerClass == 'SHAMAN') then
 	requireSpells = SPELL_MAELSTROM_WEAPON_TALENT
 	classAuraID = SPELL_MAELSTROM_WEAPON
 	requireSpec = SPEC_SHAMAN_ENCHANCEMENT
+	classPowerType = 'MAELSTROM_WEAPON'
 
 	GetPowerUpdaters = function()
-		return GetMaelstromWeapon, GetMaelstromWeaponMax
+		return GetMaelstromWeapon, GetMaelstromWeaponMax, GetGenericPowerColor
 	end
 elseif(playerClass == 'DEMONHUNTER') then
 	requireSpec = SPEC_DEMONHUNTER_DEVOURER
 	classAuraID = SPELL_VOID_METAMORPHOSIS
+	classPowerType = 'SOUL_FRAGMENTS'
 
 	GetPowerUpdaters = function()
-		return GetSoulFragments, GetSoulFragmentsMax
+		return GetSoulFragments, GetSoulFragmentsMax, GetSoulFragmentsColor
 	end
 end
 
 -- jic
-local GetPower, GetPowerMax = GetGenericPower, GetGenericPowerMax
+local GetPower, GetPowerMax, GetPowerColor = GetGenericPower, GetGenericPowerMax, GetGenericPowerColor
 
 local function UpdateColor(element, powerType)
-	local color = element.__owner.colors.power[powerType]
+	local color = GetPowerColor(element, powerType)
 	if(color) then
 		for i = 1, #element do
 			local bar = element[i]
@@ -346,9 +359,9 @@ local function Visibility(self, event, unit)
 
 	if(shouldEnable) then
 		if(unit == 'vehicle') then
-			GetPower, GetPowerMax = GetComboPoints, GetComboPointsMax
+			GetPower, GetPowerMax, GetPowerColor = GetComboPoints, GetComboPointsMax, GetGenericPowerColor
 		else
-			GetPower, GetPowerMax = GetPowerUpdaters()
+			GetPower, GetPowerMax, GetPowerColor = GetPowerUpdaters()
 		end
 
 		--[[ Override: ClassPower:UpdateColor(powerType)
