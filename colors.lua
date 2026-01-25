@@ -228,9 +228,6 @@ colors.power[Enum.PowerType.Essence or 19] = colors.power.ESSENCE
 colors.power.ALTERNATE = oUF:CreateColor(0.7, 0.7, 0.6)
 colors.power[Enum.PowerType.Alternate or 10] = colors.power.ALTERNATE
 
--- there's no official colour, this colour is a mix of maelstrom colour and the MW icon
-colors.power.MAELSTROM_WEAPON = oUF:CreateColor(44, 111, 203)
-
 for i = 0, 3 do
 	colors.threat[i] = oUF:CreateColor(GetThreatStatusColor(i))
 end

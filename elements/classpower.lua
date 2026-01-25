@@ -199,7 +199,7 @@ elseif(playerClass == 'SHAMAN') then
 	requireSpells = SPELL_MAELSTROM_WEAPON_TALENT
 	classAuraID = SPELL_MAELSTROM_WEAPON
 	requireSpec = SPEC_SHAMAN_ENCHANCEMENT
-	classPowerType = 'MAELSTROM_WEAPON'
+	classPowerType = 'MAELSTROM'
 
 	GetPowerUpdaters = function()
 		return GetMaelstromWeapon, GetMaelstromWeaponMax, GetGenericPowerColor
