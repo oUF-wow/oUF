@@ -245,13 +245,14 @@ local function Update(self, event, unit, powerType)
 
 	local element = self.ClassPower
 
-	--[[ Callback: ClassPower:PreUpdate(event)
+	--[[ Callback: ClassPower:PreUpdate(unit)
 	Called before the element has been updated.
 
-	* self  - the ClassPower element
+	* self - the ClassPower element
+	* unit - the unit for which the update has been triggered (string)
 	]]
 	if(element.PreUpdate) then
-		element:PreUpdate()
+		element:PreUpdate(unit)
 	end
 
 	local cur, max, chargedPoints, hasMaxChanged
