@@ -362,7 +362,6 @@ local function Visibility(self, event, unit)
 		shouldRegisterAuraEvent = shouldEnable == true
 	elseif(classPowerID) then
 		if(not requireSpec or requireSpec == C_SpecializationInfo.GetSpecialization()) then
-			-- use 'player' instead of unit because 'SPELLS_CHANGED' is a unitless event
 			if(not requirePower or requirePower == UnitPowerType('player')) then
 				if(not requireSpells or AnySpellKnown(requireSpells)) then
 					shouldEnable = true
@@ -421,7 +420,11 @@ local function Visibility(self, event, unit)
 	end
 end
 
-local function VisibilityPath(self, ...)
+local function VisibilityPath(self, event, ...)
+	if(event == 'TRAIT_CONFIG_UPDATED') then
+		if(C_ClassTalents.GetActiveConfigID() ~= ...) then return end
+	end
+
 	--[[ Override: ClassPower.OverrideVisibility(self, event, unit)
 	Used to completely override the internal visibility function.
 
@@ -429,7 +432,7 @@ local function VisibilityPath(self, ...)
 	* event - the event triggering the update (string)
 	* unit  - the unit accompanying the event (string)
 	--]]
-	return (self.ClassPower.OverrideVisibility or Visibility) (self, ...)
+	return (self.ClassPower.OverrideVisibility or Visibility) (self, event, ...)
 end
 
 local function ForceUpdate(element)
@@ -497,8 +500,8 @@ local function Enable(self, unit)
 		element.ForceUpdate = ForceUpdate
 
 		if(requireSpec or requireSpells) then
-			self:RegisterEvent('PLAYER_TALENT_UPDATE', VisibilityPath, true)
-			self:RegisterEvent('SPELLS_CHANGED', VisibilityPath, true)
+			self:RegisterEvent('PLAYER_LEVE_UP', VisibilityPath, true)
+			self:RegisterEvent('TRAIT_CONFIG_UPDATED', VisibilityPath, true)
 		end
 
 		if(requirePower) then
@@ -527,9 +530,9 @@ local function Disable(self)
 	if(self.ClassPower) then
 		ClassPowerDisable(self)
 
-		self:UnregisterEvent('PLAYER_TALENT_UPDATE', VisibilityPath)
+		self:UnregisterEvent('PLAYER_LEVE_UP', Visibility)
+		self:UnregisterEvent('TRAIT_CONFIG_UPDATED', VisibilityPath)
 		self:UnregisterEvent('UNIT_DISPLAYPOWER', VisibilityPath)
-		self:UnregisterEvent('SPELLS_CHANGED', Visibility)
 	end
 end
 
