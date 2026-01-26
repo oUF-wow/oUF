@@ -265,28 +265,12 @@ local function Update(self, event, unit, powerType)
 		cur, chargedPoints = GetPower(unit)
 		max = GetPowerMax(unit)
 
-		local hasCurChanged = cur ~= element.__cur
-		if(hasCurChanged) then
-			local numActive = cur + 0.9
-			for i = 1, max do
-				if(i > numActive) then
-					element[i]:Hide()
-					element[i]:SetValue(0)
-				else
-					element[i]:Show()
-					element[i]:SetValue(cur - i + 1)
-				end
-			end
-
-			element.__cur = cur
-		end
-
 		hasMaxChanged = max ~= element.__max
 		if(hasMaxChanged) then
-			local oldMax = element.__max
-			if(max < oldMax) then
-				for i = max + 1, oldMax do
-					element[i]:Hide()
+			for i = 1, #element do
+				element[i]:SetShown(i <= max)
+
+				if(i > max) then
 					element[i]:SetValue(0)
 				end
 			end
@@ -302,6 +286,20 @@ local function Update(self, event, unit, powerType)
 			do
 				(element.UpdateColor or UpdateColor) (element, powerType)
 			end
+		end
+
+		local hasCurChanged = cur ~= element.__cur
+		if(hasCurChanged) then
+			local numActive = cur + 0.9
+			for i = 1, max do
+				if(i > numActive) then
+					element[i]:SetValue(0)
+				else
+					element[i]:SetValue(cur - i + 1)
+				end
+			end
+
+			element.__cur = cur
 		end
 	end
 	--[[ Callback: ClassPower:PostUpdate(cur, max, hasMaxChanged, powerType)
@@ -489,6 +487,7 @@ do
 			element[i]:Hide()
 		end
 
+		element.__max = 0
 		element.__isEnabled = false
 		Path(self, 'ClassPowerDisable', 'player', classPowerType)
 	end
@@ -498,7 +497,7 @@ local function Enable(self, unit)
 	local element = self.ClassPower
 	if(element and UnitIsUnit(unit, 'player')) then
 		element.__owner = self
-		element.__max = #element
+		element.__max = 0
 		element.ForceUpdate = ForceUpdate
 
 		if(requireSpec or requireSpells) then
