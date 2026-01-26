@@ -325,7 +325,7 @@ local function Path(self, ...)
 	return (self.ClassPower.Override or Update) (self, ...)
 end
 
--- this function is needed in case we need to track multiple talents
+-- this function is needed in case we need to track multiple spells/talents
 local function anySpellKnown(requireSpellss)
 	if(type(requireSpellss) == 'table') then
 		for _, spellID in next, requireSpellss do
@@ -391,7 +391,7 @@ local function Visibility(self, event, unit)
 	end
 
 	if(shouldEnable and not isEnabled) then
-		ClassPowerEnable(self, shouldRegisterAuraEvent)
+		ClassPowerEnable(self)
 
 		--[[ Callback: ClassPower:PostVisibility(isVisible)
 		Called after the element's visibility has been changed.
