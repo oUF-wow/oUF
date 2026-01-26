@@ -98,7 +98,7 @@ local function GetSoulShardsDestro(unit)
 end
 
 local function GetMaelstromWeapon()
-	local auraInfo = C_UnitAuras.GetPlayerAuraBySpellID(classAuraID)
+	local auraInfo = C_UnitAuras.GetPlayerAuraBySpellID(SPELL_MAELSTROM_WEAPON)
 	if(auraInfo) then
 		return auraInfo.applications
 	else
