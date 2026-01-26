@@ -326,7 +326,7 @@ local function Path(self, ...)
 end
 
 -- this function is needed in case we need to track multiple spells/talents
-local function anySpellKnown(requireSpellss)
+local function AnySpellKnown(requireSpellss)
 	if(type(requireSpellss) == 'table') then
 		for _, spellID in next, requireSpellss do
 			if C_SpellBook.IsSpellKnown(spellID) then
@@ -349,7 +349,7 @@ local function Visibility(self, event, unit)
 		unit = 'vehicle'
 	elseif(classAuraID) then
 		if(not requireSpec or requireSpec == C_SpecializationInfo.GetSpecialization()) then
-			if(not requireSpells or anySpellKnown(requireSpells)) then
+			if(not requireSpells or AnySpellKnown(requireSpells)) then
 				shouldEnable = true
 				unit = 'player'
 			end
@@ -360,7 +360,7 @@ local function Visibility(self, event, unit)
 		if(not requireSpec or requireSpec == C_SpecializationInfo.GetSpecialization()) then
 			-- use 'player' instead of unit because 'SPELLS_CHANGED' is a unitless event
 			if(not requirePower or requirePower == UnitPowerType('player')) then
-				if(not requireSpells or anySpellKnown(requireSpells)) then
+				if(not requireSpells or AnySpellKnown(requireSpells)) then
 					shouldEnable = true
 					unit = 'player'
 				end
