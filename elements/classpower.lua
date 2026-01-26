@@ -13,12 +13,14 @@ A default texture will be applied if the sub-widgets are StatusBars and don't ha
 If the sub-widgets are StatusBars, their minimum and maximum values will be set to 0 and 1 respectively.
 
 Supported class powers:
-  - All     - Combo Points
-  - Evoker  - Essence
-  - Mage    - Arcane Charges
-  - Monk    - Chi Orbs
-  - Paladin - Holy Power
-  - Warlock - Soul Shards
+  - All          - Combo Points
+  - Demon Hunter - Soul Fragments
+  - Evoker       - Essence
+  - Mage         - Arcane Charges
+  - Monk         - Chi Orbs
+  - Paladin      - Holy Power
+  - Shaman       - Maelstrom Weapon
+  - Warlock      - Soul Shards
 
 ## Examples
 
