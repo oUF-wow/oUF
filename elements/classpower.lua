@@ -257,6 +257,7 @@ local function Update(self, event, unit, powerType)
 
 	local cur, max, chargedPoints, hasMaxChanged
 	if(event ~= 'ClassPowerDisable') then
+		powerType = event == 'UNIT_AURA' and classPowerType or powerType
 		cur, chargedPoints = GetPower(unit)
 		max = GetPowerMax(unit)
 
