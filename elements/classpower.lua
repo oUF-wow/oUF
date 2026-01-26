@@ -502,8 +502,8 @@ local function Enable(self, unit)
 		element.ForceUpdate = ForceUpdate
 
 		if(requireSpec or requireSpells) then
-			self:RegisterEvent('PLAYER_LEVE_UP', VisibilityPath, true)
 			self:RegisterEvent('TRAIT_CONFIG_UPDATED', VisibilityPath, true)
+			self:RegisterEvent('PLAYER_LEVEL_UP', VisibilityPath, true)
 		end
 
 		if(requirePower) then
@@ -532,9 +532,9 @@ local function Disable(self)
 	if(self.ClassPower) then
 		ClassPowerDisable(self)
 
-		self:UnregisterEvent('PLAYER_LEVE_UP', Visibility)
 		self:UnregisterEvent('TRAIT_CONFIG_UPDATED', VisibilityPath)
 		self:UnregisterEvent('UNIT_DISPLAYPOWER', VisibilityPath)
+		self:UnregisterEvent('PLAYER_LEVEL_UP', Visibility)
 	end
 end
 
