@@ -257,7 +257,9 @@ local function Update(self, event, unit, powerType)
 
 	local cur, max, chargedPoints, hasMaxChanged
 	if(event ~= 'ClassPowerDisable') then
-		powerType = event == 'UNIT_AURA' and classPowerType or powerType
+		-- UNIT_POWER_POINT_CHARGE doesn't provide a power type
+		-- in case of UNIT_AURA powerType is its payload, we don't want that
+		powerType = event == 'UNIT_AURA' and classPowerType or powerType or classPowerType
 		cur, chargedPoints = GetPower(unit)
 		max = GetPowerMax(unit)
 
