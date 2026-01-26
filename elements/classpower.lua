@@ -430,7 +430,7 @@ local function VisibilityPath(self, event, ...)
 
 	* self  - the parent object
 	* event - the event triggering the update (string)
-	* unit  - the unit accompanying the event (string)
+	* ...   - the arguments accompanying the event
 	--]]
 	return (self.ClassPower.OverrideVisibility or Visibility) (self, event, ...)
 end
