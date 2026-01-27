@@ -76,12 +76,12 @@ local GetPower, GetPowerMax, GetPowerColor
 local classPowerID, classPowerType, classAuraID
 local requireSpec, requirePower, requireSpell
 
-local function GetGenericPower(...)
-	return UnitPower(...)
-end
+local function GetGenericPower(unit)
+	return UnitPower(unit, classPowerID)
+	end
 
-local function GetGenericPowerMax(...)
-	return UnitPowerMax(...)
+local function GetGenericPowerMax(unit)
+	return UnitPowerMax(unit, classPowerID)
 end
 
 local function GetGenericPowerColor(element, powerType)
@@ -89,7 +89,11 @@ local function GetGenericPowerColor(element, powerType)
 end
 
 local function GetComboPoints(unit)
-	return UnitPower(unit, SPELL_POWER_COMBO_POINTS), GetUnitChargedPowerPoints(unit)
+	return UnitPower(unit, POWER_TYPE_COMBO_POINTS), GetUnitChargedPowerPoints(unit)
+end
+
+local function GetComboPointsMax(unit)
+	return UnitPowerMax(unit, POWER_TYPE_COMBO_POINTS)
 end
 
 if(playerClass == 'DEMONHUNTER') then
@@ -279,8 +283,8 @@ local function Update(self, event, unit, powerType)
 		-- UNIT_POWER_POINT_CHARGE doesn't provide a power type
 		-- in case of UNIT_AURA powerType is its payload, we don't want that
 		powerType = event == 'UNIT_AURA' and classPowerType or powerType or classPowerType
-		cur, chargedPoints = GetPower(unit, powerType)
-		max = GetPowerMax(unit, powerType)
+		cur, chargedPoints = GetPower(unit)
+		max = GetPowerMax(unit)
 
 		hasMaxChanged = max ~= element.__max
 		if(hasMaxChanged) then
@@ -371,7 +375,7 @@ local function Visibility(self, event, unit)
 
 	if(shouldEnable) then
 		if(unit == 'vehicle') then
-			GetPower, GetPowerMax, GetPowerColor = GetComboPoints, GetGenericPowerMax, GetGenericPowerColor
+			GetPower, GetPowerMax, GetPowerColor = GetComboPoints, GetComboPointsMax, GetGenericPowerColor
 		else
 			GetPower, GetPowerMax, GetPowerColor = GetPowerUpdaters()
 		end
