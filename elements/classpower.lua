@@ -239,6 +239,25 @@ local function UpdateColor(element, powerType)
 	end
 end
 
+local function ColorPath(self)
+	local element = self.ClassPower
+
+	local powerType = classPowerType
+	if(UnitHasVehicleUI('player')) then
+		powerType = 'COMBO_POINTS'
+	end
+
+	--[[ Override: ClassPower:UpdateColor(powerType)
+	Used to completely override the internal function for updating the widgets' colors.
+
+	* self      - the ClassPower element
+	* powerType - the active power type (string)
+	--]]
+	do
+		(element.UpdateColor or UpdateColor) (element, powerType)
+	end
+end
+
 local function Update(self, event, unit, powerType)
 	if(not (unit and (UnitIsUnit(unit, 'player') and (not powerType or powerType == classPowerType or event == 'UNIT_AURA')
 	or unit == 'vehicle' and powerType == 'COMBO_POINTS'))) then
@@ -276,16 +295,6 @@ local function Update(self, event, unit, powerType)
 			end
 
 			element.__max = max
-
-			--[[ Override: ClassPower:UpdateColor(powerType)
-			Used to completely override the internal function for updating the widgets' colors.
-
-			* self      - the ClassPower element
-			* powerType - the active power type (string)
-			--]]
-			do
-				(element.UpdateColor or UpdateColor) (element, powerType)
-			end
 		end
 
 		local hasCurChanged = cur ~= element.__cur
@@ -384,13 +393,7 @@ local function Visibility(self, event, unit)
 			GetPower, GetPowerMax, GetPowerColor = GetPowerUpdaters()
 		end
 
-		--[[ Override: ClassPower:UpdateColor(powerType)
-		Used to completely override the internal function for updating the widgets' colors.
-
-		* self      - the ClassPower element
-		* powerType - the active power type (string)
-		--]]
-		(element.UpdateColor or UpdateColor) (element, powerType)
+		ColorPath(self)
 	end
 
 	if(shouldEnable and not isEnabled) then
@@ -467,6 +470,8 @@ do
 			self:RegisterEvent('UNIT_POWER_POINT_CHARGE', Path)
 		end
 
+		self:RegisterEvent('SPELLS_CHANGED', ColorPath, true)
+
 		self.ClassPower.__isEnabled = true
 
 		if(UnitHasVehicleUI('player')) then
@@ -481,6 +486,7 @@ do
 		self:UnregisterEvent('UNIT_POWER_UPDATE', Path)
 		self:UnregisterEvent('UNIT_MAXPOWER', Path)
 		self:UnregisterEvent('UNIT_POWER_POINT_CHARGE', Path)
+		self:UnregisterEvent('SPELLS_CHANGED', ColorPath)
 
 		local element = self.ClassPower
 		for i = 1, #element do
