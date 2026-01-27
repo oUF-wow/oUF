@@ -70,17 +70,18 @@ local SOUL_FRAGMENTS_NO_META_INDEX = 1
 local SOUL_FRAGMENTS_META_INDEX = 2
 
 local ClassPowerEnable, ClassPowerDisable, RefreshEvents, GetPowerUpdaters
+local GetPower, GetPowerMax, GetPowerColor
 
 -- holds class-specific information for enablement toggles
 local classPowerID, classPowerType, classAuraID
-local requireSpec, requirePower, requireSpells
+local requireSpec, requirePower, requireSpell
 
-local function GetGenericPower(unit)
-	return UnitPower(unit, classPowerID)
+local function GetGenericPower(...)
+	return UnitPower(...)
 end
 
-local function GetGenericPowerMax(unit)
-	return UnitPowerMax(unit, classPowerID)
+local function GetGenericPowerMax(...)
+	return UnitPowerMax(...)
 end
 
 local function GetGenericPowerColor(element, powerType)
@@ -91,59 +92,71 @@ local function GetComboPoints(unit)
 	return UnitPower(unit, SPELL_POWER_COMBO_POINTS), GetUnitChargedPowerPoints(unit)
 end
 
-local function GetComboPointsMax(unit)
-	return UnitPowerMax(unit, SPELL_POWER_COMBO_POINTS)
-end
+if(playerClass == 'DEMONHUNTER') then
+	requireSpec = SPEC_DEMONHUNTER_DEVOURER
+	classAuraID = SPELL_VOID_METAMORPHOSIS
+	classPowerType = 'SOUL_FRAGMENTS'
 
-local function GetSoulShardsDestro(unit)
-	return UnitPower(unit, SPELL_POWER_SOUL_SHARDS, true) / UnitPowerDisplayMod(SPELL_POWER_SOUL_SHARDS)
-end
+	local function GetSoulFragments()
+		if(C_UnitAuras.GetPlayerAuraBySpellID(SPELL_VOID_METAMORPHOSIS)) then
+			local auraInfo = C_UnitAuras.GetPlayerAuraBySpellID(SPELL_SILENCE_THE_WHISPERS)
+			if(auraInfo) then
+				return auraInfo.applications / GetCollapsingStarCost()
+			end
+		else
+			local auraInfo = C_UnitAuras.GetPlayerAuraBySpellID(SPELL_DARK_HEART)
+			if(auraInfo) then
+				return auraInfo.applications / C_Spell.GetSpellMaxCumulativeAuraApplications(SPELL_DARK_HEART)
+			end
+		end
 
-local function GetMaelstromWeapon()
-	local auraInfo = C_UnitAuras.GetPlayerAuraBySpellID(SPELL_MAELSTROM_WEAPON)
-	if(auraInfo) then
-		return auraInfo.applications
-	else
 		return 0
 	end
-end
 
-local function GetMaelstromWeaponMax()
-	return C_Spell.GetSpellMaxCumulativeAuraApplications(SPELL_MAELSTROM_WEAPON)
-end
-
-local function GetSoulFragments()
-	if(C_UnitAuras.GetPlayerAuraBySpellID(SPELL_VOID_METAMORPHOSIS)) then
-		local auraInfo = C_UnitAuras.GetPlayerAuraBySpellID(SPELL_SILENCE_THE_WHISPERS)
-		if(auraInfo) then
-			return auraInfo.applications / GetCollapsingStarCost()
-		end
-	else
-		local auraInfo = C_UnitAuras.GetPlayerAuraBySpellID(SPELL_DARK_HEART)
-		if(auraInfo) then
-			return auraInfo.applications / C_Spell.GetSpellMaxCumulativeAuraApplications(SPELL_DARK_HEART)
-		end
+	local function GetSoulFragmentsMax()
+		-- we use normalised cur so that there's only 1 bar instead of 30-50
+		return 1
 	end
 
-	return 0
-end
+	local function GetSoulFragmentsColor(element)
+		local color = element.__owner.colors.power[classPowerType]
+		if(color) then
+			if(C_UnitAuras.GetPlayerAuraBySpellID(SPELL_VOID_METAMORPHOSIS)) then
+				return color[SOUL_FRAGMENTS_META_INDEX]
+			end
 
-local function GetSoulFragmentsMax()
-	return 1
-end
-
-local function GetSoulFragmentsColor(element, powerType)
-	local color = element.__owner.colors.power[powerType]
-	if(color) then
-		if(C_UnitAuras.GetPlayerAuraBySpellID(SPELL_VOID_METAMORPHOSIS)) then
-			return color[SOUL_FRAGMENTS_META_INDEX]
-		else
 			return color[SOUL_FRAGMENTS_NO_META_INDEX]
 		end
 	end
-end
 
-if(playerClass == 'MONK') then
+	GetPowerUpdaters = function()
+		return GetSoulFragments, GetSoulFragmentsMax, GetSoulFragmentsColor
+	end
+elseif(playerClass == 'DRUID') then
+	classPowerID = SPELL_POWER_COMBO_POINTS
+	classPowerType = 'COMBO_POINTS'
+	requirePower = SPELL_POWER_ENERGY
+	requireSpell = SPELL_SHRED
+
+	GetPowerUpdaters = function()
+		return GetComboPoints, GetGenericPowerMax, GetGenericPowerColor
+	end
+elseif(playerClass == 'EVOKER') then
+	classPowerID = SPELL_POWER_ESSENCE
+	classPowerType = 'ESSENCE'
+
+	GetPowerUpdaters = function()
+		return GetGenericPower, GetGenericPowerMax, GetGenericPowerColor
+	end
+elseif(playerClass == 'MAGE') then
+	classPowerID = SPELL_POWER_ARCANE_CHARGES
+	classPowerType = 'ARCANE_CHARGES'
+	requireSpec = SPEC_MAGE_ARCANE
+
+	GetPowerUpdaters = function()
+		return GetGenericPower, GetGenericPowerMax, GetGenericPowerColor
+	end
+elseif(playerClass == 'MONK') then
 	classPowerID = SPELL_POWER_CHI
 	classPowerType = 'CHI'
 	requireSpec = SPEC_MONK_WINDWALKER
@@ -158,66 +171,51 @@ elseif(playerClass == 'PALADIN') then
 	GetPowerUpdaters = function()
 		return GetGenericPower, GetGenericPowerMax, GetGenericPowerColor
 	end
-elseif(playerClass == 'WARLOCK') then
-	classPowerID = SPELL_POWER_SOUL_SHARDS
-	classPowerType = 'SOUL_SHARDS'
-
-	GetPowerUpdaters = function()
-		local cur = GetGenericPower
-		if(C_SpecializationInfo.GetSpecialization() == SPEC_WARLOCK_DESTRUCTION) then
-			cur = GetSoulShardsDestro
-		end
-
-		return cur, GetGenericPowerMax, GetGenericPowerColor
-	end
-elseif(playerClass == 'ROGUE' or playerClass == 'DRUID') then
+elseif(playerClass == 'ROGUE') then
 	classPowerID = SPELL_POWER_COMBO_POINTS
 	classPowerType = 'COMBO_POINTS'
 
-	if(playerClass == 'DRUID') then
-		requirePower = SPELL_POWER_ENERGY
-		requireSpells = SPELL_SHRED
-	end
-
 	GetPowerUpdaters = function()
-		return GetComboPoints, GetComboPointsMax, GetGenericPowerColor
-	end
-elseif(playerClass == 'MAGE') then
-	classPowerID = SPELL_POWER_ARCANE_CHARGES
-	classPowerType = 'ARCANE_CHARGES'
-	requireSpec = SPEC_MAGE_ARCANE
-
-	GetPowerUpdaters = function()
-		return GetGenericPower, GetGenericPowerMax, GetGenericPowerColor
-	end
-elseif(playerClass == 'EVOKER') then
-	classPowerID = SPELL_POWER_ESSENCE
-	classPowerType = 'ESSENCE'
-
-	GetPowerUpdaters = function()
-		return GetGenericPower, GetGenericPowerMax, GetGenericPowerColor
+		return GetComboPoints, GetGenericPowerMax, GetGenericPowerColor
 	end
 elseif(playerClass == 'SHAMAN') then
-	requireSpells = SPELL_MAELSTROM_WEAPON_TALENT
 	classAuraID = SPELL_MAELSTROM_WEAPON
-	requireSpec = SPEC_SHAMAN_ENCHANCEMENT
 	classPowerType = 'MAELSTROM'
+	requireSpec = SPEC_SHAMAN_ENCHANCEMENT
+	requireSpell = SPELL_MAELSTROM_WEAPON_TALENT
+
+	local function GetMaelstromWeapon()
+		local auraInfo = C_UnitAuras.GetPlayerAuraBySpellID(SPELL_MAELSTROM_WEAPON)
+		if(auraInfo) then
+			return auraInfo.applications
+		end
+
+		return 0
+	end
+
+	local function GetMaelstromWeaponMax()
+		return C_Spell.GetSpellMaxCumulativeAuraApplications(SPELL_MAELSTROM_WEAPON)
+	end
 
 	GetPowerUpdaters = function()
 		return GetMaelstromWeapon, GetMaelstromWeaponMax, GetGenericPowerColor
 	end
-elseif(playerClass == 'DEMONHUNTER') then
-	requireSpec = SPEC_DEMONHUNTER_DEVOURER
-	classAuraID = SPELL_VOID_METAMORPHOSIS
-	classPowerType = 'SOUL_FRAGMENTS'
+elseif(playerClass == 'WARLOCK') then
+	classPowerID = SPELL_POWER_SOUL_SHARDS
+	classPowerType = 'SOUL_SHARDS'
+
+	local function GetSoulShardsDestruction(unit)
+		return UnitPower(unit, SPELL_POWER_SOUL_SHARDS, true) / UnitPowerDisplayMod(SPELL_POWER_SOUL_SHARDS)
+	end
 
 	GetPowerUpdaters = function()
-		return GetSoulFragments, GetSoulFragmentsMax, GetSoulFragmentsColor
+		if(C_SpecializationInfo.GetSpecialization() == SPEC_WARLOCK_DESTRUCTION) then
+			return GetSoulShardsDestruction, GetGenericPowerMax, GetGenericPowerColor
+		end
+
+		return GetGenericPower, GetGenericPowerMax, GetGenericPowerColor
 	end
 end
-
--- jic
-local GetPower, GetPowerMax, GetPowerColor = GetGenericPower, GetGenericPowerMax, GetGenericPowerColor
 
 local function UpdateColor(element, powerType)
 	local color = GetPowerColor(element, powerType)
@@ -281,8 +279,8 @@ local function Update(self, event, unit, powerType)
 		-- UNIT_POWER_POINT_CHARGE doesn't provide a power type
 		-- in case of UNIT_AURA powerType is its payload, we don't want that
 		powerType = event == 'UNIT_AURA' and classPowerType or powerType or classPowerType
-		cur, chargedPoints = GetPower(unit)
-		max = GetPowerMax(unit)
+		cur, chargedPoints = GetPower(unit, powerType)
+		max = GetPowerMax(unit, powerType)
 
 		hasMaxChanged = max ~= element.__max
 		if(hasMaxChanged) then
@@ -373,7 +371,7 @@ local function Visibility(self, event, unit)
 
 	if(shouldEnable) then
 		if(unit == 'vehicle') then
-			GetPower, GetPowerMax, GetPowerColor = GetComboPoints, GetComboPointsMax, GetGenericPowerColor
+			GetPower, GetPowerMax, GetPowerColor = GetComboPoints, GetGenericPowerMax, GetGenericPowerColor
 		else
 			GetPower, GetPowerMax, GetPowerColor = GetPowerUpdaters()
 		end
@@ -491,9 +489,9 @@ local function Enable(self, unit)
 		element.__max = 0
 		element.ForceUpdate = ForceUpdate
 
-		if(requireSpec or requireSpells) then
-			self:RegisterEvent('TRAIT_CONFIG_UPDATED', VisibilityPath, true)
+		if(requireSpec or requireSpell) then
 			self:RegisterEvent('PLAYER_LEVEL_UP', VisibilityPath, true)
+			self:RegisterEvent('TRAIT_CONFIG_UPDATED', VisibilityPath, true)
 		end
 
 		if(requirePower) then
@@ -522,9 +520,9 @@ local function Disable(self)
 	if(self.ClassPower) then
 		ClassPowerDisable(self)
 
+		self:UnregisterEvent('PLAYER_LEVEL_UP', VisibilityPath)
 		self:UnregisterEvent('TRAIT_CONFIG_UPDATED', VisibilityPath)
 		self:UnregisterEvent('UNIT_DISPLAYPOWER', VisibilityPath)
-		self:UnregisterEvent('PLAYER_LEVEL_UP', Visibility)
 	end
 end
 
