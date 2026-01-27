@@ -51,13 +51,22 @@ local SPEC_MONK_WINDWALKER = _G.SPEC_MONK_WINDWALKER or 3
 local SPEC_SHAMAN_ENCHANCEMENT = 2
 local SPEC_WARLOCK_DESTRUCTION = _G.SPEC_WARLOCK_DESTRUCTION or 3
 
-local SPELL_POWER_ENERGY = Enum.PowerType.Energy or 3
-local SPELL_POWER_COMBO_POINTS = Enum.PowerType.ComboPoints or 4
-local SPELL_POWER_SOUL_SHARDS = Enum.PowerType.SoulShards or 7
-local SPELL_POWER_HOLY_POWER = Enum.PowerType.HolyPower or 9
-local SPELL_POWER_CHI = Enum.PowerType.Chi or 12
-local SPELL_POWER_ARCANE_CHARGES = Enum.PowerType.ArcaneCharges or 16
-local SPELL_POWER_ESSENCE = Enum.PowerType.Essence or 19
+local POWER_TYPE_ARCANE_CHARGES = Enum.PowerType.ArcaneCharges or 16
+local POWER_TYPE_CHI = Enum.PowerType.Chi or 12
+local POWER_TYPE_COMBO_POINTS = Enum.PowerType.ComboPoints or 4
+local POWER_TYPE_ENERGY = Enum.PowerType.Energy or 3
+local POWER_TYPE_ESSENCE = Enum.PowerType.Essence or 19
+local POWER_TYPE_HOLY_POWER = Enum.PowerType.HolyPower or 9
+local POWER_TYPE_SOUL_SHARDS = Enum.PowerType.SoulShards or 7
+
+local POWER_TYPE_ARCANE_CHARGES_NAME = 'ARCANE_CHARGES'
+local POWER_TYPE_CHI_NAME = 'CHI'
+local POWER_TYPE_COMBO_POINTS_NAME = 'COMBO_POINTS'
+local POWER_TYPE_ESSENCE_NAME = 'ESSENCE'
+local POWER_TYPE_HOLY_POWER_NAME = 'HOLY_POWER'
+local POWER_TYPE_MAELSTROM_NAME = 'MAELSTROM'
+local POWER_TYPE_SOUL_FRAGMENTS_NAME = 'SOUL_FRAGMENTS' -- fake, but it's present in PowerBarColor
+local POWER_TYPE_SOUL_SHARDS_NAME = 'SOUL_SHARDS'
 
 local SPELL_DARK_HEART = Constants.UnitPowerSpellIDs.DARK_HEART_SPELL_ID or 1225789
 local SPELL_MAELSTROM_WEAPON = 344179
@@ -99,7 +108,7 @@ end
 if(playerClass == 'DEMONHUNTER') then
 	requireSpec = SPEC_DEMONHUNTER_DEVOURER
 	classAuraID = SPELL_VOID_METAMORPHOSIS
-	classPowerType = 'SOUL_FRAGMENTS'
+	classPowerType = POWER_TYPE_SOUL_FRAGMENTS_NAME
 
 	local function GetSoulFragments()
 		if(C_UnitAuras.GetPlayerAuraBySpellID(SPELL_VOID_METAMORPHOSIS)) then
@@ -123,7 +132,7 @@ if(playerClass == 'DEMONHUNTER') then
 	end
 
 	local function GetSoulFragmentsColor(element)
-		local color = element.__owner.colors.power[classPowerType]
+		local color = element.__owner.colors.power[POWER_TYPE_SOUL_FRAGMENTS_NAME]
 		if(color) then
 			if(C_UnitAuras.GetPlayerAuraBySpellID(SPELL_VOID_METAMORPHOSIS)) then
 				return color[SOUL_FRAGMENTS_META_INDEX]
@@ -137,54 +146,54 @@ if(playerClass == 'DEMONHUNTER') then
 		return GetSoulFragments, GetSoulFragmentsMax, GetSoulFragmentsColor
 	end
 elseif(playerClass == 'DRUID') then
-	classPowerID = SPELL_POWER_COMBO_POINTS
-	classPowerType = 'COMBO_POINTS'
-	requirePower = SPELL_POWER_ENERGY
+	classPowerID = POWER_TYPE_COMBO_POINTS
+	classPowerType = POWER_TYPE_COMBO_POINTS_NAME
+	requirePower = POWER_TYPE_ENERGY
 	requireSpell = SPELL_SHRED
 
 	GetPowerUpdaters = function()
-		return GetComboPoints, GetGenericPowerMax, GetGenericPowerColor
+		return GetComboPoints, GetComboPointsMax, GetGenericPowerColor
 	end
 elseif(playerClass == 'EVOKER') then
-	classPowerID = SPELL_POWER_ESSENCE
-	classPowerType = 'ESSENCE'
+	classPowerID = POWER_TYPE_ESSENCE
+	classPowerType = POWER_TYPE_ESSENCE_NAME
 
 	GetPowerUpdaters = function()
 		return GetGenericPower, GetGenericPowerMax, GetGenericPowerColor
 	end
 elseif(playerClass == 'MAGE') then
-	classPowerID = SPELL_POWER_ARCANE_CHARGES
-	classPowerType = 'ARCANE_CHARGES'
+	classPowerID = POWER_TYPE_ARCANE_CHARGES
+	classPowerType = POWER_TYPE_ARCANE_CHARGES_NAME
 	requireSpec = SPEC_MAGE_ARCANE
 
 	GetPowerUpdaters = function()
 		return GetGenericPower, GetGenericPowerMax, GetGenericPowerColor
 	end
 elseif(playerClass == 'MONK') then
-	classPowerID = SPELL_POWER_CHI
-	classPowerType = 'CHI'
+	classPowerID = POWER_TYPE_CHI
+	classPowerType = POWER_TYPE_CHI_NAME
 	requireSpec = SPEC_MONK_WINDWALKER
 
 	GetPowerUpdaters = function()
 		return GetGenericPower, GetGenericPowerMax, GetGenericPowerColor
 	end
 elseif(playerClass == 'PALADIN') then
-	classPowerID = SPELL_POWER_HOLY_POWER
-	classPowerType = 'HOLY_POWER'
+	classPowerID = POWER_TYPE_HOLY_POWER
+	classPowerType = POWER_TYPE_HOLY_POWER_NAME
 
 	GetPowerUpdaters = function()
 		return GetGenericPower, GetGenericPowerMax, GetGenericPowerColor
 	end
 elseif(playerClass == 'ROGUE') then
-	classPowerID = SPELL_POWER_COMBO_POINTS
-	classPowerType = 'COMBO_POINTS'
+	classPowerID = POWER_TYPE_COMBO_POINTS
+	classPowerType = POWER_TYPE_COMBO_POINTS_NAME
 
 	GetPowerUpdaters = function()
-		return GetComboPoints, GetGenericPowerMax, GetGenericPowerColor
+		return GetComboPoints, GetComboPointsMax, GetGenericPowerColor
 	end
 elseif(playerClass == 'SHAMAN') then
 	classAuraID = SPELL_MAELSTROM_WEAPON
-	classPowerType = 'MAELSTROM'
+	classPowerType = POWER_TYPE_MAELSTROM_NAME
 	requireSpec = SPEC_SHAMAN_ENCHANCEMENT
 	requireSpell = SPELL_MAELSTROM_WEAPON_TALENT
 
@@ -205,11 +214,11 @@ elseif(playerClass == 'SHAMAN') then
 		return GetMaelstromWeapon, GetMaelstromWeaponMax, GetGenericPowerColor
 	end
 elseif(playerClass == 'WARLOCK') then
-	classPowerID = SPELL_POWER_SOUL_SHARDS
-	classPowerType = 'SOUL_SHARDS'
+	classPowerID = POWER_TYPE_SOUL_SHARDS
+	classPowerType = POWER_TYPE_SOUL_SHARDS_NAME
 
 	local function GetSoulShardsDestruction(unit)
-		return UnitPower(unit, SPELL_POWER_SOUL_SHARDS, true) / UnitPowerDisplayMod(SPELL_POWER_SOUL_SHARDS)
+		return UnitPower(unit, POWER_TYPE_SOUL_SHARDS, true) / UnitPowerDisplayMod(POWER_TYPE_SOUL_SHARDS)
 	end
 
 	GetPowerUpdaters = function()
@@ -246,7 +255,7 @@ local function ColorPath(self)
 
 	local powerType = classPowerType
 	if(UnitHasVehicleUI('player')) then
-		powerType = 'COMBO_POINTS'
+		powerType = POWER_TYPE_COMBO_POINTS_NAME
 	end
 
 	--[[ Override: ClassPower:UpdateColor(powerType)
@@ -262,7 +271,7 @@ end
 
 local function Update(self, event, unit, powerType)
 	if(not (unit and (UnitIsUnit(unit, 'player') and (not powerType or powerType == classPowerType or event == 'UNIT_AURA')
-	or unit == 'vehicle' and powerType == 'COMBO_POINTS'))) then
+	or unit == 'vehicle' and powerType == POWER_TYPE_COMBO_POINTS_NAME))) then
 		return
 	end
 
@@ -371,7 +380,7 @@ local function Visibility(self, event, unit)
 	element.__isClassAura = shouldRegisterAuraEvent
 
 	local isEnabled = element.__isEnabled
-	local powerType = unit == 'vehicle' and 'COMBO_POINTS' or classPowerType
+	local powerType = unit == 'vehicle' and POWER_TYPE_COMBO_POINTS_NAME or classPowerType
 
 	if(shouldEnable) then
 		if(unit == 'vehicle') then
@@ -462,7 +471,7 @@ do
 		self.ClassPower.__isEnabled = true
 
 		if(UnitHasVehicleUI('player')) then
-			Path(self, 'ClassPowerEnable', 'vehicle', 'COMBO_POINTS')
+			Path(self, 'ClassPowerEnable', 'vehicle', POWER_TYPE_COMBO_POINTS_NAME)
 		else
 			Path(self, 'ClassPowerEnable', 'player', classPowerType)
 		end
