@@ -270,8 +270,16 @@ local function ColorPath(self)
 end
 
 local function Update(self, event, unit, powerType)
-	if(not (unit and (UnitIsUnit(unit, 'player') and (not powerType or powerType == classPowerType or event == 'UNIT_AURA')
-	or unit == 'vehicle' and powerType == POWER_TYPE_COMBO_POINTS))) then
+	if(not unit) then
+		return
+	elseif(unit == 'vehicle' and powerType ~= POWER_TYPE_COMBO_POINTS) then
+		return
+	elseif(not UnitIsUnit(unit, 'player')) then -- is this redundant?
+		return
+	elseif(event == 'UNIT_AURA' or event == 'UNIT_POWER_POINT_CHARGE') then
+		-- fake the power type for events that don't provide any
+		powerType = classPowerType
+	elseif(not powerType or powerType ~= classPowerType) then
 		return
 	end
 
@@ -289,11 +297,6 @@ local function Update(self, event, unit, powerType)
 
 	local cur, max, chargedPoints, hasMaxChanged
 	if(event ~= 'ClassPowerDisable') then
-		if(event == 'UNIT_AURA' or event == 'UNIT_POWER_POINT_CHARGE') then
-			-- fake the power type for events that don't provide any
-			powerType = classPowerType
-		end
-
 		cur, chargedPoints = GetPower(unit)
 		max = GetPowerMax(unit)
 
