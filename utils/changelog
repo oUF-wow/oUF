@@ -77,6 +77,7 @@ end
 for i=2, stop do
 	local current, prev = tags[i -1], tags[i]
 	print(generateLog(prev.string, current.string))
+	break
 end
 
 -- vim: set filetype=lua :
