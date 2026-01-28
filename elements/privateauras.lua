@@ -88,7 +88,8 @@ local function resetAnchors(element)
 	table.wipe(element.anchors)
 end
 
-local function Update(element)
+local function Update(self)
+	local element = self.PrivateAuras
 	if(element.anchors) then
 		resetAnchors(element)
 	else
@@ -153,6 +154,18 @@ local function Update(element)
 	if(element.PostUpdate) then element:PostUpdate() end
 end
 
+local function Path(self, ...)
+	--[[ Override: PrivateAuras:Override()
+	Used to completely override the internal function for creating, positioning and registering
+	all private auras.
+
+	* self - the PrivateAuras element
+	--]]
+	do -- otherwise the below call is "too ambiguous"
+		(self.PrivateAuras.Override or Update) (self, ...)
+	end
+end
+
 local function ForceUpdate(element)
 	return Update(element)
 end
@@ -164,7 +177,7 @@ local function Disable(self)
 	end
 end
 
-local function Enable(self)
+local function Enable(self, unit)
 	if(self.unit ~= 'player' and not self.unit:match('raid%d?$') and not self.unit:match('party%d?$')) then
 		Disable(self)
 
@@ -176,22 +189,8 @@ local function Enable(self)
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
 
-		-- the Update method doesn't really update element, it's just used to create and position
-		-- each aura and then register them with Blizzard's system, and as such we don't want to
-		-- trigger this frequently (like on UAE).
-
-		--[[ Override: PrivateAuras:Override()
-		Used to completely override the internal function for creating, positioning and registering
-		all private auras.
-
-		* self - the PrivateAuras element
-		--]]
-		do -- otherwise the below call is "too ambiguous"
-			(element.Override or Update) (element)
-		end
-
 		return true
 	end
 end
 
-oUF:AddElement('PrivateAuras', nil, Enable, Disable)
+oUF:AddElement('PrivateAuras', Path, Enable, Disable)
