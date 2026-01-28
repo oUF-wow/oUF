@@ -119,7 +119,7 @@ local function Update(self)
 		* aura      - the private aura anchor frame to be positioned
 		* auraIndex - the index of the private aura anchor frame
 		--]]
-		do -- otherwise the below call is "too ambiguous"
+		do
 			(element.SetPosition or SetPosition) (element, aura, index)
 		end
 
@@ -161,7 +161,7 @@ local function Path(self, ...)
 
 	* self - the PrivateAuras element
 	--]]
-	do -- otherwise the below call is "too ambiguous"
+	do
 		(self.PrivateAuras.Override or Update) (self, ...)
 	end
 end
