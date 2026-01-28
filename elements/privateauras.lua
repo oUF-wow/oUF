@@ -143,7 +143,8 @@ local function Update(element)
 					relativePoint = 'CENTER',
 					offsetX = 0,
 					offsetY = 0,
-				}
+				},
+				borderScale = element.borderScale,
 			},
 			durationAnchor = not element.disableCooldownText and {
 				-- same thing as with iconAnchor
