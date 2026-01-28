@@ -25,6 +25,7 @@ read_globals = {
 	'ColorMixin',
 	'ComboFrame',
 	'CompactArenaFrame',
+	'Constants',
 	'CreateColor',
 	'Enum',
 	'FocusFrame',
@@ -47,6 +48,7 @@ read_globals = {
 
 	-- namespaces
 	'C_AddOns',
+	'C_ClassTalents',
 	'C_ColorUtil',
 	'C_CurveUtil',
 	'C_CVar',
@@ -66,6 +68,7 @@ read_globals = {
 	'CreateFrame',
 	'CreateUnitHealPredictionCalculator',
 	'GetArenaOpponentSpec',
+	'GetCollapsingStarCost',
 	'GetNetStats',
 	'GetNumArenaOpponentSpecs',
 	'GetPartyAssignment',
