@@ -50,10 +50,6 @@ local function CreateAura(element, index)
 	icon:SetAllPoints()
 	aura.Icon = icon
 
-	local duration = CreateFrame('Frame', nil, aura)
-	duration:SetPoint('CENTER')
-	aura.Duration = duration
-
 	--[[ Callback: PrivateAuras:PostCreateAura(aura, auraIndex)
 	Called after a private aura anchor frame has been created.
 
@@ -131,7 +127,7 @@ local function Update(element)
 			auraIndex = index,
 			parent = aura,
 			showCountdownFrame = not element.disableCooldown,
-			showCountdownNumbers = false, -- these are not flexible at all, use duration instead
+			showCountdownNumbers = not element.disableCooldownText,
 			iconInfo = {
 				iconWidth = aura:GetWidth(),
 				iconHeight = aura:GetHeight(),
@@ -145,14 +141,6 @@ local function Update(element)
 					offsetY = 0,
 				},
 				borderScale = element.borderScale,
-			},
-			durationAnchor = not element.disableCooldownText and {
-				-- same thing as with iconAnchor
-				point = 'CENTER',
-				relativeTo = aura.Duration,
-				relativePoint = 'CENTER',
-				offsetX = 0,
-				offsetY = 0,
 			},
 		}))
 	end
