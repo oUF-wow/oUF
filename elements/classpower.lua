@@ -78,8 +78,8 @@ local SPELL_VOID_METAMORPHOSIS = Constants.UnitPowerSpellIDs.VOID_METAMORPHOSIS_
 local SOUL_FRAGMENTS_NO_META_INDEX = 1
 local SOUL_FRAGMENTS_META_INDEX = 2
 
-local ClassPowerEnable, ClassPowerDisable, RefreshEvents, GetPowerUpdaters
-local GetPower, GetPowerMax, GetPowerColor
+local ClassPowerEnable, ClassPowerDisable
+local GetPower, GetPowerMax, GetPowerColor, GetPowerUpdaters
 
 -- holds class-specific information for enablement toggles
 local classPowerID, classPowerType, classAuraID
@@ -356,36 +356,35 @@ end
 
 local function Visibility(self, event, unit)
 	local element = self.ClassPower
-	local shouldEnable, shouldRegisterAuraEvent
+	local powerType, isAuraPower
 
 	if(UnitHasVehicleUI('player')) then
-		shouldEnable = PlayerVehicleHasComboPoints()
 		unit = 'vehicle'
+
+		if(PlayerVehicleHasComboPoints()) then
+			powerType = POWER_TYPE_COMBO_POINTS
+		end
 	elseif(classAuraID) then
 		if(not requireSpec or requireSpec == C_SpecializationInfo.GetSpecialization()) then
 			if(not requireSpell or C_SpellBook.IsSpellKnown(requireSpell)) then
-				shouldEnable = true
+				isAuraPower = true
+				powerType = classPowerType
 				unit = 'player'
 			end
 		end
-
-		shouldRegisterAuraEvent = shouldEnable == true
 	elseif(classPowerID) then
 		if(not requireSpec or requireSpec == C_SpecializationInfo.GetSpecialization()) then
 			if(not requirePower or requirePower == UnitPowerType('player')) then
 				if(not requireSpell or C_SpellBook.IsSpellKnown(requireSpell)) then
-					shouldEnable = true
+					powerType = classPowerType
 					unit = 'player'
 				end
 			end
 		end
 	end
 
-	local oldIsClassAura = element.__isClassAura
-	element.__isClassAura = shouldRegisterAuraEvent
-
-	local isEnabled = element.__isEnabled
-	local powerType = unit == 'vehicle' and POWER_TYPE_COMBO_POINTS or classPowerType
+	local wasEnabled = element.__isEnabled
+	local shouldEnable = powerType ~= nil
 
 	if(shouldEnable) then
 		if(unit == 'vehicle') then
@@ -397,8 +396,12 @@ local function Visibility(self, event, unit)
 		ColorPath(self)
 	end
 
-	if(shouldEnable and not isEnabled) then
-		ClassPowerEnable(self)
+	if(shouldEnable ~= wasEnabled) then
+		ClassPowerDisable(self, shouldEnable)
+
+		if(shouldEnable) then
+			ClassPowerEnable(self, isAuraPower)
+		end
 
 		--[[ Callback: ClassPower:PostVisibility(isVisible)
 		Called after the element's visibility has been changed.
@@ -407,19 +410,9 @@ local function Visibility(self, event, unit)
 		* isVisible - the current visibility state of the element (boolean)
 		--]]
 		if(element.PostVisibility) then
-			element:PostVisibility(true)
+			element:PostVisibility(shouldEnable)
 		end
-	elseif(not shouldEnable and (isEnabled or isEnabled == nil)) then
-		ClassPowerDisable(self)
-
-		if(element.PostVisibility) then
-			element:PostVisibility(false)
-		end
-	elseif(shouldEnable and isEnabled) then
-		if(oldIsClassAura and shouldRegisterAuraEvent) then
-			RefreshEvents(self)
-		end
-
+	elseif(shouldEnable) then
 		Path(self, event, unit, powerType)
 	end
 end
@@ -444,24 +437,8 @@ local function ForceUpdate(element)
 end
 
 do
-	function RefreshEvents(self)
-		if(self.ClassPower.__isClassAura) then
-			self:RegisterEvent('UNIT_AURA', Path)
-
-			self:UnregisterEvent('UNIT_POWER_UPDATE', Path)
-			self:UnregisterEvent('UNIT_MAXPOWER', Path)
-			self:UnregisterEvent('UNIT_POWER_POINT_CHARGE', Path)
-		else
-			self:RegisterEvent('UNIT_MAXPOWER', Path)
-			self:RegisterEvent('UNIT_POWER_UPDATE', Path)
-			self:RegisterEvent('UNIT_POWER_POINT_CHARGE', Path)
-
-			self:UnregisterEvent('UNIT_AURA', Path)
-		end
-	end
-
-	function ClassPowerEnable(self)
-		if(self.ClassPower.__isClassAura) then
+	function ClassPowerEnable(self, registerAuraEvents)
+		if(registerAuraEvents) then
 			self:RegisterEvent('UNIT_AURA', Path)
 		else
 			self:RegisterEvent('UNIT_MAXPOWER', Path)
@@ -482,21 +459,23 @@ do
 		end
 	end
 
-	function ClassPowerDisable(self)
+	function ClassPowerDisable(self, unregisterOnly)
 		self:UnregisterEvent('UNIT_AURA', Path)
 		self:UnregisterEvent('UNIT_POWER_UPDATE', Path)
 		self:UnregisterEvent('UNIT_MAXPOWER', Path)
 		self:UnregisterEvent('UNIT_POWER_POINT_CHARGE', Path)
 		self:UnregisterEvent('SPELLS_CHANGED', ColorPath)
 
-		local element = self.ClassPower
-		for i = 1, #element do
-			element[i]:Hide()
-		end
+		if(not unregisterOnly) then
+			local element = self.ClassPower
+			for i = 1, #element do
+				element[i]:Hide()
+			end
 
-		element.__max = 0
-		element.__isEnabled = false
-		Path(self, 'ClassPowerDisable', 'player', classPowerType)
+			element.__max = 0
+			element.__isEnabled = false
+			Path(self, 'ClassPowerDisable', 'player', classPowerType)
+		end
 	end
 end
 
