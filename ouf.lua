@@ -658,7 +658,7 @@ do
 		local name = overrideName or generateName(nil, ...)
 		local header = Mixin(CreateFrame('Frame', name, PetBattleFrameHider, template), headerMixin)
 
-		header:SetAttribute('template', 'SecureUnitButtonTemplate, SecureHandlerStateTemplate, SecureHandlerEnterLeaveTemplate') --, PingableUnitFrameTemplate') -- disabled until fixed
+		header:SetAttribute('template', 'SecureUnitButtonTemplate, SecureHandlerStateTemplate, SecureHandlerEnterLeaveTemplate, PingableUnitFrameTemplate')
 
 		if(...) then
 			if(type(...) == 'table') then
@@ -745,7 +745,7 @@ function oUF:Spawn(unit, overrideName)
 	unit = unit:lower()
 
 	local name = overrideName or generateName(unit)
-	local object = CreateFrame('Button', name, PetBattleFrameHider, 'SecureUnitButtonTemplate') --, PingableUnitFrameTemplate') -- disabled until fixed
+	local object = CreateFrame('Button', name, PetBattleFrameHider, 'SecureUnitButtonTemplate, PingableUnitFrameTemplate')
 	Private.UpdateUnits(object, unit)
 
 	self:DisableBlizzard(unit)
@@ -888,7 +888,7 @@ do
 			if(not nameplate.unitFrame) then
 				nameplate.style = self.style
 
-				nameplate.unitFrame = CreateFrame('Button', self.prefix .. nameplate:GetName(), nameplate) --, 'PingableUnitFrameTemplate') -- disabled until fixed
+				nameplate.unitFrame = CreateFrame('Button', self.prefix .. nameplate:GetName(), nameplate, 'PingableUnitFrameTemplate')
 				nameplate.unitFrame:EnableMouse(false)
 				nameplate.unitFrame.isNamePlate = true
 				nameplate.unitFrame:SetAllPoints()
