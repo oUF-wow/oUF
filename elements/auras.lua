@@ -361,6 +361,12 @@ local function UpdateAuras(self, event, unit, updateInfo)
 				end
 			end
 		else
+			-- Partial updates can happen before any full update, so make sure caches exist.
+			auras.allBuffs = auras.allBuffs or {}
+			auras.activeBuffs = auras.activeBuffs or {}
+			auras.allDebuffs = auras.allDebuffs or {}
+			auras.activeDebuffs = auras.activeDebuffs or {}
+
 			if(updateInfo.addedAuras) then
 				for _, data in next, updateInfo.addedAuras do
 					if(not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, buffFilter)) then
@@ -372,6 +378,9 @@ local function UpdateAuras(self, event, unit, updateInfo)
 							buffsChanged = true
 						end
 					elseif(not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, debuffFilter)) then
+						auras.allDebuffs = auras.allDebuffs or {}
+						auras.activeDebuffs = auras.activeDebuffs or {}
+
 						data = processData(auras, unit, data, debuffFilter)
 						auras.allDebuffs[data.auraInstanceID] = data
 
@@ -385,7 +394,7 @@ local function UpdateAuras(self, event, unit, updateInfo)
 
 			if(updateInfo.updatedAuraInstanceIDs) then
 				for _, auraInstanceID in next, updateInfo.updatedAuraInstanceIDs do
-					if(auras.allBuffs[auraInstanceID]) then
+					if(auras.allBuffs and auras.allBuffs[auraInstanceID]) then
 						auras.allBuffs[auraInstanceID] = processData(auras, unit, C_UnitAuras.GetAuraDataByAuraInstanceID(unit, auraInstanceID), buffFilter)
 
 						-- only update if it's actually active
@@ -393,7 +402,7 @@ local function UpdateAuras(self, event, unit, updateInfo)
 							auras.activeBuffs[auraInstanceID] = true
 							buffsChanged = true
 						end
-					elseif(auras.allDebuffs[auraInstanceID]) then
+					elseif(auras.allDebuffs and auras.allDebuffs[auraInstanceID]) then
 						auras.allDebuffs[auraInstanceID] = processData(auras, unit, C_UnitAuras.GetAuraDataByAuraInstanceID(unit, auraInstanceID), debuffFilter)
 
 						if(auras.activeDebuffs[auraInstanceID]) then
@@ -406,14 +415,14 @@ local function UpdateAuras(self, event, unit, updateInfo)
 
 			if(updateInfo.removedAuraInstanceIDs) then
 				for _, auraInstanceID in next, updateInfo.removedAuraInstanceIDs do
-					if(auras.allBuffs[auraInstanceID]) then
+					if(auras.allBuffs and auras.allBuffs[auraInstanceID]) then
 						auras.allBuffs[auraInstanceID] = nil
 
 						if(auras.activeBuffs[auraInstanceID]) then
 							auras.activeBuffs[auraInstanceID] = nil
 							buffsChanged = true
 						end
-					elseif(auras.allDebuffs[auraInstanceID]) then
+					elseif(auras.allDebuffs and auras.allDebuffs[auraInstanceID]) then
 						auras.allDebuffs[auraInstanceID] = nil
 
 						if(auras.activeDebuffs[auraInstanceID]) then
