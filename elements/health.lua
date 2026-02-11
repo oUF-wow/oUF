@@ -502,6 +502,9 @@ local function Enable(self)
 			element.values:SetIncomingHealOverflowPercent(element.incomingHealOverflow)
 		end
 
+		self:RegisterEvent('UNIT_HEALTH', Path)
+		self:RegisterEvent('UNIT_MAXHEALTH', Path)
+
 		if(element.colorDisconnected) then
 			self:RegisterEvent('UNIT_CONNECTION', ColorPath)
 		end
@@ -518,12 +521,21 @@ local function Enable(self)
 			self:RegisterEvent('UNIT_THREAT_LIST_UPDATE', ColorPath)
 		end
 
-		self:RegisterEvent('UNIT_HEALTH', Path)
-		self:RegisterEvent('UNIT_MAXHEALTH', Path)
-		self:RegisterEvent('UNIT_HEAL_PREDICTION', Path) -- TODO: conditional?
-		self:RegisterEvent('UNIT_ABSORB_AMOUNT_CHANGED', Path) -- TODO: conditional?
-		self:RegisterEvent('UNIT_HEAL_ABSORB_AMOUNT_CHANGED', Path) -- TODO: conditional?
-		self:RegisterEvent('UNIT_MAX_HEALTH_MODIFIERS_CHANGED', Path)
+		if(element.HealingAll or element.HealingPlayer or element.HealingOther or element.OverHealIndicator) then
+			self:RegisterEvent('UNIT_HEAL_PREDICTION', Path)
+		end
+
+		if(element.DamageAbsorb or element.OverDamageAbsorbIndicator) then
+			self:RegisterEvent('UNIT_ABSORB_AMOUNT_CHANGED', Path)
+		end
+
+		if(element.HealAbsorb or element.OverHealAbsorbIndicator) then
+			self:RegisterEvent('UNIT_HEAL_ABSORB_AMOUNT_CHANGED', Path)
+		end
+
+		if(element.TempLoss) then
+			self:RegisterEvent('UNIT_MAX_HEALTH_MODIFIERS_CHANGED', Path)
+		end
 
 		if(element:IsObjectType('StatusBar') and not element:GetStatusBarTexture()) then
 			element:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
