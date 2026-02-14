@@ -61,7 +61,8 @@ At least one of the above widgets must be present for the element to work.
 
 ## Attributes
 
-.dispelColorCurve - Curve object with points defined for each index in oUF.colors.dispel
+.dispelColorCurve     - Curve object with points defined for each index in oUF.colors.dispel
+.dispelIndicatorCurve - Curve object with points defined for each cell used for dispel indicators
 
 ## Button Attributes
 
