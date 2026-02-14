@@ -240,6 +240,7 @@ local function updateAura(element, unit, data, position)
 		if(data.isHarmfulAura and element.showDispelIndicator) then
 			local spriteIndex = C_UnitAuras.GetAuraDispelTypeColor(unit, data.auraInstanceID, element.dispelIndicatorCurve)
 			button.DispelIndicator:SetSize(width / 4, width / 4)
+			-- UICombatTimelineWarningIcons is a 2x4 grid, cell size is 64, plus 2 pixels for offsets
 			button.DispelIndicator:SetSpriteSheetCell(spriteIndex, 2, 4, 66, 66)
 			button.DispelIndicator:Show()
 		else
@@ -880,6 +881,7 @@ local function Enable(self)
 			if(not auras.dispelIndicatorCurve) then
 				auras.dispelIndicatorCurve = C_CurveUtil.CreateCurve()
 				auras.dispelIndicatorCurve:SetType(Enum.LuaCurveType.Step)
+				-- curve values match up with sprite cell indices of UICombatTimelineWarningIcons
 				auras.dispelIndicatorCurve:AddPoint(0, 0) -- None
 				auras.dispelIndicatorCurve:AddPoint(1, 4) -- Magic
 				auras.dispelIndicatorCurve:AddPoint(2, 5) -- Curse
@@ -942,6 +944,7 @@ local function Enable(self)
 			if(not debuffs.dispelIndicatorCurve) then
 				debuffs.dispelIndicatorCurve = C_CurveUtil.CreateCurve()
 				debuffs.dispelIndicatorCurve:SetType(Enum.LuaCurveType.Step)
+				-- curve values match up with sprite cell indices of UICombatTimelineWarningIcons
 				debuffs.dispelIndicatorCurve:AddPoint(0, 0) -- None
 				debuffs.dispelIndicatorCurve:AddPoint(1, 4) -- Magic
 				debuffs.dispelIndicatorCurve:AddPoint(2, 5) -- Curse
