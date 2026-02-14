@@ -1,12 +1,12 @@
 --[[
 # Element: Threat Indicator
 
-Handles the visibility and updating of an indicator based on the unit's current threat level.
+Handles the visibility and updating of an indicator based on the unit's current threat level.  
+The element works by changing the texture's vertex color.
 
 ## Widget
 
 ThreatIndicator - A `Texture` used to display the current threat level.
-The element works by changing the texture's vertex color.
 
 ## Notes
 
