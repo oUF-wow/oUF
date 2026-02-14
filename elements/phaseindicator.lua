@@ -9,7 +9,7 @@ PhaseIndicator - Any UI widget.
 
 ## Sub-Widgets
 
-Icon - A `Texture` to represent the phased status.
+.Icon - A `Texture` to represent the phased status.
 
 ## Notes
 
