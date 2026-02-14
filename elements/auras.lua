@@ -243,7 +243,7 @@ local function updateAura(element, unit, data, position)
 			local spriteIndex = C_UnitAuras.GetAuraDispelTypeColor(unit, data.auraInstanceID, element.dispelIndicatorCurve)
 			button.DispelIndicator:SetSize(width / 4, width / 4)
 			-- UICombatTimelineWarningIcons is a 3x4 grid, cell size is 64, plus 2 pixels for offsets
-			button.DispelIndicator:SetSpriteSheetCell(spriteIndex, 2, 4, 66, 66)
+			button.DispelIndicator:SetSpriteSheetCell(spriteIndex, 3, 4, 66, 66)
 			button.DispelIndicator:Show()
 		else
 			button.DispelIndicator:Hide()
