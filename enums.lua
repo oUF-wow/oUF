@@ -21,6 +21,7 @@ oUF.Enum.DispelIndicatorCellIndex = {
 	Curse = 5,
 	Disease = 6,
 	Poison = 8,
+	Enrage = 10,
 	Bleed = 1,
 }
 
