@@ -9,7 +9,7 @@ PvPIndicator - A `Texture` used to display faction, FFA PvP status or honor leve
 
 ## Sub-Widgets
 
-Badge - A `Texture` used to display the honor badge background image.
+.Badge - A `Texture` used to display the honor badge background image.
 
 ## Notes
 
