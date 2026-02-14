@@ -78,8 +78,7 @@ local function Update(self, event, unit)
 			element.Badge:SetAtlas('honorsystem-portrait-' .. factionGroup, false)
 			element.Badge:Show()
 		else
-			element:SetTexture([[Interface\TargetingFrame\UI-PVP-]] .. status)
-			element:SetTexCoord(0, 0.65625, 0, 0.65625)
+			element:SetAtlas('UI-HUD-UnitFrame-Player-PVP-' .. status .. 'Icon', false)
 
 			if(element.Badge) then
 				element.Badge:Hide()
