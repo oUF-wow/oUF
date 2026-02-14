@@ -14,6 +14,16 @@ oUF.Enum.DispelType = {
 	Bleed = 11,
 }
 
+oUF.Enum.DispelIndicatorCellIndex = {
+	-- this matches up with the high-resolution cells in Interface\HUD\UICombatTimelineWarningIcons
+	None = 0,
+	Magic = 4,
+	Curse = 5,
+	Disease = 6,
+	Poison = 8,
+	Bleed = 1,
+}
+
 oUF.Enum.SelectionType = {
 	-- https://warcraft.wiki.gg/wiki/API_UnitSelectionType
 	-- only keeping the useful ones (i.e. no spectator or housing stuff)

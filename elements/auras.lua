@@ -881,13 +881,9 @@ local function Enable(self)
 			if(not auras.dispelIndicatorCurve) then
 				auras.dispelIndicatorCurve = C_CurveUtil.CreateCurve()
 				auras.dispelIndicatorCurve:SetType(Enum.LuaCurveType.Step)
-				-- curve values match up with sprite cell indices of UICombatTimelineWarningIcons
-				auras.dispelIndicatorCurve:AddPoint(0, 0) -- None
-				auras.dispelIndicatorCurve:AddPoint(1, 4) -- Magic
-				auras.dispelIndicatorCurve:AddPoint(2, 5) -- Curse
-				auras.dispelIndicatorCurve:AddPoint(3, 6) -- Disease
-				auras.dispelIndicatorCurve:AddPoint(4, 8) -- Poison
-				auras.dispelIndicatorCurve:AddPoint(11, 1) -- Bleed
+				for dispelType, cellIndex in next, oUF.Enum.DispelIndicatorCellIndex do
+					auras.dispelIndicatorCurve:AddPoint(oUF.Enum.DispelType[dispelType], cellIndex)
+				end
 			end
 
 			auras:Show()
@@ -944,13 +940,9 @@ local function Enable(self)
 			if(not debuffs.dispelIndicatorCurve) then
 				debuffs.dispelIndicatorCurve = C_CurveUtil.CreateCurve()
 				debuffs.dispelIndicatorCurve:SetType(Enum.LuaCurveType.Step)
-				-- curve values match up with sprite cell indices of UICombatTimelineWarningIcons
-				debuffs.dispelIndicatorCurve:AddPoint(0, 0) -- None
-				debuffs.dispelIndicatorCurve:AddPoint(1, 4) -- Magic
-				debuffs.dispelIndicatorCurve:AddPoint(2, 5) -- Curse
-				debuffs.dispelIndicatorCurve:AddPoint(3, 6) -- Disease
-				debuffs.dispelIndicatorCurve:AddPoint(4, 8) -- Poison
-				debuffs.dispelIndicatorCurve:AddPoint(11, 1) -- Bleed
+				for dispelType, cellIndex in next, oUF.Enum.DispelIndicatorCellIndex do
+					debuffs.dispelIndicatorCurve:AddPoint(oUF.Enum.DispelType[dispelType], cellIndex)
+				end
 			end
 
 			debuffs:Show()
