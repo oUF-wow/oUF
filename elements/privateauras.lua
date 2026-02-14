@@ -167,7 +167,7 @@ local function Path(self, ...)
 end
 
 local function ForceUpdate(element)
-	return Update(element)
+	return Path(element.__owner)
 end
 
 local function Disable(self)
