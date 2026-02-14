@@ -36,6 +36,7 @@ At least one of the above widgets must be present for the element to work.
 .showType                 - Show Overlay texture colored by oUF.colors.dispel (boolean)
 .showDebuffType           - Show Overlay texture colored by oUF.colors.dispel when it's a debuff. Exclusive with .showType (boolean)
 .showBuffType             - Show Overlay texture colored by oUF.colors.dispel when it's a buff. Exclusive with .showType (boolean)
+.showDispelIndicator      - Display an icon representing the dispel type (boolean)
 .minCount                 - Minimum number of aura applications for the Count text to be visible. Defaults to 2 (number)
 .maxCount                 - Maximum number of aura applications for the Count text, anything above renders "*". Defaults to 999 (number)
 .maxCols                  - Maximum number of aura button columns before wrapping to a new row. Defaults to element width divided by aura button size (number)
