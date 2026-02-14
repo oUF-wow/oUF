@@ -5,16 +5,12 @@ Handles the updating and visibility of totems.
 
 ## Widget
 
-Totems - A `table` to hold sub-widgets.
+Totems - A `table` to hold widgets of any kind.
 
 ## Sub-Widgets
 
-Totem - Any UI widget.
-
-## Sub-Widget Options
-
-.Icon     - A `Texture` representing the totem icon.
-.Cooldown - A `Cooldown` representing the duration of the totem.
+.Icon     - An optional `Texture` widget representing the totem icon.
+.Cooldown - An optional `Cooldown` widget representing the duration of the totem.
 
 ## Notes
 
