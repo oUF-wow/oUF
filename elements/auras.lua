@@ -128,6 +128,11 @@ local function CreateButton(element, index)
 	overlay:SetTexCoord(0.296875, 0.5703125, 0, 0.515625)
 	button.Overlay = overlay
 
+	local dispelIndicator = button:CreateTexture(nil, 'OVERLAY')
+	dispelIndicator:SetTexture([[Interface\HUD\UICombatTimelineWarningIcons]])
+	dispelIndicator:SetPoint('CENTER', button, 'TOPRIGHT')
+	button.DispelIndicator = dispelIndicator
+
 	local stealable = button:CreateTexture(nil, 'OVERLAY')
 	stealable:SetTexture([[Interface\TargetingFrame\UI-TargetingFrame-Stealable]])
 	stealable:SetPoint('TOPLEFT', -3, 3)
@@ -231,6 +236,17 @@ local function updateAura(element, unit, data, position)
 
 	local width = element.width or element.size or 16
 	local height = element.height or element.size or 16
+	if(button.DispelIndicator) then
+		if(data.isHarmfulAura and element.showDispelIndicator) then
+			local spriteIndex = C_UnitAuras.GetAuraDispelTypeColor(unit, data.auraInstanceID, element.dispelIndicatorCurve)
+			button.DispelIndicator:SetSize(width / 4, width / 4)
+			button.DispelIndicator:SetSpriteSheetCell(spriteIndex, 2, 4, 66, 66)
+			button.DispelIndicator:Show()
+		else
+			button.DispelIndicator:Hide()
+		end
+	end
+
 	button:SetSize(width, height)
 	button:EnableMouse(not element.disableMouse)
 	button:Show()
@@ -516,6 +532,7 @@ local function UpdateAuras(self, event, unit, updateInfo)
 					if(button.Overlay) then button.Overlay:Hide() end
 					if(button.Stealable) then button.Stealable:Hide() end
 					if(button.Count) then button.Count:SetText() end
+					if(button.DispelIndicator) then button.DispelIndicator:Hide() end
 
 					button:EnableMouse(false)
 					button:Show()
@@ -860,6 +877,16 @@ local function Enable(self)
 					end
 				end
 			end
+			if(not auras.dispelIndicatorCurve) then
+				auras.dispelIndicatorCurve = C_CurveUtil.CreateCurve()
+				auras.dispelIndicatorCurve:SetType(Enum.LuaCurveType.Step)
+				auras.dispelIndicatorCurve:AddPoint(0, 0) -- None
+				auras.dispelIndicatorCurve:AddPoint(1, 4) -- Magic
+				auras.dispelIndicatorCurve:AddPoint(2, 5) -- Curse
+				auras.dispelIndicatorCurve:AddPoint(3, 6) -- Disease
+				auras.dispelIndicatorCurve:AddPoint(4, 8) -- Poison
+				auras.dispelIndicatorCurve:AddPoint(11, 1) -- Bleed
+			end
 
 			auras:Show()
 		end
@@ -911,6 +938,16 @@ local function Enable(self)
 						debuffs.dispelColorCurve:AddPoint(dispelIndex, self.colors.dispel[dispelIndex])
 					end
 				end
+			end
+			if(not debuffs.dispelIndicatorCurve) then
+				debuffs.dispelIndicatorCurve = C_CurveUtil.CreateCurve()
+				debuffs.dispelIndicatorCurve:SetType(Enum.LuaCurveType.Step)
+				debuffs.dispelIndicatorCurve:AddPoint(0, 0) -- None
+				debuffs.dispelIndicatorCurve:AddPoint(1, 4) -- Magic
+				debuffs.dispelIndicatorCurve:AddPoint(2, 5) -- Curse
+				debuffs.dispelIndicatorCurve:AddPoint(3, 6) -- Disease
+				debuffs.dispelIndicatorCurve:AddPoint(4, 8) -- Poison
+				debuffs.dispelIndicatorCurve:AddPoint(11, 1) -- Bleed
 			end
 
 			debuffs:Show()
