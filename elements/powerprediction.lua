@@ -3,6 +3,8 @@
 
 Handles the visibility and updating of power cost prediction.
 
+**WARNING**: this element is deprecated, please use sub-widgets of Power and AdditionalPower elements instead.
+
 ## Widget
 
 PowerPrediction - A `table` containing the sub-widgets.
