@@ -23,7 +23,6 @@
 	<Script file="elements\phaseindicator.lua"/>
 	<Script file="elements\portrait.lua"/>
 	<Script file="elements\power.lua"/>
-	<Script file="elements\powerprediction.lua"/>
 	<Script file="elements\privateauras.lua"/>
 	<Script file="elements\pvpclassificationindicator.lua"/>
 	<Script file="elements\pvpindicator.lua"/>
