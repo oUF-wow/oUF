@@ -156,9 +156,9 @@ local function UpdateColor(self, event, unit)
 
 		-- it's done this way so that only non-standard powers have r, g, b values
 		if(b) then
-			element:GetStatusBarTexture():SetVertexColor(r, g, b)
+			element:SetStatusBarColor(r, g, b)
 		elseif(color) then
-			element:GetStatusBarTexture():SetVertexColor(color:GetRGB())
+			element:SetStatusBarColor(color:GetRGB())
 		end
 	end
 
