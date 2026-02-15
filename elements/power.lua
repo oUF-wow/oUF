@@ -563,7 +563,6 @@ local function Enable(self, unit)
 				self:RegisterEvent('UNIT_SPELLCAST_STOP', PredictionPath)
 				self:RegisterEvent('UNIT_SPELLCAST_FAILED', PredictionPath)
 				self:RegisterEvent('UNIT_SPELLCAST_SUCCEEDED', PredictionPath)
-				self:RegisterEvent('UNIT_DISPLAYPOWER', PredictionPath)
 			end
 		end
 
@@ -596,7 +595,6 @@ local function Disable(self)
 			self:UnregisterEvent('UNIT_SPELLCAST_STOP', PredictionPath)
 			self:UnregisterEvent('UNIT_SPELLCAST_FAILED', PredictionPath)
 			self:UnregisterEvent('UNIT_SPELLCAST_SUCCEEDED', PredictionPath)
-			self:UnregisterEvent('UNIT_DISPLAYPOWER', PredictionPath)
 		end
 	end
 end
