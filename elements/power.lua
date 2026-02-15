@@ -264,8 +264,12 @@ local function UpdatePrediction(self, event, unit)
 	end
 
 	local _, _, _, startTime, endTime, _, _, _, spellID = UnitCastingInfo(unit)
-	local powerType = UnitPowerType(unit)
 	local cost = 0
+
+	local powerType = UnitPowerType(unit)
+	if(element.displayAltPower) then
+		powerType = element:GetDisplayPower(unit)
+	end
 
 	if(event == 'UNIT_SPELLCAST_START' and startTime ~= endTime) then
 		local costTable = C_Spell.GetSpellPowerCost(spellID)
