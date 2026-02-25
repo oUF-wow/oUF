@@ -16,6 +16,7 @@ Supported class powers:
   - All          - Combo Points
   - Demon Hunter - Soul Fragments
   - Evoker       - Essence
+  - Hunter       - Tip of the Spear
   - Mage         - Arcane Charges
   - Monk         - Chi Orbs
   - Paladin      - Holy Power
@@ -66,12 +67,15 @@ local POWER_TYPE_HOLY_POWER = 'HOLY_POWER'
 local POWER_TYPE_MAELSTROM = 'MAELSTROM'
 local POWER_TYPE_SOUL_FRAGMENTS = 'SOUL_FRAGMENTS' -- fake, but it's present in PowerBarColor
 local POWER_TYPE_SOUL_SHARDS = 'SOUL_SHARDS'
+local POWER_TYPE_TIP_OF_THE_SPEAR = 'TIP_OF_THE_SPEAR' -- fake
 
 local SPELL_DARK_HEART = Constants.UnitPowerSpellIDs.DARK_HEART_SPELL_ID or 1225789
 local SPELL_MAELSTROM_WEAPON = 344179
 local SPELL_MAELSTROM_WEAPON_TALENT = 187880
 local SPELL_SHRED = 5221
 local SPELL_SILENCE_THE_WHISPERS = Constants.UnitPowerSpellIDs.SILENCE_THE_WHISPERS_SPELL_ID or 1227702
+local SPELL_TIP_OF_THE_SPEAR = 260286
+local SPELL_TIP_OF_THE_SPEAR_TALENT = 260285
 local SPELL_VOID_METAMORPHOSIS = Constants.UnitPowerSpellIDs.VOID_METAMORPHOSIS_SPELL_ID or 1217607
 
 local SOUL_FRAGMENTS_NO_META_INDEX = 1
@@ -161,7 +165,33 @@ elseif(playerClass == 'EVOKER') then
 	GetPowerInfo = function() -- might as well be static
 		return POWER_TYPE_ESSENCE, POWER_ID_ESSENCE
 	end
+elseif(playerClass == 'HUNTER') then
+	local function GetTipOfTheSpear()
+		local auraInfo = C_UnitAuras.GetPlayerAuraBySpellID(SPELL_TIP_OF_THE_SPEAR)
+		if(auraInfo) then
+			return auraInfo.applications
+		end
 
+		return 0
+	end
+
+	local function GetTipOfTheSpearMax()
+		return C_Spell.GetSpellMaxCumulativeAuraApplications(SPELL_TIP_OF_THE_SPEAR)
+	end
+
+	local function GetTipOfTheSpearColor(element)
+		return element.__owner.colors.power[POWER_TYPE_TIP_OF_THE_SPEAR]
+	end
+
+	GetPowerUpdaters = function()
+		return GetTipOfTheSpear, GetTipOfTheSpearMax, GetTipOfTheSpearColor
+	end
+
+	GetAuraInfo = function()
+		if(C_SpellBook.IsSpellKnownOrInSpellBook(SPELL_TIP_OF_THE_SPEAR_TALENT, 0, false)) then
+			return POWER_TYPE_TIP_OF_THE_SPEAR
+		end
+	end
 elseif(playerClass == 'MAGE') then
 	GetPowerUpdaters = function()
 		if(C_SpecializationInfo.GetSpecialization() == SPEC_MAGE_ARCANE) then
