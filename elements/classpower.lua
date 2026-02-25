@@ -18,6 +18,7 @@ Supported class powers:
   - Evoker       - Essence
   - Hunter       - Tip of the Spear
   - Mage         - Arcane Charges
+  - Mage         - Icicles
   - Monk         - Chi Orbs
   - Paladin      - Holy Power
   - Shaman       - Maelstrom Weapon
@@ -50,6 +51,7 @@ local SPEC_DEMONHUNTER_DEVOURER = _G.SPEC_DEMONHUNTER_DEVOURER or 3
 local SPEC_MAGE_ARCANE = _G.SPEC_MAGE_ARCANE or 1
 local SPEC_MONK_WINDWALKER = _G.SPEC_MONK_WINDWALKER or 3
 local SPEC_WARLOCK_DESTRUCTION = _G.SPEC_WARLOCK_DESTRUCTION or 3
+local SPEC_MAGE_FROST = 3
 
 local POWER_ID_ARCANE_CHARGES = Enum.PowerType.ArcaneCharges or 16
 local POWER_ID_CHI = Enum.PowerType.Chi or 12
@@ -64,12 +66,15 @@ local POWER_TYPE_CHI = 'CHI'
 local POWER_TYPE_COMBO_POINTS = 'COMBO_POINTS'
 local POWER_TYPE_ESSENCE = 'ESSENCE'
 local POWER_TYPE_HOLY_POWER = 'HOLY_POWER'
+local POWER_TYPE_ICICLES = 'ICICLES' -- fake
 local POWER_TYPE_MAELSTROM = 'MAELSTROM'
 local POWER_TYPE_SOUL_FRAGMENTS = 'SOUL_FRAGMENTS' -- fake, but it's present in PowerBarColor
 local POWER_TYPE_SOUL_SHARDS = 'SOUL_SHARDS'
 local POWER_TYPE_TIP_OF_THE_SPEAR = 'TIP_OF_THE_SPEAR' -- fake
 
 local SPELL_DARK_HEART = Constants.UnitPowerSpellIDs.DARK_HEART_SPELL_ID or 1225789
+local SPELL_ICICLES = 205473
+local SPELL_ICICLES_TALENT = 1246832
 local SPELL_MAELSTROM_WEAPON = 344179
 local SPELL_MAELSTROM_WEAPON_TALENT = 187880
 local SPELL_SHRED = 5221
@@ -193,15 +198,44 @@ elseif(playerClass == 'HUNTER') then
 		end
 	end
 elseif(playerClass == 'MAGE') then
+	local function GetIcicles(unit)
+		local auraInfo = C_UnitAuras.GetPlayerAuraBySpellID(SPELL_ICICLES)
+		if(auraInfo) then
+			return auraInfo.applications
+		end
+
+		return 0
+	end
+
+	local function GetIciclesMax()
+		return C_Spell.GetSpellMaxCumulativeAuraApplications(SPELL_ICICLES)
+	end
+
+	local function GetIciclesColor(element)
+		local color = element.__owner.colors.power[POWER_TYPE_ICICLES]
+		if(color) then
+			return color
+		end
+	end
+
 	GetPowerUpdaters = function()
-		if(C_SpecializationInfo.GetSpecialization() == SPEC_MAGE_ARCANE) then
+		local specialization = C_SpecializationInfo.GetSpecialization()
+		if(specialization == SPEC_MAGE_ARCANE) then
 			return GetGenericPower, GetGenericPowerMax, GetGenericPowerColor
+		elseif(specialization == SPEC_MAGE_FROST) then
+			return GetIcicles, GetIciclesMax, GetIciclesColor
 		end
 	end
 
 	GetPowerInfo = function()
 		if(C_SpecializationInfo.GetSpecialization() == SPEC_MAGE_ARCANE) then
 			return POWER_TYPE_ARCANE_CHARGES, POWER_ID_ARCANE_CHARGES
+		end
+	end
+
+	GetAuraInfo = function()
+		if(C_SpellBook.IsSpellKnownOrInSpellBook(SPELL_ICICLES_TALENT, 0, false)) then
+			return POWER_TYPE_ICICLES
 		end
 	end
 elseif(playerClass == 'MONK') then
