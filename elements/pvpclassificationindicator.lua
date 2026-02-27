@@ -69,6 +69,8 @@ local function Update(self, event, unit)
 		else
 			element:Hide()
 		end
+	else
+		element:Hide()
 	end
 
 	--[[ Callback: PvPClassificationIndicator:PostUpdate(unit, class)
