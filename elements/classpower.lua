@@ -439,20 +439,20 @@ local function Visibility(self, event, unit)
 		if(PlayerVehicleHasComboPoints()) then
 			powerType = POWER_TYPE_COMBO_POINTS
 		end
-	end
-
-	if(not powerType and GetAuraInfo) then
-		powerType = GetAuraInfo()
-		if(powerType) then
-			isAuraPower = true
-			unit = 'player'
+	else
+		if(GetAuraInfo) then
+			powerType = GetAuraInfo()
+			if(powerType) then
+				isAuraPower = true
+				unit = 'player'
+			end
 		end
-	end
 
-	if(not powerType and GetPowerInfo) then
-		powerType, powerID = GetPowerInfo()
-		if(powerType) then
-			unit = 'player'
+		if(not powerType and GetPowerInfo) then
+			powerType, powerID = GetPowerInfo()
+			if(powerType) then
+				unit = 'player'
+			end
 		end
 	end
 
