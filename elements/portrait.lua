@@ -73,8 +73,6 @@ local function Update(self, event, unit)
 		else
 			local class, _
 			if(element.showClass) then
-				-- BUG: UnitClassBase can't be trusted
-				--      https://github.com/Stanzilla/WoWUIBugs/issues/621
 				_, class = UnitClass(unit)
 			end
 
