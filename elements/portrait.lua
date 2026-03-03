@@ -54,7 +54,7 @@ local function Update(self, event, unit)
 
 	local guid = UnitGUID(unit)
 	local isAvailable = UnitIsConnected(unit) and UnitIsVisible(unit)
-	local hasStateChanged = event ~= 'OnUpdate' or element.guid ~= guid or element.state ~= isAvailable
+	local hasStateChanged = event ~= 'OnUpdate' or (not issecretvalue(guid) and not issecretvalue(element.guid) and element.guid ~= guid) or element.state ~= isAvailable
 	if(hasStateChanged) then
 		if(element:IsObjectType('PlayerModel')) then
 			if(not isAvailable) then
