@@ -80,18 +80,15 @@ local function UpdateTotem(self, event, slot)
 
 	local totem = element[TOTEM_PRIORITIES[slot]]
 	local haveTotem, name, start, duration, icon = GetTotemInfo(slot)
-	if(haveTotem and duration > 0) then
-		if(totem.Icon) then
-			totem.Icon:SetTexture(icon)
-		end
 
-		if(totem.Cooldown) then
-			totem.Cooldown:SetCooldown(start, duration)
-		end
+	totem:SetAlphaFromBoolean(haveTotem, 1, 0)
 
-		totem:Show()
-	else
-		totem:Hide()
+	if(totem.Icon) then
+		totem.Icon:SetTexture(icon)
+	end
+
+	if(totem.Cooldown) then
+		totem.Cooldown:SetCooldown(start, duration)
 	end
 
 	--[[ Callback: Totems:PostUpdate(slot, haveTotem, name, start, duration, icon)
