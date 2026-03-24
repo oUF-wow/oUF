@@ -178,12 +178,6 @@ local function Disable(self)
 end
 
 local function Enable(self, unit)
-	if(self.unit ~= 'player' and not self.unit:match('raid%d?$') and not self.unit:match('party%d?$')) then
-		Disable(self)
-
-		return false
-	end
-
 	local element = self.PrivateAuras
 	if(element) then
 		element.__owner = self
