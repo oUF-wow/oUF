@@ -173,7 +173,9 @@ local function Path(self, ...)
 	else
 		self:UnregisterEvent('PLAYER_REGEN_ENABLED', Path)
 
-		(self.PrivateAuras.Override or Update) (self, ...)
+		do
+			(self.PrivateAuras.Override or Update) (self, ...)
+		end
 	end
 end
 
