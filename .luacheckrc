@@ -80,6 +80,7 @@ read_globals = {
 	'GetTexCoordsForRoleSmallCircle',
 	'GetThreatStatusColor',
 	'GetTime',
+	'GetTotemDuration',
 	'GetTotemInfo',
 	'GetUnitChargedPowerPoints',
 	'GetUnitEmpowerHoldAtMaxTime',

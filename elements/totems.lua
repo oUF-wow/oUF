@@ -80,33 +80,32 @@ local function UpdateTotem(self, event, slot)
 
 	local totem = element[TOTEM_PRIORITIES[slot]]
 	local haveTotem, name, start, duration, icon = GetTotemInfo(slot)
-	if(haveTotem and duration > 0) then
-		if(totem.Icon) then
-			totem.Icon:SetTexture(icon)
-		end
+	local durationObj = GetTotemDuration(slot)
 
-		if(totem.Cooldown) then
-			totem.Cooldown:SetCooldown(start, duration)
-		end
+	totem:SetAlphaFromBoolean(haveTotem, 1, 0)
 
-		totem:Show()
-	else
-		totem:Hide()
+	if(totem.Icon) then
+		totem.Icon:SetTexture(icon)
+	end
+
+	if(totem.Cooldown) then
+		totem.Cooldown:SetCooldownFromDuration(durationObj)
 	end
 
 	--[[ Callback: Totems:PostUpdate(slot, haveTotem, name, start, duration, icon)
 	Called after the element has been updated.
 
-	* self      - the Totems element
-	* slot      - the slot of the updated totem (number)
-	* haveTotem - indicates if a totem is present in the given slot (boolean)
-	* name      - the name of the totem (string)
-	* start     - the value of `GetTime()` when the totem was created (number)
-	* duration  - the total duration for which the totem should last (number)
-	* icon      - the totem's icon (Texture)
+	* self        - the Totems element
+	* slot        - the slot of the updated totem (number)
+	* haveTotem   - indicates if a totem is present in the given slot (boolean)
+	* name        - the name of the totem (string)
+	* start       - (deprecated) the value of `GetTime()` when the totem was created (number)
+	* duration    - (deprecated) the total duration for which the totem should last (number)
+	* icon        - the totem's icon (Texture)
+	* durationObj - totem duration ([DurationObject](https://warcraft.wiki.gg/wiki/ScriptObject_DurationObject))
 	--]]
 	if(element.PostUpdate) then
-		return element:PostUpdate(slot, haveTotem, name, start, duration, icon)
+		return element:PostUpdate(slot, haveTotem, name, start, duration, icon, durationObj)
 	end
 end
 
