@@ -88,7 +88,7 @@ local function UpdateTotem(self, event, slot)
 		totem.Icon:SetTexture(icon)
 	end
 
-	if(totem.Cooldown) then
+	if(totem.Cooldown and durationObj) then
 		totem.Cooldown:SetCooldownFromDurationObject(durationObj)
 	end
 
