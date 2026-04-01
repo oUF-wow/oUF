@@ -86,6 +86,7 @@ local _, ns = ...
 local oUF = ns.oUF
 local Private = oUF.Private
 
+local unitIsUnit = Private.unitIsUnit
 local unitSelectionType = Private.unitSelectionType
 
 -- sourced from Blizzard_UnitFrame/UnitPowerBarAlt.lua
@@ -547,7 +548,7 @@ local function Enable(self, unit)
 		if(element.CostPrediction) then
 			element.CostPrediction:Hide()
 
-			if(UnitIsUnit(unit, 'player')) then
+			if(unitIsUnit(unit, 'player')) then
 				if(element.CostPrediction:IsObjectType('StatusBar') and not element.CostPrediction:GetStatusBarTexture()) then
 					element.CostPrediction:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 				end
