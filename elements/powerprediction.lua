@@ -44,6 +44,9 @@ A default texture will be applied if the widget is a StatusBar and doesn't have 
 
 local _, ns = ...
 local oUF = ns.oUF
+local Private = oUF.Private
+
+local unitIsUnit = Private.unitIsUnit
 
 -- sourced from Blizzard_UnitFrame/AlternatePowerBar.lua
 local ALT_POWER_BAR_PAIR_DISPLAY_INFO = _G.ALT_POWER_BAR_PAIR_DISPLAY_INFO
@@ -199,7 +202,7 @@ end
 
 local function Enable(self, unit)
 	local element = self.PowerPrediction
-	if(element and UnitIsUnit(unit, 'player')) then
+	if(element and unitIsUnit(unit, 'player')) then
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
 
