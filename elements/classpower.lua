@@ -43,6 +43,9 @@ Supported class powers:
 
 local _, ns = ...
 local oUF = ns.oUF
+local Private = oUF.Private
+
+local unitIsUnit = Private.unitIsUnit
 
 local playerClass = UnitClassBase('player')
 
@@ -350,7 +353,7 @@ local function Update(self, event, unit, powerType)
 		return
 	elseif(unit == 'vehicle' and powerType ~= POWER_TYPE_COMBO_POINTS) then
 		return
-	elseif(not UnitIsUnit(unit, 'player')) then -- is this redundant?
+	elseif(not unitIsUnit(unit, 'player')) then -- is this redundant?
 		return
 	elseif(event == 'UNIT_AURA' or event == 'UNIT_POWER_POINT_CHARGE') then
 		-- fake the power type for events that don't provide any
@@ -558,7 +561,7 @@ end
 
 local function Enable(self, unit)
 	local element = self.ClassPower
-	if(element and UnitIsUnit(unit, 'player')) then
+	if(element and unitIsUnit(unit, 'player')) then
 		element.__owner = self
 		element.__max = 0
 		element.ForceUpdate = ForceUpdate
