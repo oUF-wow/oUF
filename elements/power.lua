@@ -145,7 +145,7 @@ local function UpdateColor(self, event, unit)
 		end
 
 		if(element.colorPowerSmooth and color and color:GetCurve()) then
-			color = UnitPowerPercent(unit, true, color:GetCurve())
+			color = UnitPowerPercent(unit, nil, true, color:GetCurve())
 		end
 	elseif(element.colorClass and (UnitIsPlayer(unit) or UnitInPartyIsAI(unit)))
 		or (element.colorClassNPC and not (UnitIsPlayer(unit) or UnitInPartyIsAI(unit)))
