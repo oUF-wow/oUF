@@ -129,6 +129,7 @@ local function Update(self)
 			unitToken = element.__owner.unit,
 			auraIndex = index,
 			parent = aura,
+			isContainer = false,
 			showCountdownFrame = not element.disableCooldown,
 			showCountdownNumbers = not element.disableCooldownText,
 			iconInfo = {
