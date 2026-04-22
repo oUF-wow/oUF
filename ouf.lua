@@ -878,7 +878,6 @@ do
 				nameplate.unitFrame:EnableMouse(false)
 				nameplate.unitFrame.isNamePlate = true
 				nameplate.unitFrame:SetAllPoints()
-				nameplate:SetAllHitTestPoints(nameplate.unitFrame)
 
 				Private.UpdateUnits(nameplate.unitFrame, unit)
 
@@ -886,6 +885,9 @@ do
 			else
 				Private.UpdateUnits(nameplate.unitFrame, unit)
 			end
+
+			nameplate:ClearAllHitTestPoints() -- to prevent lingering hit test points on default
+			nameplate:SetAllHitTestPoints(nameplate.unitFrame)
 
 			nameplate.unitFrame:SetAttribute('unit', unit)
 
