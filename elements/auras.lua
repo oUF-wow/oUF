@@ -65,7 +65,6 @@ At least one of the above widgets must be present for the element to work.
 ## Button Attributes
 
 button.auraInstanceID - unique ID for the current aura being tracked by the button (number)
-button.isHarmfulAura  - indicates if the button holds a debuff (boolean)
 
 ## Examples
 
@@ -207,7 +206,7 @@ local function updateAura(element, unit, data, position)
 	end
 
 	if(button.Overlay) then
-		if(element.showType or (data.isHarmfulAura and element.showDebuffType) or (not data.isHarmfulAura and element.showBuffType)) then
+		if(element.showType or (data.isHarmful and element.showDebuffType) or (not data.isHarmful and element.showBuffType)) then
 			local color = C_UnitAuras.GetAuraDispelTypeColor(unit, data.auraInstanceID, element.dispelColorCurve)
 			if color == nil then
 				-- BUG: this shouldn't happen but color can be nil, so default to None color
@@ -255,15 +254,15 @@ local function updateAura(element, unit, data, position)
 end
 
 local function FilterAura(element, unit, data)
-	if((element.onlyShowPlayer and data.isPlayerAura) or not element.onlyShowPlayer) then
+	if((element.onlyShowPlayer and data.isFromPlayerOrPlayerPet) or not element.onlyShowPlayer) then
 		return true
 	end
 end
 
 -- see AuraUtil.DefaultAuraCompare
 local function SortAuras(a, b)
-	if(a.isPlayerAura ~= b.isPlayerAura) then
-		return a.isPlayerAura
+	if(a.isFromPlayerOrPlayerPet ~= b.isFromPlayerOrPlayerPet) then
+		return a.isFromPlayerOrPlayerPet
 	end
 
 	return a.auraInstanceID < b.auraInstanceID
@@ -272,8 +271,8 @@ end
 local function processData(element, unit, data, filter)
 	if(not data) then return end
 
-	data.isPlayerAura = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, filter .. '|PLAYER')
-	data.isHarmfulAura = filter:find('HARMFUL') and true -- "isHarmful" is a secret, use a different name
+	data.isPlayerAura = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, filter .. '|PLAYER') -- DEPRECATED
+	data.isHarmfulAura = filter:find('HARMFUL') and true -- DEPRECATED
 
 	--[[ Callback: Auras:PostProcessAuraData(unit, data, filter)
 	Called after the aura data has been processed.
