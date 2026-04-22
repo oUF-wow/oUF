@@ -160,7 +160,7 @@ function oUF:DisableBlizzard(unit)
 				handleFrame(frame, true)
 			end
 		end
-	elseif(unit:match('nameplate%d?$')) then
+	elseif(unit:match('nameplate%d?%d?%d?$')) then
 		local frame = C_NamePlate.GetNamePlateForUnit(unit)
 		handleFrame(frame.UnitFrame, true)
 	end
