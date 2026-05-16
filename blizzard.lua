@@ -159,6 +159,13 @@ function oUF:DisableBlizzard(unit)
 			for _, frame in next, CompactArenaFrame.memberUnitFrames do
 				handleFrame(frame, true)
 			end
+
+			-- old arena frames, they're still used for flag carriers etc in battlegrounds
+			handleFrame(ArenaEnemyMatchFramesContainer)
+
+			for _, frame in next, ArenaEnemyMatchFramesContainer.UnitFrames do
+				handleFrame(frame, true)
+			end
 		end
 	elseif(unit:match('nameplate%d?%d?%d?$')) then
 		local frame = C_NamePlate.GetNamePlateForUnit(unit)

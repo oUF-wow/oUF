@@ -20,6 +20,7 @@ read_globals = {
 	table = {fields = {'removemulti', 'wipe'}},
 
 	-- FrameXML
+	'ArenaEnemyMatchFramesContainer',
 	'BossTargetFrameContainer',
 	'Clamp',
 	'ColorMixin',
