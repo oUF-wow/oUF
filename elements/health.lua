@@ -232,9 +232,6 @@ local function Update(self, event, unit)
 		element:SetValue(max, element.smoothing)
 	end
 
-	element.cur = cur -- DEPRECATED: use element.values
-	element.max = max -- DEPRECATED: use element.values
-
 	if(element.HealingAll or element.HealingPlayer or element.HealingOther or element.OverHealIndicator) then
 		local allHeal, playerHeal, otherHeal, healClamped = element.values:GetIncomingHeals()
 		if(element.HealingAll) then
