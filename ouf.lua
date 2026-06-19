@@ -291,6 +291,7 @@ local function initObject(unit, style, styleFunc, header, ...)
 			object:SetAttribute('*type1', 'target')
 			object:SetAttribute('*type2', 'togglemenu')
 			object:SetAttribute('toggleForVehicle', true)
+			object:SetAttribute('ping-receiver', true)
 
 			if(objectUnit:match('%w+target')) then
 				oUF:HandleEventlessUnit(object)
@@ -583,6 +584,7 @@ do
 
 				frame:SetAttribute('*type1', 'target')
 				frame:SetAttribute('*type2', 'togglemenu')
+				frame:SetAttribute('ping-receiver', true)
 				frame:SetAttribute('oUF-guessUnit', unit)
 			end
 
@@ -631,7 +633,7 @@ do
 	                 for possible values. If preferred, the attributes can be an associative table.
 
 	In addition to the standard group headers, oUF implements some of its own attributes. These can be supplied by the
-	layout, but are optional. PingableUnitFrameTemplate is inherited for Ping support.
+	layout, but are optional.
 
 	* oUF-initialConfigFunction - can contain code that will be securely run at the end of the initial secure
 	                              configuration (string?)
@@ -646,7 +648,7 @@ do
 		local name = overrideName or generateName(nil, ...)
 		local header = Mixin(CreateFrame('Frame', name, PetBattleFrameHider, template), headerMixin)
 
-		header:SetAttribute('template', 'SecureUnitButtonTemplate, SecureHandlerStateTemplate, SecureHandlerEnterLeaveTemplate, PingableUnitFrameTemplate')
+		header:SetAttribute('template', 'SecureUnitButtonTemplate, SecureHandlerStateTemplate, SecureHandlerEnterLeaveTemplate')
 
 		if(...) then
 			if(type(...) == 'table') then
@@ -722,7 +724,6 @@ Used to create a single unit frame and apply the currently active style to it.
                  (string?)
 
 oUF implements some of its own attributes. These can be supplied by the layout, but are optional.  
-PingableUnitFrameTemplate is inherited for Ping support.
 
 * oUF-enableArenaPrep - can be used to toggle arena prep support. Defaults to true (boolean)
 --]]
@@ -733,7 +734,7 @@ function oUF:Spawn(unit, overrideName)
 	unit = unit:lower()
 
 	local name = overrideName or generateName(unit)
-	local object = CreateFrame('Button', name, PetBattleFrameHider, 'SecureUnitButtonTemplate, PingableUnitFrameTemplate')
+	local object = CreateFrame('Button', name, PetBattleFrameHider, 'SecureUnitButtonTemplate')
 	Private.UpdateUnits(object, unit)
 
 	self:DisableBlizzard(unit)
@@ -876,7 +877,7 @@ do
 			if(not nameplate.unitFrame) then
 				nameplate.style = self.style
 
-				nameplate.unitFrame = CreateFrame('Button', self.prefix .. nameplate:GetName(), nameplate, 'PingableUnitFrameTemplate')
+				nameplate.unitFrame = CreateFrame('Button', self.prefix .. nameplate:GetName(), nameplate)
 				nameplate.unitFrame:EnableMouse(false)
 				nameplate.unitFrame.isNamePlate = true
 				nameplate.unitFrame:SetAllPoints()
@@ -931,8 +932,6 @@ do
 
 	* self      - the global oUF object
 	* prefix    - prefix for the global name of the nameplate. Defaults to an auto-generated prefix (string?)
-
-	PingableUnitFrameTemplate is inherited for Ping support.
 	--]]
 	function oUF:SpawnNamePlates(namePrefix)
 		if(not style) then return nierror('Unable to create frame. No styles have been registered.') end
