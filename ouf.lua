@@ -274,7 +274,7 @@ local function initObject(unit, style, styleFunc, header, ...)
 		-- frame will be stuck with the 'vehicle' unit.
 		object:RegisterEvent('PLAYER_ENTERING_WORLD', evalUnitAndUpdate, true)
 
-		if(not objectUnit:match('%w+target')) then
+		if(not objectUnit:match('%w+target') and not object.isNamePlate) then
 			object:RegisterEvent('UNIT_ENTERED_VEHICLE', evalUnitAndUpdate)
 			object:RegisterEvent('UNIT_EXITED_VEHICLE', evalUnitAndUpdate)
 
@@ -780,6 +780,7 @@ do
 		argcheck(callback, 2, 'function', 'nil')
 		self.targetCallback = callback
 	end
+
 	--[[ nameplates:SetAddedCallback(callback)
 	Sets a callback function to be triggered whenever a nameplate has been added.  
 	The payload for the callback is `(nameplate, event, unit)`.
@@ -788,6 +789,7 @@ do
 		argcheck(callback, 2, 'function', 'nil')
 		self.addedCallback = callback
 	end
+
 	--[[ nameplates:SetRemovedCallback(callback)
 	Sets a callback function to be triggered whenever a nameplate has been removed.  
 	The payload for the callback is `(nameplate, event, unit)`.
@@ -853,6 +855,7 @@ do
 		updateDriver(self)
 	end
 
+	local previouslyActiveElements = {}
 	local function driverEventHandler(self, event, unit)
 		if(event == 'PLAYER_LOGIN') then
 			updateDriver(self)
@@ -873,47 +876,79 @@ do
 
 			oUF:DisableBlizzard(unit)
 
-			if(not nameplate.unitFrame) then
-				nameplate.style = self.style
+			nameplate:ClearAllHitTestPoints() -- to prevent lingering hit test points
 
-				nameplate.unitFrame = CreateFrame('Button', self.prefix .. nameplate:GetName(), nameplate, 'PingableUnitFrameTemplate')
-				nameplate.unitFrame:EnableMouse(false)
-				nameplate.unitFrame.isNamePlate = true
-				nameplate.unitFrame:SetAllPoints()
+			local isUnit = not (UnitNameplateShowsWidgetsOnly(unit) or UnitIsGameObject(unit))
+			if(isUnit) then
+				if(not nameplate.unitFrame) then
+					nameplate.style = self.style
 
-				Private.UpdateUnits(nameplate.unitFrame, unit)
+					nameplate.unitFrame = CreateFrame('Button', self.prefix .. nameplate:GetName(), nameplate, 'PingableUnitFrameTemplate')
+					nameplate.unitFrame:EnableMouse(false)
+					nameplate.unitFrame.isNamePlate = true
+					nameplate.unitFrame:SetAllPoints()
 
-				walkObject(nameplate.unitFrame, unit)
-			else
-				Private.UpdateUnits(nameplate.unitFrame, unit)
-			end
+					Private.UpdateUnits(nameplate.unitFrame, unit)
 
-			nameplate:ClearAllHitTestPoints() -- to prevent lingering hit test points on default
-			nameplate:SetAllHitTestPoints(nameplate.unitFrame)
+					walkObject(nameplate.unitFrame, unit)
+				else
+					Private.UpdateUnits(nameplate.unitFrame, unit)
 
-			nameplate.unitFrame:SetAttribute('unit', unit)
+					if(previouslyActiveElements[nameplate.unitFrame]) then
+						for element in next, previouslyActiveElements[nameplate.unitFrame] do
+							nameplate.unitFrame:EnableElement(element, unit)
+						end
 
-			if(nameplate.UnitFrame) then
-				if(nameplate.UnitFrame.WidgetContainer) then
+						table.wipe(previouslyActiveElements[nameplate.unitFrame])
+						previouslyActiveElements[nameplate.unitFrame] = nil
+
+						nameplate.unitFrame:Show()
+					end
+				end
+
+				nameplate.unitFrame:SetAttribute('unit', unit)
+				nameplate:SetAllHitTestPoints(nameplate.unitFrame)
+
+				if(nameplate.UnitFrame.WidgetContainer and not nameplate.unitFrame.WidgetContainer) then
 					nameplate.UnitFrame.WidgetContainer:SetParent(nameplate.unitFrame)
 					nameplate.UnitFrame.WidgetContainer:SetIgnoreParentAlpha(true)
 					nameplate.unitFrame.WidgetContainer = nameplate.UnitFrame.WidgetContainer
 				end
-				if(nameplate.UnitFrame.SoftTargetFrame) then
+
+				if(nameplate.UnitFrame.SoftTargetFrame and not nameplate.unitFrame.SoftTargetFrame) then
 					-- we keep this to render soft target interaction icons above the "target"
 					nameplate.UnitFrame.SoftTargetFrame:SetParent(nameplate.unitFrame)
 					nameplate.UnitFrame.SoftTargetFrame:SetIgnoreParentAlpha(true)
 					nameplate.unitFrame.SoftTargetFrame = nameplate.UnitFrame.SoftTargetFrame
 				end
-			end
 
-			if(self.addedCallback) then
-				self.addedCallback(nameplate.unitFrame, event, unit)
-			end
+				if(self.addedCallback) then
+					self.addedCallback(nameplate.unitFrame, event, unit)
+				end
 
-			-- UAE is called after the callback to reduce the number of
-			-- ForceUpdate calls layouts have to do after changing things
-			nameplate.unitFrame:UpdateAllElements(event)
+				if(isUnit) then
+					-- UAE is called after the callback to reduce the number of
+					-- ForceUpdate calls layouts have to do after changing things
+					nameplate.unitFrame:UpdateAllElements(event)
+				end
+			elseif(nameplate.unitFrame) then
+				previouslyActiveElements[nameplate.unitFrame] = {}
+
+				for element in next, activeElements[nameplate.unitFrame] do
+					nameplate.unitFrame:DisableElement(element, unit)
+					previouslyActiveElements[nameplate.unitFrame][element] = true
+				end
+
+				if(nameplate.unitFrame.WidgetContainer) then
+					nameplate.unitFrame.WidgetContainer:SetParent(nameplate.UnitFrame)
+				end
+
+				if(nameplate.unitFrame.SoftTargetFrame) then
+					nameplate.unitFrame.SoftTargetFrame:SetParent(nameplate.UnitFrame)
+				end
+
+				nameplate.unitFrame:Hide()
+			end
 		elseif(event == 'NAME_PLATE_UNIT_REMOVED') then
 			local nameplate = C_NamePlate.GetNamePlateForUnit(unit)
 			if(not nameplate or not nameplate.unitFrame) then return end
