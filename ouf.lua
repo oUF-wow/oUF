@@ -874,12 +874,12 @@ do
 			local nameplate = C_NamePlate.GetNamePlateForUnit(unit)
 			if(not nameplate) then return end
 
-			oUF:DisableBlizzard(unit)
-
-			nameplate:ClearAllHitTestPoints() -- to prevent lingering hit test points
-
 			local isUnit = not (UnitNameplateShowsWidgetsOnly(unit) or UnitIsGameObject(unit))
 			if(isUnit) then
+				oUF:DisableBlizzard(unit)
+
+				nameplate:ClearAllHitTestPoints() -- to prevent lingering hit test points
+
 				if(not nameplate.unitFrame) then
 					nameplate.style = self.style
 
@@ -909,13 +909,13 @@ do
 				nameplate.unitFrame:SetAttribute('unit', unit)
 				nameplate:SetAllHitTestPoints(nameplate.unitFrame)
 
-				if(nameplate.UnitFrame.WidgetContainer and not nameplate.unitFrame.WidgetContainer) then
+				if(nameplate.UnitFrame.WidgetContainer) then
 					nameplate.UnitFrame.WidgetContainer:SetParent(nameplate.unitFrame)
 					nameplate.UnitFrame.WidgetContainer:SetIgnoreParentAlpha(true)
 					nameplate.unitFrame.WidgetContainer = nameplate.UnitFrame.WidgetContainer
 				end
 
-				if(nameplate.UnitFrame.SoftTargetFrame and not nameplate.unitFrame.SoftTargetFrame) then
+				if(nameplate.UnitFrame.SoftTargetFrame) then
 					-- we keep this to render soft target interaction icons above the "target"
 					nameplate.UnitFrame.SoftTargetFrame:SetParent(nameplate.unitFrame)
 					nameplate.UnitFrame.SoftTargetFrame:SetIgnoreParentAlpha(true)
@@ -948,6 +948,7 @@ do
 				end
 
 				nameplate.unitFrame:Hide()
+				nameplate.UnitFrame:Show()
 			end
 		elseif(event == 'NAME_PLATE_UNIT_REMOVED') then
 			local nameplate = C_NamePlate.GetNamePlateForUnit(unit)
