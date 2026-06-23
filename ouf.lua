@@ -878,8 +878,6 @@ do
 			if(isUnit) then
 				oUF:DisableBlizzard(unit)
 
-				nameplate:ClearAllHitTestPoints() -- to prevent lingering hit test points
-
 				if(not nameplate.unitFrame) then
 					nameplate.style = self.style
 
@@ -891,9 +889,22 @@ do
 					Private.UpdateUnits(nameplate.unitFrame, unit)
 
 					walkObject(nameplate.unitFrame, unit)
+
+					-- re-parent other elements directly to the nameplate frame, as it doesn't
+					-- seem to have effect to be parented there than to the unit frame within,
+					-- and this is the easier solution (no need to actively reparent and show/hide
+					-- the stock unit frame object)
+					if(nameplate.UnitFrame.WidgetContainer) then
+						nameplate.UnitFrame.WidgetContainer:SetParent(nameplate)
+					end
+
+					if(nameplate.UnitFrame.SoftTargetFrame) then
+						nameplate.UnitFrame.SoftTargetFrame:SetParent(nameplate)
+					end
 				else
 					Private.UpdateUnits(nameplate.unitFrame, unit)
 
+					-- enable elements if they were previously disabled
 					if(previouslyActiveElements[nameplate.unitFrame]) then
 						for element in next, previouslyActiveElements[nameplate.unitFrame] do
 							nameplate.unitFrame:EnableElement(element, unit)
@@ -906,21 +917,10 @@ do
 					end
 				end
 
-				nameplate.unitFrame:SetAttribute('unit', unit)
+				nameplate:ClearAllHitTestPoints() -- to prevent lingering hit test points
 				nameplate:SetAllHitTestPoints(nameplate.unitFrame)
 
-				if(nameplate.UnitFrame.WidgetContainer) then
-					nameplate.UnitFrame.WidgetContainer:SetParent(nameplate.unitFrame)
-					nameplate.UnitFrame.WidgetContainer:SetIgnoreParentAlpha(true)
-					nameplate.unitFrame.WidgetContainer = nameplate.UnitFrame.WidgetContainer
-				end
-
-				if(nameplate.UnitFrame.SoftTargetFrame) then
-					-- we keep this to render soft target interaction icons above the "target"
-					nameplate.UnitFrame.SoftTargetFrame:SetParent(nameplate.unitFrame)
-					nameplate.UnitFrame.SoftTargetFrame:SetIgnoreParentAlpha(true)
-					nameplate.unitFrame.SoftTargetFrame = nameplate.UnitFrame.SoftTargetFrame
-				end
+				nameplate.unitFrame:SetAttribute('unit', unit)
 
 				if(self.addedCallback) then
 					self.addedCallback(nameplate.unitFrame, event, unit)
@@ -939,16 +939,9 @@ do
 					previouslyActiveElements[nameplate.unitFrame][element] = true
 				end
 
-				if(nameplate.unitFrame.WidgetContainer) then
-					nameplate.unitFrame.WidgetContainer:SetParent(nameplate.UnitFrame)
-				end
-
-				if(nameplate.unitFrame.SoftTargetFrame) then
-					nameplate.unitFrame.SoftTargetFrame:SetParent(nameplate.UnitFrame)
-				end
-
+				-- no point showing our unit frame when there's only widgets,
+				-- it'll only get in the way
 				nameplate.unitFrame:Hide()
-				nameplate.UnitFrame:Show()
 			end
 		elseif(event == 'NAME_PLATE_UNIT_REMOVED') then
 			local nameplate = C_NamePlate.GetNamePlateForUnit(unit)
