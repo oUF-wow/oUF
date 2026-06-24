@@ -980,6 +980,11 @@ do
 		nameplateDriver:RegisterEvent('NAME_PLATE_UNIT_REMOVED')
 		nameplateDriver:RegisterEvent('PLAYER_TARGET_CHANGED')
 
+		-- we'd prefer to straight up disable blizzard's nameplate driver, but nameplates contain
+		-- widgets and soft target icons we can't recreate due to protections, and it handles the
+		-- forbidden nameplates, so we can't disable any events without friendly nameplates in
+		-- dungeons breaking
+
 		if(IsLoggedIn()) then
 			updateDriver(nameplateDriver)
 		else
