@@ -901,8 +901,18 @@ do
 				nameplate.UnitFrame.SoftTargetFrame:SetParent(nameplate)
 			end
 
-			local isUnit = not (UnitNameplateShowsWidgetsOnly(unit) or UnitIsGameObject(unit))
-			if(isUnit) then
+			if(UnitNameplateShowsWidgetsOnly(unit) or UnitIsGameObject(unit)) then
+				previouslyActiveElements[nameplate.unitFrame] = {}
+
+				for element in next, activeElements[nameplate.unitFrame] do
+					nameplate.unitFrame:DisableElement(element, unit)
+					previouslyActiveElements[nameplate.unitFrame][element] = true
+				end
+
+				-- no point showing our unit frame when there's only widgets,
+				-- it'll only get in the way
+				nameplate.unitFrame:Hide()
+			else
 				-- we need to keep updating the attributes in order to keep correct info,
 				-- as this can change during nameplate re-use
 				Private.UpdateUnits(nameplate.unitFrame, unit)
@@ -928,17 +938,6 @@ do
 				-- UAE is called after the callback to reduce the number of
 				-- ForceUpdate calls layouts have to do after changing things
 				nameplate.unitFrame:UpdateAllElements(event)
-			else
-				previouslyActiveElements[nameplate.unitFrame] = {}
-
-				for element in next, activeElements[nameplate.unitFrame] do
-					nameplate.unitFrame:DisableElement(element, unit)
-					previouslyActiveElements[nameplate.unitFrame][element] = true
-				end
-
-				-- no point showing our unit frame when there's only widgets,
-				-- it'll only get in the way
-				nameplate.unitFrame:Hide()
 			end
 		elseif(event == 'NAME_PLATE_UNIT_REMOVED') then
 			local nameplate = C_NamePlate.GetNamePlateForUnit(unit)
