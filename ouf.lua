@@ -862,6 +862,7 @@ do
 		elseif(event == 'PLAYER_TARGET_CHANGED') then
 			local nameplate = C_NamePlate.GetNamePlateForUnit('target')
 			if(not nameplate or not nameplate.unitFrame) then return end
+			if(UnitNameplateShowsWidgetsOnly('target') or UnitIsGameObject('target')) then return end
 
 			if(self.targetCallback) then
 				self.targetCallback(nameplate.unitFrame, event, 'target')
