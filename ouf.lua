@@ -891,8 +891,8 @@ do
 
 				walkObject(nameplate.unitFrame, unit)
 
-				-- re-parent other elements directly to the nameplate frame, as it doesn't
-				-- seem to have effect to be parented there than to the unit frame within,
+				-- re-parent other elements directly to the nameplate frame, as there doesn't seem
+				-- to be any downsides to be parented there than to the unit frame within,
 				-- and this is the easier solution (no need to actively reparent and show/hide
 				-- the stock unit frame object)
 				nameplate.UnitFrame.WidgetContainer:SetParent(nameplate)
