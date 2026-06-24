@@ -875,64 +875,60 @@ do
 			local nameplate = C_NamePlate.GetNamePlateForUnit(unit)
 			if(not nameplate) then return end
 
+			-- we need to disable blizzard's handling on every spawn because they keep
+			-- initializing stuff on nameplates
+			oUF:DisableBlizzard(unit)
+
+			if(not nameplate.unitFrame) then
+				nameplate.style = self.style
+
+				nameplate.unitFrame = CreateFrame('Button', self.prefix .. nameplate:GetName(), nameplate, 'PingableUnitFrameTemplate')
+				nameplate.unitFrame:EnableMouse(false)
+				nameplate.unitFrame:SetAllPoints()
+				nameplate.unitFrame:SetAttribute('unit', unit)
+				nameplate.unitFrame.isNamePlate = true
+
+				Private.UpdateUnits(nameplate.unitFrame, unit)
+
+				walkObject(nameplate.unitFrame, unit)
+
+				-- re-parent other elements directly to the nameplate frame, as it doesn't
+				-- seem to have effect to be parented there than to the unit frame within,
+				-- and this is the easier solution (no need to actively reparent and show/hide
+				-- the stock unit frame object)
+				nameplate.UnitFrame.WidgetContainer:SetParent(nameplate)
+				nameplate.UnitFrame.WidgetContainer:SetPoint('TOP', nameplate, 'BOTTOM')
+				nameplate.UnitFrame.SoftTargetFrame:SetParent(nameplate)
+			end
+
 			local isUnit = not (UnitNameplateShowsWidgetsOnly(unit) or UnitIsGameObject(unit))
 			if(isUnit) then
-				oUF:DisableBlizzard(unit)
+				-- we need to keep updating the attributes in order to keep correct info,
+				-- as this can change during nameplate re-use
+				Private.UpdateUnits(nameplate.unitFrame, unit)
 
-				if(not nameplate.unitFrame) then
-					nameplate.style = self.style
-
-					nameplate.unitFrame = CreateFrame('Button', self.prefix .. nameplate:GetName(), nameplate, 'PingableUnitFrameTemplate')
-					nameplate.unitFrame:EnableMouse(false)
-					nameplate.unitFrame.isNamePlate = true
-					nameplate.unitFrame:SetAllPoints()
-
-					Private.UpdateUnits(nameplate.unitFrame, unit)
-
-					walkObject(nameplate.unitFrame, unit)
-
-					-- re-parent other elements directly to the nameplate frame, as it doesn't
-					-- seem to have effect to be parented there than to the unit frame within,
-					-- and this is the easier solution (no need to actively reparent and show/hide
-					-- the stock unit frame object)
-					if(nameplate.UnitFrame.WidgetContainer) then
-						nameplate.UnitFrame.WidgetContainer:SetParent(nameplate)
+				-- enable elements if they were previously disabled
+				if(previouslyActiveElements[nameplate.unitFrame]) then
+					for element in next, previouslyActiveElements[nameplate.unitFrame] do
+						nameplate.unitFrame:EnableElement(element, unit)
 					end
 
-					if(nameplate.UnitFrame.SoftTargetFrame) then
-						nameplate.UnitFrame.SoftTargetFrame:SetParent(nameplate)
-					end
-				else
-					Private.UpdateUnits(nameplate.unitFrame, unit)
+					table.wipe(previouslyActiveElements[nameplate.unitFrame])
 
-					-- enable elements if they were previously disabled
-					if(previouslyActiveElements[nameplate.unitFrame]) then
-						for element in next, previouslyActiveElements[nameplate.unitFrame] do
-							nameplate.unitFrame:EnableElement(element, unit)
-						end
-
-						table.wipe(previouslyActiveElements[nameplate.unitFrame])
-						previouslyActiveElements[nameplate.unitFrame] = nil
-
-						nameplate.unitFrame:Show()
-					end
+					nameplate.unitFrame:Show()
 				end
 
 				nameplate:ClearAllHitTestPoints() -- to prevent lingering hit test points
 				nameplate:SetAllHitTestPoints(nameplate.unitFrame)
 
-				nameplate.unitFrame:SetAttribute('unit', unit)
-
 				if(self.addedCallback) then
 					self.addedCallback(nameplate.unitFrame, event, unit)
 				end
 
-				if(isUnit) then
-					-- UAE is called after the callback to reduce the number of
-					-- ForceUpdate calls layouts have to do after changing things
-					nameplate.unitFrame:UpdateAllElements(event)
-				end
-			elseif(nameplate.unitFrame) then
+				-- UAE is called after the callback to reduce the number of
+				-- ForceUpdate calls layouts have to do after changing things
+				nameplate.unitFrame:UpdateAllElements(event)
+			else
 				previouslyActiveElements[nameplate.unitFrame] = {}
 
 				for element in next, activeElements[nameplate.unitFrame] do
