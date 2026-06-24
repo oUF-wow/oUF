@@ -885,7 +885,6 @@ do
 				nameplate.unitFrame = CreateFrame('Button', self.prefix .. nameplate:GetName(), nameplate, 'PingableUnitFrameTemplate')
 				nameplate.unitFrame:EnableMouse(false)
 				nameplate.unitFrame:SetAllPoints()
-				nameplate.unitFrame:SetAttribute('unit', unit)
 				nameplate.unitFrame.isNamePlate = true
 
 				Private.UpdateUnits(nameplate.unitFrame, unit)
@@ -915,6 +914,7 @@ do
 			else
 				-- we need to keep updating the attributes in order to keep correct info,
 				-- as this can change during nameplate re-use
+				nameplate.unitFrame:SetAttribute('unit', unit)
 				Private.UpdateUnits(nameplate.unitFrame, unit)
 
 				-- enable elements if they were previously disabled
