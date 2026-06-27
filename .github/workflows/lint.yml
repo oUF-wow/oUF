@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/Checkout@v6
+      uses: actions/Checkout@v7
 
     - name: Run luacheck
       uses: nebularg/actions-luacheck@v1
