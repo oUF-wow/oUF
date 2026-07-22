@@ -21,6 +21,7 @@ read_globals = {
 
 	-- FrameXML
 	'AnchorUtil',
+	'AuraUtil',
 	'ArenaEnemyMatchFramesContainer',
 	'AuraContainerSortDirection',
 	'AuraContainerSortMethod',
