@@ -1115,6 +1115,32 @@ function oUF:AddElement(name, update, enable, disable)
 	}
 end
 
+--[[ oUF:AddMetaElement(name, create, update, enable, disable)
+Used to register a meta element with oUF.
+
+* self    - the global oUF object
+* name    - unique name of the element (string)
+* create  - used to create the element. Will be registered as a meta function (function)
+* update  - used to update the element (function)
+* enable  - used to enable the element for a given unit frame and unit (function)
+* disable - used to disable the element for a given unit frame (function)
+--]]
+function oUF:AddMetaElement(name, create, update, enable, disable)
+	argcheck(name, 2, 'string')
+	argcheck(create, 3, 'function')
+	argcheck(update, 4, 'function', 'nil')
+	argcheck(enable, 5, 'function')
+	argcheck(disable, 6, 'function')
+
+	if(elements[name]) then return nierror(string.format('Element [%s] is already registered.', name)) end
+	elements[name] = {
+		update = update,
+		enable = enable,
+		disable = disable,
+	}
+	self:RegisterMetaFunction('Create' .. name, create)
+end
+
 oUF.version = _VERSION
 --[[ oUF.objects
 Array containing all unit frames created by `oUF:Spawn`.
