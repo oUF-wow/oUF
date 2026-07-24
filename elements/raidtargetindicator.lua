@@ -25,9 +25,6 @@ A default texture will be applied if the widget is a Texture and doesn't have a 
 local _, ns = ...
 local oUF = ns.oUF
 
-local GetRaidTargetIndex = GetRaidTargetIndex
-local SetRaidTargetIconTexture = SetRaidTargetIconTexture
-
 local function Update(self, event)
 	local element = self.RaidTargetIndicator
 
