@@ -86,6 +86,8 @@ local _, ns = ...
 local oUF = ns.oUF
 local Private = oUF.Private
 
+local STATE = {}
+
 local unitIsUnit = Private.unitIsUnit
 local unitSelectionType = Private.unitSelectionType
 
@@ -119,8 +121,8 @@ local function UpdateColor(self, event, unit)
 	elseif(element.colorThreat and not UnitPlayerControlled(unit) and UnitThreatSituation('player', unit)) then
 		color =  self.colors.threat[UnitThreatSituation('player', unit)]
 	elseif(element.colorPower) then
-		if(element.displayType) then
-			color = self.colors.power[element.displayType]
+		if(STATE[element].displayType) then
+			color = self.colors.power[STATE[element].displayType]
 		end
 
 		if(not color) then
@@ -166,8 +168,8 @@ local function UpdateColor(self, event, unit)
 		element:SetStatusBarTexture(atlas)
 		element:GetStatusBarTexture():SetVertexColor(1, 1, 1)
 	else
-		if(element.__texture) then
-			element:SetStatusBarTexture(element.__texture)
+		if(STATE[element].texture) then
+			element:SetStatusBarTexture(STATE[element].texture)
 		end
 
 		-- it's done this way so that only non-standard powers have r, g, b values
@@ -233,22 +235,20 @@ local function Update(self, event, unit)
 		element:SetValue(max, element.smoothing)
 	end
 
-	element.cur = cur
-	element.min = min
-	element.max = max
-	element.displayType = displayType
+	STATE[element].displayType = displayType
 
 	--[[ Callback: Power:PostUpdate(unit, cur, min, max)
 	Called after the element has been updated.
 
-	* self - the Power element
-	* unit - the unit for which the update has been triggered (string)
-	* cur  - the unit's current power value (number)
-	* min  - the unit's minimum possible power value (number)
-	* max  - the unit's maximum possible power value (number)
+	* self        - the Power element
+	* unit        - the unit for which the update has been triggered (string)
+	* cur         - the unit's current power value (number)
+	* min         - the unit's minimum possible power value (number)
+	* max         - the unit's maximum possible power value (number)
+	* displayType - the power type displayed (number)
 	--]]
 	if(element.PostUpdate) then
-		element:PostUpdate(unit, cur, min, max)
+		element:PostUpdate(unit, cur, min, max, displayType)
 	end
 end
 
@@ -286,7 +286,7 @@ local function UpdatePrediction(self, event, unit)
 			if(not checkRequiredAura or costInfo.hasRequiredAura) then
 				if(costInfo.type == powerType) then
 					cost = costInfo.cost
-					element.cost = cost
+					STATE[element].cost = cost
 
 					break
 				end
@@ -295,9 +295,9 @@ local function UpdatePrediction(self, event, unit)
 	elseif(spellID) then
 		-- if we try to cast a spell while casting another one we need to avoid
 		-- resetting the element
-		cost = element.cost or 0
+		cost = STATE[element].cost or 0
 	else
-		element.cost = cost
+		STATE[element].cost = cost
 	end
 
 	element.CostPrediction:SetMinMaxValues(0, UnitPowerMax(unit, powerType))
@@ -318,19 +318,20 @@ end
 
 local function UpdatePredictionSize(self, event, unit)
 	local element = self.Power
-	if(element.CostPrediction and element.__size) then
-		element.CostPrediction[element.__isHoriz and 'SetWidth' or 'SetHeight'](element.CostPrediction, element.__size)
+	if(element.CostPrediction and STATE[element].size) then
+		local method = STATE[element].horizontal and 'SetWidth' or 'SetHeight'
+		element.CostPrediction[method](element.CostPrediction, STATE[element].size)
 	end
 end
 
 local function shouldUpdatePredictionSize(self)
 	local element = self.Power
 
-	local isHoriz = element:GetOrientation() == 'HORIZONTAL'
-	local newSize = element[isHoriz and 'GetWidth' or 'GetHeight'](element)
-	if(isHoriz ~= element.__isHoriz or newSize ~= element.__size) then
-		element.__isHoriz = isHoriz
-		element.__size = newSize
+	local horizontal = element:GetOrientation() == 'HORIZONTAL'
+	local size = horizontal and element:GetWidth() or element:GetHeight()
+	if(horizontal ~= STATE[element].horizontal or size ~= STATE[element].size) then
+		STATE[element].horizontal = horizontal
+		STATE[element].size = size
 
 		return true
 	end
@@ -489,6 +490,8 @@ local function Enable(self, unit)
 		element.SetColorThreat = SetColorThreat
 		element.SetFrequentUpdates = SetFrequentUpdates
 
+		STATE[element] = {}
+
 		if(not element.smoothing) then
 			element.smoothing = Enum.StatusBarInterpolation.Immediate
 		end
@@ -527,7 +530,7 @@ local function Enable(self, unit)
 		end
 
 		if(element.colorPowerAtlas) then
-			element.__texture = element.__texture or element:GetStatusBarTexture():GetTexture()
+			STATE[element].texture = element:GetStatusBarTexture():GetTexture()
 		end
 
 		if(not element.GetDisplayPower) then
