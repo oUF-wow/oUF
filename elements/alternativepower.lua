@@ -43,8 +43,6 @@ local Private = oUF.Private
 
 local unitIsUnit = Private.unitIsUnit
 
--- sourced from Blizzard_UnitFrame/UnitPowerBarAlt.lua
-local ALTERNATE_POWER_INDEX = Enum.PowerType.Alternate or 10
 
 local ALTERNATE_POWER_NAME = 'ALTERNATE'
 
@@ -74,7 +72,7 @@ local function UpdateColor(self, event, unit, powerType)
 
 	local color
 	if(element.colorPower) then
-		color = self.colors.power[ALTERNATE_POWER_INDEX]
+		color = self.colors.power[Enum.PowerType.Alternate]
 
 		if(element.colorPowerSmooth and color and color:GetCurve()) then
 			color = UnitPowerPercent(unit, nil, true, color:GetCurve())
@@ -113,9 +111,10 @@ local function Update(self, event, unit, powerType)
 	local cur, max, min
 	local barInfo = element.__barInfo
 	if(barInfo) then
-		cur = UnitPower(unit, ALTERNATE_POWER_INDEX)
-		max = UnitPowerMax(unit, ALTERNATE_POWER_INDEX)
+		cur = UnitPower(unit, Enum.PowerType.Alternate)
+		max = UnitPowerMax(unit, Enum.PowerType.Alternate)
 		min = barInfo.minPower
+
 		element:SetMinMaxValues(min, max)
 		element:SetValue(cur, element.smoothing)
 	end
