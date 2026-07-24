@@ -80,8 +80,8 @@ local function UpdateTotem(self, event, slot)
 	if(element.PreUpdate) then element:PreUpdate(slot) end
 
 	local totem = element[TOTEM_PRIORITIES[slot]]
-	local haveTotem, name, start, duration, icon = GetTotemInfo(slot)
-	local durationObj = GetTotemDuration(slot)
+	local haveTotem, name, _, _, icon = GetTotemInfo(slot)
+	local duration = GetTotemDuration(slot)
 
 	totem:SetAlphaFromBoolean(haveTotem, 1, 0)
 
@@ -89,24 +89,22 @@ local function UpdateTotem(self, event, slot)
 		totem.Icon:SetTexture(icon)
 	end
 
-	if(totem.Cooldown and durationObj ~= nil) then
-		totem.Cooldown:SetCooldownFromDurationObject(durationObj)
+	if(totem.Cooldown and duration ~= nil) then
+		totem.Cooldown:SetCooldownFromDurationObject(duration)
 	end
 
-	--[[ Callback: Totems:PostUpdate(slot, haveTotem, name, start, duration, icon)
+	--[[ Callback: Totems:PostUpdate(slot, haveTotem, name, icon, duration)
 	Called after the element has been updated.
 
-	* self        - the Totems element
-	* slot        - the slot of the updated totem (number)
-	* haveTotem   - indicates if a totem is present in the given slot (boolean)
-	* name        - the name of the totem (string)
-	* start       - (deprecated) the value of `GetTime()` when the totem was created (number)
-	* duration    - (deprecated) the total duration for which the totem should last (number)
-	* icon        - the totem's icon (Texture)
-	* durationObj - totem duration ([DurationObject](https://warcraft.wiki.gg/wiki/ScriptObject_DurationObject))
+	* self      - the Totems element
+	* slot      - the slot of the updated totem (number)
+	* haveTotem - indicates if a totem is present in the given slot (boolean)
+	* name      - the name of the totem (string)
+	* icon      - the totem's icon (Texture)
+	* duration  - totem duration ([DurationObject](https://warcraft.wiki.gg/wiki/ScriptObject_DurationObject))
 	--]]
 	if(element.PostUpdate) then
-		return element:PostUpdate(slot, haveTotem, name, start, duration, icon, durationObj)
+		return element:PostUpdate(slot, haveTotem, name, icon, duration)
 	end
 end
 
