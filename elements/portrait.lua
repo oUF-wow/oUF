@@ -40,6 +40,8 @@ local _, ns = ...
 local oUF = ns.oUF
 local Private = oUF.Private
 
+local STATE = {}
+
 local unitIsUnit = Private.unitIsUnit
 
 local function Update(self, event, unit)
@@ -58,9 +60,14 @@ local function Update(self, event, unit)
 	local guid = UnitGUID(unit)
 	local isAvailable = UnitIsConnected(unit) and UnitIsVisible(unit)
 
-	local hasStateChanged = event ~= 'OnUpdate'
-		or (not issecretvalue(guid) and not issecretvalue(element.guid) and element.guid ~= guid)
-		or element.state ~= isAvailable
+	local hasStateChanged
+	if(event ~= 'OnUpdate') then
+		hasStateChanged = true
+	elseif(STATE[element].available ~= isAvailable) then
+		hasStateChanged = true
+	elseif(not issecretvalue(guid) and not issecretvalue(STATE[element].guid)) then
+		hasStateChanged = STATE[element].guid ~= guid
+	end
 
 	if(hasStateChanged) then
 		if(element:IsObjectType('PlayerModel')) then
@@ -90,8 +97,8 @@ local function Update(self, event, unit)
 			end
 		end
 
-		element.guid = guid
-		element.state = isAvailable
+		STATE[element].guid = guid
+		STATE[element].available = isAvailable
 	end
 
 	--[[ Callback: Portrait:PostUpdate(unit)
@@ -126,6 +133,8 @@ local function Enable(self, unit)
 	if(element) then
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
+
+		STATE[element] = {}
 
 		self:RegisterEvent('UNIT_MODEL_CHANGED', Path)
 		self:RegisterEvent('UNIT_PORTRAIT_UPDATE', Path)
