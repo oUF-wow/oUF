@@ -119,10 +119,6 @@ local function Update(self, event, unit, powerType)
 		element:SetValue(cur, element.smoothing)
 	end
 
-	element.cur = cur
-	element.min = min
-	element.max = max
-
 	--[[ Callback: AlternativePower:PostUpdate(unit, cur, min, max)
 	Called after the element has been updated.
 
