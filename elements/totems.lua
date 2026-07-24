@@ -44,6 +44,7 @@ OnEnter and OnLeave script handlers will be set to display a Tooltip if the `Tot
 local _, ns = ...
 local oUF = ns.oUF
 
+-- sourced from Blizzard_FrameXMLBase/Constants.lua
 local TOTEM_PRIORITIES = _G.STANDARD_TOTEM_PRIORITIES
 if(UnitClassBase('player') == 'SHAMAN') then
 	TOTEM_PRIORITIES = _G.SHAMAN_TOTEM_PRIORITIES
