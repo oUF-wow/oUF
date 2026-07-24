@@ -559,7 +559,7 @@ local function onUpdate(self, elapsed)
 	elseif((not STATE[self].holdTime or STATE[self].holdTime == 0) and (STATE[self].casting or STATE[self].channeling or STATE[self].empowering)) then
 		if(self.Time) then
 			local durationObject = self:GetTimerDuration() -- can be nil
-			if durationObject then
+			if(durationObject) then
 				if(STATE[self].delay and STATE[self].delay ~= 0) then
 					--[[ Override: Castbar:CustomDelayText(duration)
 					Used to completely override the updating of the .Time sub-widget when there is a delay to adjust for.
