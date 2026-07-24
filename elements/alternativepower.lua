@@ -41,13 +41,14 @@ local _, ns = ...
 local oUF = ns.oUF
 local Private = oUF.Private
 
-local unitIsUnit = Private.unitIsUnit
+local STATE = {}
 
+local unitIsUnit = Private.unitIsUnit
 
 local ALTERNATE_POWER_NAME = 'ALTERNATE'
 
 local function updateTooltip(self)
-	local name, tooltip = GetUnitPowerBarStringsByID(self.__barID)
+	local name, tooltip = GetUnitPowerBarStringsByID(STATE[self].barID)
 	GameTooltip:SetText(name or '', 1, 1, 1)
 	GameTooltip:AddLine(tooltip or '', nil, nil, nil, true)
 	GameTooltip:Show()
@@ -109,7 +110,7 @@ local function Update(self, event, unit, powerType)
 	end
 
 	local cur, max, min
-	local barInfo = element.__barInfo
+	local barInfo = STATE[element].barInfo
 	if(barInfo) then
 		cur = UnitPower(unit, Enum.PowerType.Alternate)
 		max = UnitPowerMax(unit, Enum.PowerType.Alternate)
@@ -163,9 +164,10 @@ local function Visibility(self, event, unit)
 
 	local barID = UnitPowerBarID(unit)
 	local barInfo = GetUnitPowerBarInfoByID(barID)
-	element.__barID = barID
-	element.__barInfo = barInfo
-	if(barInfo and (barInfo.showOnRaid and (UnitInParty(unit) or UnitInRaid(unit))
+	STATE[element].barID = barID
+	STATE[element].barInfo = barInfo
+
+	if(barInfo and (barInfo.showOnRaid and (UnitInParty(unit) or UnitInRaid(unit) ~= nil)
 		or not barInfo.hideFromOthers
 		or unitIsUnit(unit, 'player')))
 	then
@@ -203,6 +205,8 @@ local function Enable(self, unit)
 	if(element) then
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
+
+		STATE[element] = {}
 
 		if(not element.smoothing) then
 			element.smoothing = Enum.StatusBarInterpolation.Immediate
