@@ -32,6 +32,7 @@ read_globals = {
 	'FocusFrame',
 	'GameTooltip',
 	'GameTooltip_SetDefaultAnchor',
+	'GenerateClosure',
 	'MonkStaggerBar',
 	'NamePlateDriverFrame',
 	'PartyFrame',
@@ -53,6 +54,7 @@ read_globals = {
 	'C_ClassTalents',
 	'C_ColorUtil',
 	'C_CurveUtil',
+	'C_DurationUtil',
 	'C_IncomingSummon',
 	'C_NamePlate',
 	'C_NamePlateManager',
@@ -62,6 +64,7 @@ read_globals = {
 	'C_SpellBook',
 	'C_StringUtil',
 	'C_Texture',
+	'C_Timer',
 	'C_UnitAuras',
 
 	-- API

@@ -22,10 +22,11 @@ A default texture will be applied to the StatusBar and Texture widgets if they d
 
 ## Options
 
-.timeToHold      - Indicates for how many seconds the castbar should be visible after a _FAILED or _INTERRUPTED
-                   event. Defaults to 0 (number)
-.hideTradeSkills - Makes the element ignore casts related to crafting professions (boolean)
-.smoothing       - Which status bar smoothing method to use, defaults to `Enum.StatusBarInterpolation.Immediate` (number)
+.timeToHold         - Indicates for how many seconds the castbar should be visible after a _FAILED or _INTERRUPTED
+                      event. Defaults to 0 (number)
+.hideTradeSkills    - Makes the element ignore casts related to crafting professions (boolean)
+.smoothing          - Which status bar smoothing method to use, defaults to `Enum.StatusBarInterpolation.Immediate` (number)
+.showGlobalCooldown - Whether to show a castbar for the global cooldown for the player (boolean)
 
 ## Examples
 
@@ -81,6 +82,7 @@ local STATE = {}
 local FALLBACK_ICON = 136243 -- Interface\ICONS\Trade_Engineering
 local FAILED = _G.FAILED or 'Failed'
 local INTERRUPTED = _G.INTERRUPTED or 'Interrupted'
+local GLOBAL_SPELL_ID = 61304 -- Global Cooldown
 
 local function resetState(element)
 	if(not (element.timeToHold ~= nil and STATE[element].holdTime and STATE[element].holdTime > 0)) then
@@ -489,6 +491,68 @@ local function CastInterruptible(self, event, unit)
 	end
 end
 
+local globalTimer
+local function globalTimerCallback(element)
+	-- ensure a real cast hasn't started
+	if(not STATE[element].castID) then
+		resetState(element)
+	end
+
+	globalTimer = nil
+end
+
+local function CastGlobal(self, event, unit, _, spellID, castID)
+	local element = self.Castbar
+	if(not (element.ShouldShow or ShouldShow) (element, unit)) then
+		return
+	end
+
+	-- ensure a real cast is not active
+	if(STATE[element].castID) then
+		return
+	end
+
+	local info = C_Spell.GetSpellCooldown(GLOBAL_SPELL_ID)
+	if(not (info and info.isOnGCD and info.duration > 0)) then
+		return
+	end
+
+	if(globalTimer) then
+		globalTimer:Cancel()
+	end
+
+	-- reset first
+	resetState(element)
+
+	-- we need to fake some data
+	STATE[element].channeling = true
+
+	local duration = C_DurationUtil.CreateDuration()
+	duration:SetTimeFromStart(info.startTime, info.duration, info.modRate)
+
+	element:SetTimerDuration(duration, element.smoothing, Enum.StatusBarTimerDirection.RemainingTime)
+
+	-- we need to reset manually
+	local resetTime = info.duration - (GetTime() - info.startTime)
+	globalTimer = C_Timer.NewTimer(resetTime, GenerateClosure(globalTimerCallback, element))
+
+	--[[ Callback: Castbar:PostCastGlobal(info, duration)
+	Called after the element has been updated upon a spell global cooldown.
+
+	* self     - the Castbar widget
+	* unit     - the unit for which the update has been triggered (string)
+	* info     - cooldown information related to the cast (table)
+	* duration - the duration object associated with the cast ([DurationObject](https://warcraft.wiki.gg/wiki/ScriptObject_DurationObject))
+	* spellID  - the ID of the spell (number)
+	* castID   - the unique ID of the cast (number)
+	--]]
+	if(element.PostCastGlobal) then
+		element:PostCastGlobal(info, duration, spellID, castID)
+	end
+
+	element:Show()
+end
+
 local function onUpdate(self, elapsed)
 	if(STATE[self].holdTime and STATE[self].holdTime > 0) then
 		STATE[self].holdTime = STATE[self].holdTime - elapsed
@@ -594,6 +658,10 @@ local function Enable(self, unit)
 			self:RegisterEvent(event, method)
 		end
 
+		if(unit == 'player' and element.showGlobalCooldown) then
+			self:RegisterEvent('UNIT_SPELLCAST_SUCCEEDED', CastGlobal)
+		end
+
 		element.Pips = element.Pips or {}
 
 		element:SetScript('OnUpdate', element.OnUpdate or onUpdate)
@@ -637,6 +705,10 @@ local function Disable(self)
 
 		for event, method in next, eventMethods do
 			self:UnregisterEvent(event, method)
+		end
+
+		if(self.unit == 'player' and element.showGlobalCooldown) then
+			self:UnregisterEvent('UNIT_SPELLCAST_SUCCEEDED', CastGlobal)
 		end
 
 		element:SetScript('OnUpdate', nil)
