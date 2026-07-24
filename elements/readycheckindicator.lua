@@ -19,10 +19,6 @@ Default textures will be applied if the layout does not provide custom ones. See
                    1.5 (number).
 .useAtlasSize    - Makes the element use preprogrammed atlas' size instead of its set dimensions (boolean)
 
-## Attributes
-
-.status - the unit's ready check status (string?)['ready', 'noready', 'waiting']
-
 ## Examples
 
     -- Position and size
@@ -89,10 +85,9 @@ local function Update(self, event)
 			end
 		end
 
-		element.status = status
 		element:Show()
 	elseif(event ~= 'READY_CHECK_FINISHED') then
-		element.status = nil
+		status = nil
 		element:Hide()
 	end
 
