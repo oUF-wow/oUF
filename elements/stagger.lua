@@ -36,22 +36,23 @@ local unitIsUnit = Private.unitIsUnit
 -- sourced from Blizzard_FrameXMLBase/Constants.lua
 local SPEC_MONK_BREWMASTER = _G.SPEC_MONK_BREWMASTER or 1
 
-local BREWMASTER_POWER_BAR_NAME = 'STAGGER'
+local POWER_TYPE_STAGGER = 'STAGGER'
 
 -- percentages at which bar should change color
-local STAGGER_YELLOW_TRANSITION =  _G.STAGGER_YELLOW_TRANSITION or 0.3
-local STAGGER_RED_TRANSITION = _G.STAGGER_RED_TRANSITION or 0.6
+-- sourced from STAGGER_STATES in Blizzard_UnitFrame/MonkStaggerBar.lua
+local STAGGER_YELLOW_TRANSITION = 0.3
+local STAGGER_RED_TRANSITION = 0.6
 
 -- table indices of bar colors
-local STAGGER_GREEN_INDEX = _G.STAGGER_GREEN_INDEX or 1
-local STAGGER_YELLOW_INDEX = _G.STAGGER_YELLOW_INDEX or 2
-local STAGGER_RED_INDEX = _G.STAGGER_RED_INDEX or 3
+local STAGGER_GREEN_INDEX = 1
+local STAGGER_YELLOW_INDEX = 2
+local STAGGER_RED_INDEX = 3
 
 local function UpdateColor(self, event, unit)
 	if(unit and unit ~= self.unit) then return end
 	local element = self.Stagger
 
-	local colors = self.colors.power[BREWMASTER_POWER_BAR_NAME]
+	local colors = self.colors.power[POWER_TYPE_STAGGER]
 	local perc = STATE[element].cur / (STATE[element].max or 1)
 
 	local color
