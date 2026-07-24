@@ -29,6 +29,8 @@ local _, ns = ...
 local oUF = ns.oUF
 local Private = oUF.Private
 
+local STATE = {}
+
 local unitIsUnit = Private.unitIsUnit
 
 -- sourced from Blizzard_FrameXMLBase/Constants.lua
@@ -50,7 +52,7 @@ local function UpdateColor(self, event, unit)
 	local element = self.Stagger
 
 	local colors = self.colors.power[BREWMASTER_POWER_BAR_NAME]
-	local perc = (element.cur or 0) / (element.max or 1)
+	local perc = STATE[element].cur / (STATE[element].max or 1)
 
 	local color
 	if(perc >= STAGGER_RED_TRANSITION) then
@@ -97,8 +99,8 @@ local function Update(self, event, unit)
 	element:SetMinMaxValues(0, max)
 	element:SetValue(cur, element.smoothing)
 
-	element.cur = cur
-	element.max = max
+	STATE[element].cur = cur
+	STATE[element].max = max
 
 	--[[ Callback: Stagger:PostUpdate(cur, max)
 	Called after the element has been updated.
@@ -208,6 +210,8 @@ local function Enable(self, unit)
 	if(element and unitIsUnit(unit, 'player')) then
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
+
+		STATE[element] = {}
 
 		if(not element.smoothing) then
 			element.smoothing = Enum.StatusBarInterpolation.Immediate
