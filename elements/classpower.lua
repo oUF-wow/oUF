@@ -45,6 +45,8 @@ local _, ns = ...
 local oUF = ns.oUF
 local Private = oUF.Private
 
+local STATE = {}
+
 local unitIsUnit = Private.unitIsUnit
 
 local playerClass = UnitClassBase('player')
@@ -323,7 +325,7 @@ end
 local function ColorPath(self)
 	local element = self.ClassPower
 
-	local powerType = element.__powerType
+	local powerType = STATE[element].powerType
 	if(UnitHasVehicleUI('player')) then
 		powerType = POWER_TYPE_COMBO_POINTS
 	end
@@ -349,8 +351,8 @@ local function Update(self, event, unit, powerType)
 		return
 	elseif(event == 'UNIT_AURA' or event == 'UNIT_POWER_POINT_CHARGE') then
 		-- fake the power type for events that don't provide any
-		powerType = element.__powerType
-	elseif(not powerType or powerType ~= element.__powerType) then
+		powerType = STATE[element].powerType
+	elseif(not powerType or powerType ~= STATE[element].powerType) then
 		return
 	end
 
@@ -367,10 +369,10 @@ local function Update(self, event, unit, powerType)
 
 	local cur, max, chargedPoints, hasMaxChanged
 	if(event ~= 'ClassPowerDisable') then
-		cur, chargedPoints = GetPower(unit, element.__powerID)
-		max = GetPowerMax(unit, element.__powerID)
+		cur, chargedPoints = GetPower(unit, STATE[element].powerID)
+		max = GetPowerMax(unit, STATE[element].powerID)
 
-		hasMaxChanged = max ~= element.__max
+		hasMaxChanged = max ~= STATE[element].max
 		if(hasMaxChanged) then
 			for i = 1, #element do
 				element[i]:SetShown(i <= max)
@@ -380,10 +382,10 @@ local function Update(self, event, unit, powerType)
 				end
 			end
 
-			element.__max = max
+			STATE[element].max = max
 		end
 
-		local hasCurChanged = cur ~= element.__cur
+		local hasCurChanged = cur ~= STATE[element].cur
 		if(hasCurChanged) then
 			local numActive = cur + 0.9
 			for i = 1, max do
@@ -394,7 +396,7 @@ local function Update(self, event, unit, powerType)
 				end
 			end
 
-			element.__cur = cur
+			STATE[element].cur = cur
 		end
 	end
 	--[[ Callback: ClassPower:PostUpdate(cur, max, hasMaxChanged, powerType)
@@ -451,11 +453,11 @@ local function Visibility(self, event, unit)
 		end
 	end
 
-	local wasEnabled = element.__isEnabled
+	local wasEnabled = STATE[element].enabled
 	local shouldEnable = powerType ~= nil
 
-	element.__powerType = powerType
-	element.__powerID = powerID
+	STATE[element].powerType = powerType
+	STATE[element].powerID = powerID
 
 	if(shouldEnable) then
 		if(unit == 'vehicle') then
@@ -522,12 +524,12 @@ do
 		self:RegisterEvent('SPELLS_CHANGED', ColorPath, true)
 
 		local element = self.ClassPower
-		element.__isEnabled = true
+		STATE[element].enabled = true
 
 		if(UnitHasVehicleUI('player')) then
 			Path(self, 'ClassPowerEnable', 'vehicle', POWER_TYPE_COMBO_POINTS)
 		else
-			Path(self, 'ClassPowerEnable', 'player', element.__powerType)
+			Path(self, 'ClassPowerEnable', 'player', STATE[element].powerType)
 		end
 	end
 
@@ -544,9 +546,9 @@ do
 				element[i]:Hide()
 			end
 
-			element.__max = 0
-			element.__isEnabled = false
-			Path(self, 'ClassPowerDisable', 'player', element.__powerType)
+			STATE[element].max = 0
+			STATE[element].enabled = false
+			Path(self, 'ClassPowerDisable', 'player', STATE[element].powerType)
 		end
 	end
 end
@@ -555,8 +557,9 @@ local function Enable(self, unit)
 	local element = self.ClassPower
 	if(element and unitIsUnit(unit, 'player')) then
 		element.__owner = self
-		element.__max = 0
 		element.ForceUpdate = ForceUpdate
+
+		STATE[element] = {}
 
 		self:RegisterEvent('PLAYER_LEVEL_UP', VisibilityPath, true)
 		self:RegisterEvent('TRAIT_CONFIG_UPDATED', VisibilityPath, true)
