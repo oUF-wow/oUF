@@ -38,7 +38,17 @@ local function Update(self, event)
 		element:PreUpdate()
 	end
 
-	local isAssistant = UnitInRaid(unit) and UnitIsGroupAssistant(unit) and not UnitIsGroupLeader(unit)
+	local isAssistant
+	if(UnitInRaid(unit) ~= nil) then
+		local isGroupLeader = UnitIsGroupLeader(unit)
+		if(not issecretvalue(isGroupLeader) and not isGroupLeader) then
+			isAssistant = UnitIsGroupAssistant(unit)
+			if(issecretvalue(isAssistant)) then
+				isAssistant = false
+			end
+		end
+	end
+
 	if(isAssistant) then
 		element:Show()
 	else
