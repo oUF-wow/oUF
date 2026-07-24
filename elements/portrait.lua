@@ -83,7 +83,7 @@ local function Update(self, event, unit)
 				_, class = UnitClass(unit)
 			end
 
-			if(class) then
+			if(class ~= nil) then
 				element:SetAtlas('classicon-' .. class)
 			else
 				SetPortraitTexture(element, unit)
