@@ -89,9 +89,6 @@ local Private = oUF.Private
 local unitIsUnit = Private.unitIsUnit
 local unitSelectionType = Private.unitSelectionType
 
--- sourced from Blizzard_UnitFrame/UnitPowerBarAlt.lua
-local ALTERNATE_POWER_INDEX = Enum.PowerType.Alternate or 10
-
 --[[ Override: Power:GetDisplayPower(unit)
 Used to get info on the unit's alternative power, if any.
 Should return the power type index (see [Enum.PowerType.Alternate](https://warcraft.wiki.gg/wiki/Enum.PowerType))
@@ -106,7 +103,7 @@ type and zero for the minimum value.
 local function GetDisplayPower(_, unit)
 	local barInfo = GetUnitPowerBarInfo(unit)
 	if(barInfo and barInfo.showOnRaid and (UnitInParty(unit) or UnitInRaid(unit) ~= nil)) then
-		return ALTERNATE_POWER_INDEX, barInfo.minPower
+		return Enum.PowerType.Alternate, barInfo.minPower
 	end
 end
 
