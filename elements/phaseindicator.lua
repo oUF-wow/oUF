@@ -93,15 +93,14 @@ local function Update(self, event, unit)
 
 	element.reason = phaseReason
 
-	--[[ Callback: PhaseIndicator:PostUpdate(isInSamePhase, phaseReason)
+	--[[ Callback: PhaseIndicator:PostUpdate(phaseReason)
 	Called after the element has been updated.
 
-	* self          - the PhaseIndicator element
-	* isInSamePhase - indicates whether the unit is in the same phase as the player (boolean)
-	* phaseReason   - the reason why the unit is in a different phase (number?)
+	* self        - the PhaseIndicator element
+	* phaseReason - the reason why the unit is in a different phase (number?)
 	--]]
 	if(element.PostUpdate) then
-		return element:PostUpdate(not phaseReason, phaseReason)
+		return element:PostUpdate(phaseReason)
 	end
 end
 
