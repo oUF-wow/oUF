@@ -57,16 +57,19 @@ local function Update(self, event, unit)
 
 	if(UnitIsPVPFreeForAll(unit)) then
 		status = 'FFA'
-	elseif(factionGroup ~= 'Neutral' and UnitIsPVP(unit)) then
-		if(unit == 'player' and UnitIsMercenary(unit)) then
-			if(factionGroup == 'Horde') then
-				factionGroup = 'Alliance'
-			elseif(factionGroup == 'Alliance') then
-				factionGroup = 'Horde'
+	else
+		local isPvP = UnitIsPVP(unit)
+		if(factionGroup ~= 'Neutral' and not issecretvalue(isPvP) and isPvP) then
+			if(unit == 'player' and UnitIsMercenary(unit)) then
+				if(factionGroup == 'Horde') then
+					factionGroup = 'Alliance'
+				elseif(factionGroup == 'Alliance') then
+					factionGroup = 'Horde'
+				end
 			end
-		end
 
-		status = factionGroup
+			status = factionGroup
+		end
 	end
 
 	if(status) then
