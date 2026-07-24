@@ -59,6 +59,10 @@ local function Update(self, event)
 		isLeader = UnitLeadsAnyGroup(unit)
 	end
 
+	if(issecretvalue(isLeader)) then
+		isLeader = false
+	end
+
 	if(isLeader) then
 		if(isInLFGInstance) then
 			element:SetAtlas('UI-HUD-UnitFrame-Player-Group-GuideIcon', element.useAtlasSize)
