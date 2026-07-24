@@ -105,7 +105,7 @@ type and zero for the minimum value.
 --]]
 local function GetDisplayPower(_, unit)
 	local barInfo = GetUnitPowerBarInfo(unit)
-	if(barInfo and barInfo.showOnRaid and (UnitInParty(unit) or UnitInRaid(unit))) then
+	if(barInfo and barInfo.showOnRaid and (UnitInParty(unit) or UnitInRaid(unit) ~= nil)) then
 		return ALTERNATE_POWER_INDEX, barInfo.minPower
 	end
 end
@@ -152,7 +152,13 @@ local function UpdateColor(self, event, unit)
 		or (element.colorClassNPC and not (UnitIsPlayer(unit) or UnitInPartyIsAI(unit)))
 		or (element.colorClassPet and UnitPlayerControlled(unit) and not UnitIsPlayer(unit)) then
 		local _, class = UnitClass(unit)
-		color = self.colors.class[class]
+		if(issecretvalue(class)) then
+			-- BUG: we can't use custom colors if the class is secret
+			-- https://github.com/oUF-wow/oUF/issues/873
+			color = C_ClassColor.GetClassColor(class)
+		else
+			color = self.colors.class[class]
+		end
 	elseif(element.colorSelection and unitSelectionType(unit, element.considerSelectionInCombatHostile)) then
 		color = self.colors.selection[unitSelectionType(unit, element.considerSelectionInCombatHostile)]
 	elseif(element.colorReaction and UnitReaction(unit, 'player')) then
