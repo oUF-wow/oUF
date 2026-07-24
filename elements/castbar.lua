@@ -232,7 +232,7 @@ local function CastStart(self, event, unit)
 	if(unit == 'player') then
 		-- we can only read these variables for players
 		element.startTime = startTime / 1000
-		if(self.empowering) then
+		if(element.empowering) then
 			element.endTime = (endTime + GetUnitEmpowerHoldAtMaxTime(unit)) / 1000
 		else
 			element.endTime = endTime / 1000
