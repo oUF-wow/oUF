@@ -27,16 +27,6 @@ A default texture will be applied to the StatusBar and Texture widgets if they d
 .hideTradeSkills - Makes the element ignore casts related to crafting professions (boolean)
 .smoothing       - Which status bar smoothing method to use, defaults to `Enum.StatusBarInterpolation.Immediate` (number)
 
-## Attributes
-
-.castID           - A unique identifier of the currently cast spell (number?)
-.casting          - Indicates whether the current spell is an ordinary cast (boolean)
-.channeling       - Indicates whether the current spell is a channeled cast (boolean)
-.empowering       - Indicates whether the current spell is an empowering cast (boolean)
-.notInterruptible - Indicates whether the current spell is interruptible (boolean)
-.spellID          - The spell identifier of the currently cast/channeled/empowering spell (number)
-.spellName        - The name of the spell currently being cast/channeled/empowered (string)
-
 ## Examples
 
     -- Position and size
@@ -86,20 +76,18 @@ A default texture will be applied to the StatusBar and Texture widgets if they d
 local _, ns = ...
 local oUF = ns.oUF
 
+local STATE = {}
+
 local FALLBACK_ICON = 136243 -- Interface\ICONS\Trade_Engineering
 local FAILED = _G.FAILED or 'Failed'
 local INTERRUPTED = _G.INTERRUPTED or 'Interrupted'
 
-local function resetAttributes(self)
-	self.castID = nil
-	self.casting = nil
-	self.channeling = nil
-	self.empowering = nil
-	self.notInterruptible = nil
-	self.spellID = nil
-	self.spellName = nil
+local function resetState(element)
+	if(not (element.timeToHold ~= nil and STATE[element].holdTime and STATE[element].holdTime > 0)) then
+		table.wipe(STATE[element])
+	end
 
-	for _, pip in next, self.Pips do
+	for _, pip in next, element.Pips do
 		pip:Hide()
 	end
 end
@@ -109,8 +97,8 @@ local function CreatePip(element)
 end
 
 local function UpdatePips(element, stages)
-	local isHoriz = element:GetOrientation() == 'HORIZONTAL'
-	local elementSize = isHoriz and element:GetWidth() or element:GetHeight()
+	local horizontal = element:GetOrientation() == 'HORIZONTAL'
+	local elementSize = horizontal and element:GetWidth() or element:GetHeight()
 
 	local lastOffset = 0
 	for stage, stageSection in next, stages do
@@ -136,7 +124,7 @@ local function UpdatePips(element, stages)
 		pip:ClearAllPoints()
 		pip:Show()
 
-		if(isHoriz) then
+		if(horizontal) then
 			if(pip.RotateTextures) then
 				pip:RotateTextures(0)
 			end
@@ -192,21 +180,21 @@ local function CastStart(self, event, unit)
 	end
 
 	-- reset first to avoid any attributes that might be stuck
-	resetAttributes(element)
+	resetState(element)
 
 	local direction, duration = Enum.StatusBarTimerDirection.ElapsedTime
-	local name, text, texture, startTime, endTime, isTradeSkill, _, notInterruptible, spellID, castID = UnitCastingInfo(unit)
+	local name, displayName, texture, startTime, endTime, isTradeSkill, _, notInterruptible, spellID, castID = UnitCastingInfo(unit)
 	if(name) then
-		element.casting = true
+		STATE[element].casting = true
 		duration = UnitCastingDuration(unit)
 	else
 		local isEmpowered
-		name, text, texture, startTime, endTime, isTradeSkill, notInterruptible, spellID, isEmpowered, _, castID = UnitChannelInfo(unit)
+		name, displayName, texture, startTime, endTime, isTradeSkill, notInterruptible, spellID, isEmpowered, _, castID = UnitChannelInfo(unit)
 		if(isEmpowered) then
-			element.empowering = true
+			STATE[element].empowering = true
 			duration = UnitEmpoweredChannelDuration(unit)
 		else
-			element.channeling = true
+			STATE[element].channeling = true
 			duration = UnitChannelDuration(unit)
 			direction = Enum.StatusBarTimerDirection.RemainingTime
 		end
@@ -214,28 +202,25 @@ local function CastStart(self, event, unit)
 
 	if(not name or (isTradeSkill and element.hideTradeSkills)) then
 		-- don't cancel hold time when we swap targets
-		if(not (event == 'PLAYER_TARGET_CHANGED' and element.holdTime and element.holdTime > 0)) then
-			resetAttributes(element)
+		if(not (event == 'PLAYER_TARGET_CHANGED' and STATE[element].holdTime and STATE[element].holdTime > 0)) then
 			element:Hide()
 		end
 
 		return
 	end
 
-	element.delay = 0
-	element.notInterruptible = notInterruptible
-	element.holdTime = 0
-	element.castID = castID
-	element.spellID = spellID
-	element.spellName = text
+	STATE[element].delay = 0
+	STATE[element].holdTime = 0
+	STATE[element].notInterruptible = notInterruptible
+	STATE[element].castID = castID
 
 	if(unit == 'player') then
 		-- we can only read these variables for players
-		element.startTime = startTime / 1000
-		if(element.empowering) then
-			element.endTime = (endTime + GetUnitEmpowerHoldAtMaxTime(unit)) / 1000
+		STATE[element].startTime = startTime / 1000
+		if(STATE[element].empowering) then
+			STATE[element].endTime = (endTime + GetUnitEmpowerHoldAtMaxTime(unit)) / 1000
 		else
-			element.endTime = endTime / 1000
+			STATE[element].endTime = endTime / 1000
 		end
 	end
 
@@ -244,24 +229,28 @@ local function CastStart(self, event, unit)
 	if(element.Icon) then element.Icon:SetTexture(texture or FALLBACK_ICON) end
 	if(element.Shield) then element.Shield:SetAlphaFromBoolean(notInterruptible, 1, 0) end
 	if(element.Spark) then element.Spark:Show() end
-	if(element.Text) then element.Text:SetText(text) end
+	if(element.Text) then element.Text:SetText(displayName) end
 	if(element.Time) then element.Time:SetText() end
 
 	local safeZone = element.SafeZone
 	if(safeZone and unit == 'player') then
-		local isHoriz = element:GetOrientation() == 'HORIZONTAL'
+		local horizontal = element:GetOrientation() == 'HORIZONTAL'
 
 		safeZone:ClearAllPoints()
-		safeZone:SetPoint(isHoriz and 'TOP' or 'LEFT')
-		safeZone:SetPoint(isHoriz and 'BOTTOM' or 'RIGHT')
+		safeZone:SetPoint(horizontal and 'TOP' or 'LEFT')
+		safeZone:SetPoint(horizontal and 'BOTTOM' or 'RIGHT')
 
-		if(element.channeling) then
-			safeZone:SetPoint(element:GetReverseFill() and (isHoriz and 'RIGHT' or 'TOP') or (isHoriz and 'LEFT' or 'BOTTOM'))
+		if(STATE[element].channeling) then
+			local directionNormal = horizontal and 'LEFT' or 'BOTTOM'
+			local directionReverse = horizontal and 'RIGHT' or 'TOP'
+			safeZone:SetPoint(element:GetReverseFill() and directionReverse or directionNormal)
 		else
-			safeZone:SetPoint(element:GetReverseFill() and (isHoriz and 'LEFT' or 'BOTTOM') or (isHoriz and 'RIGHT' or 'TOP'))
+			local directionNormal = horizontal and 'RIGHT' or 'TOP'
+			local directionReverse = horizontal and 'LEFT' or 'BOTTOM'
+			safeZone:SetPoint(element:GetReverseFill() and directionReverse or directionNormal)
 		end
 
-		if(element.empowering) then
+		if(STATE[element].empowering) then
 			endTime = endTime + GetUnitEmpowerHoldAtMaxTime(unit)
 		end
 
@@ -270,10 +259,11 @@ local function CastStart(self, event, unit)
 			ratio = 1
 		end
 
-		safeZone[isHoriz and 'SetWidth' or 'SetHeight'](safeZone, element[isHoriz and 'GetWidth' or 'GetHeight'](element) * ratio)
+		local axis = horizontal and 'Width' or 'Height'
+		safeZone['Set' .. axis](safeZone, element['Get' .. axis](element) * ratio)
 	end
 
-	if(element.empowering) then
+	if(STATE[element].empowering) then
 		--[[ Override: Castbar:UpdatePips(stages)
 		Handles updates for stage separators (pips) in an empowered cast.
 
@@ -283,14 +273,20 @@ local function CastStart(self, event, unit)
 		(element.UpdatePips or UpdatePips) (element, UnitEmpoweredStagePercentages(unit))
 	end
 
-	--[[ Callback: Castbar:PostCastStart(unit)
+	--[[ Callback: Castbar:PostCastStart(unit, name, texture, isTradeSkill, notInterruptible, spellID, castID)
 	Called after the element has been updated upon a spell cast or channel start.
 
-	* self - the Castbar widget
-	* unit - the unit for which the update has been triggered (string)
+	* self             - the Castbar widget
+	* unit             - the unit for which the update has been triggered (string)
+	* name             - the name of the spell (string)
+	* texture          - the texture path associated with the spell (string/number)
+	* isTradeSkill     - whether the spell is associated with a profession (boolean)
+	* notInterruptible - whether the spell is interruptible (boolean)
+	* spellID          - the ID of the spell (number)
+	* castID           - the unique ID of the cast (number)
 	--]]
 	if(element.PostCastStart) then
-		element:PostCastStart(unit)
+		element:PostCastStart(unit, displayName, texture, isTradeSkill, notInterruptible, spellID, castID)
 	end
 
 	element:Show()
@@ -302,11 +298,12 @@ local function CastUpdate(self, event, unit, _, _, castID)
 		return
 	end
 
-	if(not element:IsShown() or not castID or element.castID ~= castID) then
+	if(not element:IsShown() or not castID or STATE[element].castID ~= castID) then
 		return
 	end
 
-	local direction, duration, name, startTime, _ = Enum.StatusBarTimerDirection.ElapsedTime
+	local direction = Enum.StatusBarTimerDirection.ElapsedTime
+	local duration, name, startTime, _
 	if(event == 'UNIT_SPELLCAST_DELAYED') then
 		name, _, _, startTime = UnitCastingInfo(unit)
 		duration = UnitCastingDuration(unit)
@@ -327,29 +324,32 @@ local function CastUpdate(self, event, unit, _, _, castID)
 		startTime = startTime / 1000
 
 		local delta
-		if(element.channeling) then
-			delta = element.startTime - startTime
+		if(STATE[element].channeling) then
+			delta = STATE[element].startTime - startTime
 		else
-			delta = startTime - element.startTime
+			delta = startTime - STATE[element].startTime
 		end
 
 		if(delta < 0) then
 			delta = 0
 		end
 
-		element.delay = element.delay + delta
+		STATE[element].delay = STATE[element].delay + delta
 	end
 
 	element:SetTimerDuration(duration, element.smoothing, direction)
 
-	--[[ Callback: Castbar:PostCastUpdate(unit)
+	--[[ Callback: Castbar:PostCastUpdate(unit, duration, direction, castID)
 	Called after the element has been updated when a spell cast or channel has been updated.
 
-	* self - the Castbar widget
-	* unit - the unit that the update has been triggered (string)
+	* self      - the Castbar widget
+	* unit      - the unit that the update has been triggered (string)
+	* duration  - the duration object associated with the cast ([DurationObject](https://warcraft.wiki.gg/wiki/ScriptObject_DurationObject))
+	* direction - the direction of the duration object (number)
+	* castID    - the unique ID of the cast (number)
 	--]]
 	if(element.PostCastUpdate) then
-		return element:PostCastUpdate(unit)
+		return element:PostCastUpdate(unit, duration, direction, castID)
 	end
 end
 
@@ -368,7 +368,7 @@ local function CastStop(self, event, unit, _, _, ...)
 		interruptedBy, castID = ...
 	end
 
-	if(not element:IsShown() or not castID or element.castID ~= castID) then
+	if(not element:IsShown() or not castID or STATE[element].castID ~= castID) then
 		return
 	end
 
@@ -377,7 +377,7 @@ local function CastStop(self, event, unit, _, _, ...)
 	if(interruptedBy) then
 		if(element.Text) then element.Text:SetText(INTERRUPTED) end
 
-		element.holdTime = element.timeToHold or 0
+		STATE[element].holdTime = element.timeToHold or 0
 
 		-- force filled castbar
 		element:SetMinMaxValues(0, 1)
@@ -391,9 +391,10 @@ local function CastStop(self, event, unit, _, _, ...)
 		* self          - the Castbar widget
 		* unit          - the unit for which the update has been triggered (string)
 		* interruptedBy - GUID of whomever interrupted the cast (string)
+		* castID        - the unique ID of the cast (number)
 		--]]
 		if(element.PostCastInterrupted) then
-			element:PostCastInterrupted(unit, interruptedBy)
+			element:PostCastInterrupted(unit, interruptedBy, castID)
 		end
 	else
 		--[[ Callback: Castbar:PostCastStop(unit[, empowerComplete])
@@ -401,14 +402,16 @@ local function CastStop(self, event, unit, _, _, ...)
 
 		* self            - the Castbar widget
 		* unit            - the unit for which the update has been triggered (string)
+		* interruptedBy   - GUID of whomever interrupted the cast (string)
 		* empowerComplete - if the empowered cast was complete (boolean?)
+		* castID          - the unique ID of the cast (number)
 		--]]
 		if(element.PostCastStop) then
-			element:PostCastStop(unit, empowerComplete)
+			element:PostCastStop(unit, interruptedBy, empowerComplete, castID)
 		end
 	end
 
-	resetAttributes(element)
+	resetState(element)
 end
 
 local function CastFail(self, event, unit, _, _, ...)
@@ -424,7 +427,7 @@ local function CastFail(self, event, unit, _, _, ...)
 		castID = ...
 	end
 
-	if(not element:IsShown() or not castID or element.castID ~= castID) then
+	if(not element:IsShown() or not castID or STATE[element].castID ~= castID) then
 		return
 	end
 
@@ -434,7 +437,7 @@ local function CastFail(self, event, unit, _, _, ...)
 
 	if(element.Spark) then element.Spark:Hide() end
 
-	element.holdTime = element.timeToHold or 0
+	STATE[element].holdTime = element.timeToHold or 0
 
 	-- force filled castbar
 	element:SetMinMaxValues(0, 1)
@@ -442,21 +445,22 @@ local function CastFail(self, event, unit, _, _, ...)
 
 	if(interruptedBy) then
 		if(element.PostCastInterrupted) then
-			element:PostCastInterrupted(unit, interruptedBy)
+			element:PostCastInterrupted(unit, interruptedBy, castID)
 		end
 	else
 		--[[ Callback: Castbar:PostCastFail(unit)
 		Called after the element has been updated upon a failed or interrupted spell cast.
 
-		* self - the Castbar widget
-		* unit - the unit for which the update has been triggered (string)
+		* self   - the Castbar widget
+		* unit   - the unit for which the update has been triggered (string)
+		* castID - the unique ID of the cast (number)
 		--]]
 		if(element.PostCastFail) then
-			element:PostCastFail(unit)
+			element:PostCastFail(unit, castID)
 		end
 	end
 
-	resetAttributes(element)
+	resetState(element)
 end
 
 local function CastInterruptible(self, event, unit)
@@ -468,45 +472,49 @@ local function CastInterruptible(self, event, unit)
 	if(not element:IsShown()) then return end
 	-- ISSUE: we can't verify if this is for an active cast/channel/empower without castID
 
-	element.notInterruptible = event == 'UNIT_SPELLCAST_NOT_INTERRUPTIBLE'
+	local notInterruptible = event == 'UNIT_SPELLCAST_NOT_INTERRUPTIBLE'
+	STATE[element].notInterruptible = notInterruptible
 
-	if(element.Shield) then element.Shield:SetAlphaFromBoolean(element.notInterruptible, 1, 0) end
+	if(element.Shield) then element.Shield:SetAlphaFromBoolean(notInterruptible, 1, 0) end
 
 	--[[ Callback: Castbar:PostCastInterruptible(unit)
 	Called after the element has been updated when a spell cast has become interruptible or uninterruptible.
 
-	* self - the Castbar widget
-	* unit - the unit for which the update has been triggered (string)
+	* self             - the Castbar widget
+	* unit             - the unit for which the update has been triggered (string)
+	* notInterruptible - whether the spell is interruptible (boolean)
 	--]]
 	if(element.PostCastInterruptible) then
-		return element:PostCastInterruptible(unit)
+		return element:PostCastInterruptible(unit, notInterruptible)
 	end
 end
 
 local function onUpdate(self, elapsed)
-	if(self.casting or self.channeling or self.empowering) then
+	if(STATE[self].holdTime and STATE[self].holdTime > 0) then
+		STATE[self].holdTime = STATE[self].holdTime - elapsed
+	elseif((not STATE[self].holdTime or STATE[self].holdTime == 0) and (STATE[self].casting or STATE[self].channeling or STATE[self].empowering)) then
 		if(self.Time) then
 			local durationObject = self:GetTimerDuration() -- can be nil
 			if durationObject then
-				if(self.delay ~= 0) then
+				if(STATE[self].delay and STATE[self].delay ~= 0) then
 					--[[ Override: Castbar:CustomDelayText(duration)
 					Used to completely override the updating of the .Time sub-widget when there is a delay to adjust for.
 
 					* self     - the Castbar widget
-					* duration - a [Duration](https://warcraft.wiki.gg/wiki/ScriptObject_DurationObject) object for the Castbar
+					* duration - the duration object associated with the cast ([DurationObject](https://warcraft.wiki.gg/wiki/ScriptObject_DurationObject))
 					--]]
 					if(self.CustomDelayText) then
 						self:CustomDelayText(durationObject)
 					else
 						local duration = durationObject:GetRemainingDuration()
-						self.Time:SetFormattedText('%.1f|cffff0000%s%.2f|r', duration, self.channeling and '-' or '+', self.delay)
+						self.Time:SetFormattedText('%.1f|cffff0000%s%.2f|r', duration, STATE[self].channeling and '-' or '+', STATE[self].delay)
 					end
 				else
 					--[[ Override: Castbar:CustomTimeText(duration)
 					Used to completely override the updating of the .Time sub-widget.
 
 					* self     - the Castbar widget
-					* duration - a [Duration](https://warcraft.wiki.gg/wiki/ScriptObject_DurationObject) object for the Castbar
+					* duration - the duration object associated with the cast ([DurationObject](https://warcraft.wiki.gg/wiki/ScriptObject_DurationObject))
 					--]]
 					if(self.CustomTimeText) then
 						self:CustomTimeText(durationObject)
@@ -540,10 +548,8 @@ local function onUpdate(self, elapsed)
 		-- 		end
 		-- 	end
 		-- end
-	elseif(self.holdTime > 0) then
-		self.holdTime = self.holdTime - elapsed
 	else
-		resetAttributes(self)
+		resetState(self)
 		self:Hide()
 	end
 end
@@ -578,6 +584,8 @@ local function Enable(self, unit)
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
 
+		STATE[element] = {}
+
 		if(not element.smoothing) then
 			element.smoothing = Enum.StatusBarInterpolation.Immediate
 		end
@@ -586,7 +594,6 @@ local function Enable(self, unit)
 			self:RegisterEvent(event, method)
 		end
 
-		element.holdTime = 0
 		element.Pips = element.Pips or {}
 
 		element:SetScript('OnUpdate', element.OnUpdate or onUpdate)
