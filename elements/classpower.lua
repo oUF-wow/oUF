@@ -56,14 +56,6 @@ local SPEC_MONK_WINDWALKER = _G.SPEC_MONK_WINDWALKER or 3
 local SPEC_WARLOCK_DESTRUCTION = _G.SPEC_WARLOCK_DESTRUCTION or 3
 local SPEC_MAGE_FROST = 3
 
-local POWER_ID_ARCANE_CHARGES = Enum.PowerType.ArcaneCharges or 16
-local POWER_ID_CHI = Enum.PowerType.Chi or 12
-local POWER_ID_COMBO_POINTS = Enum.PowerType.ComboPoints or 4
-local POWER_ID_ENERGY = Enum.PowerType.Energy or 3
-local POWER_ID_ESSENCE = Enum.PowerType.Essence or 19
-local POWER_ID_HOLY_POWER = Enum.PowerType.HolyPower or 9
-local POWER_ID_SOUL_SHARDS = Enum.PowerType.SoulShards or 7
-
 local POWER_TYPE_ARCANE_CHARGES = 'ARCANE_CHARGES'
 local POWER_TYPE_CHI = 'CHI'
 local POWER_TYPE_COMBO_POINTS = 'COMBO_POINTS'
@@ -106,11 +98,11 @@ local function GetGenericPowerColor(element, powerType)
 end
 
 local function GetComboPoints(unit)
-	return UnitPower(unit, POWER_ID_COMBO_POINTS), GetUnitChargedPowerPoints(unit)
+	return UnitPower(unit, Enum.PowerType.ComboPoints), GetUnitChargedPowerPoints(unit)
 end
 
 local function GetComboPointsMax(unit)
-	return UnitPowerMax(unit, POWER_ID_COMBO_POINTS)
+	return UnitPowerMax(unit, Enum.PowerType.ComboPoints)
 end
 
 if(playerClass == 'DEMONHUNTER') then
@@ -161,8 +153,8 @@ elseif(playerClass == 'DRUID') then
 	end
 
 	GetPowerInfo = function()
-		if(UnitPowerType('player') == POWER_ID_ENERGY and C_SpellBook.IsSpellKnown(SPELL_SHRED)) then
-			return POWER_TYPE_COMBO_POINTS, POWER_ID_COMBO_POINTS
+		if(UnitPowerType('player') == Enum.PowerType.Energy and C_SpellBook.IsSpellKnown(SPELL_SHRED)) then
+			return POWER_TYPE_COMBO_POINTS, Enum.PowerType.ComboPoints
 		end
 	end
 elseif(playerClass == 'EVOKER') then
@@ -171,7 +163,7 @@ elseif(playerClass == 'EVOKER') then
 	end
 
 	GetPowerInfo = function() -- might as well be static
-		return POWER_TYPE_ESSENCE, POWER_ID_ESSENCE
+		return POWER_TYPE_ESSENCE, Enum.PowerType.Essence
 	end
 elseif(playerClass == 'HUNTER') then
 	local function GetTipOfTheSpear()
@@ -232,7 +224,7 @@ elseif(playerClass == 'MAGE') then
 
 	GetPowerInfo = function()
 		if(C_SpecializationInfo.GetSpecialization() == SPEC_MAGE_ARCANE) then
-			return POWER_TYPE_ARCANE_CHARGES, POWER_ID_ARCANE_CHARGES
+			return POWER_TYPE_ARCANE_CHARGES, Enum.PowerType.ArcaneCharges
 		end
 	end
 
@@ -248,7 +240,7 @@ elseif(playerClass == 'MONK') then
 
 	GetPowerInfo = function()
 		if(C_SpecializationInfo.GetSpecialization() == SPEC_MONK_WINDWALKER) then
-			return POWER_TYPE_CHI, POWER_ID_CHI
+			return POWER_TYPE_CHI, Enum.PowerType.Chi
 		end
 	end
 elseif(playerClass == 'PALADIN') then
@@ -257,7 +249,7 @@ elseif(playerClass == 'PALADIN') then
 	end
 
 	GetPowerInfo = function() -- might as well be static
-		return POWER_TYPE_HOLY_POWER, POWER_ID_HOLY_POWER
+		return POWER_TYPE_HOLY_POWER, Enum.PowerType.HolyPower
 	end
 elseif(playerClass == 'ROGUE') then
 	GetPowerUpdaters = function()
@@ -265,7 +257,7 @@ elseif(playerClass == 'ROGUE') then
 	end
 
 	GetPowerInfo = function() -- might as well be static
-		return POWER_TYPE_COMBO_POINTS, POWER_ID_COMBO_POINTS
+		return POWER_TYPE_COMBO_POINTS, Enum.PowerType.ComboPoints
 	end
 elseif(playerClass == 'SHAMAN') then
 	local function GetMaelstromWeapon()
@@ -292,7 +284,7 @@ elseif(playerClass == 'SHAMAN') then
 	end
 elseif(playerClass == 'WARLOCK') then
 	local function GetSoulShardsDestruction(unit)
-		return UnitPower(unit, POWER_ID_SOUL_SHARDS, true) / UnitPowerDisplayMod(POWER_ID_SOUL_SHARDS)
+		return UnitPower(unit, Enum.PowerType.SoulShards, true) / UnitPowerDisplayMod(Enum.PowerType.SoulShards)
 	end
 
 	GetPowerUpdaters = function()
@@ -304,7 +296,7 @@ elseif(playerClass == 'WARLOCK') then
 	end
 
 	GetPowerInfo = function() -- might as well be static
-		return POWER_TYPE_SOUL_SHARDS, POWER_ID_SOUL_SHARDS
+		return POWER_TYPE_SOUL_SHARDS, Enum.PowerType.SoulShards
 	end
 end
 
