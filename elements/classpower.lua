@@ -367,7 +367,7 @@ local function Update(self, event, unit, powerType)
 		element:PreUpdate(unit)
 	end
 
-	local cur, max, chargedPoints, hasMaxChanged
+	local cur, max, chargedPoints, hasCurChanged, hasMaxChanged
 	if(event ~= 'ClassPowerDisable') then
 		cur, chargedPoints = GetPower(unit, STATE[element].powerID)
 		max = GetPowerMax(unit, STATE[element].powerID)
@@ -385,7 +385,7 @@ local function Update(self, event, unit, powerType)
 			STATE[element].max = max
 		end
 
-		local hasCurChanged = cur ~= STATE[element].cur
+		hasCurChanged = cur ~= STATE[element].cur
 		if(hasCurChanged) then
 			local numActive = cur + 0.9
 			for i = 1, max do
@@ -405,12 +405,13 @@ local function Update(self, event, unit, powerType)
 	* self          - the ClassPower element
 	* cur           - the current amount of power (number)
 	* max           - the maximum amount of power (number)
+	* hasCurChanged - indicates whether the current amount has changed since the last update (boolean)
 	* hasMaxChanged - indicates whether the maximum amount has changed since the last update (boolean)
 	* powerType     - the active power type (string)
 	* ...           - the indices of currently charged power points, if any
 	--]]
 	if(element.PostUpdate) then
-		return element:PostUpdate(cur, max, hasMaxChanged, powerType, unpack(chargedPoints or {}))
+		return element:PostUpdate(cur, max, hasCurChanged, hasMaxChanged, powerType, unpack(chargedPoints or {}))
 	end
 end
 
