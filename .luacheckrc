@@ -126,7 +126,7 @@ read_globals = {
 	'UnitFactionGroup',
 	'UnitGUID',
 	'UnitGetDetailedHealPrediction',
-	'UnitGroupRolesAssigned',
+	'UnitGroupRolesAssignedEnum',
 	'UnitHasIncomingResurrection',
 	'UnitHasVehiclePlayerFrameUI',
 	'UnitHasVehicleUI',
