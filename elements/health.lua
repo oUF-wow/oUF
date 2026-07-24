@@ -151,6 +151,8 @@ local _, ns = ...
 local oUF = ns.oUF
 local Private = oUF.Private
 
+local STATE = {}
+
 local unitSelectionType = Private.unitSelectionType
 
 local function UpdateColor(self, event, unit)
@@ -302,35 +304,36 @@ end
 local function UpdatePredictionSize(self, event, unit)
 	local element = self.Health
 
+	local method = STATE[element].horizontal and 'SetWidth' or 'SetHeight'
 	if(element.HealingAll) then
-		element.HealingAll[element.__isHoriz and 'SetWidth' or 'SetHeight'](element.HealingAll, element.__size)
+		element.HealingAll[method](element.HealingAll, STATE[element].size)
 	end
 
 	if(element.HealingPlayer) then
-		element.HealingPlayer[element.__isHoriz and 'SetWidth' or 'SetHeight'](element.HealingPlayer, element.__size)
+		element.HealingPlayer[method](element.HealingPlayer, STATE[element].size)
 	end
 
 	if(element.HealingOther) then
-		element.HealingOther[element.__isHoriz and 'SetWidth' or 'SetHeight'](element.HealingOther, element.__size)
+		element.HealingOther[method](element.HealingOther, STATE[element].size)
 	end
 
 	if(element.DamageAbsorb) then
-		element.DamageAbsorb[element.__isHoriz and 'SetWidth' or 'SetHeight'](element.DamageAbsorb, element.__size)
+		element.DamageAbsorb[method](element.DamageAbsorb, STATE[element].size)
 	end
 
 	if(element.HealAbsorb) then
-		element.HealAbsorb[element.__isHoriz and 'SetWidth' or 'SetHeight'](element.HealAbsorb, element.__size)
+		element.HealAbsorb[method](element.HealAbsorb, STATE[element].size)
 	end
 end
 
 local function shouldUpdatePredictionSize(self)
 	local element = self.Health
 
-	local isHoriz = element:GetOrientation() == 'HORIZONTAL'
-	local newSize = element[isHoriz and 'GetWidth' or 'GetHeight'](element)
-	if(isHoriz ~= element.__isHoriz or newSize ~= element.__size) then
-		element.__isHoriz = isHoriz
-		element.__size = newSize
+	local horizontal = element:GetOrientation() == 'HORIZONTAL'
+	local size = horizontal and element:GetWidth() or element:GetHeight()
+	if(horizontal ~= STATE[element].horizontal or size ~= STATE[element].size) then
+		STATE[element].horizontal = horizontal
+		STATE[element].size = size
 
 		return true
 	end
@@ -364,8 +367,8 @@ local function Path(self, ...)
 end
 
 local function ForceUpdate(element)
-	element.__isHoriz = nil
-	element.__size = nil
+	STATE[element].horizontal = nil
+	STATE[element].size = nil
 
 	Path(element.__owner, 'ForceUpdate', element.__owner.unit)
 end
@@ -451,6 +454,8 @@ local function Enable(self, unit)
 		element.SetColorTapping = SetColorTapping
 		element.SetColorReaction = SetColorReaction
 		element.SetColorThreat = SetColorThreat
+
+		STATE[element] = {}
 
 		if(element.values) then
 			element.values:ResetPredictedValues()
