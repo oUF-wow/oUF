@@ -51,6 +51,7 @@ read_globals = {
 	-- namespaces
 	'C_AddOns',
 	'C_CVar',
+	'C_ClassColor',
 	'C_ClassTalents',
 	'C_ColorUtil',
 	'C_CurveUtil',
