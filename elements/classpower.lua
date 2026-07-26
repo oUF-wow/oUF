@@ -302,7 +302,14 @@ elseif(playerClass == 'WARLOCK') then
 	end
 end
 
-local function UpdateColor(element, powerType)
+local function UpdateColor(self, event, unit)
+	local element = self.ClassPower
+
+	local powerType = STATE[element].powerType
+	if(UnitHasVehicleUI('player')) then
+		powerType = POWER_TYPE_COMBO_POINTS
+	end
+
 	local color = GetPowerColor(element, powerType)
 	if(color) then
 		for i = 1, #element do
@@ -322,23 +329,15 @@ local function UpdateColor(element, powerType)
 	end
 end
 
-local function ColorPath(self)
-	local element = self.ClassPower
-
-	local powerType = STATE[element].powerType
-	if(UnitHasVehicleUI('player')) then
-		powerType = POWER_TYPE_COMBO_POINTS
-	end
-
-	--[[ Override: ClassPower:UpdateColor(powerType)
+local function ColorPath(self, ...)
+	--[[ Override: ClassPower.UpdateColor(self, event, unit)
 	Used to completely override the internal function for updating the widgets' colors.
 
-	* self      - the ClassPower element
-	* powerType - the active power type (string)
+	* self  - the parent object
+	* event - the event triggering the update (string)
+	* unit  - the unit accompanying the event (string)
 	--]]
-	do
-		(element.UpdateColor or UpdateColor) (element, powerType)
-	end
+	(self.ClassPower.UpdateColor or UpdateColor) (self, ...)
 end
 
 local function Update(self, event, unit, powerType)
@@ -467,7 +466,7 @@ local function Visibility(self, event, unit)
 			GetPower, GetPowerMax, GetPowerColor = GetPowerUpdaters()
 		end
 
-		ColorPath(self)
+		ColorPath(self, event, unit)
 	end
 
 	if(shouldEnable ~= wasEnabled) then
