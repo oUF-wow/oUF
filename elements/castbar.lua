@@ -320,9 +320,9 @@ local function CastUpdate(self, event, unit, _, _, castID)
 	end
 
 	local direction = Enum.StatusBarTimerDirection.ElapsedTime
-	local duration, name, startTime, _
+	local duration, name, startTime, delayTime, _
 	if(event == 'UNIT_SPELLCAST_DELAYED') then
-		name, _, _, startTime = UnitCastingInfo(unit)
+		name, _, _, _, _, _, _, _, _, _, delayTime = UnitCastingInfo(unit)
 		duration = UnitCastingDuration(unit)
 	else
 		name, _, _, startTime = UnitChannelInfo(unit)
@@ -336,7 +336,7 @@ local function CastUpdate(self, event, unit, _, _, castID)
 
 	if(not name) then return end
 
-	if(unit == 'player') then
+	if(unit == 'player' and startTime) then
 		-- we can only calculate delay for players
 		startTime = startTime / 1000
 
@@ -352,6 +352,8 @@ local function CastUpdate(self, event, unit, _, _, castID)
 		end
 
 		STATE[element].delay = STATE[element].delay + delta
+	elseif(delayTime) then
+		STATE[element].delay = STATE[element].delay + (delayTime / 1000)
 	end
 
 	element:SetTimerDuration(duration, element.smoothing, direction)
