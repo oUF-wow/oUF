@@ -217,9 +217,8 @@ local tagStrings = {
 	['group'] = [[function(unit)
 		if(IsInRaid()) then
 			for index = 1, GetNumGroupMembers() do
-				-- TODO: use C_Secrets.CanCompareUnitTokens instead of pcall
-				local isOk, isUnit = pcall(UnitIsUnit, unit, 'raid' .. index)
-				if(isOk and isUnit) then
+				local raidUnit = 'raid' .. index
+				if(C_Secrets.CanCompareUnitTokens(unit, raidUnit) and UnitIsUnit(unit, raidUnit)) then
 					local _, _, group = GetRaidRosterInfo(index)
 					return group
 				end
