@@ -404,12 +404,11 @@ local function CastStop(self, event, unit, _, _, ...)
 
 		* self            - the Castbar widget
 		* unit            - the unit for which the update has been triggered (string)
-		* interruptedBy   - GUID of whomever interrupted the cast (string)
 		* empowerComplete - if the empowered cast was complete (boolean?)
 		* castID          - the unique ID of the cast (number)
 		--]]
 		if(element.PostCastStop) then
-			element:PostCastStop(unit, interruptedBy, empowerComplete, castID)
+			element:PostCastStop(unit, empowerComplete, castID)
 		end
 	end
 
