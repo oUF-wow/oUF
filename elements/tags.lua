@@ -67,10 +67,6 @@ order to avoid possible name collisions.
                    This will override the events for the tag(s), if any. If the value is a number, it is taken as a time
                    interval in seconds. If the value is a boolean, the time interval is set to 0.5 seconds (number or boolean)
 
-## Attributes
-
-.parent - the unit frame on which the tag has been registered
-
 ## Examples
 
 ### Example tag usage
@@ -578,7 +574,7 @@ eventFrame:SetScript('OnEvent', function(self, event, unit)
 	local strings = eventFontStrings[event]
 	if(strings) then
 		for fs in next, strings do
-			if(not stringsToUpdate[fs] and fs:IsVisible() and (unitlessEvents[event] or fs.parent.unit == unit or (fs.extraUnits and fs.extraUnits[unit]))) then
+			if(not stringsToUpdate[fs] and fs:IsVisible() and (unitlessEvents[event] or fs.__owner.unit == unit or (fs.extraUnits and fs.extraUnits[unit]))) then
 				stringsToUpdate[fs] = true
 			end
 		end
@@ -616,7 +612,7 @@ local function enableTimer(timer)
 		frame:SetScript('OnUpdate', function(self, elapsed)
 			if(total >= timer) then
 				for fs in next, strings do
-					if(fs.parent:IsShown() and unitExists(fs.parent.unit)) then
+					if(fs.__owner:IsShown() and unitExists(fs.__owner.unit)) then
 						fs:UpdateTag()
 					end
 				end
@@ -761,7 +757,7 @@ local function getTagFunc(tagstr)
 		end
 
 		func = function(self)
-			local parent = self.parent
+			local parent = self.__owner
 			local unit = parent.unit
 			local realUnit
 			if(self.overrideUnit) then
@@ -859,7 +855,7 @@ local function Tag(self, fs, ts, ...)
 		self:Untag(fs)
 	end
 
-	fs.parent = self
+	fs.__owner = self
 	fs.UpdateTag = getTagFunc(ts)
 
 	if(self.__eventless or fs.frequentUpdates) then
