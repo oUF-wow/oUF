@@ -15,6 +15,12 @@ Castbar - A `StatusBar` to represent spell cast/channel progress.
 .Spark    - A `Texture` to represent the castbar's edge.
 .Text     - A `FontString` to represent spell name.
 .Time     - A `FontString` to represent spell duration.
+.Delay    - A `FontString` to represent spell pushback delay for player casts.
+
+## Sub-Widget options
+
+.Time.binding   - A [`DurationTextBinding`](https://warcraft.wiki.gg/wiki/ScriptObject_DurationTextBinding) object to override the default
+.Time.formatter - A [`NumericFormatter`](https://warcraft.wiki.gg/wiki/ScriptObject_NumericFormatter) to override the default
 
 ## Notes
 
@@ -83,6 +89,11 @@ local FALLBACK_ICON = 136243 -- Interface\ICONS\Trade_Engineering
 local FAILED = _G.FAILED or 'Failed'
 local INTERRUPTED = _G.INTERRUPTED or 'Interrupted'
 local GLOBAL_SPELL_ID = 61304 -- Global Cooldown
+
+local defaultFormatter = C_StringUtil.CreateSecondsFormatter()
+defaultFormatter:SetDefaultAbbreviation(Enum.SecondsFormatterAbbreviation.OneLetter)
+defaultFormatter:SetMinInterval(Enum.SecondsFormatterInterval.Seconds)
+defaultFormatter:SetMillisecondsThreshold(60)
 
 local function resetState(element)
 	if(not (element.timeToHold ~= nil and STATE[element].holdTime and STATE[element].holdTime > 0)) then
@@ -228,6 +239,10 @@ local function CastStart(self, event, unit)
 
 	element:SetTimerDuration(duration, element.smoothing, direction)
 
+	if(element.Time) then
+		element.Time.binding:SetDuration(duration)
+	end
+
 	if(element.Icon) then element.Icon:SetTexture(texture or FALLBACK_ICON) end
 	if(element.Shield) then element.Shield:SetAlphaFromBoolean(notInterruptible, 1, 0) end
 	if(element.Spark) then element.Spark:Show() end
@@ -340,6 +355,10 @@ local function CastUpdate(self, event, unit, _, _, castID)
 	end
 
 	element:SetTimerDuration(duration, element.smoothing, direction)
+
+	if(element.Time) then
+		element.Time.binding:SetDuration(duration)
+	end
 
 	--[[ Callback: Castbar:PostCastUpdate(unit, duration, direction, castID)
 	Called after the element has been updated when a spell cast or channel has been updated.
@@ -531,6 +550,10 @@ local function CastGlobal(self, event, unit, _, spellID, castID)
 
 	element:SetTimerDuration(duration, element.smoothing, Enum.StatusBarTimerDirection.RemainingTime)
 
+	if(element.Time) then
+		element.Time.binding:SetDuration(duration)
+	end
+
 	-- we need to reset manually
 	local resetTime = info.duration - (GetTime() - info.startTime)
 	globalTimer = C_Timer.NewTimer(resetTime, GenerateClosure(globalTimerCallback, element))
@@ -556,35 +579,23 @@ local function onUpdate(self, elapsed)
 	if(STATE[self].holdTime and STATE[self].holdTime > 0) then
 		STATE[self].holdTime = STATE[self].holdTime - elapsed
 	elseif((not STATE[self].holdTime or STATE[self].holdTime == 0) and (STATE[self].casting or STATE[self].channeling or STATE[self].empowering)) then
-		if(self.Time) then
-			local durationObject = self:GetTimerDuration() -- can be nil
-			if(durationObject) then
-				if(STATE[self].delay and STATE[self].delay ~= 0) then
-					--[[ Override: Castbar:CustomDelayText(duration)
-					Used to completely override the updating of the .Time sub-widget when there is a delay to adjust for.
+		if(self.Delay) then
+			if(STATE[self].delay and STATE[self].delay ~= 0) then
+				local isChanneling = STATE[self].channeling
+				--[[ Override: Castbar:CustomDelayText(delay, isChanneling)
+				Used to completely override the updating of the .Delay sub-widget when there is a delay in the cast.
 
-					* self     - the Castbar widget
-					* duration - the duration object associated with the cast ([DurationObject](https://warcraft.wiki.gg/wiki/ScriptObject_DurationObject))
-					--]]
-					if(self.CustomDelayText) then
-						self:CustomDelayText(durationObject)
-					else
-						local duration = durationObject:GetRemainingDuration()
-						self.Time:SetFormattedText('%.1f|cffff0000%s%.2f|r', duration, STATE[self].channeling and '-' or '+', STATE[self].delay)
-					end
+				* self         - the Castbar widget
+				* delay        - the amount of time the cast is delayed for
+				* isChanneling - whether the cast is considered a channel or not
+				--]]
+				if(self.CustomDelayText) then
+					self:CustomDelayText(STATE[self].delay, isChanneling)
 				else
-					--[[ Override: Castbar:CustomTimeText(duration)
-					Used to completely override the updating of the .Time sub-widget.
-
-					* self     - the Castbar widget
-					* duration - the duration object associated with the cast ([DurationObject](https://warcraft.wiki.gg/wiki/ScriptObject_DurationObject))
-					--]]
-					if(self.CustomTimeText) then
-						self:CustomTimeText(durationObject)
-					else
-						self.Time:SetFormattedText('%.1f', durationObject:GetRemainingDuration())
-					end
+					self.Delay:SetFormattedText('|cffff0000%s%.2f|r', isChanneling and '-' or '+', STATE[self].delay)
 				end
+			else
+				self.Delay:SetText('')
 			end
 		end
 
@@ -672,6 +683,17 @@ local function Enable(self, unit)
 			PetCastingBarFrame:Hide()
 		end
 
+		local Time = element.Time
+		if(Time) then
+			if(not Time.binding) then
+				Time.binding = C_DurationUtil.CreateDurationTextBinding()
+				Time.binding:SetFormatter(Time.formatter or defaultFormatter)
+			end
+
+			Time.binding:SetFontString(Time)
+			Time.binding:SetEnabled(true)
+		end
+
 		if(element:IsObjectType('StatusBar') and not element:GetStatusBarTexture()) then
 			element:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 		end
@@ -711,6 +733,10 @@ local function Disable(self)
 		end
 
 		element:SetScript('OnUpdate', nil)
+
+		if(element.Time) then
+			element.Time.binding:SetEnabled(false)
+		end
 
 		if(self.unit == 'player' and not (self.hasChildren or self.isChild or self.isNamePlate)) then
 			for event in next, eventMethods do
