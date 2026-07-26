@@ -114,6 +114,7 @@ local STATE = {}
 local nierror = Private.nierror
 local unitExists = Private.unitExists
 local validateEvent = Private.validateEvent
+local insertObjectElementUpdateFunc = Private.insertObjectElementUpdateFunc
 
 local _PATTERN = '%[..-%]+'
 
@@ -849,7 +850,7 @@ local function Tag(self, fs, ts, ...)
 
 	if(not STATE[self]) then
 		STATE[self] = {}
-		table.insert(self.__elements, Update)
+		insertObjectElementUpdateFunc(self, Update)
 	elseif(STATE[self][fs]) then
 		self:Untag(fs)
 	end

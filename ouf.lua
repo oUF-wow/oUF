@@ -82,6 +82,11 @@ local frame_metatable = {
 }
 Private.frame_metatable = frame_metatable
 
+local objectElementUpdateFuncs = {}
+function Private.insertObjectElementUpdateFunc(object, func)
+	table.insert(objectElementUpdateFuncs[object], func)
+end
+
 for k, v in next, {
 	--[[ frame:EnableElement(name[, unit])
 	Used to activate an element for the given unit frame.
@@ -101,7 +106,7 @@ for k, v in next, {
 			activeElements[self][name] = true
 
 			if(element.update) then
-				table.insert(self.__elements, element.update)
+				table.insert(objectElementUpdateFuncs[self], element.update)
 			end
 		end
 	end,
@@ -122,9 +127,9 @@ for k, v in next, {
 
 		local update = elements[name].update
 		if(update) then
-			for k, func in next, self.__elements do
+			for index, func in next, objectElementUpdateFuncs[self] do
 				if(func == update) then
-					table.remove(self.__elements, k)
+					table.remove(objectElementUpdateFuncs[self], index)
 					break
 				end
 			end
@@ -198,7 +203,7 @@ for k, v in next, {
 			self:PreUpdate(event)
 		end
 
-		for _, func in next, self.__elements do
+		for _, func in next, objectElementUpdateFuncs[self] do
 			func(self, event, unit)
 		end
 
@@ -258,7 +263,7 @@ local function initObject(unit, style, styleFunc, header, ...)
 			objectUnit = objectUnit .. suffix
 		end
 
-		object.__elements = {}
+		objectElementUpdateFuncs[object] = {}
 		object.style = style
 		object = setmetatable(object, frame_metatable)
 
