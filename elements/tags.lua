@@ -857,7 +857,7 @@ local function Tag(self, fs, ts, ...)
 	fs.__owner = self
 	fs.UpdateTag = getTagFunc(ts)
 
-	if(self.__eventless or fs.frequentUpdates) then
+	if(self:IsEventless() or fs.frequentUpdates) then
 		local timer = 0.5
 		if(type(fs.frequentUpdates) == 'number') then
 			timer = fs.frequentUpdates
