@@ -109,6 +109,8 @@ local _, ns = ...
 local oUF = ns.oUF
 local Private = oUF.Private
 
+local STATE = {}
+
 local nierror = Private.nierror
 local unitExists = Private.unitExists
 local validateEvent = Private.validateEvent
@@ -642,8 +644,8 @@ Used to update all tags on a frame.
 * self - the unit frame from which to update the tags
 --]]
 local function Update(self)
-	if(self.__tags) then
-		for fs in next, self.__tags do
+	if(STATE[self]) then
+		for fs in next, STATE[self] do
 			fs:UpdateTag()
 		end
 	end
@@ -834,8 +836,6 @@ local function unregisterTimer(fs)
 	end
 end
 
-local taggedFontStrings = {}
-
 --[[ Tags: frame:Tag(fs, ts, ...)
 Used to register a tag on a unit frame.
 
@@ -847,11 +847,10 @@ Used to register a tag on a unit frame.
 local function Tag(self, fs, ts, ...)
 	if(not fs or not ts) then return end
 
-	if(not self.__tags) then
-		self.__tags = {}
+	if(not STATE[self]) then
+		STATE[self] = {}
 		table.insert(self.__elements, Update)
-	elseif(self.__tags[fs]) then
-		-- We don't need to remove it from the __tags table as Untag handles that for us.
+	elseif(STATE[self][fs]) then
 		self:Untag(fs)
 	end
 
@@ -879,8 +878,7 @@ local function Tag(self, fs, ts, ...)
 		end
 	end
 
-	taggedFontStrings[fs] = ts
-	self.__tags[fs] = true
+	STATE[self][fs] = ts
 end
 
 --[[ Tags: frame:Untag(fs)
@@ -890,15 +888,14 @@ Used to unregister a tag from a unit frame.
 * fs   - the font string holding the tag (FontString)
 --]]
 local function Untag(self, fs)
-	if(not fs or not self.__tags) then return end
+	if(not fs or not STATE[self]) then return end
 
 	unregisterEvents(fs)
 	unregisterTimer(fs)
 
 	fs.UpdateTag = nil
 
-	taggedFontStrings[fs] = nil
-	self.__tags[fs] = nil
+	STATE[self][fs] = nil
 end
 
 local function strip(tag)
@@ -928,7 +925,7 @@ oUF.Tags = {
 			if(strip(tagstr):match(tag)) then
 				tagStringFuncs[tagstr] = nil
 
-				for fs in next, taggedFontStrings do
+				for fs in next, STATE[self] do
 					if(fs.UpdateTag == func) then
 						fs.UpdateTag = getTagFunc(tagstr)
 
@@ -949,7 +946,7 @@ oUF.Tags = {
 
 		for tagstr in next, tagStringFuncs do
 			if(strip(tagstr):match(tag)) then
-				for fs, ts in next, taggedFontStrings do
+				for fs, ts in next, STATE[self] do
 					if(ts == tagstr) then
 						unregisterEvents(fs)
 						registerEvents(fs, tagstr)
