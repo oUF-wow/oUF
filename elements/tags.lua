@@ -858,23 +858,26 @@ local function Tag(self, fs, ts, ...)
 	fs.__owner = self
 	fs.UpdateTag = getTagFunc(ts)
 
-	if(self:IsEventless() or fs.frequentUpdates) then
-		local timer = 0.5
-		if(type(fs.frequentUpdates) == 'number') then
-			timer = fs.frequentUpdates
-		end
-
-		registerTimer(fs, timer)
-	else
-		registerEvents(fs, ts)
-
-		if(...) then
-			if(not fs.extraUnits) then
-				fs.extraUnits = {}
+	if(not self:IsEventless()) then
+		-- tags on eventless units gets updated through the frame's timer
+		if(fs.frequentUpdates) then
+			local timer = 0.5
+			if(type(fs.frequentUpdates) == 'number') then
+				timer = fs.frequentUpdates
 			end
 
-			for index = 1, select('#', ...) do
-				fs.extraUnits[select(index, ...)] = true
+			registerTimer(fs, timer)
+		else
+			registerEvents(fs, ts)
+
+			if(...) then
+				if(not fs.extraUnits) then
+					fs.extraUnits = {}
+				end
+
+				for index = 1, select('#', ...) do
+					fs.extraUnits[select(index, ...)] = true
+				end
 			end
 		end
 	end
