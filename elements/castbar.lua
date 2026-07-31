@@ -592,7 +592,7 @@ local function onUpdate(self, elapsed)
 				if(self.CustomDelayText) then
 					self:CustomDelayText(STATE[self].delay, isChanneling)
 				else
-					self.Delay:SetFormattedText('|cffff0000%s%.2f|r', isChanneling and '-' or '+', STATE[self].delay)
+					self.Delay:SetFormattedText('%s%.2f', isChanneling and '-' or '+', STATE[self].delay)
 				end
 			else
 				self.Delay:SetText('')
