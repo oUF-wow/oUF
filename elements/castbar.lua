@@ -225,6 +225,7 @@ local function CastStart(self, event, unit)
 	STATE[element].delay = 0
 	STATE[element].holdTime = 0
 	STATE[element].notInterruptible = notInterruptible
+	STATE[element].spellID = spellID
 	STATE[element].castID = castID
 
 	if(unit == 'player') then
@@ -290,26 +291,25 @@ local function CastStart(self, event, unit)
 		(element.UpdatePips or UpdatePips) (element, UnitEmpoweredStagePercentages(unit))
 	end
 
-	--[[ Callback: Castbar:PostCastStart(unit, name, texture, isTradeSkill, notInterruptible, spellID, castID)
+	--[[ Callback: Castbar:PostCastStart(unit, spellID, notInterruptible, name, texture, isTradeSkill)
 	Called after the element has been updated upon a spell cast or channel start.
 
 	* self             - the Castbar widget
 	* unit             - the unit for which the update has been triggered (string)
+	* spellID          - the ID of the spell (number)
+	* notInterruptible - whether the spell is interruptible (boolean)
 	* name             - the name of the spell (string)
 	* texture          - the texture path associated with the spell (string/number)
 	* isTradeSkill     - whether the spell is associated with a profession (boolean)
-	* notInterruptible - whether the spell is interruptible (boolean)
-	* spellID          - the ID of the spell (number)
-	* castID           - the unique ID of the cast (number)
 	--]]
 	if(element.PostCastStart) then
-		element:PostCastStart(unit, displayName, texture, isTradeSkill, notInterruptible, spellID, castID)
+		element:PostCastStart(unit, spellID, notInterruptible, displayName, texture, isTradeSkill)
 	end
 
 	element:Show()
 end
 
-local function CastUpdate(self, event, unit, _, _, castID)
+local function CastUpdate(self, event, unit, _, spellID, castID)
 	local element = self.Castbar
 	if(not (element.ShouldShow or ShouldShow) (element, unit)) then
 		return
@@ -362,21 +362,21 @@ local function CastUpdate(self, event, unit, _, _, castID)
 		element.Time.binding:SetDuration(duration)
 	end
 
-	--[[ Callback: Castbar:PostCastUpdate(unit, duration, direction, castID)
+	--[[ Callback: Castbar:PostCastUpdate(unit, spellID, duration, direction)
 	Called after the element has been updated when a spell cast or channel has been updated.
 
 	* self      - the Castbar widget
 	* unit      - the unit that the update has been triggered (string)
+	* spellID   - the ID of the spell (number)
 	* duration  - the duration object associated with the cast ([DurationObject](https://warcraft.wiki.gg/wiki/ScriptObject_DurationObject))
 	* direction - the direction of the duration object (number)
-	* castID    - the unique ID of the cast (number)
 	--]]
 	if(element.PostCastUpdate) then
-		return element:PostCastUpdate(unit, duration, direction, castID)
+		return element:PostCastUpdate(unit, spellID, duration, direction)
 	end
 end
 
-local function CastStop(self, event, unit, _, _, ...)
+local function CastStop(self, event, unit, _, spellID, ...)
 	local element = self.Castbar
 	if(not (element.ShouldShow or ShouldShow) (element, unit)) then
 		return
@@ -408,35 +408,35 @@ local function CastStop(self, event, unit, _, _, ...)
 	end
 
 	if(interruptedBy) then
-		--[[ Callback: Castbar:PostCastInterrupted(unit, interruptedBy)
+		--[[ Callback: Castbar:PostCastInterrupted(unit, spellID, interruptedBy)
 		Called after the element has been updated when a spell cast or channel has stopped.
 
 		* self          - the Castbar widget
 		* unit          - the unit for which the update has been triggered (string)
+		* spellID       - the ID of the spell (number)
 		* interruptedBy - GUID of whomever interrupted the cast (string)
-		* castID        - the unique ID of the cast (number)
 		--]]
 		if(element.PostCastInterrupted) then
-			element:PostCastInterrupted(unit, interruptedBy, castID)
+			element:PostCastInterrupted(unit, spellID, interruptedBy)
 		end
 	else
-		--[[ Callback: Castbar:PostCastStop(unit[, empowerComplete])
+		--[[ Callback: Castbar:PostCastStop(unit, spellID[, empowerComplete])
 		Called after the element has been updated when a spell cast or channel has stopped.
 
 		* self            - the Castbar widget
 		* unit            - the unit for which the update has been triggered (string)
+		* spellID         - the ID of the spell (number)
 		* empowerComplete - if the empowered cast was complete (boolean?)
-		* castID          - the unique ID of the cast (number)
 		--]]
 		if(element.PostCastStop) then
-			element:PostCastStop(unit, empowerComplete, castID)
+			element:PostCastStop(unit, spellID, empowerComplete)
 		end
 	end
 
 	resetState(element)
 end
 
-local function CastFail(self, event, unit, _, _, ...)
+local function CastFail(self, event, unit, _, spellID, ...)
 	local element = self.Castbar
 	if(not (element.ShouldShow or ShouldShow) (element, unit)) then
 		return
@@ -467,18 +467,18 @@ local function CastFail(self, event, unit, _, _, ...)
 
 	if(interruptedBy) then
 		if(element.PostCastInterrupted) then
-			element:PostCastInterrupted(unit, interruptedBy, castID)
+			element:PostCastInterrupted(unit, spellID, interruptedBy)
 		end
 	else
-		--[[ Callback: Castbar:PostCastFail(unit)
+		--[[ Callback: Castbar:PostCastFail(unit, spellID)
 		Called after the element has been updated upon a failed or interrupted spell cast.
 
-		* self   - the Castbar widget
-		* unit   - the unit for which the update has been triggered (string)
-		* castID - the unique ID of the cast (number)
+		* self    - the Castbar widget
+		* unit    - the unit for which the update has been triggered (string)
+		* spellID - the ID of the spell (number)
 		--]]
 		if(element.PostCastFail) then
-			element:PostCastFail(unit, castID)
+			element:PostCastFail(unit, spellID)
 		end
 	end
 
@@ -499,15 +499,16 @@ local function CastInterruptible(self, event, unit)
 
 	if(element.Shield) then element.Shield:SetAlphaFromBoolean(notInterruptible, 1, 0) end
 
-	--[[ Callback: Castbar:PostCastInterruptible(unit)
+	--[[ Callback: Castbar:PostCastInterruptible(unit, spellID, notInterruptible)
 	Called after the element has been updated when a spell cast has become interruptible or uninterruptible.
 
 	* self             - the Castbar widget
 	* unit             - the unit for which the update has been triggered (string)
+	* spellID          - the ID of the spell (number)
 	* notInterruptible - whether the spell is interruptible (boolean)
 	--]]
 	if(element.PostCastInterruptible) then
-		return element:PostCastInterruptible(unit, notInterruptible)
+		return element:PostCastInterruptible(unit, STATE[element].spellID, notInterruptible)
 	end
 end
 
@@ -521,7 +522,7 @@ local function globalTimerCallback(element)
 	globalTimer = nil
 end
 
-local function CastGlobal(self, event, unit, _, spellID, castID)
+local function CastGlobal(self, event, unit, _, spellID)
 	local element = self.Castbar
 	if(not (element.ShouldShow or ShouldShow) (element, unit)) then
 		return
@@ -532,8 +533,8 @@ local function CastGlobal(self, event, unit, _, spellID, castID)
 		return
 	end
 
-	local info = C_Spell.GetSpellCooldown(GLOBAL_SPELL_ID)
-	if(not (info and info.isOnGCD and info.duration > 0)) then
+	local cooldownInfo = C_Spell.GetSpellCooldown(GLOBAL_SPELL_ID)
+	if(not (cooldownInfo and cooldownInfo.isOnGCD and cooldownInfo.duration > 0)) then
 		return
 	end
 
@@ -548,7 +549,7 @@ local function CastGlobal(self, event, unit, _, spellID, castID)
 	STATE[element].channeling = true
 
 	local duration = C_DurationUtil.CreateDuration()
-	duration:SetTimeFromStart(info.startTime, info.duration, info.modRate)
+	duration:SetTimeFromStart(cooldownInfo.startTime, cooldownInfo.duration, cooldownInfo.modRate)
 
 	element:SetTimerDuration(duration, element.smoothing, Enum.StatusBarTimerDirection.RemainingTime)
 
@@ -557,21 +558,20 @@ local function CastGlobal(self, event, unit, _, spellID, castID)
 	end
 
 	-- we need to reset manually
-	local resetTime = info.duration - (GetTime() - info.startTime)
+	local resetTime = cooldownInfo.duration - (GetTime() - cooldownInfo.startTime)
 	globalTimer = C_Timer.NewTimer(resetTime, GenerateClosure(globalTimerCallback, element))
 
-	--[[ Callback: Castbar:PostCastGlobal(info, duration)
+	--[[ Callback: Castbar:PostCastGlobal(unit, spellID, cooldownInfo, duration)
 	Called after the element has been updated upon a spell global cooldown.
 
-	* self     - the Castbar widget
-	* unit     - the unit for which the update has been triggered (string)
-	* info     - cooldown information related to the cast (table)
-	* duration - the duration object associated with the cast ([DurationObject](https://warcraft.wiki.gg/wiki/ScriptObject_DurationObject))
-	* spellID  - the ID of the spell (number)
-	* castID   - the unique ID of the cast (number)
+	* self         - the Castbar widget
+	* unit         - the unit for which the update has been triggered (string)
+	* spellID      - the ID of the spell (number)
+	* cooldownInfo - cooldown information related to the cast (table)
+	* duration     - the duration object associated with the cast ([DurationObject](https://warcraft.wiki.gg/wiki/ScriptObject_DurationObject))
 	--]]
 	if(element.PostCastGlobal) then
-		element:PostCastGlobal(info, duration, spellID, castID)
+		element:PostCastGlobal(unit, spellID, cooldownInfo, duration)
 	end
 
 	element:Show()
