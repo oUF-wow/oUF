@@ -102,7 +102,7 @@ for k, v in next, {
 		local element = elements[name]
 		if(not element or self:IsElementEnabled(name)) then return end
 
-		if(element.enable(self, unit or self.unit)) then
+		if(element.enable(self, unit or self.__unit)) then
 			activeElements[self][name] = true
 
 			if(element.update) then
@@ -137,7 +137,7 @@ for k, v in next, {
 
 		activeElements[self][name] = nil
 
-		return elements[name].disable(self, unit or self.unit)
+		return elements[name].disable(self, unit or self.__unit)
 	end,
 
 	--[[ frame:IsElementEnabled(name)
@@ -188,7 +188,7 @@ for k, v in next, {
 	* event - event name to pass to the elements' update functions (string)
 	--]]
 	UpdateAllElements = function(self, event)
-		local unit = self.unit
+		local unit = self.__unit
 		if(not unitExists(unit)) then return end
 
 		assert(type(event) == 'string', "Invalid argument 'event' in UpdateAllElements.")
@@ -236,13 +236,13 @@ local function updatePet(self, event, unit)
 		petUnit = unit:gsub('^(%a+)(%d+)', '%1pet%2')
 	end
 
-	if(self.unit ~= petUnit) then return end
+	if(self.__unit ~= petUnit) then return end
 
 	evalUnitAndUpdate(self, event)
 end
 
 local function updateRaid(self, event)
-	local unitGUID = UnitGUID(self.unit)
+	local unitGUID = UnitGUID(self.__unit)
 	if(unitGUID ~= nil and not issecretvalue(unitGUID) and unitGUID ~= self.unitGUID) then
 		self.unitGUID = unitGUID
 

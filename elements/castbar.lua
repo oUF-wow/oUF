@@ -183,7 +183,7 @@ Defaults to the object unit.
 * unit - the unit for which the update has been triggered (string)
 --]]
 local function ShouldShow(element, unit)
-	return element.__owner.unit == unit
+	return element.__owner.__unit == unit
 end
 
 local function CastStart(self, event, unit)
@@ -635,7 +635,7 @@ local function Update(...)
 end
 
 local function ForceUpdate(element)
-	return Update(element.__owner, 'ForceUpdate', element.__owner.unit)
+	return Update(element.__owner, 'ForceUpdate', element.__owner.__unit)
 end
 
 local eventMethods = {
@@ -678,7 +678,7 @@ local function Enable(self, unit)
 
 		element:SetScript('OnUpdate', element.OnUpdate or onUpdate)
 
-		if(self.unit == 'player' and not (self.hasChildren or self.isChild or self.isNamePlate)) then
+		if(unit == 'player' and not (self.hasChildren or self.isChild or self.isNamePlate)) then
 			PlayerCastingBarFrame:UnregisterAllEvents()
 			PlayerCastingBarFrame:Hide()
 			PetCastingBarFrame:UnregisterAllEvents()
@@ -721,7 +721,7 @@ local function Enable(self, unit)
 	end
 end
 
-local function Disable(self)
+local function Disable(self, unit)
 	local element = self.Castbar
 	if(element) then
 		element:Hide()
@@ -730,7 +730,7 @@ local function Disable(self)
 			self:UnregisterEvent(event, method)
 		end
 
-		if(self.unit == 'player' and element.showGlobalCooldown) then
+		if(unit == 'player' and element.showGlobalCooldown) then
 			self:UnregisterEvent('UNIT_SPELLCAST_SUCCEEDED', CastGlobal)
 		end
 
@@ -740,7 +740,7 @@ local function Disable(self)
 			element.Time.binding:SetEnabled(false)
 		end
 
-		if(self.unit == 'player' and not (self.hasChildren or self.isChild or self.isNamePlate)) then
+		if(unit == 'player' and not (self.hasChildren or self.isChild or self.isNamePlate)) then
 			for event in next, eventMethods do
 				PlayerCastingBarFrame:RegisterUnitEvent(event, 'player')
 				PetCastingBarFrame:RegisterUnitEvent(event, 'pet')

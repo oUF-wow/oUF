@@ -41,7 +41,7 @@ local function Update(self, event)
 		element:PreUpdate()
 	end
 
-	local role = UnitGroupRolesAssignedEnum(self.unit)
+	local role = UnitGroupRolesAssignedEnum(self.__unit)
 	if(issecretvalue(role)) then
 		role = nil
 	end
@@ -85,13 +85,13 @@ local function ForceUpdate(element)
 	return Path(element.__owner, 'ForceUpdate')
 end
 
-local function Enable(self)
+local function Enable(self, unit)
 	local element = self.GroupRoleIndicator
 	if(element) then
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
 
-		if(self.unit == 'player') then
+		if(unit == 'player') then
 			self:RegisterEvent('PLAYER_ROLES_ASSIGNED', Path, true)
 		else
 			self:RegisterEvent('GROUP_ROSTER_UPDATE', Path, true)

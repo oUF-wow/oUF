@@ -84,7 +84,7 @@ local oUF = ns.oUF
 local function UpdateTooltip(self)
 	if(GameTooltip:IsForbidden()) then return end
 
-	GameTooltip:SetUnitAuraByAuraInstanceID(self:GetParent().__owner.unit, self.auraInstanceID)
+	GameTooltip:SetUnitAuraByAuraInstanceID(self:GetParent().__owner.__unit, self.auraInstanceID)
 end
 
 local function onEnter(self)
@@ -294,7 +294,7 @@ local function processData(element, unit, data, filter)
 end
 
 local function UpdateAuras(self, event, unit, updateInfo)
-	if(self.unit ~= unit) then return end
+	if(self.__unit ~= unit) then return end
 
 	local isFullUpdate = not updateInfo or updateInfo.isFullUpdate
 
@@ -811,7 +811,7 @@ local function UpdateAuras(self, event, unit, updateInfo)
 end
 
 local function Update(self, event, unit, updateInfo)
-	if(self.unit ~= unit) then return end
+	if(self.__unit ~= unit) then return end
 
 	UpdateAuras(self, event, unit, updateInfo)
 
@@ -836,7 +836,7 @@ local function Update(self, event, unit, updateInfo)
 end
 
 local function ForceUpdate(element)
-	return Update(element.__owner, 'ForceUpdate', element.__owner.unit)
+	return Update(element.__owner, 'ForceUpdate', element.__owner.__unit)
 end
 
 local function Enable(self)
