@@ -49,7 +49,7 @@ local STAGGER_YELLOW_INDEX = 2
 local STAGGER_RED_INDEX = 3
 
 local function UpdateColor(self, event, unit)
-	if(unit and unit ~= self.unit) then return end
+	if(unit and unit ~= self.__unit) then return end
 	local element = self.Stagger
 
 	local colors = self.colors.power[POWER_TYPE_STAGGER]
@@ -80,7 +80,7 @@ local function UpdateColor(self, event, unit)
 end
 
 local function Update(self, event, unit)
-	if(unit and unit ~= self.unit) then return end
+	if(unit and unit ~= self.__unit) then return end
 
 	local element = self.Stagger
 
@@ -180,7 +180,7 @@ local function VisibilityPath(self, ...)
 end
 
 local function ForceUpdate(element)
-	VisibilityPath(element.__owner, 'ForceUpdate', element.__owner.unit)
+	VisibilityPath(element.__owner, 'ForceUpdate', element.__owner.__unit)
 end
 
 local function Disable(self)

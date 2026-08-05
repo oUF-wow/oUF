@@ -110,7 +110,7 @@ local function GetDisplayPower(_, unit)
 end
 
 local function UpdateColor(self, event, unit)
-	if(self.unit ~= unit) then return end
+	if(self.__unit ~= unit) then return end
 	local element = self.Power
 
 	local r, g, b, color, atlas
@@ -207,7 +207,7 @@ local function ColorPath(self, ...)
 end
 
 local function Update(self, event, unit)
-	if(self.unit ~= unit) then return end
+	if(self.__unit ~= unit) then return end
 	local element = self.Power
 
 	--[[ Callback: Power:PreUpdate(unit)
@@ -253,7 +253,7 @@ local function Update(self, event, unit)
 end
 
 local function UpdatePrediction(self, event, unit)
-	if(self.unit ~= unit) then return end
+	if(self.__unit ~= unit) then return end
 
 	local element = self.Power
 
@@ -380,10 +380,10 @@ local function PredictionPath(self, ...)
 end
 
 local function ForceUpdate(element)
-	Path(element.__owner, 'ForceUpdate', element.__owner.unit)
+	Path(element.__owner, 'ForceUpdate', element.__owner.__unit)
 
 	if(element.CostPrediction) then
-		PredictionPath(element.__owner, 'ForceUpdate', element.__owner.unit)
+		PredictionPath(element.__owner, 'ForceUpdate', element.__owner.__unit)
 	end
 end
 
