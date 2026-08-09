@@ -18,6 +18,7 @@ local callback, objects, headers = {}, {}, {}
 
 local elements = {}
 local activeElements = {}
+local pausedElements = {}
 
 local PetBattleFrameHider = CreateFrame('Frame', (global or parent) .. '_PetBattleFrameHider', UIParent, 'SecureHandlerStateTemplate')
 PetBattleFrameHider:SetAllPoints()
@@ -89,7 +90,9 @@ end
 
 for k, v in next, {
 	--[[ frame:EnableElement(name[, unit])
-	Used to activate an element for the given unit frame.
+	Used to activate an element on the given unit frame.
+
+	If the element was previously paused on the given unit frame it will also be resumed.
 
 	* self - unit frame for which the element should be enabled
 	* name - name of the element to be enabled (string)
@@ -105,6 +108,10 @@ for k, v in next, {
 		if(element.enable(self, unit or self.__unit)) then
 			activeElements[self][name] = true
 
+			if(pausedElements[self]) then
+				pausedElements[self][name] = nil
+			end
+
 			if(element.update) then
 				table.insert(objectElementUpdateFuncs[self], element.update)
 			end
@@ -112,7 +119,7 @@ for k, v in next, {
 	end,
 
 	--[[ frame:DisableElement(name[, unit])
-	Used to deactivate an element for the given unit frame.
+	Used to deactivate an element on the given unit frame.
 
 	* self - unit frame for which the element should be disabled
 	* name - name of the element to be disabled (string)
@@ -122,8 +129,17 @@ for k, v in next, {
 		argcheck(name, 2, 'string')
 		argcheck(unit, 3, 'string', 'nil')
 
-		local enabled = self:IsElementEnabled(name)
-		if(not enabled) then return end
+		if(not self:IsElementEnabled(name)) then return end
+
+		activeElements[self][name] = nil
+
+		if(self:IsElementPaused(name)) then
+			-- no need to run deactivation as that's already been done from pausing, just
+			-- remove the pause state instead
+			pausedElements[self][name] = nil
+
+			return true
+		end
 
 		local update = elements[name].update
 		if(update) then
@@ -134,8 +150,6 @@ for k, v in next, {
 				end
 			end
 		end
-
-		activeElements[self][name] = nil
 
 		return elements[name].disable(self, unit or self.__unit)
 	end,
@@ -149,11 +163,83 @@ for k, v in next, {
 	IsElementEnabled = function(self, name)
 		argcheck(name, 2, 'string')
 
-		local element = elements[name]
-		if(not element) then return end
+		if(not elements[name]) then return end
 
 		local active = activeElements[self]
 		return active and active[name]
+	end,
+
+	--[[ frame:PauseElement(name[, unit])
+	Used to pause the execution of an element on the given unit frame.
+
+	Nameplates automatically resume paused elements.
+
+	* self - unit frame for which the element should be paused
+	* name - name of the element to be paused (string)
+	* unit - unit to be passed to the element's Disable function. Defaults to the frame's unit (string?)
+	--]]
+	PauseElement = function(self, name, unit)
+		argcheck(name, 2, 'string')
+		argcheck(unit, 3, 'string', 'nil')
+
+		if(self:IsElementPaused(name) or not self:IsElementEnabled(name)) then return end
+
+		if(not pausedElements[self]) then
+			pausedElements[self] = {}
+		end
+
+		pausedElements[self][name] = true
+
+		-- deactivate as if we're disabling
+		local update = elements[name].update
+		if(update) then
+			for index, func in next, objectElementUpdateFuncs[self] do
+				if(func == update) then
+					table.remove(objectElementUpdateFuncs[self], index)
+					break
+				end
+			end
+		end
+
+		return elements[name].disable(self, unit or self.__unit)
+	end,
+
+	--[[ frame:ResumeElement(name[, unit])
+	Used to resume a paused element on the given unit frame, if the element is not disabled.
+
+	* self - unit frame for which the element should be resumed
+	* name - name of the element to be resumed (self)
+	* unit - unit to be passed to the element's Enable function. Defaults to the frame's unit (string?)
+	--]]
+	ResumeElement = function(self, name, unit)
+		argcheck(name, 2, 'string')
+		argcheck(unit, 3, 'string', 'nil')
+
+		if(not self:IsElementPaused(name) or not self:IsElementEnabled(name)) then return end
+
+		local element = elements[name]
+		if(element.enable(self, unit or self.__unit)) then
+			pausedElements[self][name] = nil
+
+			if(element.update) then
+				table.insert(objectElementUpdateFuncs[self], element.update)
+			end
+		end
+	end,
+
+	--[[ frame:IsElementPaused(name)
+	Used to check if an element is paused on a given frame.
+
+	* self - unit frame
+	* name - name of the element (string)
+	--]]
+	IsElementPaused = function(self, name)
+		argcheck(name, 2, 'string')
+
+		if(not elements[name]) then return end
+
+		local paused = pausedElements[self]
+		return paused and paused[name]
 	end,
 
 	--[[ frame:Enable(asState)
@@ -182,7 +268,7 @@ for k, v in next, {
 	--]]
 	IsEnabled = UnitWatchRegistered,
 	--[[ frame:UpdateAllElements(event)
-	Used to update all enabled elements on the given frame.
+	Used to update all enabled elements on the given frame, unless they're paused.
 
 	* self  - unit frame
 	* event - event name to pass to the elements' update functions (string)
@@ -860,7 +946,6 @@ do
 		updateDriver(self)
 	end
 
-	local previouslyActiveElements = {}
 	local function driverEventHandler(self, event, unit)
 		if(event == 'PLAYER_LOGIN') then
 			updateDriver(self)
@@ -906,11 +991,9 @@ do
 			end
 
 			if(UnitNameplateShowsWidgetsOnly(unit) or UnitIsGameObject(unit)) then
-				previouslyActiveElements[nameplate.unitFrame] = {}
-
+				-- pause active elements, they shouldn't run when we hide the frame
 				for element in next, activeElements[nameplate.unitFrame] do
-					nameplate.unitFrame:DisableElement(element, unit)
-					previouslyActiveElements[nameplate.unitFrame][element] = true
+					nameplate.unitFrame:PauseElement(element, unit)
 				end
 
 				-- no point showing our unit frame when there's only widgets,
@@ -939,15 +1022,14 @@ do
 
 			nameplate.unitFrame:SetAttribute('unit', nil)
 
-			-- enable elements if they were previously disabled
-			if(previouslyActiveElements[nameplate.unitFrame]) then
-				for element in next, previouslyActiveElements[nameplate.unitFrame] do
-					nameplate.unitFrame:EnableElement(element, unit)
+			-- resume elements if they were previously paused
+			if(pausedElements[nameplate.unitFrame]) then
+				for element in next, pausedElements[nameplate.unitFrame] do
+					nameplate.unitFrame:ResumeElement(element, unit)
 				end
-
-				previouslyActiveElements[nameplate.unitFrame] = nil
-				nameplate.unitFrame:Show()
 			end
+
+			nameplate.unitFrame:Show()
 
 			if(self.removedCallback) then
 				self.removedCallback(nameplate.unitFrame, event, unit)
