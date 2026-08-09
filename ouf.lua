@@ -303,6 +303,30 @@ for k, v in next, {
 			self:PostUpdate(event)
 		end
 	end,
+
+	--[[ frame:PauseAllElements()
+	Pauses all elements on the given unit frame.
+
+	* self - unit frame for which the elements should be paused
+	--]]
+	PauseAllElements = function(self)
+		for element in next, activeElements[self] do
+			self:PauseElement(element)
+		end
+	end,
+
+	--[[ frame:ResumeAllElements()
+	Resumes all paused elements on the given unit frame.
+
+	* self - unit frame for which the elements should be resumed
+	--]]
+	ResumeAllElements = function(self)
+		if(not pausedElements[self]) then return end
+
+		for element in next, pausedElements[self] do
+			self:ResumeElement(element)
+		end
+	end,
 } do
 	frame_metatable.__index[k] = v
 end
@@ -991,13 +1015,8 @@ do
 			end
 
 			if(UnitNameplateShowsWidgetsOnly(unit) or UnitIsGameObject(unit)) then
-				-- pause active elements, they shouldn't run when we hide the frame
-				for element in next, activeElements[nameplate.unitFrame] do
-					nameplate.unitFrame:PauseElement(element, unit)
-				end
-
-				-- no point showing our unit frame when there's only widgets,
-				-- it'll only get in the way
+				-- pause all active elements and hide the unit frame
+				nameplate.unitFrame:PauseAllElements()
 				nameplate.unitFrame:Hide()
 			else
 				-- we need to keep updating the attributes in order to keep correct info,
@@ -1022,13 +1041,8 @@ do
 
 			nameplate.unitFrame:SetAttribute('unit', nil)
 
-			-- resume elements if they were previously paused
-			if(pausedElements[nameplate.unitFrame]) then
-				for element in next, pausedElements[nameplate.unitFrame] do
-					nameplate.unitFrame:ResumeElement(element, unit)
-				end
-			end
-
+			-- resume any paused elements and show the unit frame
+			nameplate.unitFrame:ResumeAllElements()
 			nameplate.unitFrame:Show()
 
 			if(self.removedCallback) then
