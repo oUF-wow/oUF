@@ -922,17 +922,6 @@ do
 				nameplate.unitFrame:SetAttribute('unit', unit)
 				Private.UpdateUnits(nameplate.unitFrame, unit)
 
-				-- enable elements if they were previously disabled
-				if(previouslyActiveElements[nameplate.unitFrame]) then
-					for element in next, previouslyActiveElements[nameplate.unitFrame] do
-						nameplate.unitFrame:EnableElement(element, unit)
-					end
-
-					table.wipe(previouslyActiveElements[nameplate.unitFrame])
-
-					nameplate.unitFrame:Show()
-				end
-
 				nameplate:ClearAllHitTestPoints() -- to prevent lingering hit test points
 				nameplate:SetAllHitTestPoints(nameplate.unitFrame)
 
@@ -949,6 +938,16 @@ do
 			if(not nameplate or not nameplate.unitFrame) then return end
 
 			nameplate.unitFrame:SetAttribute('unit', nil)
+
+			-- enable elements if they were previously disabled
+			if(previouslyActiveElements[nameplate.unitFrame]) then
+				for element in next, previouslyActiveElements[nameplate.unitFrame] do
+					nameplate.unitFrame:EnableElement(element, unit)
+				end
+
+				previouslyActiveElements[nameplate.unitFrame] = nil
+				nameplate.unitFrame:Show()
+			end
 
 			if(self.removedCallback) then
 				self.removedCallback(nameplate.unitFrame, event, unit)
