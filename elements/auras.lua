@@ -414,8 +414,8 @@ end
 local function Update(self)
 	if(STATE[self] and STATE[self].elements) then
 		for _, element in next, STATE[self].elements do
-			if element:GetUnit() ~= self.unit then
-				element:SetUnit(self.unit) -- triggers a full update
+			if element:GetUnit() ~= self.__unit then
+				element:SetUnit(self.__unit) -- triggers a full update
 			else
 				element:ForceUpdate()
 			end
