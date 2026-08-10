@@ -1,8 +1,8 @@
 --[[
 # Element: Auras
 
-Handles creation of [aura containers](https://warcraft.wiki.gg/wiki/UIOBJECT_AuraContainer), groups,
-slots, and [buttons](https://warcraft.wiki.gg/wiki/UIOBJECT_AuraButton).
+Handles creation of [aura containers](https://warcraft.wiki.gg/wiki/INTRINSIC_AuraContainer), groups,
+slots, and [buttons](https://warcraft.wiki.gg/wiki/INTRINSIC_AuraButton).
 
 ## Notes
 
@@ -209,8 +209,8 @@ local elementMixin = {}
 Defines a group of auras to display on the element.  
 This can be defined multiple times.
 
-* filter  - aura filter for this group ([AuraFilter](https://warcraft.wiki.gg/wiki/API_type/AuraFilters))
-* options - options for this group (TODO: link to wiki)
+* filter  - aura filter for this group ([AuraFilter](https://warcraft.wiki.gg/wiki/API_types/AuraFilters))
+* options - options for this group ([CustomAuraContainerGroupDefaultOptions](https://warcraft.wiki.gg/wiki/FrameXML_types/CustomAuraContainerGroupDefaultOptions))
 
 ## Notes
 
@@ -279,8 +279,8 @@ Defines a slot for a single buff or debuff to create from the element.
 The slot can be manually positioned if necessary.  
 This can be defined multiple times.
 
-* filter  - aura filter for this group ([AuraFilter](https://warcraft.wiki.gg/wiki/API_type/AuraFilters))
-* options - options for this group (TODO: link to wiki)
+* filter  - aura filter for this group ([AuraFilter](https://warcraft.wiki.gg/wiki/API_types/AuraFilters))
+* options - options for this group ([CustomAuraContainerSlotDefaultOptions](https://warcraft.wiki.gg/wiki/FrameXML_types/CustomAuraContainerSlotDefaultOptions))
 
 ## Notes
 
@@ -349,7 +349,7 @@ methods on the element.
 .paddingRight  - Padding on the right side of the element. Takes priority over `padding` (number?)
 .paddingTop    - Padding on the top side of the element. Takes priority over `padding` (number?)
 .paddingBottom - Padding on the bottom side of the element. Takes priority over `padding` (number?)
-.policy        - Policy for how auras should be processed. See CustomAuraContainerProcessAuraPolicyDefaultOptions (table?)
+.policy        - Policy for how auras should be processed. See [CustomAuraContainerProcessAuraPolicyDefaultOptions](https://warcraft.wiki.gg/wiki/FrameXML_types/CustomAuraContainerProcessAuraPolicyDefaultOptions) (table?)
 .templates     - Extra templates to use for the aura element (string?)
 
 ## Returns
