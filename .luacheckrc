@@ -17,10 +17,13 @@ ignore = {
 
 read_globals = {
 	string = {fields = {'join', 'split', 'trim'}},
-	table = {fields = {'removemulti', 'wipe'}},
+	table = {fields = {'count', 'removemulti', 'wipe'}},
 
 	-- FrameXML
+	'AnchorUtil',
 	'ArenaEnemyMatchFramesContainer',
+	'AuraContainerSortDirection',
+	'AuraContainerSortMethod',
 	'BossTargetFrameContainer',
 	'Clamp',
 	'ColorMixin',
@@ -28,6 +31,7 @@ read_globals = {
 	'CompactArenaFrame',
 	'Constants',
 	'CreateColor',
+	'CustomAuraContainerAuraProcessingPolicy',
 	'Enum',
 	'FocusFrame',
 	'GameTooltip',
