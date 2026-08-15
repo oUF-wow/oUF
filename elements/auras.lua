@@ -420,12 +420,13 @@ local function Update(self, event)
 				element:ForceUpdate()
 			end
 
-			--[[ Callback: Auras:PostUpdate()
+			--[[ Callback: Auras:PostUpdate(event)
 			Called after the element has been updated.
 
 			Note: This only triggers when oUF initiates an update, not when Blizzard does it.
 
-			* self - the Auras element
+			* self  - the Auras element
+			* event - the event that triggered the update
 			--]]
 			if(element.PostUpdate) then
 				element:PostUpdate(event)
