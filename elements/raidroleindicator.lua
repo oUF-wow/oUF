@@ -44,11 +44,13 @@ local function Update(self, event)
 
 	local role, shouldShow
 	if(UnitInRaid(unit) ~= nil and not UnitHasVehicleUI(unit)) then
-		if(GetPartyAssignment('MAINTANK', unit)) then
+		local isMainTank = GetPartyAssignment('MAINTANK', unit)
+		local isMainAssist = GetPartyAssignment('MAINASSIST', unit)
+		if(not issecretvalue(isMainTank) and isMainTank) then
 			role = 'MAINTANK'
 			shouldShow = true
 			element:SetAtlas('RaidFrame-Icon-MainTank', element.useAtlasSize)
-		elseif(GetPartyAssignment('MAINASSIST', unit)) then
+		elseif(not issecretvalue(isMainAssist) and isMainAssist) then
 			role = 'MAINASSIST'
 			shouldShow = true
 			element:SetAtlas('RaidFrame-Icon-MainAssist', element.useAtlasSize)
