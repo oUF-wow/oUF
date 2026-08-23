@@ -138,6 +138,7 @@ local function Enable(self)
 		for i = 1, #element do
 			local totem = element[TOTEM_PRIORITIES[i]]
 			totem:SetID(i)
+			totem:Show()
 
 			if(totem:IsMouseEnabled()) then
 				totem:SetScript('OnEnter', OnEnter)
