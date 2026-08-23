@@ -533,24 +533,32 @@ local function Enable(self, unit)
 		end
 
 		if(element.HealingAll) then
+			element.HealingAll:Show()
+
 			if(element.HealingAll:IsObjectType('StatusBar') and not element.HealingAll:GetStatusBarTexture()) then
 				element.HealingAll:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 			end
 		end
 
 		if(element.HealingPlayer) then
+			element.HealingPlayer:Show()
+
 			if(element.HealingPlayer:IsObjectType('StatusBar') and not element.HealingPlayer:GetStatusBarTexture()) then
 				element.HealingPlayer:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 			end
 		end
 
 		if(element.HealingOther) then
+			element.HealingOther:Show()
+
 			if(element.HealingOther:IsObjectType('StatusBar') and not element.HealingOther:GetStatusBarTexture()) then
 				element.HealingOther:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 			end
 		end
 
 		if(element.OverHealIndicator) then
+			element.OverHealIndicator:Show()
+
 			if(element.OverHealIndicator:IsObjectType('Texture') and not element.OverHealIndicator:GetTexture()) then
 				element.OverHealIndicator:SetTexture([[Interface\RaidFrame\Shield-Overshield]])
 				element.OverHealIndicator:SetBlendMode('ADD')
@@ -558,18 +566,24 @@ local function Enable(self, unit)
 		end
 
 		if(element.DamageAbsorb) then
+			element.DamageAbsorb:Show()
+
 			if(element.DamageAbsorb:IsObjectType('StatusBar') and not element.DamageAbsorb:GetStatusBarTexture()) then
 				element.DamageAbsorb:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 			end
 		end
 
 		if(element.HealAbsorb) then
+			element.HealAbsorb:Show()
+
 			if(element.HealAbsorb:IsObjectType('StatusBar') and not element.HealAbsorb:GetStatusBarTexture()) then
 				element.HealAbsorb:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 			end
 		end
 
 		if(element.OverDamageAbsorbIndicator) then
+			element.OverDamageAbsorbIndicator:Show()
+
 			if(element.OverDamageAbsorbIndicator:IsObjectType('Texture') and not element.OverDamageAbsorbIndicator:GetTexture()) then
 				element.OverDamageAbsorbIndicator:SetTexture([[Interface\RaidFrame\Shield-Overshield]])
 				element.OverDamageAbsorbIndicator:SetBlendMode('ADD')
@@ -577,6 +591,8 @@ local function Enable(self, unit)
 		end
 
 		if(element.OverHealAbsorbIndicator) then
+			element.OverHealAbsorbIndicator:Show()
+
 			if(element.OverHealAbsorbIndicator:IsObjectType('Texture') and not element.OverHealAbsorbIndicator:GetTexture()) then
 				element.OverHealAbsorbIndicator:SetTexture([[Interface\RaidFrame\Absorb-Overabsorb]])
 				element.OverHealAbsorbIndicator:SetBlendMode('ADD')
