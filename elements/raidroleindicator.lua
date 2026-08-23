@@ -44,6 +44,10 @@ local function Update(self, event)
 		element:PreUpdate()
 	end
 
+	if(event == 'OnShow') then
+		STATE[element] = {}
+	end
+
 	local role, shouldShow
 	if(UnitInRaid(unit) ~= nil and not UnitHasVehicleUI(unit)) then
 		local isMainTank = GetPartyAssignment('MAINTANK', unit)
