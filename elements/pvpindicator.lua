@@ -53,6 +53,10 @@ local function Update(self, event, unit)
 		element:PreUpdate(unit)
 	end
 
+	if(event == 'OnShow') then
+		STATE[element] = {}
+	end
+
 	local status
 	local factionGroup = UnitFactionGroup(unit) or 'Neutral'
 	local honorRewardInfo = C_PvP.GetHonorRewardInfo(UnitHonorLevel(unit))
