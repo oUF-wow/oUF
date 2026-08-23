@@ -336,6 +336,7 @@ local function shouldUpdatePredictionSize(self)
 
 	local horizontal = element:GetOrientation() == 'HORIZONTAL'
 	local size = horizontal and element:GetWidth() or element:GetHeight()
+	size = math.floor((size + 0.005) * 100) / 100 -- normalize floating point errors
 	if(horizontal ~= STATE[element].horizontal or size ~= STATE[element].size) then
 		STATE[element].horizontal = horizontal
 		STATE[element].size = size
