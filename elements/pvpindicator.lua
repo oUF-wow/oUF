@@ -35,6 +35,8 @@ The `Badge` sub-widget has to be on a lower sub-layer than the `PvP` texture.
 local _, ns = ...
 local oUF = ns.oUF
 
+local STATE = {}
+
 local function Update(self, event, unit)
 	if(unit and unit ~= self.__unit) then return end
 
@@ -51,6 +53,10 @@ local function Update(self, event, unit)
 		element:PreUpdate(unit)
 	end
 
+	if(event == 'OnShow') then
+		STATE[element] = {}
+	end
+
 	local status
 	local factionGroup = UnitFactionGroup(unit) or 'Neutral'
 	local honorRewardInfo = C_PvP.GetHonorRewardInfo(UnitHonorLevel(unit))
@@ -59,7 +65,13 @@ local function Update(self, event, unit)
 		status = 'FFA'
 	else
 		local isPvP = UnitIsPVP(unit)
-		if(factionGroup ~= 'Neutral' and not issecretvalue(isPvP) and isPvP) then
+		if issecretvalue(isPvP) then
+			isPvP = STATE[element].isPvP
+		else
+			STATE[element].isPvP = isPvP
+		end
+
+		if(factionGroup ~= 'Neutral' and not isPvP) then
 			if(unit == 'player' and UnitIsMercenary(unit)) then
 				if(factionGroup == 'Horde') then
 					factionGroup = 'Alliance'
@@ -130,8 +142,11 @@ local function Enable(self)
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
 
+		STATE[element] = {}
+
 		self:RegisterEvent('UNIT_FACTION', Path)
 		self:RegisterEvent('HONOR_LEVEL_UPDATE', Path, true)
+		self:RegisterEvent('PLAYER_REGEN_ENABLED', Path, true)
 
 		return true
 	end
@@ -148,6 +163,7 @@ local function Disable(self)
 
 		self:UnregisterEvent('UNIT_FACTION', Path)
 		self:UnregisterEvent('HONOR_LEVEL_UPDATE', Path)
+		self:UnregisterEvent('PLAYER_REGEN_ENABLED', Path)
 	end
 end
 
