@@ -35,8 +35,6 @@ The `Badge` sub-widget has to be on a lower sub-layer than the `PvP` texture.
 local _, ns = ...
 local oUF = ns.oUF
 
-local STATE = {}
-
 local function Update(self, event, unit)
 	if(unit and unit ~= self.__unit) then return end
 
@@ -53,39 +51,33 @@ local function Update(self, event, unit)
 		element:PreUpdate(unit)
 	end
 
-	if(event == 'OnShow') then
-		STATE[element] = {}
-	end
-
 	local status
 	local factionGroup = UnitFactionGroup(unit) or 'Neutral'
-	local honorRewardInfo = C_PvP.GetHonorRewardInfo(UnitHonorLevel(unit))
+	if(unit == 'player' and UnitIsMercenary(unit)) then
+		if(factionGroup == 'Horde') then
+			factionGroup = 'Alliance'
+		elseif(factionGroup == 'Alliance') then
+			factionGroup = 'Horde'
+		end
+	end
 
 	if(UnitIsPVPFreeForAll(unit)) then
 		status = 'FFA'
 	else
 		local isPvP = UnitIsPVP(unit)
-		if(issecretvalue(isPvP)) then
-			isPvP = STATE[element].isPvP
-		else
-			STATE[element].isPvP = isPvP
-		end
-
-		if(factionGroup ~= 'Neutral' and isPvP) then
-			if(unit == 'player' and UnitIsMercenary(unit)) then
-				if(factionGroup == 'Horde') then
-					factionGroup = 'Alliance'
-				elseif(factionGroup == 'Alliance') then
-					factionGroup = 'Horde'
-				end
-			end
-
+		if(factionGroup ~= 'Neutral' and not issecretvalue(isPvP) and isPvP) then
 			status = factionGroup
 		end
 	end
 
 	if(status) then
 		element:Show()
+
+		local honorRewardInfo
+		local honorLevel = UnitHonorLevel(unit)
+		if(not issecretvalue(honorLevel)) then
+			honorRewardInfo = C_PvP.GetHonorRewardInfo(honorLevel)
+		end
 
 		if(element.Badge and honorRewardInfo) then
 			element:SetTexture(honorRewardInfo.badgeFileDataID)
@@ -141,8 +133,6 @@ local function Enable(self)
 	if(element) then
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
-
-		STATE[element] = {}
 
 		self:RegisterEvent('UNIT_FACTION', Path)
 		self:RegisterEvent('HONOR_LEVEL_UPDATE', Path, true)
