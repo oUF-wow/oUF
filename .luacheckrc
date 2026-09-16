@@ -21,10 +21,10 @@ read_globals = {
 
 	-- FrameXML
 	'AnchorUtil',
-	'AuraUtil',
 	'ArenaEnemyMatchFramesContainer',
 	'AuraContainerSortDirection',
 	'AuraContainerSortMethod',
+	'AuraUtil',
 	'BossTargetFrameContainer',
 	'Clamp',
 	'ColorMixin',
@@ -52,6 +52,7 @@ read_globals = {
 	'TargetofFocusFrame',
 	'TotemFrame',
 	'UIParent',
+	'UnitFrameUtil',
 
 	-- namespaces
 	'C_AddOns',

@@ -5,11 +5,12 @@ Handles the visibility and updating of an indicator based on the unit's PvP stat
 
 ## Widget
 
-PvPIndicator - A `Texture` used to display faction, FFA PvP status or honor level icon.
+PvPIndicator - A `Texture` used to display faction or FFA PvP status.
 
 ## Sub-Widgets
 
-Badge - A `Texture` used to display the honor badge background image.
+Badge - An optional `Texture` used to display the honor level background image.
+Portrait - An optional `Texture` used to display the honor level portrait image.
 
 ## Notes
 
@@ -19,21 +20,29 @@ The `Badge` sub-widget has to be on a lower sub-layer than the `PvP` texture.
 ## Examples
 
     -- Position and size
-    local PvPIndicator = self:CreateTexture(nil, 'ARTWORK', nil, 1)
+    local PvPIndicator = self:CreateTexture(nil, 'ARTWORK')
     PvPIndicator:SetSize(30, 30)
     PvPIndicator:SetPoint('RIGHT', self, 'LEFT')
 
-    local Badge = self:CreateTexture(nil, 'ARTWORK')
-    Badge:SetSize(50, 52)
-    Badge:SetPoint('CENTER', PvPIndicator, 'CENTER')
+    local Portrait = self:CreateTexture(nil, 'ARTWORK')
+    Portrait:SetSize(50, 52)
+    Portrait:SetPoint('CENTER', PvPIndicator)
+
+    local Badge = self:CreateTexture(nil, 'OVERLAY')
+    Badge:SetSize(30, 30)
+    Badge:SetPoint('CENTER', Portrait)
 
     -- Register it with oUF
+    PvPIndicator.Portrait = Portrait
     PvPIndicator.Badge = Badge
     self.PvPIndicator = PvPIndicator
 --]]
 
 local _, ns = ...
 local oUF = ns.oUF
+local Private = oUF.Private
+
+local GameVersion = Private.GameVersion
 
 local function Update(self, event, unit)
 	if(unit and unit ~= self.__unit) then return end
@@ -51,65 +60,71 @@ local function Update(self, event, unit)
 		element:PreUpdate(unit)
 	end
 
-	local status
-	local factionGroup = UnitFactionGroup(unit) or 'Neutral'
-	if(unit == 'player' and UnitIsMercenary(unit)) then
-		if(factionGroup == 'Horde') then
-			factionGroup = 'Alliance'
-		elseif(factionGroup == 'Alliance') then
-			factionGroup = 'Horde'
-		end
-	end
-
-	if(UnitIsPVPFreeForAll(unit)) then
-		status = 'FFA'
+	if GameVersion.PTR then
+		UnitFrameUtil.UpdateUnitPvPIndicator({
+			pvpIcon = element,
+			prestigePortrait = element.Portrait,
+			prestigeBadge = element.Badge,
+		}, unit, true)
 	else
-		local isPvP = UnitIsPVP(unit)
-		if(factionGroup ~= 'Neutral' and not issecretvalue(isPvP) and isPvP) then
-			status = factionGroup
-		end
-	end
-
-	if(status) then
-		element:Show()
-
-		local honorRewardInfo
-		local honorLevel = UnitHonorLevel(unit)
-		if(not issecretvalue(honorLevel)) then
-			honorRewardInfo = C_PvP.GetHonorRewardInfo(honorLevel)
+		local status
+		local factionGroup = UnitFactionGroup(unit) or 'Neutral'
+		if(unit == 'player' and UnitIsMercenary(unit)) then
+			if(factionGroup == 'Horde') then
+				factionGroup = 'Alliance'
+			elseif(factionGroup == 'Alliance') then
+				factionGroup = 'Horde'
+			end
 		end
 
-		if(element.Badge and honorRewardInfo) then
-			element:SetTexture(honorRewardInfo.badgeFileDataID)
-			element:SetTexCoord(0, 1, 0, 1)
-			element.Badge:SetAtlas('honorsystem-portrait-' .. factionGroup, false)
-			element.Badge:Show()
+		if(UnitIsPVPFreeForAll(unit)) then
+			status = 'FFA'
 		else
-			element:SetTexture([[Interface\TargetingFrame\UI-PVP-]] .. status)
-			element:SetTexCoord(0, 0.65625, 0, 0.65625)
+			local isPvP = UnitIsPVP(unit)
+			if(factionGroup ~= 'Neutral' and not issecretvalue(isPvP) and isPvP) then
+				status = factionGroup
+			end
+		end
+
+		if(status) then
+			element:Show()
+
+			local honorRewardInfo
+			local honorLevel = UnitHonorLevel(unit)
+			if(not issecretvalue(honorLevel)) then
+				honorRewardInfo = C_PvP.GetHonorRewardInfo(honorLevel)
+			end
+
+			if(element.Badge and honorRewardInfo) then
+				element:SetTexture(honorRewardInfo.badgeFileDataID)
+				element:SetTexCoord(0, 1, 0, 1)
+				element.Badge:SetAtlas('honorsystem-portrait-' .. factionGroup, false)
+				element.Badge:Show()
+			else
+				element:SetTexture([[Interface\TargetingFrame\UI-PVP-]] .. status)
+				element:SetTexCoord(0, 0.65625, 0, 0.65625)
+
+				if(element.Badge) then
+					element.Badge:Hide()
+				end
+			end
+		else
+			element:Hide()
 
 			if(element.Badge) then
 				element.Badge:Hide()
 			end
 		end
-	else
-		element:Hide()
-
-		if(element.Badge) then
-			element.Badge:Hide()
-		end
 	end
 
-	--[[ Callback: PvPIndicator:PostUpdate(unit, status)
+	--[[ Callback: PvPIndicator:PostUpdate(unit)
 	Called after the element has been updated.
 
 	* self   - the PvPIndicator element
 	* unit   - the unit for which the update has been triggered (string)
-	* status - the unit's current PvP status or faction accounting for mercenary mode (string)['FFA', 'Alliance',
-	           'Horde']
 	--]]
 	if(element.PostUpdate) then
-		return element:PostUpdate(unit, status)
+		return element:PostUpdate(unit)
 	end
 end
 
@@ -149,6 +164,9 @@ local function Disable(self)
 
 		if(element.Badge) then
 			element.Badge:Hide()
+		end
+		if(element.Portrait) then
+			element.Portrait:Hide()
 		end
 
 		self:UnregisterEvent('UNIT_FACTION', Path)
