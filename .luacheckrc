@@ -79,6 +79,7 @@ read_globals = {
 	'CreateFrame',
 	'CreateUnitHealPredictionCalculator',
 	'GetArenaOpponentSpec',
+	'GetBuildInfo',
 	'GetCollapsingStarCost',
 	'GetNetStats',
 	'GetNumArenaOpponentSpecs',
