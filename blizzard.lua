@@ -33,7 +33,7 @@ local function handleFrame(baseName)
 			power:UnregisterAllEvents()
 		end
 
-		local castbar = frame.castBar or frame.spellbar or frame.CastingBarFrame
+		local castbar = frame.castBar or frame.spellbar or frame.CastingBarFrame or (frame.CastBarsContainer and frame.CastBarsContainer.castBar)
 		if(castbar) then
 			castbar:UnregisterAllEvents()
 		end
