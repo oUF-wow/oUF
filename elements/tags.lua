@@ -126,6 +126,7 @@ local _ENV = {
 		return string.format('|cff%02x%02x%02x', r * 255, g * 255, b * 255)
 	end,
 	ColorMixin = ColorMixin, -- not available in restricted env for some reason
+	GameVersion = Private.GameVersion,
 }
 
 local _PROXY = setmetatable(_ENV, {__index = _G})
@@ -159,7 +160,7 @@ local tagStrings = {
 	end]],
 
 	['chi'] = [[function()
-		if(C_SpecializationInfo.GetSpecialization() == SPEC_MONK_WINDWALKER) then
+		if(C_SpecializationInfo.GetSpecialization() == SPEC_MONK_WINDWALKER or not GameCompatibility.Legion) then
 			local num = UnitPower('player', Enum.PowerType.Chi)
 			if(num > 0) then
 				return num
@@ -226,11 +227,9 @@ local tagStrings = {
 	end]],
 
 	['holypower'] = [[function()
-		if(C_SpecializationInfo.GetSpecialization() == SPEC_PALADIN_RETRIBUTION) then
-			local num = UnitPower('player', Enum.PowerType.HolyPower)
-			if(num > 0) then
-				return num
-			end
+		local num = UnitPower('player', Enum.PowerType.HolyPower)
+		if(num > 0) then
+			return num
 		end
 	end]],
 
@@ -358,17 +357,17 @@ local tagStrings = {
 		end
 	end]],
 
-	['runes'] = [[function()
-		local amount = 0
-
-		for i = 1, 6 do
-			local _, _, ready = GetRuneCooldown(i)
-			if(ready) then
-				amount = amount + 1
+	['runes'] = [[function(u)
+		if(UnitClassBase(u) == 'DEATHKNIGHT') then
+			local amount = 0
+			for i = 1, 6 do
+				local _, _, ready = GetRuneCooldown(i)
+				if(ready) then
+					amount = amount + 1
+				end
 			end
+			return amount
 		end
-
-		return amount
 	end]],
 
 	['sex'] = [[function(u)
