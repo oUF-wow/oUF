@@ -127,6 +127,7 @@ local _ENV = {
 	end,
 	ColorMixin = ColorMixin, -- not available in restricted env for some reason
 	GameVersion = Private.GameVersion,
+	GameCompatibility = Private.GameCompatibility,
 }
 
 local _PROXY = setmetatable(_ENV, {__index = _G})
