@@ -15,6 +15,9 @@ jobs:
       - name: Update TOC Interface version
         uses: p3lim/toc-interface-updater@v4
         with:
+          flavor: |
+            retail
+            forever
           beta: true
           ptr: true
 
