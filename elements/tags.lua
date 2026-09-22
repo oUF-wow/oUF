@@ -317,7 +317,8 @@ local tagStrings = {
 	end]],
 
 	['pvp'] = [[function(u)
-		if(UnitIsPVP(u)) then
+		local successful, isPVP = pcall(UnitIsPVP, u)
+		if(successful and isPVP) then
 			return 'PvP'
 		end
 	end]],
