@@ -1,7 +1,7 @@
 --[[
 # Element: ClassPower
 
-Handles the visibility and updating of the player's class resources (like Chi Orbs or Holy Power) and combo points.
+Handles the visibility and updating of vehicle and player class resources (like Combo Points or Holy Power).
 
 ## Widget
 
@@ -48,6 +48,7 @@ local Private = oUF.Private
 local STATE = {}
 
 local unitIsUnit = Private.unitIsUnit
+local GameCompatibility = Private.GameCompatibility
 
 local playerClass = UnitClassBase('player')
 
@@ -107,7 +108,7 @@ local function GetComboPointsMax(unit)
 	return UnitPowerMax(unit, Enum.PowerType.ComboPoints)
 end
 
-if(playerClass == 'DEMONHUNTER') then
+if(playerClass == 'DEMONHUNTER' and GameCompatibility.Midnight) then
 	local function GetSoulFragments()
 		if(C_UnitAuras.GetPlayerAuraBySpellID(SPELL_VOID_METAMORPHOSIS)) then
 			local auraInfo = C_UnitAuras.GetPlayerAuraBySpellID(SPELL_SILENCE_THE_WHISPERS)
@@ -167,7 +168,7 @@ elseif(playerClass == 'EVOKER') then
 	GetPowerInfo = function() -- might as well be static
 		return POWER_TYPE_ESSENCE, Enum.PowerType.Essence
 	end
-elseif(playerClass == 'HUNTER') then
+elseif(playerClass == 'HUNTER' and GameCompatibility.BattleForAzeroth) then
 	local function GetTipOfTheSpear()
 		local auraInfo = C_UnitAuras.GetPlayerAuraBySpellID(SPELL_TIP_OF_THE_SPEAR)
 		if(auraInfo) then
@@ -194,7 +195,7 @@ elseif(playerClass == 'HUNTER') then
 			return POWER_TYPE_TIP_OF_THE_SPEAR
 		end
 	end
-elseif(playerClass == 'MAGE') then
+elseif(playerClass == 'MAGE' and GameCompatibility.Midnight) then
 	local function GetIcicles(unit)
 		local auraInfo = C_UnitAuras.GetPlayerAuraBySpellID(SPELL_ICICLES)
 		if(auraInfo) then
@@ -245,7 +246,7 @@ elseif(playerClass == 'MONK') then
 			return POWER_TYPE_CHI, Enum.PowerType.Chi
 		end
 	end
-elseif(playerClass == 'PALADIN') then
+elseif(playerClass == 'PALADIN' and GameCompatibility.Cataclysm) then
 	GetPowerUpdaters = function()
 		return GetGenericPower, GetGenericPowerMax, GetGenericPowerColor
 	end
@@ -261,7 +262,7 @@ elseif(playerClass == 'ROGUE') then
 	GetPowerInfo = function() -- might as well be static
 		return POWER_TYPE_COMBO_POINTS, Enum.PowerType.ComboPoints
 	end
-elseif(playerClass == 'SHAMAN') then
+elseif(playerClass == 'SHAMAN') then -- TBD
 	local function GetMaelstromWeapon()
 		local auraInfo = C_UnitAuras.GetPlayerAuraBySpellID(SPELL_MAELSTROM_WEAPON)
 		if(auraInfo) then
@@ -284,7 +285,7 @@ elseif(playerClass == 'SHAMAN') then
 			return POWER_TYPE_MAELSTROM -- we re-use the power type from elemental
 		end
 	end
-elseif(playerClass == 'WARLOCK') then
+elseif(playerClass == 'WARLOCK' and GameCompatibility.Cataclysm) then
 	local function GetSoulShardsDestruction(unit)
 		return UnitPower(unit, Enum.PowerType.SoulShards, true) / UnitPowerDisplayMod(Enum.PowerType.SoulShards)
 	end
