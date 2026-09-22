@@ -225,6 +225,19 @@ local tagStrings = {
 		end
 	end]],
 
+	['happiness'] = [[function(u)
+		if(GameVersion.Forever and u == 'pet') then
+			local happiness = C_PetInfo.GetPetHappiness()
+			if(happiness == 1) then
+				return ':<'
+			elseif(happiness == 2) then
+				return ':|'
+			elseif(happiness == 3) then
+				return ':D'
+			end
+		end
+	end]],
+
 	['holypower'] = [[function()
 		if(C_SpecializationInfo.GetSpecialization() == SPEC_PALADIN_RETRIBUTION) then
 			local num = UnitPower('player', Enum.PowerType.HolyPower)
@@ -530,6 +543,7 @@ local tagEvents = {
 	['difficulty']          = 'UNIT_FACTION',
 	['faction']             = 'NEUTRAL_FACTION_SELECT_RESULT',
 	['group']               = 'GROUP_ROSTER_UPDATE',
+	['happiness']           = 'UNIT_HAPPINESS UNIT_PET',
 	['holypower']           = 'UNIT_POWER_UPDATE PLAYER_TALENT_UPDATE',
 	['leader']              = 'PARTY_LEADER_CHANGED',
 	['leaderlong']          = 'PARTY_LEADER_CHANGED',
