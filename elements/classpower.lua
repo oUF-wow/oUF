@@ -75,7 +75,7 @@ local SPELL_ICICLES = 205473
 local SPELL_ICICLES_TALENT = 1246832
 local SPELL_MAELSTROM_WEAPON = 344179
 local SPELL_MAELSTROM_WEAPON_TALENT = 187880
-local SPELL_SHRED = 5221
+local SPELL_CAT_FORM = 768
 local SPELL_SILENCE_THE_WHISPERS = Constants.UnitPowerSpellIDs.SILENCE_THE_WHISPERS_SPELL_ID or 1227702
 local SPELL_TIP_OF_THE_SPEAR = 260286
 local SPELL_TIP_OF_THE_SPEAR_TALENT = 260285
@@ -156,7 +156,7 @@ elseif(playerClass == 'DRUID') then
 	end
 
 	GetPowerInfo = function()
-		if(UnitPowerType('player') == Enum.PowerType.Energy and C_SpellBook.IsSpellKnown(SPELL_SHRED)) then
+		if(UnitPowerType('player') == Enum.PowerType.Energy and C_SpellBook.IsSpellKnown(SPELL_CAT_FORM)) then
 			return POWER_TYPE_COMBO_POINTS, Enum.PowerType.ComboPoints
 		end
 	end
