@@ -837,6 +837,8 @@ local function unregisterTimer(fs)
 	end
 end
 
+local taggedFontStrings = {}
+
 --[[ Tags: frame:Tag(fs, ts, ...)
 Used to register a tag on a unit frame.
 
@@ -882,6 +884,7 @@ local function Tag(self, fs, ts, ...)
 		end
 	end
 
+	taggedFontStrings[fs] = ts
 	STATE[self][fs] = ts
 end
 
@@ -899,6 +902,7 @@ local function Untag(self, fs)
 
 	fs.UpdateTag = nil
 
+	taggedFontStrings[fs] = nil
 	STATE[self][fs] = nil
 end
 
@@ -912,7 +916,7 @@ oUF.Tags = {
 	Events = tagEvents,
 	SharedEvents = unitlessEvents,
 	Vars = vars,
-	RefreshMethods = function(self, tag)
+	RefreshMethods = function(_, tag)
 		if(not tag) then return end
 
 		-- if a tag's name contains magic chars, there's a chance that string.match will fail to
@@ -929,7 +933,7 @@ oUF.Tags = {
 			if(strip(tagstr):match(tag)) then
 				tagStringFuncs[tagstr] = nil
 
-				for fs in next, STATE[self] do
+				for fs in next, taggedFontStrings do
 					if(fs.UpdateTag == func) then
 						fs.UpdateTag = getTagFunc(tagstr)
 
@@ -941,7 +945,7 @@ oUF.Tags = {
 			end
 		end
 	end,
-	RefreshEvents = function(self, tag)
+	RefreshEvents = function(_, tag)
 		if(not tag) then return end
 
 		-- if a tag's name contains magic chars, there's a chance that string.match will fail to
@@ -950,7 +954,7 @@ oUF.Tags = {
 
 		for tagstr in next, tagStringFuncs do
 			if(strip(tagstr):match(tag)) then
-				for fs, ts in next, STATE[self] do
+				for fs, ts in next, taggedFontStrings do
 					if(ts == tagstr) then
 						unregisterEvents(fs)
 						registerEvents(fs, tagstr)
@@ -959,7 +963,7 @@ oUF.Tags = {
 			end
 		end
 	end,
-	SetEventUpdateTimer = function(self, timer)
+	SetEventUpdateTimer = function(_, timer)
 		if(not timer) then return end
 		if(type(timer) ~= 'number') then return end
 
