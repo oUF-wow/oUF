@@ -14,8 +14,9 @@ Portrait - An optional `Texture` used to display the honor level portrait image.
 
 ## Notes
 
-This element updates by changing the texture.
-The `Badge` sub-widget has to be on a lower sub-layer than the `PvP` texture.
+This element updates by changing the texture and alpha.
+The `Badge` sub-widget should be on a lower sub-layer than the element.
+If the `Badge` sub-widget is provided the faction-based textures will not be used.
 
 ## Examples
 
@@ -24,16 +25,12 @@ The `Badge` sub-widget has to be on a lower sub-layer than the `PvP` texture.
     PvPIndicator:SetSize(30, 30)
     PvPIndicator:SetPoint('RIGHT', self, 'LEFT')
 
-    local Portrait = self:CreateTexture(nil, 'ARTWORK')
-    Portrait:SetSize(50, 52)
-    Portrait:SetPoint('CENTER', PvPIndicator)
-
-    local Badge = self:CreateTexture(nil, 'OVERLAY')
-    Badge:SetSize(30, 30)
-    Badge:SetPoint('CENTER', Portrait)
+    local layer, sublayer = PvPIndicator:GetDrawLayer()
+    local Badge = self:CreateTexture(nil, layer, nil, sublayer - 1)
+    Badge:SetSize(50, 52)
+    Badge:SetPoint('CENTER', PvPIndicator)
 
     -- Register it with oUF
-    PvPIndicator.Portrait = Portrait
     PvPIndicator.Badge = Badge
     self.PvPIndicator = PvPIndicator
 --]]
@@ -43,6 +40,7 @@ local oUF = ns.oUF
 local Private = oUF.Private
 
 local GameVersion = Private.GameVersion
+local GameCompatibility = Private.GameCompatibility
 
 local function Update(self, event, unit)
 	if(unit and unit ~= self.__unit) then return end
@@ -60,14 +58,58 @@ local function Update(self, event, unit)
 		element:PreUpdate(unit)
 	end
 
+	local status, info
 	if GameVersion.PTR then
-		UnitFrameUtil.UpdateUnitPvPIndicator({
-			pvpIcon = element,
-			prestigePortrait = element.Portrait,
-			prestigeBadge = element.Badge,
-		}, unit, true)
+		if(element.Badge and GameCompatibility.BattleForAzeroth and UnitIsHumanPlayer(unit)) then
+			info = UnitFrameUtil.GetUnitPvPIndicatorDisplayInfo(unit, true)
+
+			element:SetTexture(info.prestigeBadgeTexture)
+			element:SetAlphaFromBoolean(info.showPrestigeBadge, 1, 0)
+
+			element.Badge:SetAtlas(info.prestigePortraitTexture)
+			element.Badge:SetAlphaFromBoolean(info.showPrestigePortrait, 1, 0)
+		else
+			if(element.Badge) then
+				-- hide it in case we're not on a compatible version of the game
+				element.Badge:SetAlpha(0)
+			end
+
+			-- we can't use the UnitFrameUtil to determine the pvp icon, as it doesn't provide it
+			-- if the honor reward API returns data (a bug in the util, Blizzard is aware)
+			if(UnitIsPVPFreeForAll(unit)) then
+				status = 'FFA'
+			else
+				local factionGroup = UnitFactionGroup(unit)
+				if(unit == 'player' and UnitIsMercenary(unit)) then
+					if(factionGroup == 'Horde') then
+						factionGroup = 'Alliance'
+					elseif(factionGroup == 'Alliance') then
+						factionGroup = 'Horde'
+					end
+				elseif(not UnitIsHumanPlayer(unit)) then
+					local playerFactionGroup = UnitFactionGroup('player')
+					if(UnitIsEnemy('player', unit)) then
+						if(playerFactionGroup == 'Alliance') then
+							factionGroup = 'Horde'
+						elseif(playerFactionGroup == 'Horde') then
+							factionGroup = 'Alliance'
+						end
+					else
+						factionGroup = playerFactionGroup
+					end
+				end
+
+				if(factionGroup ~= 'Neutral') then
+					status = factionGroup
+				end
+			end
+
+			if(status) then
+				element:SetAtlas('UI-HUD-UnitFrame-Player-PVP-' .. status .. 'Icon', true)
+				element:SetAlphaFromBoolean(UnitIsPVP(unit), 1, 0)
+			end
+		end
 	else
-		local status
 		local factionGroup = UnitFactionGroup(unit) or 'Neutral'
 		if(unit == 'player' and UnitIsMercenary(unit)) then
 			if(factionGroup == 'Horde') then
@@ -122,9 +164,11 @@ local function Update(self, event, unit)
 
 	* self   - the PvPIndicator element
 	* unit   - the unit for which the update has been triggered (string)
+	* status - the unit's current PvP status or faction accounting for mercenary mode (string?)
+	* info   - information about the badge and portrait textures (table?)
 	--]]
 	if(element.PostUpdate) then
-		return element:PostUpdate(unit)
+		return element:PostUpdate(unit, status, info)
 	end
 end
 
