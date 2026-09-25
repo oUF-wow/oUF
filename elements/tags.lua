@@ -274,7 +274,11 @@ local tagStrings = {
 	end]],
 
 	['name'] = [[function(u, r)
-		return UnitName(r or u)
+		if(GameVersion.Forever) then
+			return NameUtil.GetUnmodifiedUnitFullName(r or u)
+		else
+			return UnitName(r or u)
+		end
 	end]],
 
 	['offline'] = [[function(u)
