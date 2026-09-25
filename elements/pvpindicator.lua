@@ -59,7 +59,7 @@ local function Update(self, event, unit)
 	end
 
 	local status, info
-	if(GameVersion.PTR) then
+	if(GameVersion.PTR or GameVersion.Forever) then
 		if(element.Badge and GameCompatibility.BattleForAzeroth and UnitIsHumanPlayer(unit)) then
 			info = UnitFrameUtil.GetUnitPvPIndicatorDisplayInfo(unit, true)
 
