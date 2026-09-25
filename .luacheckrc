@@ -52,6 +52,7 @@ read_globals = {
 	'TargetofFocusFrame',
 	'TotemFrame',
 	'UIParent',
+	'UnitFrameUtil',
 
 	-- namespaces
 	'C_AddOns',
