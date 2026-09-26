@@ -114,17 +114,21 @@ function oUF:DisableBlizzard(unit)
 		if(not isArenaHooked) then
 			isArenaHooked = true
 
-			handleFrame(CompactArenaFrame)
+			if(CompactArenaFrame) then -- does not exist in Forever
+				handleFrame(CompactArenaFrame)
 
-			for _, frame in next, CompactArenaFrame.memberUnitFrames do
-				handleFrame(frame)
+				for _, frame in next, CompactArenaFrame.memberUnitFrames do
+					handleFrame(frame)
+				end
 			end
 
-			-- old arena frames, they're still used for flag carriers etc in battlegrounds
-			handleFrame(ArenaEnemyMatchFramesContainer)
+			if(ArenaEnemyMatchFramesContainer) then
+				-- old arena frames, they're still used for flag carriers etc in battlegrounds
+				handleFrame(ArenaEnemyMatchFramesContainer)
 
-			for _, frame in next, ArenaEnemyMatchFramesContainer.UnitFrames do
-				handleFrame(frame)
+				for _, frame in next, ArenaEnemyMatchFramesContainer.UnitFrames do
+					handleFrame(frame)
+				end
 			end
 		end
 	elseif(unit:match('nameplate%d?%d?%d?$')) then
