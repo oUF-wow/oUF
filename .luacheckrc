@@ -67,6 +67,7 @@ read_globals = {
 	'C_NamePlate',
 	'C_NamePlateManager',
 	'C_PetInfo',
+	'C_PartyInfo',
 	'C_PvP',
 	'C_Secrets',
 	'C_SpecializationInfo',
