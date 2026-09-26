@@ -121,8 +121,7 @@ local function Update(self, event, unit)
 		if(UnitIsPVPFreeForAll(unit)) then
 			status = 'FFA'
 		else
-			local isPvP = UnitIsPVP(unit)
-			if(factionGroup ~= 'Neutral' and not issecretvalue(isPvP) and isPvP) then
+			if(factionGroup ~= 'Neutral' and not scrubsecretvalues(UnitIsPVP(unit))) then
 				status = factionGroup
 			end
 		end

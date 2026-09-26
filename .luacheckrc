@@ -185,4 +185,5 @@ read_globals = {
 	'geterrorhandler',
 	'hooksecurefunc',
 	'issecretvalue',
+	'scrubsecretvalues',
 }
