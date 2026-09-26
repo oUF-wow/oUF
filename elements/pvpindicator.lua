@@ -209,9 +209,6 @@ local function Disable(self)
 		if(element.Badge) then
 			element.Badge:Hide()
 		end
-		if(element.Portrait) then
-			element.Portrait:Hide()
-		end
 
 		self:UnregisterEvent('UNIT_FACTION', Path)
 		self:UnregisterEvent('HONOR_LEVEL_UPDATE', Path)
