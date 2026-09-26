@@ -114,8 +114,7 @@ function oUF:DisableBlizzard(unit)
 		if(not isArenaHooked) then
 			isArenaHooked = true
 
-			if(CompactArenaFrame) then
-				-- does not exist in Forever
+			if(CompactArenaFrame) then -- does not exist in Forever
 				handleFrame(CompactArenaFrame)
 
 				for _, frame in next, CompactArenaFrame.memberUnitFrames do
