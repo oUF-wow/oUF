@@ -21,10 +21,10 @@ read_globals = {
 
 	-- FrameXML
 	'AnchorUtil',
-	'AuraUtil',
 	'ArenaEnemyMatchFramesContainer',
 	'AuraContainerSortDirection',
 	'AuraContainerSortMethod',
+	'AuraUtil',
 	'BossTargetFrameContainer',
 	'Clamp',
 	'ColorMixin',
@@ -151,9 +151,11 @@ read_globals = {
 	'UnitInRaid',
 	'UnitInRange',
 	'UnitIsConnected',
+	'UnitIsEnemy',
 	'UnitIsGameObject',
 	'UnitIsGroupAssistant',
 	'UnitIsGroupLeader',
+	'UnitIsHumanPlayer',
 	'UnitIsMercenary',
 	'UnitIsOwnerOrControllerOfUnit',
 	'UnitIsPVP',
@@ -185,4 +187,5 @@ read_globals = {
 	'geterrorhandler',
 	'hooksecurefunc',
 	'issecretvalue',
+	'scrubsecretvalues',
 }
