@@ -1076,7 +1076,6 @@ do
 		nameplateDriver:RegisterEvent('NAME_PLATE_UNIT_ADDED')
 		nameplateDriver:RegisterEvent('NAME_PLATE_UNIT_REMOVED')
 		nameplateDriver:RegisterEvent('PLAYER_TARGET_CHANGED')
-		nameplateDriver:RegisterEvent('CVAR_UPDATE')
 
 		-- we'd prefer to straight up disable blizzard's nameplate driver, but nameplates contain
 		-- widgets and soft target icons we can't recreate due to protections, and it handles the
