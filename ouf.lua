@@ -1050,11 +1050,6 @@ do
 			if(self.removedCallback) then
 				self.removedCallback(nameplate.unitFrame, event, unit)
 			end
-		elseif(event == 'CVAR_UPDATE' and unit == 'nameplateShowFriendlyNpcs') then
-			-- BUG: when toggling this cvar friendly nameplates sometimes doesn't show
-			for _, nameplate in next, C_NamePlate.GetNamePlates() do
-				driverEventHandler(self, 'NAME_PLATE_UNIT_ADDED', nameplate.unitToken)
-			end
 		end
 	end
 
