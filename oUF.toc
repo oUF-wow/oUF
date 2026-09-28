@@ -3,6 +3,7 @@
 ## Author: Haste, lightspark, p3lim, Rainrider
 ## Version: @project-version@
 ## Notes: Unit frame framework. Does nothing by itself.
+## AllowLoadGameType: standard, camelot
 ## OptionalDeps: Clique
 ## X-oUF: oUF
 
