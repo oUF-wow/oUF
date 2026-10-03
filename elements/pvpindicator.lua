@@ -41,6 +41,8 @@ local Private = oUF.Private
 local GameVersion = Private.GameVersion
 local GameCompatibility = Private.GameCompatibility
 
+local STATE = {}
+
 local function Update(self, event, unit)
 	if(unit and unit ~= self.__unit) then return end
 
@@ -58,7 +60,9 @@ local function Update(self, event, unit)
 	end
 
 	local status, info
-	if(GameVersion.PTR or GameVersion.Forever) then
+	if(GameVersion.Forever) then
+		UnitFrameUtil.UpdateUnitPvPIndicator(STATE[element], unit, true)
+	elseif(GameVersion.PTR) then
 		if(element.Badge and GameCompatibility.BattleForAzeroth and UnitIsHumanPlayer(unit)) then
 			info = UnitFrameUtil.GetUnitPvPIndicatorDisplayInfo(unit, true)
 
@@ -185,15 +189,27 @@ local function ForceUpdate(element)
 	return Path(element.__owner, 'ForceUpdate', element.__owner.__unit)
 end
 
-local function Enable(self)
+local function Enable(self, unit)
 	local element = self.PvPIndicator
 	if(element) then
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
 
+		if(GameVersion.Forever) then
+			STATE[element] = {
+				pvpIcon = element,
+				prestigeBadge = element,
+				prestigePortrait = element.Badge,
+			}
+		end
+
 		self:RegisterEvent('UNIT_FACTION', Path)
 		self:RegisterEvent('HONOR_LEVEL_UPDATE', Path, true)
 		self:RegisterEvent('PLAYER_REGEN_ENABLED', Path, true)
+
+		if(GameVersion.Forever and unit == 'player') then
+			self:RegisterEvent('PLAYER_PVP_FLAG_CHANGED', Path, true)
+		end
 
 		return true
 	end
@@ -211,6 +227,10 @@ local function Disable(self)
 		self:UnregisterEvent('UNIT_FACTION', Path)
 		self:UnregisterEvent('HONOR_LEVEL_UPDATE', Path)
 		self:UnregisterEvent('PLAYER_REGEN_ENABLED', Path)
+
+		if(GameVersion.Forever) then
+			self:UnregisterEvent('PLAYER_PVP_FLAG_CHANGED', Path)
+		end
 	end
 end
 
