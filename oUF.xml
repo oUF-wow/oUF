@@ -38,6 +38,7 @@
 	<Script file="elements\stagger.lua"/>
 	<Script file="elements\summonindicator.lua"/>
 	<Script file="elements\tags.lua"/>
+	<Script file="elements\targetindicator.lua"/>
 	<Script file="elements\threatindicator.lua"/>
 	<Script file="elements\totems.lua"/>
 
