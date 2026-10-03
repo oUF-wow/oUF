@@ -51,7 +51,7 @@ local function Update(self, event)
 
 	local role -- TODO: remove in 12.1.5
 
-	if(GameVersion.PTR) then
+	if(GameVersion.PTR or GameVersion.Forever) then
 		-- we have to set the unit here, not during Enable, as the unit is not valid then
 		STATE[element].unit = self.__unit
 
@@ -108,7 +108,7 @@ local function Enable(self, unit)
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
 
-		if(GameVersion.PTR) then
+		if(GameVersion.PTR or GameVersion.Forever) then
 			STATE[element] = {
 				roleIcon = element,
 				optionTable = {
@@ -117,10 +117,15 @@ local function Enable(self, unit)
 						TANK = element.tankAtlas or 'UI-LFG-RoleIcon-Tank-Micro-Raid',
 						HEALER = element.healerAtlas or 'UI-LFG-RoleIcon-Healer-Micro-Raid',
 						DAMAGER = element.damageAtlas or 'UI-LFG-RoleIcon-DPS-Micro-Raid',
-						VEHICLE = '', -- otherwise it will show a vehicle icon (why Blizzard?)
 					}
 				}
 			}
+
+			if(GameVersion.Forever) then
+				STATE[element].optionTable.displayVehicleRoleIcon = false
+			else
+				STATE[element].optionTable.textureMap.VEHICLE = ''
+			end
 
 			self:RegisterEvent('PLAYER_ROLES_ASSIGNED', Path, true)
 		else
