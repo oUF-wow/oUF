@@ -59,7 +59,7 @@ local function Update(self, event, unit)
 		element:PreUpdate(unit)
 	end
 
-	local status, info
+	local status, info -- TODO: remove in 12.1.5
 	if(GameVersion.Forever) then
 		UnitFrameUtil.UpdateUnitPvPIndicator(STATE[element], unit, true)
 	elseif(GameVersion.PTR) then
@@ -166,8 +166,8 @@ local function Update(self, event, unit)
 
 	* self   - the PvPIndicator element
 	* unit   - the unit for which the update has been triggered (string)
-	* status - the unit's current PvP status or faction accounting for mercenary mode (string?)
-	* info   - information about the badge and portrait textures (table?)
+	* status - (DEPRECATED) the unit's current PvP status or faction accounting for mercenary mode (string?)
+	* info   - (DEPRECATED) information about the badge and portrait textures (table?)
 	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(unit, status, info)
