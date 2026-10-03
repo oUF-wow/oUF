@@ -13,9 +13,24 @@ Badge - An optional `Texture` used to display the honor level background image.
 
 ## Notes
 
-This element updates by changing the texture and alpha.
-The `Badge` sub-widget should be on a lower sub-layer than the element.
-If the `Badge` sub-widget is provided the faction-based textures will not be used.
+This element updates by changing the texture and alpha.  
+The `Badge` sub-widget should be on a lower sub-layer than the element.  
+If the `Badge` sub-widget is provided the faction-based textures will not be used.  
+
+## Options
+
+.useAtlasSize          - Makes the element use preprogrammed atlas' size instead of its set dimensions (boolean)
+.portraitNeutralAtlas  - Overrides the portrait atlas for neutral standing (string)
+.portraitHordeAtlas    - Overrides the portrait atlas for Horde (string)
+.portraitAllianceAtlas - Overrides the portrait atlas for Alliance (string)
+.badgeTexture          - Overrides the badge texture (string)
+.ffaAtlas              - Overrides the default atlas for "FreeForAll" (string)
+.hordeAtlas            - Overrides the default atlas for Horde (string)
+.allianceAtlas         - Overrides the default atlas for Alliance (string)
+
+## Sub-Widget options
+
+.Badge.useAtlasSize - Makes the Badge use preprogrammed atlas' size instead of its set dimensions (boolean)
 
 ## Examples
 
@@ -61,7 +76,8 @@ local function Update(self, event, unit)
 
 	local status, info -- TODO: remove in 12.1.5
 	if(GameVersion.Forever) then
-		UnitFrameUtil.UpdateUnitPvPIndicator(STATE[element], unit, true)
+		local state = STATE[element]
+		UnitFrameUtil.UpdateUnitPvPIndicator(state.elements, unit, true, state.textureMap, state.atlasSize)
 	elseif(GameVersion.PTR) then
 		if(element.Badge and GameCompatibility.BattleForAzeroth and UnitIsHumanPlayer(unit)) then
 			info = UnitFrameUtil.GetUnitPvPIndicatorDisplayInfo(unit, true)
@@ -197,9 +213,25 @@ local function Enable(self, unit)
 
 		if(GameVersion.Forever) then
 			STATE[element] = {
-				pvpIcon = element,
-				prestigeBadge = element,
-				prestigePortrait = element.Badge,
+				elements = {
+					pvpIcon = element,
+					prestigeBadge = element,
+					prestigePortrait = element.Badge,
+				},
+				textureMap = {
+					prestigePortraitNeutral = element.portraitNeutralAtlas,
+					prestigePortraitHorde = element.portraitHordeAtlas,
+					prestigePortraitAlliance = element.portraitAllianceAtlas,
+					prestigeBadge = element.badgeAtlas,
+					pvpIconFreeForAll = element.ffaAtlas,
+					pvpIconHorde = element.hordeAtlas,
+					pvpIconAlliance = element.allianceAtlas,
+				},
+				atlasSize = {
+					pvpIcon = element.useAtlasSize,
+					prestigeBadge = element.useAtlasSize,
+					prestigePortrait = element.Badge and element.Badge.useAtlasSize,
+				}
 			}
 		end
 
