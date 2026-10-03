@@ -9,13 +9,29 @@ PvPIndicator - A `Texture` used to display faction or FFA PvP status.
 
 ## Sub-Widgets
 
-Badge - An optional `Texture` used to display the honor level background image.
+Badge      - An optional `Texture` used to display the honor level background image.
+Background - An optional `Texture` that will show/hide with the default PvP indicator in Forever.
 
 ## Notes
 
-This element updates by changing the texture and alpha.
-The `Badge` sub-widget should be on a lower sub-layer than the element.
-If the `Badge` sub-widget is provided the faction-based textures will not be used.
+This element updates by changing the texture and alpha.  
+The `Badge` sub-widget should be on a lower sub-layer than the element.  
+If the `Badge` sub-widget is provided the faction-based textures will not be used.  
+
+## Options
+
+.useAtlasSize          - Makes the element use preprogrammed atlas' size instead of its set dimensions (boolean)
+.portraitNeutralAtlas  - Overrides the portrait atlas for neutral standing (string)
+.portraitHordeAtlas    - Overrides the portrait atlas for Horde (string)
+.portraitAllianceAtlas - Overrides the portrait atlas for Alliance (string)
+.badgeTexture          - Overrides the badge texture (string)
+.ffaAtlas              - Overrides the default atlas for "FreeForAll" (string)
+.hordeAtlas            - Overrides the default atlas for Horde (string)
+.allianceAtlas         - Overrides the default atlas for Alliance (string)
+
+## Sub-Widget options
+
+.Badge.useAtlasSize - Makes the Badge use preprogrammed atlas' size instead of its set dimensions (boolean)
 
 ## Examples
 
@@ -41,6 +57,8 @@ local Private = oUF.Private
 local GameVersion = Private.GameVersion
 local GameCompatibility = Private.GameCompatibility
 
+local STATE = {}
+
 local function Update(self, event, unit)
 	if(unit and unit ~= self.__unit) then return end
 
@@ -57,8 +75,11 @@ local function Update(self, event, unit)
 		element:PreUpdate(unit)
 	end
 
-	local status, info
-	if(GameVersion.PTR or GameVersion.Forever) then
+	local status, info -- TODO: remove in 12.1.5
+	if(GameVersion.Forever) then
+		local state = STATE[element]
+		UnitFrameUtil.UpdateUnitPvPIndicator(state.elements, unit, true, state.textureMap, state.atlasSize)
+	elseif(GameVersion.PTR) then
 		if(element.Badge and GameCompatibility.BattleForAzeroth and UnitIsHumanPlayer(unit)) then
 			info = UnitFrameUtil.GetUnitPvPIndicatorDisplayInfo(unit, true)
 
@@ -162,8 +183,8 @@ local function Update(self, event, unit)
 
 	* self   - the PvPIndicator element
 	* unit   - the unit for which the update has been triggered (string)
-	* status - the unit's current PvP status or faction accounting for mercenary mode (string?)
-	* info   - information about the badge and portrait textures (table?)
+	* status - (DEPRECATED) the unit's current PvP status or faction accounting for mercenary mode (string?)
+	* info   - (DEPRECATED) information about the badge and portrait textures (table?)
 	--]]
 	if(element.PostUpdate) then
 		return element:PostUpdate(unit, status, info)
@@ -185,15 +206,48 @@ local function ForceUpdate(element)
 	return Path(element.__owner, 'ForceUpdate', element.__owner.__unit)
 end
 
-local function Enable(self)
+local function Enable(self, unit)
 	local element = self.PvPIndicator
 	if(element) then
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
 
+		if(GameVersion.Forever) then
+			STATE[element] = {
+				elements = {
+					pvpIcon = element,
+					pvpBackground = element.Background,
+					prestigeBadge = element,
+					prestigePortrait = element.Badge,
+				},
+				textureMap = {
+					prestigePortraitNeutral = element.portraitNeutralAtlas,
+					prestigePortraitHorde = element.portraitHordeAtlas,
+					prestigePortraitAlliance = element.portraitAllianceAtlas,
+					prestigeBadge = element.badgeAtlas,
+					pvpIconFreeForAll = element.ffaAtlas,
+					pvpIconHorde = element.hordeAtlas,
+					pvpIconAlliance = element.allianceAtlas,
+				},
+				atlasSize = {
+					pvpIcon = element.useAtlasSize,
+					prestigeBadge = element.useAtlasSize,
+					prestigePortrait = element.Badge and element.Badge.useAtlasSize,
+				}
+			}
+		end
+
+		if(element.Background) then
+			element.Background:Hide()
+		end
+
 		self:RegisterEvent('UNIT_FACTION', Path)
 		self:RegisterEvent('HONOR_LEVEL_UPDATE', Path, true)
 		self:RegisterEvent('PLAYER_REGEN_ENABLED', Path, true)
+
+		if(GameVersion.Forever and unit == 'player') then
+			self:RegisterEvent('PLAYER_PVP_FLAG_CHANGED', Path, true)
+		end
 
 		return true
 	end
@@ -208,9 +262,17 @@ local function Disable(self)
 			element.Badge:Hide()
 		end
 
+		if(element.Background) then
+			element.Background:Hide()
+		end
+
 		self:UnregisterEvent('UNIT_FACTION', Path)
 		self:UnregisterEvent('HONOR_LEVEL_UPDATE', Path)
 		self:UnregisterEvent('PLAYER_REGEN_ENABLED', Path)
+
+		if(GameVersion.Forever) then
+			self:UnregisterEvent('PLAYER_PVP_FLAG_CHANGED', Path)
+		end
 	end
 end
 
