@@ -9,7 +9,8 @@ PvPIndicator - A `Texture` used to display faction or FFA PvP status.
 
 ## Sub-Widgets
 
-Badge - An optional `Texture` used to display the honor level background image.
+Badge      - An optional `Texture` used to display the honor level background image.
+Background - An optional `Texture` that will show/hide with the default PvP indicator in Forever.
 
 ## Notes
 
@@ -215,6 +216,7 @@ local function Enable(self, unit)
 			STATE[element] = {
 				elements = {
 					pvpIcon = element,
+					pvpBackground = element.Background,
 					prestigeBadge = element,
 					prestigePortrait = element.Badge,
 				},
@@ -233,6 +235,10 @@ local function Enable(self, unit)
 					prestigePortrait = element.Badge and element.Badge.useAtlasSize,
 				}
 			}
+		end
+
+		if(element.Background) then
+			element.Background:Hide()
 		end
 
 		self:RegisterEvent('UNIT_FACTION', Path)
@@ -254,6 +260,10 @@ local function Disable(self)
 
 		if(element.Badge) then
 			element.Badge:Hide()
+		end
+
+		if(element.Background) then
+			element.Background:Hide()
 		end
 
 		self:UnregisterEvent('UNIT_FACTION', Path)
