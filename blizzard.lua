@@ -1,5 +1,8 @@
 local _, ns = ...
 local oUF = ns.oUF
+local Private = oUF.Private
+
+local GameVersion = Private.GameVersion
 
 -- sourced from Blizzard_UnitFrame/Mainline/TargetFrame.lua
 local MAX_BOSS_FRAMES = _G.MAX_BOSS_FRAMES or 5
@@ -7,6 +10,7 @@ local MAX_BOSS_FRAMES = _G.MAX_BOSS_FRAMES or 5
 -- sourced from Blizzard_FrameXMLBase/Shared/Constants.lua
 local MEMBERS_PER_RAID_GROUP = _G.MEMBERS_PER_RAID_GROUP or 5
 
+local isPlayerHooked = false
 local isArenaHooked = false
 local isBossHooked = false
 local isPartyHooked = false
@@ -75,6 +79,22 @@ function oUF:DisableBlizzard(unit)
 
 	if(unit == 'player') then
 		handleFrame(PlayerFrame)
+
+		if(GameVersion.Forever and not isPlayerHooked) then
+			isPlayerHooked = true
+
+			-- by killing PlayerFrame we also inadvertedly kill the sound played when
+			-- the player toggles pvp status, so we'll have to re-implement that.
+			-- no fix for this for retail (yet - the event might be added in 12.1.7).
+			-- this should really be handled by GameEvent...
+			local f = CreateFrame('Frame')
+			f:RegisterEvent('PLAYER_PVP_FLAG_CHANGED')
+			f:SetScript('OnEvent', function(_, _, isFlagged)
+				if(isFlagged) then
+					PlaySound(SOUNDKIT.IG_PVP_UPDATE)
+				end
+			end)
+		end
 	elseif(unit == 'pet') then
 		handleFrame(PetFrame)
 	elseif(unit == 'target') then
