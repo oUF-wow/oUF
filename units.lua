@@ -87,6 +87,7 @@ local function updateArenaPreparationElements(self, event, elementName, specID)
 	end
 end
 
+local restoreArenaCVar
 local function updateArenaPreparation(self, event)
 	if(not self:GetAttribute('oUF-enableArenaPrep')) then
 		return
@@ -97,6 +98,11 @@ local function updateArenaPreparation(self, event)
 		self:ResumeAllElements()
 		self:UpdateAllElements('ArenaPreparation')
 		self:UnregisterEvent(event, updateArenaPreparation)
+
+		if(restoreArenaCVar) then
+			C_CVar.SetCVar('pvpFramesDisplayClassColor', 0)
+			restoreArenaCVar = false
+		end
 	elseif(event == 'PLAYER_ENTERING_WORLD' and not UnitExists(self.__unit)) then
 		-- semi-recursive call for when the player zones into an arena
 		updateArenaPreparation(self, 'ARENA_PREP_OPPONENT_SPECIALIZATIONS')
@@ -105,6 +111,12 @@ local function updateArenaPreparation(self, event)
 			-- prevent calling protected functions if entering arena while in combat
 			self:RegisterEvent('PLAYER_REGEN_ENABLED', updateArenaPreparation, true)
 			return
+		end
+
+		if((self.Health.colorClass or self.Power.colorClass) and not C_CVar.GetCVarBool('pvpFramesDisplayClassColor')) then
+			-- this CVar is required for class coloring to work with UnitFrameUtil
+			restoreArenaCVar = true
+			C_CVar.SetCVar('pvpFramesDisplayClassColor', 1)
 		end
 
 		if(self.PreUpdate) then
