@@ -384,7 +384,8 @@ local function initObject(unit, style, styleFunc, header, ...)
 		-- frame will be stuck with the 'vehicle' unit.
 		object:RegisterEvent('PLAYER_ENTERING_WORLD', evalUnitAndUpdate, true)
 
-		if(not objectUnit:match('%w+target') and not object.isNamePlate) then
+		local isEventlessUnit = objectUnit:match('%w+target')
+		if(not isEventlessUnit and not object.isNamePlate) then
 			object:RegisterEvent('UNIT_ENTERED_VEHICLE', evalUnitAndUpdate)
 			object:RegisterEvent('UNIT_EXITED_VEHICLE', evalUnitAndUpdate)
 
@@ -402,7 +403,7 @@ local function initObject(unit, style, styleFunc, header, ...)
 			object:SetAttribute('*type2', 'togglemenu')
 			object:SetAttribute('toggleForVehicle', true)
 
-			if(objectUnit:match('%w+target')) then
+			if(isEventlessUnit) then
 				oUF:HandleEventlessUnit(object)
 			else
 				oUF:HandleUnit(object)
