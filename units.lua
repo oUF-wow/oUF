@@ -13,14 +13,14 @@ local function updateArenaPreparationElements(self, event, elementName, specID)
 
 			* self   - the parent object
 			* event  - the event triggering the update (string)
-			* specID - the specialization ID for the opponent (number)
+			* specID - (DEPRECATED) the specialization ID for the opponent (number)
 			--]]
 			--[[ Override: Power.OverrideArenaPreparation(self, event, specID)
 			Used to completely override the internal update function for arena preparation.
 
 			* self   - the parent object
 			* event  - the event triggering the update (string)
-			* specID - the specialization ID for the opponent (number)
+			* specID - (DEPRECATED) the specialization ID for the opponent (number)
 			--]]
 			element.OverrideArenaPreparation(self, event, specID)
 			return
@@ -36,14 +36,14 @@ local function updateArenaPreparationElements(self, event, elementName, specID)
 			during arena preparation.
 
 			* self   - the Health element
-			* specID - the specialization ID for the opponent (number)
+			* specID - (DEPRECATED) the specialization ID for the opponent (number)
 			--]]
 			--[[ Override: Power:UpdateColor(specID)
 			Used to completely override the internal function for updating the widget's colors
 			during arena preparation.
 
 			* self   - the Power element
-			* specID - the specialization ID for the opponent (number)
+			* specID - (DEPRECATED) the specialization ID for the opponent (number)
 			--]]
 			element:UpdateColorArenaPreparation(specID)
 		else
@@ -73,14 +73,14 @@ local function updateArenaPreparationElements(self, event, elementName, specID)
 
 			* self   - the Health element
 			* event  - the event triggering the update (string)
-			* specID - the specialization ID for the opponent (number)
+			* specID - (DEPRECATED) the specialization ID for the opponent (number)
 			--]]
 			--[[ Callback: Power:PostUpdateArenaPreparation(event, specID)
 			Called after the element has been updated during arena preparation.
 
 			* self   - the Power element
 			* event  - the event triggering the update (string)
-			* specID - the specialization ID for the opponent (number)
+			* specID - (DEPRECATED) the specialization ID for the opponent (number)
 			--]]
 			element:PostUpdateArenaPreparation(event, specID)
 		end
@@ -117,8 +117,6 @@ local function updateArenaPreparation(self, event)
 			self:Hide()
 		end
 
-		local specID = GetArenaOpponentSpec(self.__unitIndex)
-		-- Secret spec IDs cannot control visibility; use the public opponent count.
 		if(self.__unitIndex <= numOpponents) then
 			if(self:IsEnabled()) then
 				-- disable the unit watch so we can forcefully show the object ourselves
@@ -130,6 +128,7 @@ local function updateArenaPreparation(self, event)
 			self:PauseAllElements()
 
 			-- update Health and Power (if available) with fake data
+			local specID = GetArenaOpponentSpec(self.__unitIndex) -- DEPRECATED
 			updateArenaPreparationElements(self, event, 'Health', specID)
 			updateArenaPreparationElements(self, event, 'Power', specID)
 
