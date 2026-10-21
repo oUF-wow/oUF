@@ -53,7 +53,7 @@ local function updateArenaPreparationElements(self, event, elementName, specID)
 				-- FIXME: no idea if we can get power type here without the unit
 			if(element.colorClass) then
 				local info = UnitFrameUtil.GetArenaOpponentSpecDisplayInfo(self.__unitIndex)
-				color = CreateColor(info.barColorR, info.barColorG, info.barColorB)
+				color = oUF:CreateColor(info.barColorR, info.barColorG, info.barColorB)
 			elseif(element.colorReaction) then
 				color = self.colors.reaction[2]
 			elseif(element.colorSmooth and self.colors.health:GetCurve()) then
