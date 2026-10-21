@@ -347,8 +347,8 @@ local function updatePet(self, event, unit)
 end
 
 local function updateRaid(self, event)
-	local unitGUID = UnitGUID(self.__unit)
-	if(unitGUID ~= nil and not issecretvalue(unitGUID) and unitGUID ~= self.unitGUID) then
+	local unitGUID = scrubsecretvalues(UnitGUID(self.__unit))
+	if(unitGUID and unitGUID ~= self.unitGUID) then
 		self.unitGUID = unitGUID
 
 		self:UpdateAllElements(event)
