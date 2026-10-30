@@ -281,7 +281,7 @@ local function UpdatePrediction(self, event, unit)
 
 	local powerType = UnitPowerType(unit)
 	if(element.displayAltPower) then
-		powerType = element:GetDisplayPower(unit)
+		powerType = element:GetDisplayPower(unit) or powerType
 	end
 
 	if(event == 'UNIT_SPELLCAST_START' and startTime ~= endTime) then
