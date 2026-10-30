@@ -244,14 +244,14 @@ local tagStrings = {
 	end]],
 
 	['leader'] = [[function(u)
-		local isLeader = UnitIsGroupLeader(unit)
+		local isLeader = UnitIsGroupLeader(u)
 		if(not issecretvalue(isLeader) and isLeader) then
 			return 'L'
 		end
 	end]],
 
 	['leaderlong']  = [[function(u)
-		local isLeader = UnitIsGroupLeader(unit)
+		local isLeader = UnitIsGroupLeader(u)
 		if(not issecretvalue(isLeader) and isLeader) then
 			return 'Leader'
 		end
