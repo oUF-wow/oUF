@@ -296,4 +296,4 @@ local function Enable(self, unit)
 	end
 end
 
-oUF:AddMetaElement('Swing', Create, nil, Enable, Disable)
+oUF:AddMetaElement('Swing', Create, Path, Enable, Disable)
