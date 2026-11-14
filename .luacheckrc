@@ -172,6 +172,7 @@ read_globals = {
 	'UnitNameplateShowsWidgetsOnly',
 	'UnitPhaseReason',
 	'UnitPlayerControlled',
+	'UnitPlayerOrPetInParty',
 	'UnitPower',
 	'UnitPowerBarID',
 	'UnitPowerDisplayMod',
