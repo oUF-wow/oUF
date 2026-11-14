@@ -83,12 +83,15 @@ A default texture will be applied to the StatusBar and Texture widgets if they d
 local _, ns = ...
 local oUF = ns.oUF
 
+local Private = oUF.Private
+local GameVersion = Private.GameVersion
+
 local STATE = {}
 
 local FALLBACK_ICON = 136243 -- Interface\ICONS\Trade_Engineering
 local FAILED = _G.FAILED or 'Failed'
 local INTERRUPTED = _G.INTERRUPTED or 'Interrupted'
-local GLOBAL_SPELL_ID = 61304 -- Global Cooldown
+local GLOBAL_SPELL_ID = GameVersion.Forever and 1283885 or 61304 -- Global Cooldown
 
 local defaultFormatter = C_StringUtil.CreateSecondsFormatter()
 defaultFormatter:SetDefaultAbbreviation(Enum.SecondsFormatterAbbreviation.OneLetter)
