@@ -113,7 +113,7 @@ local function updateArenaPreparation(self, event)
 			return
 		end
 
-		if((self.Health.colorClass or self.Power.colorClass) and not C_CVar.GetCVarBool('pvpFramesDisplayClassColor')) then
+		if(((self.Health and self.Health.colorClass) or (self.Power and self.Power.colorClass)) and not C_CVar.GetCVarBool('pvpFramesDisplayClassColor')) then
 			-- this CVar is required for class coloring to work with UnitFrameUtil
 			restoreArenaCVar = true
 			C_CVar.SetCVar('pvpFramesDisplayClassColor', 1)
