@@ -9,8 +9,8 @@ function Private.argcheck(value, num, ...)
 		if(type(value) == select(i, ...)) then return end
 	end
 
-	local types = string.join(', ', ...)
-	local name = debugstack(2,2,0):match(": in function [`<](.-)['>]")
+	local types = string.join('/', ...)
+	local name = debugstack(2,2,0):match(": in function [`'<](.-)['>]")
 	error(string.format("Bad argument #%d to '%s' (%s expected, got %s)", num, name, types, type(value)), 3)
 end
 
