@@ -100,11 +100,11 @@ local function GetGenericPowerColor(element, powerType)
 	return element.__owner.colors.power[powerType]
 end
 
-local function GetComboPoints(unit)
+local function GetComboPointsPower(unit)
 	return UnitPower(unit, Enum.PowerType.ComboPoints), GetUnitChargedPowerPoints(unit)
 end
 
-local function GetComboPointsMax(unit)
+local function GetComboPointsPowerMax(unit)
 	return UnitPowerMax(unit, Enum.PowerType.ComboPoints)
 end
 
@@ -152,7 +152,7 @@ if(playerClass == 'DEMONHUNTER' and GameCompatibility.Midnight) then
 	end
 elseif(playerClass == 'DRUID') then
 	GetPowerUpdaters = function()
-		return GetComboPoints, GetComboPointsMax, GetGenericPowerColor
+		return GetComboPointsPower, GetComboPointsPowerMax, GetGenericPowerColor
 	end
 
 	GetPowerInfo = function()
@@ -256,7 +256,7 @@ elseif(playerClass == 'PALADIN' and GameCompatibility.Cataclysm) then
 	end
 elseif(playerClass == 'ROGUE') then
 	GetPowerUpdaters = function()
-		return GetComboPoints, GetComboPointsMax, GetGenericPowerColor
+		return GetComboPointsPower, GetComboPointsPowerMax, GetGenericPowerColor
 	end
 
 	GetPowerInfo = function() -- might as well be static
@@ -462,7 +462,7 @@ local function Visibility(self, event, unit)
 
 	if(shouldEnable) then
 		if(unit == 'vehicle') then
-			GetPower, GetPowerMax, GetPowerColor = GetComboPoints, GetComboPointsMax, GetGenericPowerColor
+			GetPower, GetPowerMax, GetPowerColor = GetComboPointsPower, GetComboPointsPowerMax, GetGenericPowerColor
 		else
 			GetPower, GetPowerMax, GetPowerColor = GetPowerUpdaters()
 		end
