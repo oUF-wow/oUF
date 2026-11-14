@@ -351,6 +351,12 @@ end
 
 local function Update(self, event, unit, powerType)
 	local element = self.ClassPower
+	if(event == 'PLAYER_TARGET_CHANGED') then
+		-- event does not have valid args, need to fake it
+		unit = 'player'
+		powerType = STATE[element].powerType
+	end
+
 	if(not unit) then
 		return
 	elseif(unit == 'vehicle' and powerType ~= POWER_TYPE_COMBO_POINTS) then
@@ -532,6 +538,12 @@ do
 
 		self:RegisterEvent('SPELLS_CHANGED', ColorPath, true)
 
+		if(not GameCompatibility.Warlords) then
+			-- combo points are tied to the target before 6.x, so we need to
+			-- update the element whenever the target changes
+			self:RegisterEvent('PLAYER_TARGET_CHANGED', Path, true)
+		end
+
 		local element = self.ClassPower
 		STATE[element].enabled = true
 
@@ -548,6 +560,7 @@ do
 		self:UnregisterEvent('UNIT_MAXPOWER', Path)
 		self:UnregisterEvent('UNIT_POWER_POINT_CHARGE', Path)
 		self:UnregisterEvent('SPELLS_CHANGED', ColorPath)
+		self:UnregisterEvent('PLAYER_TARGET_CHANGED', Path)
 
 		if(not unregisterOnly) then
 			local element = self.ClassPower
