@@ -287,12 +287,7 @@ local function Enable(self, unit)
 			self:RegisterEvent('PLAYER_SWING_RANGE_UPDATE', Path, true)
 		end
 
-		-- need to test this first
-		-- SwingTimerManagerFrame:UnregisterAllEvents()
-		-- for _, swingFrame in next, SwingTimerManagerFrame.swingTimerFrames do
-		-- 	swingFrame:UnregisterAllEvents()
-		-- 	swingFrame:Hide()
-		-- end
+		C_CVar.SetCVar('showSwingTimer', 0)
 
 		return true
 	end
