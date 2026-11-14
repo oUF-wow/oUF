@@ -17,7 +17,7 @@ ignore = {
 
 read_globals = {
 	string = {fields = {'join', 'split', 'trim'}},
-	table = {fields = {'count', 'removemulti', 'wipe'}},
+	table = {fields = {'contains', 'count', 'removemulti', 'wipe'}},
 
 	-- FrameXML
 	'AnchorUtil',
@@ -75,6 +75,7 @@ read_globals = {
 	'C_Spell',
 	'C_SpellBook',
 	'C_StringUtil',
+	'C_SwingTimer',
 	'C_Texture',
 	'C_Timer',
 	'C_UnitAuras',
