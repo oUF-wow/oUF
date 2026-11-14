@@ -23,6 +23,7 @@ The element only functions in Forever.
 .showAlways - Always keep element shown (bool?)
 .checkRange - Only show element when in the correct range (bool?)
 .smoothing  - Which status bar smoothing method to use, defaults to `Enum.StatusBarInterpolation.Immediate` (number)
+.direction  - Which direction the bar move, defaults to `Enum.StatusBarTimerDirection.ElapsedTime` (number)
 
 ## Sub-Widget options
 
@@ -65,7 +66,8 @@ local function reset(state)
 	state.isSwinging = false
 	state.timer = nil
 
-	element:SetValue(0)
+	element:SetMinMaxValues(0, 1)
+	element:SetValue(element.direction == Enum.StatusBarTimerDirection.RemainingTime and 1 or 0)
 
 	if(element.Time) then
 		element.Time:SetText('')
@@ -105,7 +107,7 @@ local function Update(self, event, swingType, ...)
 			local duration = state.duration
 			duration:SetTimeFromStart(GetTime(), swingDuration)
 
-			element:SetTimerDuration(duration, element.smoothing, Enum.StatusBarTimerDirection.RemainingTime)
+			element:SetTimerDuration(duration, element.smoothing, element.direction)
 
 			if(element.Time) then
 				element.Time.binding:SetDuration(duration)
@@ -134,7 +136,8 @@ local function Update(self, event, swingType, ...)
 	end
 
 	if(not state.isSwinging) then
-		element:SetValue(0)
+		element:SetMinMaxValues(0, 1)
+		element:SetValue(element.direction == Enum.StatusBarTimerDirection.RemainingTime and 1 or 0)
 
 		if(element.Time) then
 			element.Time:SetText('')
