@@ -55,7 +55,7 @@ groups and slots for each element.
 ## Examples
 
   -- Initialize
-  local Auras = self:CreateAuras()
+  local Auras = self:CreateAurasElement()
   Auras.num = 10 -- per-group option
 
   -- Position and size
@@ -328,7 +328,7 @@ function elementMixin:ForceUpdate()
 	self:UpdateAllAuras()
 end
 
---[[ Auras: frame:CreateAuras([options])
+--[[ Auras: frame:CreateAurasElement([options])
 Create and return a aura element.
 
 * self     - the unit frame on which to create the element
