@@ -87,6 +87,7 @@ read_globals = {
 	'GetArenaOpponentSpec',
 	'GetBuildInfo',
 	'GetCollapsingStarCost',
+	'GetComboPoints',
 	'GetNetStats',
 	'GetNumArenaOpponentSpecs',
 	'GetPartyAssignment',

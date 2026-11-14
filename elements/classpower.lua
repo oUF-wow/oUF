@@ -100,8 +100,16 @@ local function GetGenericPowerColor(element, powerType)
 	return element.__owner.colors.power[powerType]
 end
 
-local function GetComboPointsPower(unit)
-	return UnitPower(unit, Enum.PowerType.ComboPoints), GetUnitChargedPowerPoints(unit)
+local GetComboPointsPower
+if(GameCompatibility.Warlords) then
+	function GetComboPointsPower(unit)
+		return UnitPower(unit, Enum.PowerType.ComboPoints), GetUnitChargedPowerPoints(unit)
+	end
+else
+	function GetComboPointsPower(unit)
+		-- combo points are tied to the target unit before 6.x
+		return GetComboPoints(unit, 'target')
+	end
 end
 
 local function GetComboPointsPowerMax(unit)
