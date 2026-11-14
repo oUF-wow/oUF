@@ -42,7 +42,7 @@ local function Update(self, event)
 	end
 
 	local inRange
-	local isEligible = UnitIsConnected(unit) and UnitInParty(unit)
+	local isEligible = UnitIsConnected(unit) and UnitPlayerOrPetInParty(unit)
 	if(isEligible) then
 		inRange = UnitInRange(unit)
 		self:SetAlphaFromBoolean(inRange, element.insideAlpha, element.outsideAlpha)
