@@ -1007,21 +1007,28 @@ do
 				Private.UpdateUnits(nameplate.unitFrame, unit)
 
 				walkObject(nameplate.unitFrame, unit)
-
-				-- re-parent other elements directly to the nameplate frame, as there doesn't seem
-				-- to be any downsides to be parented there than to the unit frame within,
-				-- and this is the easier solution (no need to actively reparent and show/hide
-				-- the stock unit frame object)
-				nameplate.UnitFrame.WidgetContainer:SetParent(nameplate)
-				nameplate.UnitFrame.WidgetContainer:SetPoint('TOP', nameplate, 'BOTTOM')
-				nameplate.UnitFrame.SoftTargetFrame:SetParent(nameplate)
 			end
+
+			-- re-parent other elements directly to the nameplate frame, as there doesn't seem
+			-- to be any downsides to be parented there than to the unit frame within,
+			-- and this is the easier solution (no need to actively reparent and show/hide
+			-- the stock unit frame object).
+			-- this has to be done on every spawn, as blizzard pools their unit frames separately
+			-- from the nameplates, acquiring one on add and releasing it on removal, so the
+			-- nameplate isn't guaranteed to get the same unit frame back
+			nameplate.UnitFrame.WidgetContainer:SetParent(nameplate)
+			nameplate.UnitFrame.SoftTargetFrame:SetParent(nameplate)
 
 			if(UnitNameplateShowsWidgetsOnly(unit) or UnitIsGameObject(unit)) then
 				-- pause all active elements and hide the unit frame
 				nameplate.unitFrame:PauseAllElements()
 				nameplate.unitFrame:Hide()
 			else
+				-- blizzard re-anchors the widget container every time the unit is set, so we
+				-- need to keep anchoring it below our frame, but leave it be for widgets-only
+				-- nameplates since blizzard anchors it correctly for those
+				nameplate.UnitFrame.WidgetContainer:SetPoint('TOP', nameplate, 'BOTTOM')
+
 				-- we need to keep updating the attributes in order to keep correct info,
 				-- as this can change during nameplate re-use
 				nameplate.unitFrame:SetAttribute('unit', unit)
